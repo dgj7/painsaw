@@ -8,12 +8,12 @@ pub struct LogConfigPair {
 }
 
 #[derive(Debug,Clone)]
-pub struct LoggingConfig {
+pub struct LoggerConfig {
     pub(crate) pairs: Vec<LogConfigPair>,
 }
 
-impl LoggingConfig {
-    pub fn new(pairs: &[LogConfigPair]) -> LoggingConfig {
-        LoggingConfig { pairs: Vec::from(pairs) }
+impl LoggerConfig {
+    pub fn new(pairs: &[LogConfigPair]) -> LoggerConfig {
+        LoggerConfig { pairs: Vec::from(pairs) }
     }
 }

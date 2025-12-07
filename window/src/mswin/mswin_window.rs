@@ -1,5 +1,5 @@
 use crate::model::window::Window;
-use crate::model::window_request::WindowRequest;
+use crate::model::window_config::WindowConfig;
 
 pub struct MsWinWindow {
     // todo
@@ -12,7 +12,7 @@ impl Window for MsWinWindow {
 }
 
 impl MsWinWindow {
-    pub fn new(_request : &WindowRequest) -> Box<dyn Window> {
+    pub fn new(_request : &WindowConfig) -> Box<dyn Window> {
         Box::new(MsWinWindow {})
     }
 }
