@@ -1,0 +1,9 @@
+[workspace]
+members = [
+    # libraries
+    #"window",
+
+    # main program entrypoint
+    "game",
+]
+resolver="1"
