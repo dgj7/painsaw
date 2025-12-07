@@ -1,12 +1,12 @@
 mod model;
 
+use crate::model::config::ApplicationConfiguration;
 use logger::log;
 use logger::model::log_config::{LogConfigPair, LoggerConfig};
 use logger::model::log_level::LogLevel;
 use logger::model::log_target::LogTarget;
 use window::create_window;
-use window::model::window_config::{WindowDimensions, WindowConfig};
-use crate::model::config::ApplicationConfiguration;
+use window::model::window_config::{WindowConfig, WindowDimensions};
 
 fn main() {
     let cfg = configure();
@@ -15,7 +15,7 @@ fn main() {
     match create_window(&cfg.window) {
         Ok(win) => {
             win.begin_display(&cfg.logger);
-        },
+        }
         Err(_e) => {
             log(&cfg.logger, LogLevel::Error, &|| "window creation failed");
         }
@@ -26,7 +26,10 @@ fn main() {
 
 fn configure() -> ApplicationConfiguration {
     ApplicationConfiguration {
-        logger: LoggerConfig::new(&*vec!(LogConfigPair { level: LogLevel::Debug, target: LogTarget::StdOut })),
+        logger: LoggerConfig::new(&*vec![LogConfigPair {
+            level: LogLevel::Debug,
+            target: LogTarget::StdOut,
+        }]),
         window: WindowConfig::new(WindowDimensions::Fullscreen, "painsaw"),
     }
 }
