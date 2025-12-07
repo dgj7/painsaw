@@ -1,7 +1,6 @@
 mod model;
 
 use crate::model::config::ApplicationConfiguration;
-use logger::log;
 use logger::model::log_config::{LogConfigPair, LoggerConfig};
 use logger::model::log_level::LogLevel;
 use logger::model::log_target::LogTarget;
@@ -10,18 +9,18 @@ use window::model::window_config::{WindowConfig, WindowDimensions};
 
 fn main() {
     let cfg = configure();
-    log(&cfg.logger, LogLevel::Info, &|| "begin");
+    cfg.logger.info(&|| "begin");
 
     match create_window(&cfg.window) {
         Ok(win) => {
             win.begin_display(&cfg.logger);
         }
         Err(_e) => {
-            log(&cfg.logger, LogLevel::Error, &|| "window creation failed");
+            cfg.logger.error(&|| "window creation failed");
         }
     }
 
-    log(&cfg.logger, LogLevel::Info, &|| "end.");
+    cfg.logger.info(&|| "end.");
 }
 
 fn configure() -> ApplicationConfiguration {

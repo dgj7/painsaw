@@ -1,8 +1,6 @@
-use logger::log;
-use logger::model::log_config::LoggerConfig;
-use logger::model::log_level::LogLevel;
 use crate::model::window::Window;
 use crate::model::window_config::WindowConfig;
+use logger::model::log_config::LoggerConfig;
 
 pub struct MsWinWindow {
     // todo
@@ -10,7 +8,7 @@ pub struct MsWinWindow {
 
 impl Window for MsWinWindow {
     fn begin_display(&self, logger: &LoggerConfig) {
-        log(&logger, LogLevel::Debug, &|| "begin window display");
+        logger.debug(&|| "begin window display");
     }
 }
 
