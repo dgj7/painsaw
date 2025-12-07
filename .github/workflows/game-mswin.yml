@@ -1,0 +1,30 @@
+name: game
+
+on:
+  push:
+    paths:
+    - game/**
+  pull_request:
+    paths:
+    - game/**
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          profile: minimal
+          override: true
+      - name: Build
+        run: cargo build --verbose
+        working-directory: ./game
+      - name: Test
+        run: cargo test --verbose
+        working-directory: ./game

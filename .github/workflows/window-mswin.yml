@@ -1,20 +1,19 @@
-name: painsaw
+name: window-mswindows
 
 on:
   push:
-    branches: [ main ]
+    paths:
+      - window/**
   pull_request:
-    branches: [ main ]
+    paths:
+      - window/**
 
 env:
   CARGO_TERM_COLOR: always
 
 jobs:
   build:
-    strategy:
-      matrix:
-        os: [ windows-latest, macos-latest, ubuntu-latest ]
-    runs-on: $({ matrix.os })
+    runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
       - name: Install Rust
@@ -25,5 +24,7 @@ jobs:
           override: true
       - name: Build
         run: cargo build --verbose
+        working-directory: ./window
       - name: Test
         run: cargo test --verbose
+        working-directory: ./window
