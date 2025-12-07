@@ -1,12 +1,12 @@
-name: window-mswin
+name: logger-mswin
 
 on:
   push:
     paths:
-      - window/**
+      - logger/**
   pull_request:
     paths:
-      - window/**
+      - logger/**
 
 env:
   CARGO_TERM_COLOR: always
@@ -24,7 +24,7 @@ jobs:
           override: true
       - name: Build
         run: cargo build --verbose
-        working-directory: ./window
+        working-directory: ./logger
       - name: Test
         run: cargo test --verbose
-        working-directory: ./window
+        working-directory: ./logger

@@ -4,6 +4,7 @@ members = [
     "game",
 
     # libraries
+    "logger",
     "window",
 ]
 resolver="1"
