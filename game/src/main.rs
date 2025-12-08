@@ -13,7 +13,7 @@ fn main() {
 
     match create_window(&cfg.window) {
         Ok(win) => {
-            win.begin_display(&cfg.logger);
+            win.begin_display(&cfg.logger).expect("window creation failed");
         }
         Err(_e) => {
             cfg.logger.error(&|| "window creation failed");
