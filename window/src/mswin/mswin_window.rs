@@ -35,9 +35,11 @@ impl Window for MsWinWindow {
 impl MsWinWindow {
     pub fn new(request : &WindowConfig) -> std::result::Result<Box<dyn Window>, Box<dyn std::error::Error>> {
         unsafe {
+            /* get handle instance */
             let hinstance: HINSTANCE = HINSTANCE::from(GetModuleHandleA(None)?);
             debug_assert!(hinstance.0 != std::ptr::null_mut());
 
+            /* create the wnd class */
             let wc = WNDCLASSA {
                 hCursor: LoadCursorW(None, IDC_ARROW)?,
                 hInstance: hinstance,
@@ -47,21 +49,32 @@ impl MsWinWindow {
                 ..Default::default()
             };
 
+            /* register the wnd class */
             let atom = RegisterClassA(&wc);
             debug_assert!(atom != 0);
 
+            /* determine some settings based on configuration */
+            let dwstyle = match request.dimensions {
+                WindowDimensions::Fullscreen => WS_VISIBLE,
+                WindowDimensions::Dimensional { width: _width, height: _height } => WS_OVERLAPPEDWINDOW | WS_VISIBLE | WS_THICKFRAME,
+            };
+            let (x, y) = match request.dimensions {
+                WindowDimensions::Fullscreen => (0, 0),
+                WindowDimensions::Dimensional { width: _width, height: _height } => (CW_USEDEFAULT, CW_USEDEFAULT),
+            };
             let (width,height) = match request.dimensions {
                 WindowDimensions::Fullscreen => (CW_USEDEFAULT, CW_USEDEFAULT),
                 WindowDimensions::Dimensional { width, height } => (width, height),
             };
 
+            /* create the window */
             let hwnd = CreateWindowExA(
                 WINDOW_EX_STYLE::default(),
                 s!("window"),
                 s!("This is a sample window"),
-                WS_OVERLAPPEDWINDOW | WS_VISIBLE,
-                CW_USEDEFAULT,
-                CW_USEDEFAULT,
+                dwstyle,
+                x,
+                y,
                 width,
                 height,
                 None,
@@ -70,6 +83,7 @@ impl MsWinWindow {
                 None,
             ).expect("CreateWindowEx* failed");
 
+            /* done; returning handles to window so we can create device context later */
             Ok(Box::new(MsWinWindow {
                 hinstance,
                 wndclassa: wc,

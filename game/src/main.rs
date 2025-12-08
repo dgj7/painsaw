@@ -30,6 +30,6 @@ fn configure() -> ApplicationConfiguration {
             level: LogLevel::Debug,
             target: LogTarget::StdOut,
         }]),
-        window: WindowConfig::new(WindowDimensions::Dimensional {width: 800, height: 600}, "painsaw"),
+        window: WindowConfig::new(WindowDimensions::Dimensional { width: 800, height: 600 }, "painsaw"),
     }
 }
