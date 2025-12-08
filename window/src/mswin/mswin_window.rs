@@ -9,44 +9,17 @@ use windows::{
     Win32::UI::WindowsAndMessaging::*,
 };
 
-pub struct MsWinWindow {}
+pub struct MsWinWindow {
+    pub hinstance: HINSTANCE,
+    pub wndclassa: WNDCLASSA,
+    pub atom: u16,
+    pub hwnd: HWND,
+}
 
 impl Window for MsWinWindow {
-    fn begin_display(&self, logger: &LoggerConfig) -> std::result::Result<(), Box<dyn std::error::Error>> {
-        logger.debug(&|| "begin window display");
+    fn begin_event_handling(&self, logger: &LoggerConfig) -> std::result::Result<(), Box<dyn std::error::Error>> {
+        logger.debug(&|| "begin event handling");
         unsafe {
-            let instance: HINSTANCE = HINSTANCE::from(GetModuleHandleA(None)?);
-            debug_assert!(instance.0 != std::ptr::null_mut());
-
-            let window_class = s!("window");
-
-            let wc = WNDCLASSA {
-                hCursor: LoadCursorW(None, IDC_ARROW)?,
-                hInstance: instance,
-                lpszClassName: window_class,
-                style: CS_HREDRAW | CS_VREDRAW,
-                lpfnWndProc: Some(wndproc),
-                ..Default::default()
-            };
-
-            let atom = RegisterClassA(&wc);
-            debug_assert!(atom != 0);
-
-            CreateWindowExA(
-                WINDOW_EX_STYLE::default(),
-                window_class,
-                s!("This is a sample window"),
-                WS_OVERLAPPEDWINDOW | WS_VISIBLE,
-                CW_USEDEFAULT,
-                CW_USEDEFAULT,
-                CW_USEDEFAULT,
-                CW_USEDEFAULT,
-                None,
-                None,
-                Option::from(instance),
-                None,
-            ).expect("TODO: panic message");
-
             let mut message = MSG::default();
 
             while GetMessageA(&mut message, Option::from(HWND(std::ptr::null_mut())), 0, 0).into() {
@@ -59,8 +32,45 @@ impl Window for MsWinWindow {
 }
 
 impl MsWinWindow {
-    pub fn new(_request : &WindowConfig) -> Box<dyn Window> {
-        Box::new(MsWinWindow {})
+    pub fn new(_request : &WindowConfig) -> std::result::Result<Box<dyn Window>, Box<dyn std::error::Error>> {
+        unsafe {
+            let hinstance: HINSTANCE = HINSTANCE::from(GetModuleHandleA(None)?);
+            debug_assert!(hinstance.0 != std::ptr::null_mut());
+
+            let wc = WNDCLASSA {
+                hCursor: LoadCursorW(None, IDC_ARROW)?,
+                hInstance: hinstance,
+                lpszClassName: s!("window"),
+                style: CS_HREDRAW | CS_VREDRAW,
+                lpfnWndProc: Some(wndproc),
+                ..Default::default()
+            };
+
+            let atom = RegisterClassA(&wc);
+            debug_assert!(atom != 0);
+
+            let hwnd = CreateWindowExA(
+                WINDOW_EX_STYLE::default(),
+                s!("window"),
+                s!("This is a sample window"),
+                WS_OVERLAPPEDWINDOW | WS_VISIBLE,
+                CW_USEDEFAULT,
+                CW_USEDEFAULT,
+                CW_USEDEFAULT,
+                CW_USEDEFAULT,
+                None,
+                None,
+                Option::from(hinstance),
+                None,
+            ).expect("CreateWindowEx* failed");
+
+            Ok(Box::new(MsWinWindow {
+                hinstance,
+                wndclassa: wc,
+                atom,
+                hwnd,
+            }))
+        }
     }
 }
 
