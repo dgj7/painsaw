@@ -12,7 +12,7 @@ fn main() {
     cfg.logger.info(&|| "begin");
 
     match create_window(&cfg.window) {
-        Ok(win) => {
+        Ok(mut win) => {
             win.begin_event_handling(&cfg.logger).expect("window creation failed");
         }
         Err(_e) => {

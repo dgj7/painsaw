@@ -1,7 +1,7 @@
 use crate::model::window::Window;
 use crate::model::window_config::{WindowConfig, WindowDimensions};
-use windows::Win32::UI::Input::KeyboardAndMouse::{VIRTUAL_KEY, VK_ESCAPE};
 use logger::model::log_config::LoggerConfig;
+use windows::Win32::UI::Input::KeyboardAndMouse::{VIRTUAL_KEY, VK_ESCAPE};
 use windows::{
     core::*,
     Win32::Foundation::*,
@@ -15,18 +15,30 @@ pub struct MsWinWindow {
     pub wndclassa: WNDCLASSA,
     pub atom: u16,
     pub hwnd: HWND,
+    pub quit: bool,
 }
 
 impl Window for MsWinWindow {
-    fn begin_event_handling(&self, logger: &LoggerConfig) -> std::result::Result<(), Box<dyn std::error::Error>> {
+    fn begin_event_handling(&mut self, logger: &LoggerConfig) -> std::result::Result<(), Box<dyn std::error::Error>> {
         logger.debug(&|| "begin event handling");
         unsafe {
-            let mut message = MSG::default();
+            let mut message: MSG = MSG::default();
 
-            while GetMessageA(&mut message, Option::from(HWND(std::ptr::null_mut())), 0, 0).into() {
-                DispatchMessageA(&message);
+            while !self.quit {
+                if PeekMessageA(&mut message, Default::default(), 0, 0, PM_REMOVE).into() {
+                    if message.message == WM_QUIT {
+                        self.quit = true;
+                        break;
+                    }
+
+                    let _ = TranslateMessage(&message);
+                    DispatchMessageA(&message);
+                } else {
+                    // todo: rendering code
+                }
             }
 
+            logger.info(&|| "after while(!quit)");
             Ok(())
         }
     }
@@ -89,6 +101,7 @@ impl MsWinWindow {
                 wndclassa: wc,
                 atom,
                 hwnd,
+                quit: false,
             }))
         }
     }
