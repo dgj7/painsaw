@@ -6,7 +6,7 @@ pub struct WindowConfig {
 
 pub enum WindowDimensions {
     Fullscreen,
-    Dimensional(u16, u16),
+    Dimensional{ width: i32, height: i32 },
 }
 
 impl WindowConfig {

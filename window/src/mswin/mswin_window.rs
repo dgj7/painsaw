@@ -1,5 +1,5 @@
 use crate::model::window::Window;
-use crate::model::window_config::WindowConfig;
+use crate::model::window_config::{WindowConfig, WindowDimensions};
 use logger::model::log_config::LoggerConfig;
 use windows::{
     core::*,
@@ -32,7 +32,7 @@ impl Window for MsWinWindow {
 }
 
 impl MsWinWindow {
-    pub fn new(_request : &WindowConfig) -> std::result::Result<Box<dyn Window>, Box<dyn std::error::Error>> {
+    pub fn new(request : &WindowConfig) -> std::result::Result<Box<dyn Window>, Box<dyn std::error::Error>> {
         unsafe {
             let hinstance: HINSTANCE = HINSTANCE::from(GetModuleHandleA(None)?);
             debug_assert!(hinstance.0 != std::ptr::null_mut());
@@ -49,6 +49,11 @@ impl MsWinWindow {
             let atom = RegisterClassA(&wc);
             debug_assert!(atom != 0);
 
+            let (width,height) = match request.dimensions {
+                WindowDimensions::Fullscreen => (CW_USEDEFAULT, CW_USEDEFAULT),
+                WindowDimensions::Dimensional { width, height } => (width, height),
+            };
+
             let hwnd = CreateWindowExA(
                 WINDOW_EX_STYLE::default(),
                 s!("window"),
@@ -56,8 +61,8 @@ impl MsWinWindow {
                 WS_OVERLAPPEDWINDOW | WS_VISIBLE,
                 CW_USEDEFAULT,
                 CW_USEDEFAULT,
-                CW_USEDEFAULT,
-                CW_USEDEFAULT,
+                width,
+                height,
                 None,
                 None,
                 Option::from(hinstance),
