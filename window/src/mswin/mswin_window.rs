@@ -1,13 +1,11 @@
 use crate::model::window::Window;
 use crate::model::window_config::{WindowConfig, WindowDimensions};
-use crate::mswin::mswin_unsafe::{default_window_proc, dispatch_message, peek_message, post_quit_message, translate_message, validate_rect};
+use crate::mswin::mswin_unsafe::{create_window_ex, default_window_proc, dispatch_message, get_module_handle, load_cursor, peek_message, post_quit_message, register_class, translate_message, validate_rect};
 use logger::model::log_config::LoggerConfig;
 use windows::Win32::UI::Input::KeyboardAndMouse::{VIRTUAL_KEY, VK_ESCAPE};
 use windows::{
     core::*,
-    Win32::Foundation::*
-    ,
-    Win32::System::LibraryLoader::GetModuleHandleA,
+    Win32::Foundation::*,
     Win32::UI::WindowsAndMessaging::*,
 };
 
@@ -45,64 +43,62 @@ impl Window for MsWinWindow {
 
 impl MsWinWindow {
     pub fn new(request : &WindowConfig) -> std::result::Result<Box<dyn Window>, Box<dyn std::error::Error>> {
-        unsafe {
-            /* get handle instance */
-            let hinstance: HINSTANCE = HINSTANCE::from(GetModuleHandleA(None)?);
-            debug_assert!(hinstance.0 != std::ptr::null_mut());
+        /* get handle instance */
+        let hinstance: HINSTANCE = HINSTANCE::from(get_module_handle(None)?);
+        debug_assert!(hinstance.0 != std::ptr::null_mut());
 
-            /* create the wnd class */
-            let wc = WNDCLASSA {
-                hCursor: LoadCursorW(None, IDC_ARROW)?,
-                hInstance: hinstance,
-                lpszClassName: s!("window"),
-                style: CS_HREDRAW | CS_VREDRAW,
-                lpfnWndProc: Some(wndproc),
-                ..Default::default()
-            };
+        /* create the wnd class */
+        let wc = WNDCLASSA {
+            hCursor: load_cursor(None, IDC_ARROW)?,
+            hInstance: hinstance,
+            lpszClassName: s!("window"),
+            style: CS_HREDRAW | CS_VREDRAW,
+            lpfnWndProc: Some(wndproc),
+            ..Default::default()
+        };
 
-            /* register the wnd class */
-            let atom = RegisterClassA(&wc);
-            debug_assert!(atom != 0);
+        /* register the wnd class */
+        let atom = register_class(&wc);
+        debug_assert!(atom != 0);
 
-            /* determine some settings based on configuration */
-            let dwstyle = match request.dimensions {
-                WindowDimensions::Fullscreen => WS_VISIBLE,
-                WindowDimensions::Dimensional { width: _width, height: _height } => WS_OVERLAPPEDWINDOW | WS_VISIBLE | WS_THICKFRAME,
-            };
-            let (x, y) = match request.dimensions {
-                WindowDimensions::Fullscreen => (0, 0),
-                WindowDimensions::Dimensional { width: _width, height: _height } => (CW_USEDEFAULT, CW_USEDEFAULT),
-            };
-            let (width,height) = match request.dimensions {
-                WindowDimensions::Fullscreen => (CW_USEDEFAULT, CW_USEDEFAULT),
-                WindowDimensions::Dimensional { width, height } => (width, height),
-            };
+        /* determine some settings based on configuration */
+        let dwstyle = match request.dimensions {
+            WindowDimensions::Fullscreen => WS_VISIBLE,
+            WindowDimensions::Dimensional { width: _width, height: _height } => WS_OVERLAPPEDWINDOW | WS_VISIBLE | WS_THICKFRAME,
+        };
+        let (x, y) = match request.dimensions {
+            WindowDimensions::Fullscreen => (0, 0),
+            WindowDimensions::Dimensional { width: _width, height: _height } => (CW_USEDEFAULT, CW_USEDEFAULT),
+        };
+        let (width,height) = match request.dimensions {
+            WindowDimensions::Fullscreen => (CW_USEDEFAULT, CW_USEDEFAULT),
+            WindowDimensions::Dimensional { width, height } => (width, height),
+        };
 
-            /* create the window */
-            let hwnd = CreateWindowExA(
-                WINDOW_EX_STYLE::default(),
-                s!("window"),
-                s!("This is a sample window"),
-                dwstyle,
-                x,
-                y,
-                width,
-                height,
-                None,
-                None,
-                Option::from(hinstance),
-                None,
-            ).expect("CreateWindowEx* failed");
+        /* create the window */
+        let hwnd = create_window_ex(
+            WINDOW_EX_STYLE::default(),
+            s!("window"),
+            s!("This is a sample window"),
+            dwstyle,
+            x,
+            y,
+            width,
+            height,
+            None,
+            None,
+            Option::from(hinstance),
+            None,
+        ).expect("CreateWindowEx* failed");
 
-            /* done; returning handles to window so we can create device context later */
-            Ok(Box::new(MsWinWindow {
-                hinstance,
-                wndclassa: wc,
-                atom,
-                hwnd,
-                quit: false,
-            }))
-        }
+        /* done; returning handles to window so we can create device context later */
+        Ok(Box::new(MsWinWindow {
+            hinstance,
+            wndclassa: wc,
+            atom,
+            hwnd,
+            quit: false,
+        }))
     }
 }
 
