@@ -9,6 +9,7 @@ use windows::{
     Win32::System::LibraryLoader::GetModuleHandleA,
     Win32::UI::WindowsAndMessaging::*,
 };
+use crate::mswin::mswin_unsafe::{dispatch_message, peek_message, translate_message};
 
 pub struct MsWinWindow {
     pub hinstance: HINSTANCE,
@@ -21,26 +22,24 @@ pub struct MsWinWindow {
 impl Window for MsWinWindow {
     fn begin_event_handling(&mut self, logger: &LoggerConfig) -> std::result::Result<(), Box<dyn std::error::Error>> {
         logger.debug(&|| "begin event handling");
-        unsafe {
-            let mut message: MSG = MSG::default();
+        let mut message: MSG = MSG::default();
 
-            while !self.quit {
-                if PeekMessageA(&mut message, Default::default(), 0, 0, PM_REMOVE).into() {
-                    if message.message == WM_QUIT {
-                        self.quit = true;
-                        break;
-                    }
-
-                    let _ = TranslateMessage(&message);
-                    DispatchMessageA(&message);
-                } else {
-                    // todo: rendering code
+        while !self.quit {
+            if peek_message(&mut message, Default::default(), 0, 0, PM_REMOVE) {
+                if message.message == WM_QUIT {
+                    self.quit = true;
+                    break;
                 }
-            }
 
-            logger.info(&|| "after while(!quit)");
-            Ok(())
+                let _ = translate_message(&message);
+                dispatch_message(&message);
+            } else {
+                // todo: rendering code
+            }
         }
+
+        logger.info(&|| "after while(!quit)");
+        Ok(())
     }
 }
 
