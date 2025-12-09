@@ -1,15 +1,15 @@
 use crate::model::window::Window;
 use crate::model::window_config::{WindowConfig, WindowDimensions};
+use crate::mswin::mswin_unsafe::{default_window_proc, dispatch_message, peek_message, post_quit_message, translate_message, validate_rect};
 use logger::model::log_config::LoggerConfig;
 use windows::Win32::UI::Input::KeyboardAndMouse::{VIRTUAL_KEY, VK_ESCAPE};
 use windows::{
     core::*,
-    Win32::Foundation::*,
-    Win32::Graphics::Gdi::*,
+    Win32::Foundation::*
+    ,
     Win32::System::LibraryLoader::GetModuleHandleA,
     Win32::UI::WindowsAndMessaging::*,
 };
-use crate::mswin::mswin_unsafe::{dispatch_message, peek_message, translate_message};
 
 pub struct MsWinWindow {
     pub hinstance: HINSTANCE,
@@ -107,23 +107,21 @@ impl MsWinWindow {
 }
 
 extern "system" fn wndproc(window: HWND, message: u32, wparam: WPARAM, lparam: LPARAM) -> LRESULT {
-    unsafe {
-        match message {
-            WM_PAINT => {
-                let _ = ValidateRect(Option::from(window), None);
-                LRESULT(0)
-            }
-            WM_DESTROY => {
-                PostQuitMessage(0);
-                LRESULT(0)
-            }
-            WM_KEYDOWN => {
-                if (VIRTUAL_KEY(wparam.0 as u16)) == VK_ESCAPE {
-                    PostQuitMessage(0);
-                }
-                LRESULT(0)
-            }
-            _ => DefWindowProcA(window, message, wparam, lparam),
+    match message {
+        WM_PAINT => {
+            let _ = validate_rect(Option::from(window), None);
+            LRESULT(0)
         }
+        WM_DESTROY => {
+            post_quit_message(0);
+            LRESULT(0)
+        }
+        WM_KEYDOWN => {
+            if (VIRTUAL_KEY(wparam.0 as u16)) == VK_ESCAPE {
+                post_quit_message(0);
+            }
+            LRESULT(0)
+        }
+        _ => default_window_proc(window, message, wparam, lparam),
     }
 }
