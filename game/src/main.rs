@@ -1,4 +1,5 @@
-mod model;
+pub(crate) mod model;
+pub(crate) mod render;
 
 use crate::model::config::ApplicationConfiguration;
 use logger::model::log_config::{LogConfigPair, LoggerConfig};
@@ -6,6 +7,7 @@ use logger::model::log_level::LogLevel;
 use logger::model::log_target::LogTarget;
 use window::create_window;
 use window::model::window_config::{WindowConfig, WindowDimensions};
+use crate::render::game_renderer::GameRenderer;
 
 fn main() {
     let cfg = configure();
@@ -13,7 +15,8 @@ fn main() {
 
     match create_window(&cfg.window) {
         Ok(mut win) => {
-            win.begin_event_handling(&cfg.logger).expect("window creation failed");
+            let renderer = GameRenderer::new();
+            win.begin_event_handling(&renderer, &cfg.logger).expect("window creation failed");
         }
         Err(_e) => {
             cfg.logger.error(&|| "window creation failed");

@@ -8,6 +8,8 @@ use windows::{
     Win32::Foundation::*,
     Win32::UI::WindowsAndMessaging::*,
 };
+use crate::render::render_context::RendererContext;
+use crate::render::renderer::Renderer;
 
 pub struct MsWinWindow {
     pub hinstance: HINSTANCE,
@@ -18,9 +20,11 @@ pub struct MsWinWindow {
 }
 
 impl Window for MsWinWindow {
-    fn begin_event_handling(&mut self, logger: &LoggerConfig) -> std::result::Result<(), Box<dyn std::error::Error>> {
+    fn begin_event_handling(&mut self, renderer: &dyn Renderer, logger: &LoggerConfig) -> std::result::Result<(), Box<dyn std::error::Error>>
+    {
         logger.debug(&|| "begin event handling");
         let mut message: MSG = MSG::default();
+        let context = RendererContext::new();
 
         while !self.quit {
             if peek_message(&mut message, Default::default(), 0, 0, PM_REMOVE) {
@@ -32,7 +36,7 @@ impl Window for MsWinWindow {
                 let _ = translate_message(&message);
                 dispatch_message(&message);
             } else {
-                // todo: rendering code
+                renderer.render_scene(&context);
             }
         }
 

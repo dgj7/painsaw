@@ -7,6 +7,7 @@ use crate::mswin::mswin_window::MsWinWindow;
 
 pub mod model;
 pub mod mswin;
+pub mod render;
 
 ///
 /// Create a window.
