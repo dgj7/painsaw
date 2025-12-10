@@ -4,8 +4,9 @@ use window::render::renderer::Renderer;
 pub(crate) struct GameRenderer {}
 
 impl Renderer for GameRenderer {
-    fn render_scene(&self, _context: &RendererContext) {
-        // nothing yet
+    fn render_scene(&self, context: &mut RendererContext) {
+        context.first_frame_rendered = true;
+        context.frame_count+=1;
     }
 }
 

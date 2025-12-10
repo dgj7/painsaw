@@ -24,7 +24,7 @@ impl Window for MsWinWindow {
     {
         logger.debug(&|| "begin event handling");
         let mut message: MSG = MSG::default();
-        let context = RendererContext::new();
+        let mut context = RendererContext::new();
 
         while !self.quit {
             if peek_message(&mut message, Default::default(), 0, 0, PM_REMOVE) {
@@ -36,7 +36,7 @@ impl Window for MsWinWindow {
                 let _ = translate_message(&message);
                 dispatch_message(&message);
             } else {
-                renderer.render_scene(&context);
+                renderer.render_scene(&mut context);
             }
         }
 
