@@ -1,17 +1,22 @@
+use std::time::Instant;
 use crate::model::window::Window;
 use crate::model::window_config::{WindowConfig, WindowDimensions};
-use crate::mswin::mswin_unsafe::{create_window_ex, default_window_proc, dispatch_message, get_module_handle, load_cursor, peek_message, post_quit_message, register_class, translate_message, validate_rect};
+use crate::mswin::mswin_unsafe::{create_window_ex, default_window_proc, dispatch_message, get_module_handle, load_cursor, peek_message, post_quit_message, register_class, translate_message};
 use logger::model::log_config::LoggerConfig;
-use windows::Win32::UI::Input::KeyboardAndMouse::{VIRTUAL_KEY, VK_ESCAPE};
+use windows::Win32::UI::Input::KeyboardAndMouse::{VIRTUAL_KEY, VK_ESCAPE, VK_G};
 use windows::{
     core::*,
     Win32::Foundation::*,
     Win32::UI::WindowsAndMessaging::*,
 };
+use crate::input::InputState;
+use crate::input::keyboard_state::KeyState::{KeyDown, KeyUp};
 use crate::render::render_context::RendererContext;
 use crate::render::renderer::Renderer;
 
 pub struct MsWinWindow {
+    pub input: InputState,
+
     pub hinstance: HINSTANCE,
     pub wndclassa: WNDCLASSA,
     pub atom: u16,
@@ -42,6 +47,10 @@ impl Window for MsWinWindow {
 
         logger.info(&|| "after while(!quit)");
         Ok(())
+    }
+
+    fn get_input_state(&self) -> &InputState {
+        &self.input
     }
 }
 
@@ -79,6 +88,9 @@ impl MsWinWindow {
             WindowDimensions::Dimensional { width, height } => (width, height),
         };
 
+        /* create input state */
+        let input = InputState::new();
+
         /* create the window */
         let hwnd = create_window_ex(
             WINDOW_EX_STYLE::default(),
@@ -89,14 +101,15 @@ impl MsWinWindow {
             y,
             width,
             height,
-            None,
-            None,
+            None,                                               // no parent window
+            None,                                               // no menus
             Option::from(hinstance),
-            None,
+            Some(&mut input.to_owned() as *mut _ as _),
         ).expect("CreateWindowEx* failed");
 
         /* done; returning handles to window so we can create device context later */
         Ok(Box::new(MsWinWindow {
+            input,
             hinstance,
             wndclassa: wc,
             atom,
@@ -106,22 +119,60 @@ impl MsWinWindow {
     }
 }
 
+// https://github.com/microsoft/windows-rs/blob/master/crates/samples/windows/direct3d12/src/main.rs
 extern "system" fn wndproc(window: HWND, message: u32, wparam: WPARAM, lparam: LPARAM) -> LRESULT {
     match message {
-        WM_PAINT => {
-            let _ = validate_rect(Option::from(window), None);
+        WM_CREATE => {
+            // todo: move to mswin_unsafe
+            unsafe {
+                let cs: &CREATESTRUCTA = &*(lparam.0 as *const CREATESTRUCTA);
+                SetWindowLongPtrA(window, GWLP_USERDATA, cs.lpCreateParams as _);
+            }
             LRESULT(0)
         }
         WM_DESTROY => {
             post_quit_message(0);
             LRESULT(0)
         }
-        WM_KEYDOWN => {
-            if (VIRTUAL_KEY(wparam.0 as u16)) == VK_ESCAPE {
-                post_quit_message(0);
+        _ => {
+            // todo: move to mswin_unsafe
+            let ud = unsafe { GetWindowLongPtrA(window, GWLP_USERDATA) };
+            let data = std::ptr::NonNull::new(ud as _);
+            let handled = data.is_some_and(|mut d| handle_message_if_applicable(unsafe { d.as_mut() }, window, message, wparam, lparam));
+
+            if handled {
+                LRESULT::default()
+            } else {
+                default_window_proc(window, message, wparam, lparam)
             }
-            LRESULT(0)
         }
-        _ => default_window_proc(window, message, wparam, lparam),
+    }
+}
+
+fn handle_message_if_applicable(input: &mut InputState, _window: HWND, message: u32, wparam: WPARAM, _lparam: LPARAM) -> bool {
+    match message {
+        WM_KEYDOWN => {
+            match VIRTUAL_KEY(wparam.0 as u16) {
+                VK_ESCAPE => {
+                    post_quit_message(0);
+                    true
+                }
+                VK_G => {
+                    input.g_key = KeyDown(Instant::now());
+                    true
+                }
+                _ => true
+            }
+        }
+        WM_KEYUP => {
+            match VIRTUAL_KEY(wparam.0 as u16) {
+                VK_G => {
+                    input.g_key = KeyUp();
+                    true
+                }
+                _ => true
+            }
+        }
+        _ => false
     }
 }

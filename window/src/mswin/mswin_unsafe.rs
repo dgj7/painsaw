@@ -1,6 +1,5 @@
 use windows::Win32::Foundation;
 use windows::Win32::Foundation::LRESULT;
-use windows::Win32::Graphics::Gdi::ValidateRect;
 use windows::Win32::System::LibraryLoader::GetModuleHandleA;
 use windows::Win32::UI::WindowsAndMessaging::{CreateWindowExA, DefWindowProcA, DispatchMessageA, LoadCursorW, PeekMessageA, PostQuitMessage, RegisterClassA, TranslateMessage, HCURSOR, HMENU, MSG, PEEK_MESSAGE_REMOVE_TYPE, WINDOW_EX_STYLE, WINDOW_STYLE, WNDCLASSA};
 
@@ -40,10 +39,6 @@ where
     P2: windows_core::Param<windows_core::PCSTR>,
 {
     unsafe { CreateWindowExA(dwexstyle, lpclassname, lpwindowname, dwstyle, x, y, nwidth, nheight, hwndparent, hmenu, hinstance, lpparam) }
-}
-
-pub(crate) fn validate_rect(hwnd: Option<Foundation::HWND>, lprect: Option<*const Foundation::RECT>) -> bool {
-    unsafe { bool::from(ValidateRect(hwnd, lprect)) }
 }
 
 pub(crate) fn post_quit_message(nexitcode: i32) {
