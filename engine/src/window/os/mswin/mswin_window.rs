@@ -1,0 +1,230 @@
+use crate::input::model::input_state::InputState;
+use crate::input::model::keyboard_state::{KeyInfo, KeyPosition};
+use crate::logger::log_level::LogLevel;
+use crate::logger::Logger;
+use crate::render::model::render_context::RendererContext;
+use crate::render::renderer::Renderer;
+use crate::window::model::window_config::{WindowConfig, WindowDimensions};
+use crate::window::os::mswin::mswin_data::{create_and_write_pointer, input_state_to_raw_pointer, read_window_data};
+use crate::window::os::mswin::mswin_winapi::{choose_pixel_format, create_window_ex, default_window_proc, dispatch_message, get_dc, get_module_handle, load_cursor, peek_message, post_quit_message, register_class, set_pixel_format, translate_message, wgl_create_context, wgl_make_current, wgl_make_current_cleanup};
+use crate::window::window::Window;
+use std::sync::{Arc, Mutex};
+use std::time::Instant;
+use windows::Win32::Graphics::Gdi::HDC;
+use windows::Win32::Graphics::OpenGL::*;
+use windows::Win32::UI::Input::KeyboardAndMouse::{VIRTUAL_KEY, VK_ESCAPE, VK_G};
+use windows::{
+    core::*,
+    Win32::Foundation::*,
+    Win32::UI::WindowsAndMessaging::*,
+};
+
+pub struct MsWinWindow {
+    pub input: Arc<Mutex<InputState>>,
+    pub logger: Arc<Logger>,
+
+    pub hinstance: HINSTANCE,
+    pub wndclassw: WNDCLASSW,
+    pub atom: u16,
+    pub hwnd: HWND,
+    pub quit: bool,
+
+    pub hdc: HDC,
+    pub hrc: HGLRC,
+}
+
+impl Window for MsWinWindow {
+    fn begin_event_handling(&mut self, renderer: &dyn Renderer) -> std::result::Result<(), Box<dyn std::error::Error>>
+    {
+        self.logger.log(LogLevel::Info, &|| "begin event handling".parse().unwrap());
+        let mut message: MSG = MSG::default();
+        let mut context = RendererContext::new(&self.logger, &self.input);
+
+        while !self.quit {
+            if peek_message(&mut message, Default::default(), 0, 0, PM_REMOVE) {
+                if message.message == WM_QUIT {
+                    self.quit = true;
+                    break;
+                }
+
+                let _ = translate_message(&message);
+                dispatch_message(&message);
+            } else {
+                renderer.update_world(&mut context);
+                renderer.render_scene(&mut context);
+            }
+        }
+
+        self.logger.log(LogLevel::Info, &|| { return String::from(format!("after while(!quit); rendered {} frames", context.frame_count)); });
+
+        Ok(())
+    }
+
+    fn get_input_state(&self) -> Arc<Mutex<InputState>> {
+        self.input.clone()
+    }
+}
+
+impl MsWinWindow {
+    pub fn new(request : &WindowConfig, logger: &Arc<Logger>) -> std::result::Result<Box<dyn Window>, Box<dyn std::error::Error>> {
+        /* get handle instance */
+        let hinstance: HINSTANCE = HINSTANCE::from(get_module_handle(None)?);
+        debug_assert!(hinstance.0 != std::ptr::null_mut());
+
+        /* create the wnd class */
+        let wc = WNDCLASSW {
+            hCursor: load_cursor(None, IDC_ARROW)?,
+            hbrBackground: Default::default(),
+            hInstance: hinstance,
+            lpszClassName: w!("window"),
+            style: CS_OWNDC | CS_HREDRAW | CS_VREDRAW,
+            lpfnWndProc: Some(wndproc),
+            cbClsExtra: 0,
+            cbWndExtra: 0,
+            hIcon: Default::default(),
+            lpszMenuName: Default::default(),
+        };
+
+        /* register the wnd class */
+        let atom = register_class(&wc);
+        debug_assert!(atom != 0);
+
+        /* determine some settings based on configuration */
+        let dwstyle = match request.dimensions {
+            WindowDimensions::Fullscreen => WS_VISIBLE,
+            WindowDimensions::Dimensional { width: _width, height: _height } => WS_OVERLAPPEDWINDOW | WS_VISIBLE | WS_THICKFRAME,
+        };
+        let (x, y) = match request.dimensions {
+            WindowDimensions::Fullscreen => (0, 0),
+            WindowDimensions::Dimensional { width: _width, height: _height } => (CW_USEDEFAULT, CW_USEDEFAULT),
+        };
+        let (width,height) = match request.dimensions {
+            WindowDimensions::Fullscreen => (CW_USEDEFAULT, CW_USEDEFAULT),
+            WindowDimensions::Dimensional { width, height } => (width, height),
+        };
+
+        /* create input state */
+        let input = InputState::new();
+        let input_pointer = input_state_to_raw_pointer(&input);
+
+        /* create the window */
+        let hwnd = create_window_ex(
+            WINDOW_EX_STYLE::default(),
+            w!("window"),
+            w!("This is a sample window"),
+            dwstyle,
+            x,
+            y,
+            width,
+            height,
+            None,                                               // no parent window
+            None,                                               // no menus
+            Option::from(hinstance),
+            Some(input_pointer),
+        ).expect("CreateWindowEx* failed");
+
+        /* opengl: create pixel format */
+        let pfd = PIXELFORMATDESCRIPTOR {
+            nSize: size_of::<PIXELFORMATDESCRIPTOR>() as _,
+            dwFlags: PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER,
+            iPixelType: PFD_TYPE_RGBA,
+            cColorBits: 32,
+            cDepthBits: 24,
+            cStencilBits: 8,
+            iLayerType: 0, // PFD_MAIN_PLANE is negative i8, 0 as u8
+            ..Default::default()
+        };
+
+        /* opengl: get the device context */
+        let hdc = get_dc(Option::from(hwnd));
+
+        /* opengl: set the pixel format */
+        let pf = choose_pixel_format(hdc, &pfd);
+        set_pixel_format(hdc, pf, &pfd)?;// todo: handle errors from ?
+
+        /* opengl: get hrc */
+        let hrc = wgl_create_context(hdc)?;// todo: handle errors from ?
+        wgl_make_current(hdc, hrc)?; // todo: handle errors from ?
+
+        /* done; returning handles to window so we can create device context later */
+        Ok(Box::new(MsWinWindow {
+            input,
+            logger: logger.clone(),
+            hinstance,
+            wndclassw: wc,
+            atom,
+            hwnd,
+            quit: false,
+            hdc,
+            hrc,
+        }))
+    }
+}
+
+extern "system" fn wndproc(window: HWND, message: u32, wparam: WPARAM, lparam: LPARAM) -> LRESULT {
+    match message {
+        WM_CREATE => {
+            create_and_write_pointer(window, lparam);
+            LRESULT(0)
+        }
+        WM_DESTROY => {
+            let input = read_window_data(window).unwrap();
+            drop(input);
+            post_quit_message(0);
+
+            // todo: free opengl resources; to do this, we need access to window values
+            wgl_make_current_cleanup();
+            // wglDeleteContext(hrc);
+            // ReleaseDC(window, hdc);
+
+            LRESULT(0)
+        }
+        _ => {
+            let maybe_input = read_window_data(window);
+            if let Some(input) = maybe_input {
+                let handled = handle_message_if_applicable(&input, window, message, wparam, lparam);
+                if handled {
+                    LRESULT::default()
+                } else {
+                    default_window_proc(window, message, wparam, lparam)
+                }
+            } else {
+                default_window_proc(window, message, wparam, lparam)
+            }
+        }
+    }
+}
+
+fn handle_message_if_applicable(input: &Arc<Mutex<InputState>>, _window: HWND, message: u32, wparam: WPARAM, _lparam: LPARAM) -> bool {
+    match message {
+        WM_KEYDOWN => {
+            match VIRTUAL_KEY(wparam.0 as u16) {
+                VK_ESCAPE => {
+                    post_quit_message(0);
+                    true
+                }
+                VK_G => {
+                    match input.lock() {
+                        Ok(mut is) => {is.g_key.update(KeyPosition::KeyDown { info: KeyInfo { when: Instant::now(), handled: false } })}
+                        Err(_) => panic!("todo: g: down")
+                    }
+                    true
+                }
+                _ => true
+            }
+        }
+        WM_KEYUP => {
+            match VIRTUAL_KEY(wparam.0 as u16) {
+                VK_G => {
+                    match input.lock() {
+                        Ok(mut is) => {is.g_key.update(KeyPosition::KeyUp { info: KeyInfo { when: Instant::now(), handled: false } })}
+                        Err(_) => panic!("todo: g: up")
+                    }
+                    true
+                }
+                _ => true
+            }
+        }
+        _ => false
+    }
+}
