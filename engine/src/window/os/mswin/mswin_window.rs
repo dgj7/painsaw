@@ -1,12 +1,12 @@
 use crate::input::model::input_state::InputState;
 use crate::input::model::keyboard_state::{KeyInfo, KeyPosition};
 use crate::logger::log_level::LogLevel;
-use crate::logger::{log};
+use crate::logger::log;
 use crate::render::model::render_context::RendererContext;
 use crate::render::renderer::Renderer;
 use crate::window::model::window_config::{WindowConfig, WindowDimensions};
 use crate::window::os::mswin::mswin_data::{create_and_write_pointer, input_state_to_raw_pointer, read_window_data};
-use crate::window::os::mswin::mswin_winapi::{choose_pixel_format, create_window_ex, default_window_proc, dispatch_message, get_dc, get_module_handle, load_cursor, peek_message, post_quit_message, register_class, set_pixel_format, translate_message, wgl_create_context, wgl_make_current, wgl_make_current_cleanup};
+use crate::window::os::mswin::mswin_winapi::{create_window_ex, default_window_proc, dispatch_message, get_module_handle, load_cursor, peek_message, post_quit_message, register_class, translate_message};
 use crate::window::window::Window;
 use std::sync::{Arc, Mutex};
 use std::time::Instant;
@@ -18,6 +18,7 @@ use windows::{
     Win32::Foundation::*,
     Win32::UI::WindowsAndMessaging::*,
 };
+use crate::render::graphics::opengl::opengl_mswin::{choose_pixel_format, get_dc, release_dc, set_pixel_format, wgl_create_context, wgl_delete_context, wgl_get_current_context, wgl_make_current};
 
 pub struct MsWinWindow {
     pub input: Arc<Mutex<InputState>>,
@@ -53,6 +54,8 @@ impl Window for MsWinWindow {
                 renderer.render_scene(&mut context);
             }
         }
+
+        opengl_cleanup(self.hwnd);
 
         log(LogLevel::Info, &|| { return String::from(format!("after while(!quit); rendered {} frames", context.frame_count)) });
 
@@ -168,12 +171,8 @@ extern "system" fn wndproc(window: HWND, message: u32, wparam: WPARAM, lparam: L
         WM_DESTROY => {
             let input = read_window_data(window).unwrap();
             drop(input);
-            post_quit_message(0);
 
-            // todo: free opengl resources; to do this, we need access to window values
-            wgl_make_current_cleanup();
-            // wglDeleteContext(hrc);
-            // ReleaseDC(window, hdc);
+            post_quit_message(0);
 
             LRESULT(0)
         }
@@ -225,4 +224,21 @@ fn handle_message_if_applicable(input: &Arc<Mutex<InputState>>, _window: HWND, m
         }
         _ => false
     }
+}
+
+fn opengl_cleanup(hwnd: HWND) {
+    /* retrieve required handles */
+    let hdc = get_dc(Option::from(hwnd));
+    let hrc = wgl_get_current_context();
+
+    /* log the values in case we need to compare them at some point */
+    log(LogLevel::Debug, &|| String::from(format!("opengl cleanup: hdc={:?}, hrc={:?}", hdc, hrc)));
+
+    /* do the cleanup */
+    wgl_make_current(HDC(std::ptr::null_mut()), HGLRC(std::ptr::null_mut())).expect("TODO: cleanup: make current failed");
+    wgl_delete_context(hrc).expect("TODO: cleanup: delete context failed");
+    release_dc(Option::from(hwnd), hdc);
+
+    /* declare success */
+    log(LogLevel::Trace, &|| String::from("opengl cleanup completed"));
 }

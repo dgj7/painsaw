@@ -1,7 +1,5 @@
 use windows::Win32::Foundation;
 use windows::Win32::Foundation::LRESULT;
-use windows::Win32::Graphics::Gdi::{GetDC, HDC};
-use windows::Win32::Graphics::OpenGL::{wglCreateContext, wglMakeCurrent, ChoosePixelFormat, SetPixelFormat, HGLRC, PIXELFORMATDESCRIPTOR};
 use windows::Win32::System::LibraryLoader::GetModuleHandleW;
 use windows::Win32::UI::WindowsAndMessaging::{CreateWindowExW, DefWindowProcW, DispatchMessageW, LoadCursorW, PeekMessageW, PostQuitMessage, RegisterClassW, TranslateMessage, HCURSOR, HMENU, MSG, PEEK_MESSAGE_REMOVE_TYPE, WINDOW_EX_STYLE, WINDOW_STYLE, WNDCLASSW};
 
@@ -49,28 +47,4 @@ pub(crate) fn post_quit_message(nexitcode: i32) {
 
 pub(crate) fn default_window_proc(hwnd: Foundation::HWND, msg: u32, wparam: Foundation::WPARAM, lparam: Foundation::LPARAM) -> LRESULT {
     unsafe { DefWindowProcW(hwnd, msg, wparam, lparam) }
-}
-
-pub(crate) fn get_dc(hwnd: Option<Foundation::HWND>) -> HDC {
-    unsafe { GetDC(hwnd) }
-}
-
-pub(crate) fn choose_pixel_format(hdc: HDC, pfd: *const PIXELFORMATDESCRIPTOR) -> i32 {
-    unsafe { ChoosePixelFormat(hdc, pfd) }
-}
-
-pub(crate) fn set_pixel_format(hdc: HDC, format: i32, pfd: *const PIXELFORMATDESCRIPTOR) -> windows_core::Result<()> {
-    unsafe { SetPixelFormat(hdc, format, pfd) }
-}
-
-pub(crate) fn wgl_create_context(hdc: HDC) -> windows_core::Result<HGLRC> {
-    unsafe { wglCreateContext(hdc) }
-}
-
-pub(crate) fn wgl_make_current(hdc: HDC, hglrc: HGLRC) -> windows_core::Result<()> {
-    unsafe { wglMakeCurrent(hdc, hglrc) }
-}
-
-pub(crate) fn wgl_make_current_cleanup() {
-    wgl_make_current(HDC(std::ptr::null_mut()), HGLRC(std::ptr::null_mut())).expect("TODO: panic message");
 }
