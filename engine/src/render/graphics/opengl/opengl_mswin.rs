@@ -1,36 +1,37 @@
-use windows::Win32::Foundation;
 use windows::Win32::Foundation::HWND;
-use windows::Win32::Graphics::Gdi::{GetDC, ReleaseDC, HDC};
-use windows::Win32::Graphics::OpenGL::{wglCreateContext, wglDeleteContext, wglGetCurrentContext, wglMakeCurrent, ChoosePixelFormat, SetPixelFormat, HGLRC, PIXELFORMATDESCRIPTOR};
+use windows::Win32::Graphics::Gdi::HDC;
+use windows::Win32::Graphics::OpenGL::{HGLRC, PFD_DOUBLEBUFFER, PFD_DRAW_TO_WINDOW, PFD_SUPPORT_OPENGL, PFD_TYPE_RGBA, PIXELFORMATDESCRIPTOR};
+use crate::logger::log;
+use crate::logger::log_level::LogLevel;
+use crate::render::graphics::opengl::opengl_mswin_api::{choose_pixel_format, get_dc, set_pixel_format, wgl_create_context, wgl_make_current};
 
-pub fn wgl_delete_context(hrc: HGLRC) -> windows_core::Result<()> {
-    unsafe { wglDeleteContext(hrc) }
-}
+pub fn init_opengl(hwnd: HWND) -> (HDC, HGLRC) {
+    /* opengl: create pixel format */
+    let pfd = PIXELFORMATDESCRIPTOR {
+        nSize: size_of::<PIXELFORMATDESCRIPTOR>() as _,
+        dwFlags: PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER,
+        iPixelType: PFD_TYPE_RGBA,
+        cColorBits: 32,
+        cDepthBits: 24,
+        cStencilBits: 8,
+        iLayerType: 0, // PFD_MAIN_PLANE is negative i8, 0 as u8
+        ..Default::default()
+    };
 
-pub fn release_dc(hwnd: Option<HWND>, hdc: HDC) -> i32 {
-    unsafe { ReleaseDC(hwnd, hdc) }
-}
+    /* opengl: get the device context */
+    let hdc = get_dc(Option::from(hwnd));
 
-pub fn get_dc(hwnd: Option<Foundation::HWND>) -> HDC {
-    unsafe { GetDC(hwnd) }
-}
+    /* opengl: set the pixel format */
+    let pf = choose_pixel_format(hdc, &pfd);
+    set_pixel_format(hdc, pf, &pfd).expect("todo: set pixel format");
 
-pub fn choose_pixel_format(hdc: HDC, pfd: *const PIXELFORMATDESCRIPTOR) -> i32 {
-    unsafe { ChoosePixelFormat(hdc, pfd) }
-}
+    /* opengl: get hrc */
+    let hrc = wgl_create_context(hdc).expect("todo: wgl create context");
+    wgl_make_current(hdc, hrc).expect("todo: wgl make current");
 
-pub fn set_pixel_format(hdc: HDC, format: i32, pfd: *const PIXELFORMATDESCRIPTOR) -> windows_core::Result<()> {
-    unsafe { SetPixelFormat(hdc, format, pfd) }
-}
+    /* log the things */
+    log(LogLevel::Debug, &|| String::from(format!("init_opengl(): hdc={:?}, hrc={:?}", hdc, hrc)));
 
-pub fn wgl_create_context(hdc: HDC) -> windows_core::Result<HGLRC> {
-    unsafe { wglCreateContext(hdc) }
-}
-
-pub fn wgl_get_current_context() -> HGLRC {
-    unsafe { wglGetCurrentContext() }
-}
-
-pub fn wgl_make_current(hdc: HDC, hglrc: HGLRC) -> windows_core::Result<()> {
-    unsafe { wglMakeCurrent(hdc, hglrc) }
+    /* done */
+    (hdc, hrc)
 }

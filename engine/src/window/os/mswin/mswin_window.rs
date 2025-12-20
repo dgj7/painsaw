@@ -1,7 +1,9 @@
 use crate::input::model::input_state::InputState;
 use crate::input::model::keyboard_state::{KeyInfo, KeyPosition};
-use crate::logger::log_level::LogLevel;
 use crate::logger::log;
+use crate::logger::log_level::LogLevel;
+use crate::render::graphics::opengl::opengl_mswin::init_opengl;
+use crate::render::graphics::opengl::opengl_mswin_api::{get_dc, release_dc, wgl_delete_context, wgl_get_current_context, wgl_make_current};
 use crate::render::model::render_context::RendererContext;
 use crate::render::renderer::Renderer;
 use crate::window::model::window_config::{WindowConfig, WindowDimensions};
@@ -18,7 +20,6 @@ use windows::{
     Win32::Foundation::*,
     Win32::UI::WindowsAndMessaging::*,
 };
-use crate::render::graphics::opengl::opengl_mswin::{choose_pixel_format, get_dc, release_dc, set_pixel_format, wgl_create_context, wgl_delete_context, wgl_get_current_context, wgl_make_current};
 
 pub struct MsWinWindow {
     pub input: Arc<Mutex<InputState>>,
@@ -125,28 +126,8 @@ impl MsWinWindow {
             Some(input_pointer),
         ).expect("CreateWindowEx* failed");
 
-        /* opengl: create pixel format */
-        let pfd = PIXELFORMATDESCRIPTOR {
-            nSize: size_of::<PIXELFORMATDESCRIPTOR>() as _,
-            dwFlags: PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER,
-            iPixelType: PFD_TYPE_RGBA,
-            cColorBits: 32,
-            cDepthBits: 24,
-            cStencilBits: 8,
-            iLayerType: 0, // PFD_MAIN_PLANE is negative i8, 0 as u8
-            ..Default::default()
-        };
-
-        /* opengl: get the device context */
-        let hdc = get_dc(Option::from(hwnd));
-
-        /* opengl: set the pixel format */
-        let pf = choose_pixel_format(hdc, &pfd);
-        set_pixel_format(hdc, pf, &pfd)?;// todo: handle errors from ?
-
-        /* opengl: get hrc */
-        let hrc = wgl_create_context(hdc)?;// todo: handle errors from ?
-        wgl_make_current(hdc, hrc)?; // todo: handle errors from ?
+        /* init opengl */
+        let (hdc, hrc) = init_opengl(hwnd);
 
         /* done; returning handles to window so we can create device context later */
         Ok(Box::new(MsWinWindow {
@@ -169,6 +150,8 @@ extern "system" fn wndproc(window: HWND, message: u32, wparam: WPARAM, lparam: L
             LRESULT(0)
         }
         WM_DESTROY => {
+            log(LogLevel::Debug, &|| String::from("WM_DESTROY"));
+            
             let input = read_window_data(window).unwrap();
             drop(input);
 
