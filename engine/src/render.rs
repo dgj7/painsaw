@@ -1,2 +1,2 @@
 pub mod model;
-mod renderer;
+pub mod renderer;
