@@ -44,7 +44,9 @@ impl Window for MsWinWindow {
         while !self.quit {
             if peek_message(&mut message, Default::default(), 0, 0, PM_REMOVE) {
                 if message.message == WM_QUIT {
+                    log(LogLevel::Debug, &|| String::from("WM_QUIT"));
                     self.quit = true;
+                    opengl_cleanup(self.hwnd);
                     break;
                 }
 
@@ -55,8 +57,6 @@ impl Window for MsWinWindow {
                 renderer.render_scene(&mut context);
             }
         }
-
-        opengl_cleanup(self.hwnd);
 
         log(LogLevel::Info, &|| { return String::from(format!("after while(!quit); rendered {} frames", context.frame_count)) });
 
@@ -151,7 +151,7 @@ extern "system" fn wndproc(window: HWND, message: u32, wparam: WPARAM, lparam: L
         }
         WM_DESTROY => {
             log(LogLevel::Debug, &|| String::from("WM_DESTROY"));
-            
+
             let input = read_window_data(window).unwrap();
             drop(input);
 
