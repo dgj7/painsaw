@@ -4,7 +4,7 @@ version = 4
 
 [[package]]
 name = "engine"
-version = "0.0.9"
+version = "0.0.10"
 dependencies = [
  "windows",
  "windows-core",
@@ -12,7 +12,7 @@ dependencies = [
 
 [[package]]
 name = "game"
-version = "0.0.2"
+version = "0.0.3"
 dependencies = [
  "engine",
 ]

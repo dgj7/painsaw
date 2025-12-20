@@ -1,7 +1,7 @@
 use crate::input::model::input_state::InputState;
 use crate::input::model::keyboard_state::{KeyInfo, KeyPosition};
 use crate::logger::log_level::LogLevel;
-use crate::logger::Logger;
+use crate::logger::{log};
 use crate::render::model::render_context::RendererContext;
 use crate::render::renderer::Renderer;
 use crate::window::model::window_config::{WindowConfig, WindowDimensions};
@@ -21,7 +21,6 @@ use windows::{
 
 pub struct MsWinWindow {
     pub input: Arc<Mutex<InputState>>,
-    pub logger: Arc<Logger>,
 
     pub hinstance: HINSTANCE,
     pub wndclassw: WNDCLASSW,
@@ -36,9 +35,9 @@ pub struct MsWinWindow {
 impl Window for MsWinWindow {
     fn begin_event_handling(&mut self, renderer: &dyn Renderer) -> std::result::Result<(), Box<dyn std::error::Error>>
     {
-        self.logger.log(LogLevel::Info, &|| "begin event handling".parse().unwrap());
+        log(LogLevel::Info, &|| "begin event handling".parse().unwrap());
         let mut message: MSG = MSG::default();
-        let mut context = RendererContext::new(&self.logger, &self.input);
+        let mut context = RendererContext::new(&self.input);
 
         while !self.quit {
             if peek_message(&mut message, Default::default(), 0, 0, PM_REMOVE) {
@@ -55,7 +54,7 @@ impl Window for MsWinWindow {
             }
         }
 
-        self.logger.log(LogLevel::Info, &|| { return String::from(format!("after while(!quit); rendered {} frames", context.frame_count)); });
+        log(LogLevel::Info, &|| { return String::from(format!("after while(!quit); rendered {} frames", context.frame_count)) });
 
         Ok(())
     }
@@ -66,7 +65,7 @@ impl Window for MsWinWindow {
 }
 
 impl MsWinWindow {
-    pub fn new(request : &WindowConfig, logger: &Arc<Logger>) -> std::result::Result<Box<dyn Window>, Box<dyn std::error::Error>> {
+    pub fn new(request : &WindowConfig) -> std::result::Result<Box<dyn Window>, Box<dyn std::error::Error>> {
         /* get handle instance */
         let hinstance: HINSTANCE = HINSTANCE::from(get_module_handle(None)?);
         debug_assert!(hinstance.0 != std::ptr::null_mut());
@@ -149,7 +148,6 @@ impl MsWinWindow {
         /* done; returning handles to window so we can create device context later */
         Ok(Box::new(MsWinWindow {
             input,
-            logger: logger.clone(),
             hinstance,
             wndclassw: wc,
             atom,

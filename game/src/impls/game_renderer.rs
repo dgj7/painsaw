@@ -1,4 +1,5 @@
 use engine::input::model::keyboard_state::{KeyInfo, KeyPosition};
+use engine::logger::log;
 use engine::logger::log_level::LogLevel;
 use engine::render::model::render_context::RendererContext;
 use engine::render::renderer::Renderer;
@@ -13,13 +14,13 @@ impl Renderer for GameRenderer {
                 match &input.g_key.current {
                     KeyPosition::KeyDown { info } => {
                         if !info.handled {
-                            context.logger.log(LogLevel::Debug, &|| String::from(format!("G: DOWN    (up for {}ms)", duration.as_millis())));
+                            log(LogLevel::Debug, &|| String::from(format!("G: DOWN    (up for {}ms)", duration.as_millis())));
                             input.g_key.current = KeyPosition::KeyDown { info: KeyInfo { when: info.when, handled: true, } };
                         }
                     }
                     KeyPosition::KeyUp { info } => {
                         if !info.handled {
-                            context.logger.log(LogLevel::Debug, &|| String::from(format!("G: UP      (down for {}ms", duration.as_millis())));
+                            log(LogLevel::Debug, &|| String::from(format!("G: UP      (down for {}ms)", duration.as_millis())));
                             input.g_key.current = KeyPosition::KeyUp { info: KeyInfo { when: info.when, handled: true } };
                         }
                     }
