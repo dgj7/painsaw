@@ -1,16 +1,11 @@
 pub mod log_level;
 pub mod log_target;
+pub mod log_config;
 
-
-use std::sync::Arc;
+pub use crate::logger::log_config::LoggerConfig;
 use crate::logger::log_level::LogLevel;
-use crate::logger::log_target::LogTarget;
+use std::sync::Arc;
 
-#[derive(Debug, Clone)]
-pub struct LoggerConfig {
-    pub level: LogLevel,
-    pub target: LogTarget,
-}
 
 #[derive(Debug, Clone)]
 pub struct Logger {
