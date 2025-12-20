@@ -1,5 +1,5 @@
 pub mod logger;
 pub mod input;
 pub mod render;
-mod window;
-mod app;
+pub mod window;
+pub mod app;

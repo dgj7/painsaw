@@ -4,7 +4,7 @@ version = 4
 
 [[package]]
 name = "engine"
-version = "0.0.7"
+version = "0.0.8"
 dependencies = [
  "windows",
  "windows-core",
@@ -12,7 +12,10 @@ dependencies = [
 
 [[package]]
 name = "game"
-version = "0.0.1"
+version = "0.0.2"
+dependencies = [
+ "engine",
+]
 
 [[package]]
 name = "proc-macro2"

@@ -1,4 +1,4 @@
 pub mod model;
 pub mod window;
-mod os;
-mod window_factory;
+pub mod os;
+pub mod window_factory;
