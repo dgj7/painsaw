@@ -1,2 +1,3 @@
 pub mod logger;
-mod input;
+pub mod input;
+pub mod render;
