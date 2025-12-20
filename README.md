@@ -8,7 +8,7 @@ initialized with code from the prior `painsaw`.
 
 |                                                Component                                                 |                 Purpose                 |
 |:--------------------------------------------------------------------------------------------------------:|:---------------------------------------:|
-| [![engine-mswin](https://github.com/dgj7/painsaw/actions/workflows/engine-mswin.yml/badge.svg)](/window) | core engine, used by other related apps |
+| [![engine-mswin](https://github.com/dgj7/painsaw/actions/workflows/engine-mswin.yml/badge.svg)](/engine) | core engine, used by other related apps |
 |    [![game-mswin](https://github.com/dgj7/painsaw/actions/workflows/game-mswin.yml/badge.svg)](/game)    |            game application             |
 
 ---
