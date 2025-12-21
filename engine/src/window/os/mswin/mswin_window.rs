@@ -8,7 +8,7 @@ use crate::render::model::render_context::RendererContext;
 use crate::render::renderer::Renderer;
 use crate::window::model::window_config::{WindowConfig, WindowDimensions};
 use crate::window::os::mswin::mswin_data::{create_and_write_pointer, input_state_to_raw_pointer, read_window_data};
-use crate::window::os::mswin::mswin_winapi::{create_window_ex, default_window_proc, dispatch_message, get_module_handle, load_cursor, peek_message, post_quit_message, register_class, translate_message};
+use crate::window::os::mswin::mswin_winapi::{create_window_ex, default_window_proc, dispatch_message, get_client_rect, get_module_handle, get_window_rect, load_cursor, peek_message, post_quit_message, register_class, translate_message};
 use crate::window::window::Window;
 use std::sync::{Arc, Mutex};
 use std::time::Instant;
@@ -53,8 +53,11 @@ impl Window for MsWinWindow {
                 let _ = translate_message(&message);
                 dispatch_message(&message);
             } else {
+                /* update and draw the world */
                 renderer.update_world(&mut context);
                 renderer.render_scene(&mut context);
+
+                /* swap buffers after it's all done */
                 swap_buffers(self.hdc);
             }
         }
@@ -177,7 +180,7 @@ extern "system" fn wndproc(window: HWND, message: u32, wparam: WPARAM, lparam: L
     }
 }
 
-fn handle_message_if_applicable(input: &Arc<Mutex<InputState>>, _window: HWND, message: u32, wparam: WPARAM, _lparam: LPARAM) -> bool {
+fn handle_message_if_applicable(input: &Arc<Mutex<InputState>>, hwnd: HWND, message: u32, wparam: WPARAM, _lparam: LPARAM) -> bool {
     match message {
         WM_KEYDOWN => {
             match VIRTUAL_KEY(wparam.0 as u16) {
@@ -206,6 +209,23 @@ fn handle_message_if_applicable(input: &Arc<Mutex<InputState>>, _window: HWND, m
                 }
                 _ => true
             }
+        }
+        WM_SIZE => {
+            // see also: WM_SIZING: while the user is actively resizing the window
+            // see also: WM_ENTERSIZEMOVE: resizing started
+            // see also: WM_EXITSIZEMOVE: resizing ended
+            let window_dimensions = get_window_rect(hwnd);
+            let client_dimensions = get_client_rect(hwnd);
+            log(LogLevel::Debug, &|| format!("window_dimensions {:?}", window_dimensions));
+            log(LogLevel::Debug, &|| format!("client_dimensions {:?}", client_dimensions));
+            match input.lock() {
+                Ok(mut is) => {
+                    is.update_client_dimensions(client_dimensions);
+                    is.update_window_dimensions(window_dimensions);
+                }
+                Err(_) => panic!("todo: wm_size")
+            }
+            true
         }
         _ => false
     }

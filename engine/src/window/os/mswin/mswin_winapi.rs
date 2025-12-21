@@ -1,7 +1,8 @@
+use crate::math::twod::dimension_2d::Dimension2D;
 use windows::Win32::Foundation;
-use windows::Win32::Foundation::LRESULT;
+use windows::Win32::Foundation::{LRESULT, RECT};
 use windows::Win32::System::LibraryLoader::GetModuleHandleW;
-use windows::Win32::UI::WindowsAndMessaging::{CreateWindowExW, DefWindowProcW, DispatchMessageW, LoadCursorW, PeekMessageW, PostQuitMessage, RegisterClassW, TranslateMessage, HCURSOR, HMENU, MSG, PEEK_MESSAGE_REMOVE_TYPE, WINDOW_EX_STYLE, WINDOW_STYLE, WNDCLASSW};
+use windows::Win32::UI::WindowsAndMessaging::{CreateWindowExW, DefWindowProcW, DispatchMessageW, GetClientRect, GetWindowRect, LoadCursorW, PeekMessageW, PostQuitMessage, RegisterClassW, TranslateMessage, HCURSOR, HMENU, MSG, PEEK_MESSAGE_REMOVE_TYPE, WINDOW_EX_STYLE, WINDOW_STYLE, WNDCLASSW};
 
 pub(crate) fn peek_message(lpmsg: *mut MSG, hwnd: Option<Foundation::HWND>, wmsgfiltermin: u32, wmsgfiltermax: u32, wremovemsg: PEEK_MESSAGE_REMOVE_TYPE) -> bool {
     unsafe { bool::from(PeekMessageW(lpmsg, hwnd, wmsgfiltermin, wmsgfiltermax, wremovemsg)) }
@@ -47,4 +48,18 @@ pub(crate) fn post_quit_message(nexitcode: i32) {
 
 pub(crate) fn default_window_proc(hwnd: Foundation::HWND, msg: u32, wparam: Foundation::WPARAM, lparam: Foundation::LPARAM) -> LRESULT {
     unsafe { DefWindowProcW(hwnd, msg, wparam, lparam) }
+}
+
+pub(crate) fn get_client_rect(hwnd: Foundation::HWND) -> Dimension2D {
+    let rect = &mut RECT { left: 0, top: 0, right: 0, bottom: 0, };
+    unsafe { GetClientRect(hwnd, rect) }.expect("TODO: get client rect");
+    //log(LogLevel::Debug, &|| String::from(format!("(client) {:?}", rect)));
+    Dimension2D::new((rect.bottom - rect.top) as f32, (rect.right - rect.left) as f32)
+}
+
+pub(crate) fn get_window_rect(hwnd: Foundation::HWND) -> Dimension2D {
+    let rect = &mut RECT { left: 0, top: 0, right: 0, bottom: 0, };
+    unsafe { GetWindowRect(hwnd, rect) }.expect("TODO: get window rect");
+    //log(LogLevel::Debug, &|| String::from(format!("(window) {:?}", rect)));
+    Dimension2D::new((rect.bottom - rect.top) as f32, (rect.right - rect.left) as f32)
 }
