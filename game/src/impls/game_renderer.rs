@@ -1,7 +1,10 @@
 use engine::input::model::keyboard_state::{KeyInfo, KeyPosition};
 use engine::logger::log;
 use engine::logger::log_level::LogLevel;
-use engine::render::graphics::opengl::opengl_wrapper::paint_background;
+use engine::math::twod::draw_config_2d::DrawingConfig2D;
+use engine::math::twod::line_2d::Line2D;
+use engine::math::twod::point_2d::Point2D;
+use engine::render::graphics::opengl::opengl_wrapper::{paint_background, paint_lines};
 use engine::render::model::color::Color;
 use engine::render::model::render_context::RendererContext;
 use engine::render::renderer::Renderer;
@@ -38,7 +41,18 @@ impl Renderer for GameRenderer {
         context.first_frame_rendered = true;
         context.frame_count += 1;
 
+        //let max = 1000;
+
+        /* draw black background */
         paint_background(Color::BLACK);
+
+        /* draw x/y axis in white */
+        paint_lines(&*vec!(
+            Line2D::new(Point2D::origin(), Point2D::new(0.0, 1.0)),
+            Line2D::new(Point2D::origin(), Point2D::new(1.0, 0.0)),
+            Line2D::new(Point2D::origin(), Point2D::new(0.0, -1.0)),
+            Line2D::new(Point2D::origin(), Point2D::new(-1.0, 0.0)),
+        ), &DrawingConfig2D::new(Color::WHITE, 5.0));
     }
 }
 
