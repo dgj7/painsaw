@@ -37,7 +37,7 @@ impl Renderer for GameRenderer {
         }
     }
 
-    fn before_render(&self, context: &mut RendererContext) {
+    fn before_render(&self, _context: &mut RendererContext) {
         // no work to do yet
     }
 
@@ -58,7 +58,7 @@ impl Renderer for GameRenderer {
         paint_lines(&*vec!(
             Line2D::new(Point2D::origin(), Point2D::new(0.0, ccd.height)),
             Line2D::new(Point2D::origin(), Point2D::new(ccd.width, 0.0)),
-        ), &DrawingConfig2D::new(Color::WHITE, 10.0));
+        ), &DrawingConfig2D::new(Color::from_rgb(0.498, 0.0, 1.0), 10.0));
 
         /* draw x-axis horizontal lines */
         let hgap = 10;
@@ -67,7 +67,7 @@ impl Renderer for GameRenderer {
         for h in 0..hiters {
             hlines.push(Line2D::new(Point2D::new(0.0, (h * hgap) as f32), Point2D::new(ccd.width, (h * hgap) as f32)));
         }
-        paint_lines(&*hlines, &DrawingConfig2D::new(Color::RED, 1.0));
+        paint_lines(&*hlines, &DrawingConfig2D::new(Color::from_rgb(0.2, 0.2, 0.2), 1.0));
 
         /* draw y-axis vertical lines */
         let vgap = 10;
@@ -76,7 +76,7 @@ impl Renderer for GameRenderer {
         for v in 0..viters {
             vlines.push(Line2D::new(Point2D::new((v * vgap) as f32, 0.0), Point2D::new((v * vgap) as f32, ccd.height)));
         }
-        paint_lines(&*vlines, &DrawingConfig2D::new(Color::RED, 1.0));
+        paint_lines(&*vlines, &DrawingConfig2D::new(Color::from_rgb(0.2, 0.2, 0.2), 1.0));
     }
 
     fn render_3d_scene(&self, _context: &mut RendererContext) {
