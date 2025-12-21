@@ -79,7 +79,7 @@ impl MsWinWindow {
             hCursor: load_cursor(None, IDC_ARROW)?,
             hbrBackground: Default::default(),
             hInstance: hinstance,
-            lpszClassName: w!("window"),
+            lpszClassName: w!("PAINSAW"),
             style: CS_OWNDC | CS_HREDRAW | CS_VREDRAW,
             lpfnWndProc: Some(wndproc),
             cbClsExtra: 0,
@@ -111,10 +111,11 @@ impl MsWinWindow {
         let input_pointer = input_state_to_raw_pointer(&input);
 
         /* create the window */
+        let title = HSTRING::from(request.title.clone().unwrap_or(String::from("WindowConfig: set title")));
         let hwnd = create_window_ex(
             WINDOW_EX_STYLE::default(),
-            w!("window"),
-            w!("This is a sample window"),
+            w!("PAINSAW"),
+            &title,
             dwstyle,
             x,
             y,
