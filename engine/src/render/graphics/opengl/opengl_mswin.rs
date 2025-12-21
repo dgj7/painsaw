@@ -1,6 +1,6 @@
 use windows::Win32::Foundation::HWND;
 use windows::Win32::Graphics::Gdi::HDC;
-use windows::Win32::Graphics::OpenGL::{HGLRC, PFD_DOUBLEBUFFER, PFD_DRAW_TO_WINDOW, PFD_SUPPORT_OPENGL, PFD_TYPE_RGBA, PIXELFORMATDESCRIPTOR};
+use windows::Win32::Graphics::OpenGL::{SwapBuffers, HGLRC, PFD_DOUBLEBUFFER, PFD_DRAW_TO_WINDOW, PFD_SUPPORT_OPENGL, PFD_TYPE_RGBA, PIXELFORMATDESCRIPTOR};
 use crate::logger::log;
 use crate::logger::log_level::LogLevel;
 use crate::render::graphics::opengl::opengl_mswin_api::{choose_pixel_format, get_dc, set_pixel_format, wgl_create_context, wgl_make_current};
@@ -34,4 +34,8 @@ pub fn init_opengl(hwnd: HWND) -> (HDC, HGLRC) {
 
     /* done */
     (hdc, hrc)
+}
+
+pub fn swap_buffers(hdc: HDC) {
+    unsafe { SwapBuffers(hdc).expect("TODO: swap buffers"); }
 }

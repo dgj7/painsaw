@@ -4,7 +4,7 @@ version = "0.0.14"
 edition = "2024"
 
 [dependencies]
-
+gl = "0.14.0"
 
 # https://crates.io/crates/windows
 [target.'cfg(target_os="windows")'.dependencies]

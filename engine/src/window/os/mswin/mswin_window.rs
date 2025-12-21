@@ -2,7 +2,7 @@ use crate::input::model::input_state::InputState;
 use crate::input::model::keyboard_state::{KeyInfo, KeyPosition};
 use crate::logger::log;
 use crate::logger::log_level::LogLevel;
-use crate::render::graphics::opengl::opengl_mswin::init_opengl;
+use crate::render::graphics::opengl::opengl_mswin::{init_opengl, swap_buffers};
 use crate::render::graphics::opengl::opengl_mswin_api::{get_dc, release_dc, wgl_delete_context, wgl_get_current_context, wgl_make_current};
 use crate::render::model::render_context::RendererContext;
 use crate::render::renderer::Renderer;
@@ -55,6 +55,7 @@ impl Window for MsWinWindow {
             } else {
                 renderer.update_world(&mut context);
                 renderer.render_scene(&mut context);
+                swap_buffers(self.hdc);
             }
         }
 
