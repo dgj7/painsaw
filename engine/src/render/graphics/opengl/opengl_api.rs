@@ -1,4 +1,4 @@
-use windows::Win32::Graphics::OpenGL::{glBegin, glClear, glClearColor, glColor3f, glEnd, glFlush, glLineWidth, glVertex2f, GL_LINES};
+use windows::Win32::Graphics::OpenGL::{glBegin, glClear, glClearColor, glColor3f, glEnd, glFlush, glLineWidth, glVertex2f, glViewport, GL_LINES};
 
 pub fn gl_clear(mask: u32) {
     unsafe { glClear(mask); }
@@ -18,6 +18,10 @@ pub fn gl_end() {
 
 pub fn gl_flush() {
     unsafe { glFlush(); }
+}
+
+pub fn gl_viewport(x: i32, y: i32, width: i32, height: i32) {
+    unsafe { glViewport(x, y, width, height); }
 }
 
 pub fn gl_line_width(width_pixels: f32) {

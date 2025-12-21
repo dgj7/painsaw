@@ -55,7 +55,10 @@ impl Window for MsWinWindow {
             } else {
                 /* update and draw the world */
                 renderer.update_world(&mut context);
-                renderer.render_scene(&mut context);
+                renderer.before_render(&mut context);
+                renderer.render_2d_scene(&mut context);
+                renderer.render_3d_scene(&mut context);
+                renderer.after_render(&mut context);
 
                 /* swap buffers after it's all done */
                 swap_buffers(self.hdc);

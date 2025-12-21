@@ -1,8 +1,13 @@
 use crate::math::twod::line_2d::Line2D;
-use crate::render::graphics::opengl::opengl_api::{gl_begin_lines, gl_clear, gl_clear_color, gl_color_3f, gl_end, gl_flush, gl_line_width, gl_vertex_2f};
+use crate::render::graphics::opengl::opengl_api::{gl_begin_lines, gl_clear, gl_clear_color, gl_color_3f, gl_end, gl_flush, gl_line_width, gl_vertex_2f, gl_viewport};
 use crate::render::model::color::Color;
 use windows::Win32::Graphics::OpenGL::{GL_COLOR_BUFFER_BIT, GL_DEPTH_BUFFER_BIT};
 use crate::math::twod::draw_config_2d::DrawingConfig2D;
+
+
+pub fn adjust_viewport(width: i32, height: i32) {
+    gl_viewport(0, 0, width, height);
+}
 
 pub fn paint_background(color: Color) {
     gl_clear_color(color.red, color.green, color.blue, color.alpha);
