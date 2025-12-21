@@ -1,17 +1,27 @@
 use crate::math::twod::line_2d::Line2D;
-use crate::render::graphics::opengl::opengl_api::{gl_begin_lines, gl_clear, gl_clear_color, gl_color_3f, gl_end, gl_flush, gl_line_width, gl_vertex_2f, gl_viewport};
+use crate::render::graphics::opengl::opengl_api::{gl_begin_lines, gl_clear, gl_clear_color, gl_color_3f, gl_end, gl_flush, gl_line_width, gl_load_identity, gl_matrix_mode, gl_ortho, gl_vertex_2f, gl_viewport};
 use crate::render::model::color::Color;
-use windows::Win32::Graphics::OpenGL::{GL_COLOR_BUFFER_BIT, GL_DEPTH_BUFFER_BIT};
+use windows::Win32::Graphics::OpenGL::{GL_COLOR_BUFFER_BIT, GL_DEPTH_BUFFER_BIT, GL_PROJECTION};
 use crate::math::twod::draw_config_2d::DrawingConfig2D;
-
-
-pub fn adjust_viewport(width: i32, height: i32) {
-    gl_viewport(0, 0, width, height);
-}
+use crate::render::model::render_context::RendererContext;
 
 pub fn paint_background(color: Color) {
     gl_clear_color(color.red, color.green, color.blue, color.alpha);
     gl_clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+}
+
+pub fn prepare_2d(context: &mut RendererContext) {
+    let ccd = context.copy_client_dimensions();
+    gl_viewport(0, 0, ccd.width as i32, ccd.height as i32);
+    gl_matrix_mode(GL_PROJECTION);
+    gl_load_identity();
+    gl_ortho(0.0, 
+             ccd.width as f64, 
+             ccd.height as f64, 
+             0.0, 
+             -1.0, 
+             1.0
+    );
 }
 
 pub fn paint_lines(lines: &[Line2D], config: &DrawingConfig2D) {

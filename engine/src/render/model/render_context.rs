@@ -1,5 +1,6 @@
 use std::sync::{Arc, Mutex};
 use crate::input::model::input_state::InputState;
+use crate::math::twod::dimension_2d::Dimension2D;
 
 pub struct RendererContext {
     pub first_frame_rendered: bool,
@@ -16,5 +17,13 @@ impl RendererContext {
 
             input: input.clone(),
         }
+    }
+
+    pub fn copy_client_dimensions(&self) -> Dimension2D {
+        self.input
+            .lock()
+            .expect("retrieve_client_dimensions(): can't lock")
+            .current_client_dimensions
+            .clone()
     }
 }

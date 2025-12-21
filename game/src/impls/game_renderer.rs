@@ -4,7 +4,7 @@ use engine::logger::log_level::LogLevel;
 use engine::math::twod::draw_config_2d::DrawingConfig2D;
 use engine::math::twod::line_2d::Line2D;
 use engine::math::twod::point_2d::Point2D;
-use engine::render::graphics::opengl::opengl_wrapper::{adjust_viewport, paint_background, paint_lines};
+use engine::render::graphics::opengl::opengl_wrapper::{paint_background, paint_lines, prepare_2d};
 use engine::render::model::color::Color;
 use engine::render::model::render_context::RendererContext;
 use engine::render::renderer::Renderer;
@@ -38,30 +38,30 @@ impl Renderer for GameRenderer {
     }
 
     fn before_render(&self, context: &mut RendererContext) {
-        match context.input.lock() {
-            Ok(is) => {
-                adjust_viewport(is.current_client_dimensions.width as i32, is.current_client_dimensions.height as i32);
-            }
-            Err(_) => panic!("TODO: before_render(): can't lock input state")
-        }
+        // no work to do yet
     }
 
     fn render_2d_scene(&self, context: &mut RendererContext) {
         context.first_frame_rendered = true;
         context.frame_count += 1;
 
-        //let max = 1000;
+        /* gather needed data */
+        let ccd = context.copy_client_dimensions();
+
+        /* prepare for 2d drawing */
+        prepare_2d(context);
 
         /* draw black background */
         paint_background(Color::BLACK);
 
         /* draw x&y axes in white */
         paint_lines(&*vec!(
-            Line2D::new(Point2D::origin(), Point2D::new(0.0, 1.0)),
-            Line2D::new(Point2D::origin(), Point2D::new(1.0, 0.0)),
-            Line2D::new(Point2D::origin(), Point2D::new(0.0, -1.0)),
-            Line2D::new(Point2D::origin(), Point2D::new(-1.0, 0.0)),
-        ), &DrawingConfig2D::new(Color::WHITE, 5.0));
+            Line2D::new(Point2D::origin(), Point2D::new(0.0, ccd.height)),
+            Line2D::new(Point2D::origin(), Point2D::new(ccd.width, 0.0)),
+        ), &DrawingConfig2D::new(Color::WHITE, 10.0));
+
+        /* draw x-axis horizontal lines */
+        //
     }
 
     fn render_3d_scene(&self, _context: &mut RendererContext) {

@@ -1,4 +1,4 @@
-use windows::Win32::Graphics::OpenGL::{glBegin, glClear, glClearColor, glColor3f, glEnd, glFlush, glLineWidth, glVertex2f, glViewport, GL_LINES};
+use windows::Win32::Graphics::OpenGL::{glBegin, glClear, glClearColor, glColor3f, glEnd, glFlush, glLineWidth, glLoadIdentity, glMatrixMode, glOrtho, glVertex2f, glViewport, GL_LINES};
 
 pub fn gl_clear(mask: u32) {
     unsafe { glClear(mask); }
@@ -22,6 +22,18 @@ pub fn gl_flush() {
 
 pub fn gl_viewport(x: i32, y: i32, width: i32, height: i32) {
     unsafe { glViewport(x, y, width, height); }
+}
+
+pub fn gl_matrix_mode(mode: u32) {
+    unsafe { glMatrixMode(mode) }
+}
+
+pub fn gl_load_identity() {
+    unsafe { glLoadIdentity() }
+}
+
+pub fn gl_ortho(left: f64, right: f64, bottom: f64, top: f64, znear: f64, zfar: f64) {
+    unsafe { glOrtho(left, right, bottom, top, znear, zfar) }
 }
 
 pub fn gl_line_width(width_pixels: f32) {
