@@ -61,7 +61,22 @@ impl Renderer for GameRenderer {
         ), &DrawingConfig2D::new(Color::WHITE, 10.0));
 
         /* draw x-axis horizontal lines */
-        //
+        let hgap = 10;
+        let hiters = ((ccd.height + (hgap as f32))/(hgap as f32)) as u16;
+        let mut hlines: Vec<Line2D> = Vec::with_capacity((hiters + 10) as usize);
+        for h in 0..hiters {
+            hlines.push(Line2D::new(Point2D::new(0.0, (h * hgap) as f32), Point2D::new(ccd.width, (h * hgap) as f32)));
+        }
+        paint_lines(&*hlines, &DrawingConfig2D::new(Color::RED, 1.0));
+
+        /* draw y-axis vertical lines */
+        let vgap = 10;
+        let viters = ((ccd.width + (vgap as f32))/(vgap as f32)) as u16;
+        let mut vlines: Vec<Line2D> = Vec::with_capacity((viters + 10) as usize);
+        for v in 0..viters {
+            vlines.push(Line2D::new(Point2D::new((v * vgap) as f32, 0.0), Point2D::new((v * vgap) as f32, ccd.height)));
+        }
+        paint_lines(&*vlines, &DrawingConfig2D::new(Color::RED, 1.0));
     }
 
     fn render_3d_scene(&self, _context: &mut RendererContext) {
