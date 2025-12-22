@@ -3,7 +3,6 @@ use chrono::{DateTime, Local};
 use colored::{ColoredString, Colorize};
 use std::panic::Location;
 use std::path::Path;
-use colored::Color::TrueColor;
 
 #[derive(Debug, Clone)]
 pub enum LogTarget {
@@ -35,7 +34,7 @@ impl LogTarget {
             LogTarget::File { path: _ } => panic!("not implemented!"),
             LogTarget::EngineConsole => panic!("not implemented!"),
             LogTarget::StdOut => println!(
-                "{:LEVEL$} {:TIME$} {:CALLER$}: {}",
+                "{:LEVEL$}{:TIME$}{:CALLER$}: {}",
                 colorize(level),
                 when.format("%H:%M:%S").to_string().as_str().blue(),
                 truncate(format!("{}:{}", filename, line).as_str(), CALLER).green(),

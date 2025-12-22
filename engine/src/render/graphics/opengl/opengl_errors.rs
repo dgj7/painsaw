@@ -1,8 +1,8 @@
+use crate::logger::log_level::LogLevel;
+use crate::logger::log_caller;
 use std::ffi::{c_uchar, CStr};
 use std::panic::Location;
 use windows::Win32::Graphics::OpenGL::{glGetError, gluErrorString, GL_NO_ERROR};
-use crate::logger::{log, log_caller};
-use crate::logger::log_level::LogLevel;
 
 #[track_caller]
 pub fn check_errors_gl(caller: &str) {
