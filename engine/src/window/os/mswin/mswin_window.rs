@@ -53,11 +53,13 @@ impl Window for MsWinWindow {
                 let _ = translate_message(&message);
                 dispatch_message(&message);
             } else {
-                /* update and draw the world */
+                /* update the game world */
                 renderer.update_world(&mut context);
+
+                /* render the game world */
                 renderer.before_render(&mut context);
-                renderer.render_2d_scene(&mut context);
                 renderer.render_3d_scene(&mut context);
+                renderer.render_2d_scene(&mut context);
                 renderer.after_render(&mut context);
 
                 /* swap buffers after it's all done */
@@ -219,8 +221,8 @@ fn handle_message_if_applicable(input: &Arc<Mutex<InputState>>, hwnd: HWND, mess
             // see also: WM_EXITSIZEMOVE: resizing ended
             let window_dimensions = get_window_rect(hwnd);
             let client_dimensions = get_client_rect(hwnd);
-            log(LogLevel::Debug, &|| format!("window_dimensions {:?}", window_dimensions));
-            log(LogLevel::Debug, &|| format!("client_dimensions {:?}", client_dimensions));
+            log(LogLevel::Trace, &|| format!("window_dimensions {:?}", window_dimensions));
+            log(LogLevel::Trace, &|| format!("client_dimensions {:?}", client_dimensions));
             match input.lock() {
                 Ok(mut is) => {
                     is.update_client_dimensions(client_dimensions);
