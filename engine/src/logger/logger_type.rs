@@ -1,5 +1,7 @@
 use crate::logger::log_level::LogLevel;
 use crate::logger::LoggerConfig;
+use chrono::{DateTime, Utc};
+use std::panic::Location;
 
 #[derive(Debug, Clone)]
 pub struct Logger {
@@ -16,7 +18,7 @@ impl Logger {
         self.pairs.push(config);
     }
 
-    pub fn log<F>(&self, level: LogLevel, message_provider: &F)
+    pub fn log<F>(&self, level: LogLevel, caller: &Location, message_provider: &F)
     where
         F: Fn() -> String,
     {
@@ -24,6 +26,6 @@ impl Logger {
             .iter()
             .filter(|x| level.is_allowed(&x.level))
             .map(|tc| (tc, message_provider()))
-            .for_each(|tuple| tuple.0.target.print(&tuple.1));
+            .for_each(|tuple| tuple.0.target.print(&level, DateTime::from(Utc::now()), caller, &tuple.1));
     }
 }
