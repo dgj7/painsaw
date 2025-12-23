@@ -2,7 +2,7 @@ use crate::math::twod::dimension_2d::Dimension2D;
 use windows::Win32::Foundation;
 use windows::Win32::Foundation::{LRESULT, RECT};
 use windows::Win32::System::LibraryLoader::GetModuleHandleW;
-use windows::Win32::UI::WindowsAndMessaging::{CreateWindowExW, DefWindowProcW, DispatchMessageW, GetClientRect, GetWindowRect, LoadCursorW, PeekMessageW, PostQuitMessage, RegisterClassW, TranslateMessage, HCURSOR, HMENU, MSG, PEEK_MESSAGE_REMOVE_TYPE, WINDOW_EX_STYLE, WINDOW_STYLE, WNDCLASSW};
+use windows::Win32::UI::WindowsAndMessaging::{CreateWindowExW, DefWindowProcW, DispatchMessageW, GetClientRect, GetWindowRect, IsWindow, LoadCursorW, PeekMessageW, PostQuitMessage, RegisterClassW, TranslateMessage, HCURSOR, HMENU, MSG, PEEK_MESSAGE_REMOVE_TYPE, WINDOW_EX_STYLE, WINDOW_STYLE, WNDCLASSW};
 use crate::window::os::mswin::mswin_errors::check_errors_mswin;
 
 pub(crate) fn peek_message(lpmsg: *mut MSG, hwnd: Option<Foundation::HWND>, wmsgfiltermin: u32, wmsgfiltermax: u32, wremovemsg: PEEK_MESSAGE_REMOVE_TYPE) -> bool {
@@ -62,9 +62,16 @@ pub(crate) fn post_quit_message(nexitcode: i32) {
 }
 
 pub(crate) fn default_window_proc(hwnd: Foundation::HWND, msg: u32, wparam: Foundation::WPARAM, lparam: Foundation::LPARAM) -> LRESULT {
-    let result = unsafe { DefWindowProcW(hwnd, msg, wparam, lparam) };
-    check_errors_mswin("DefWindowProcW");
-    result
+    if is_window_handle_valid(hwnd) {
+        let result = unsafe { DefWindowProcW(hwnd, msg, wparam, lparam) };
+        check_errors_mswin(format!("DefWindowProcW ({:#06X})", msg).as_str());
+        return result
+    }
+    LRESULT(0)
+}
+
+pub(crate) fn is_window_handle_valid(hwnd: Foundation::HWND) -> bool {
+    unsafe { bool::from(IsWindow(Option::from(hwnd))) }
 }
 
 pub(crate) fn get_client_rect(hwnd: Foundation::HWND) -> Dimension2D {

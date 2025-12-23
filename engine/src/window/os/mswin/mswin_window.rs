@@ -155,7 +155,10 @@ impl MsWinWindow {
 
 extern "system" fn wndproc(window: HWND, message: u32, wparam: WPARAM, lparam: LPARAM) -> LRESULT {
     match message {
-        WM_CREATE => {
+        WM_NCCREATE => {// 0x0081: sent prior to WM_CREATE; https://learn.microsoft.com/en-us/windows/win32/winmsg/wm-nccreate
+            LRESULT(1)
+        }
+        WM_CREATE => {// 0x0001: sent when createwindowex/createwindow is called; https://learn.microsoft.com/en-us/windows/win32/winmsg/wm-create
             create_and_write_pointer(window, lparam);
             LRESULT(0)
         }
@@ -169,6 +172,24 @@ extern "system" fn wndproc(window: HWND, message: u32, wparam: WPARAM, lparam: L
 
             LRESULT(0)
         }
+        //WM_MOVING => {// 0x0216: when user is moving the window; https://learn.microsoft.com/en-us/windows/win32/winmsg/wm-moving
+        //    LRESULT(0)
+        //}
+        //WM_MOVE => {// 0x0003: after a window has been moved; https://learn.microsoft.com/en-us/windows/win32/winmsg/wm-move
+        //    LRESULT(0)
+        //}
+        //WM_NCMOUSELEAVE => {// 0x02A2: curor leaves the nonclinent area of the window; https://learn.microsoft.com/en-us/windows/win32/inputdev/wm-ncmouseleave
+        //    LRESULT(0)
+        //}
+        //WM_GETMINMAXINFO => {// 0x0024: size/pos of the window is about to change; https://learn.microsoft.com/en-us/windows/win32/winmsg/wm-getminmaxinfo
+        //    LRESULT(0)
+        //}
+        //WM_WINDOWPOSCHANGING => {// 0x0046: size/pos/place (z-order) is about to change, from SetWindowPos; https://learn.microsoft.com/en-us/windows/win32/winmsg/wm-windowposchanging
+        //    LRESULT(0)
+        //}
+        //WM_WINDOWPOSCHANGED => {// 0x0047: size/pos/place (z-order) has changed, from SetWindowPos; https://learn.microsoft.com/en-us/windows/win32/winmsg/wm-windowposchanged
+        //    LRESULT(0)
+        //}
         _ => {
             let maybe_input = read_window_data(window);
             if let Some(input) = maybe_input {
