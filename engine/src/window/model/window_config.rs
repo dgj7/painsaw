@@ -1,5 +1,4 @@
 pub struct WindowConfig {
-    // todo: these fields don't need to be pub; pub can be removed after we construct the actual window
     pub dimensions: WindowDimensions,
     pub title: Option<String>,
 }

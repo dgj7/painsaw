@@ -120,11 +120,10 @@ impl MsWinWindow {
         let input_pointer = input_state_to_raw_pointer(&input);
 
         /* create the window */
-        let title = HSTRING::from(request.title.clone().unwrap_or(String::from("WindowConfig: set title")));
         let hwnd = create_window_ex(
             WINDOW_EX_STYLE::default(),
             w!("PAINSAW"),
-            &title,
+            PCWSTR::from_raw(HSTRING::from(request.title.clone().unwrap_or(String::from("WindowConfig: set title"))).as_ptr()),
             dwstyle,
             x,
             y,
