@@ -7,6 +7,9 @@ pub struct Point3D<F: Float + Add<F> + Sub<F>> {
     pub z: F,
 }
 
+#[allow(dead_code)]
+type Vector3D<F> = Point3D<F>;
+
 impl<F: Float + Add<F> + Sub<F>> Point3D<F> {
     pub fn new(x: F, y: F, z: F) -> Point3D<F> {
         Point3D { x, y, z }
