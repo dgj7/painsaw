@@ -25,7 +25,7 @@ pub fn prepare_2d(context: &mut RendererContext) {
     gl_matrix_mode(GL_MODELVIEW);
 }
 
-pub fn paint_2d_lines(lines: &[Line2D], config: &DrawingConfig) {
+pub fn paint_2d_lines(lines: &[Line2D<f32>], config: &DrawingConfig) {
     gl_color_3f(config.color.red, config.color.green, config.color.blue);
     gl_line_width(config.line_thickness);
     

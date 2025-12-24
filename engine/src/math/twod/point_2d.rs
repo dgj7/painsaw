@@ -1,14 +1,16 @@
-pub struct Point2D {
-    pub x: f32,
-    pub y: f32,
+use num_traits::Num;
+
+pub struct Point2D<F: Num> {
+    pub x: F,
+    pub y: F,
 }
 
-impl Point2D {
-    pub fn new(x: f32, y: f32) -> Point2D {
+impl<F: Num> Point2D<F> {
+    pub fn new(x: F, y: F) -> Point2D<F> {
         Point2D { x, y }
     }
 
-    pub fn origin() -> Point2D {
-        Point2D { x: 0.0, y: 0.0 }
+    pub fn origin() -> Point2D<F> {
+        Point2D { x: F::zero(), y: F::zero() }
     }
 }

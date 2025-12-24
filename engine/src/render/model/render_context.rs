@@ -19,7 +19,7 @@ impl RendererContext {
         }
     }
 
-    pub fn copy_client_dimensions(&self) -> Dimension2D {
+    pub fn copy_client_dimensions(&self) -> Dimension2D<f32> {
         self.input
             .lock()
             .expect("retrieve_client_dimensions(): can't lock")

@@ -74,14 +74,14 @@ pub(crate) fn is_window_handle_valid(hwnd: Foundation::HWND) -> bool {
     unsafe { bool::from(IsWindow(Option::from(hwnd))) }
 }
 
-pub(crate) fn get_client_rect(hwnd: Foundation::HWND) -> Dimension2D {
+pub(crate) fn get_client_rect(hwnd: Foundation::HWND) -> Dimension2D<f32> {
     let rect = &mut RECT { left: 0, top: 0, right: 0, bottom: 0, };
     unsafe { GetClientRect(hwnd, rect) }.expect("TODO: get client rect");
     check_errors_mswin("GetClientRect");
     Dimension2D::new((rect.bottom - rect.top) as f32, (rect.right - rect.left) as f32)
 }
 
-pub(crate) fn get_window_rect(hwnd: Foundation::HWND) -> Dimension2D {
+pub(crate) fn get_window_rect(hwnd: Foundation::HWND) -> Dimension2D<f32> {
     let rect = &mut RECT { left: 0, top: 0, right: 0, bottom: 0, };
     unsafe { GetWindowRect(hwnd, rect) }.expect("TODO: get window rect");
     check_errors_mswin("GetWindowRect");

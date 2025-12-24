@@ -15,7 +15,7 @@ pub fn prepare_3d(_context: &mut RendererContext) {
     gl_load_identity();
 }
 
-pub fn paint_3d_lines(lines: &[Line3D], config: &DrawingConfig) {
+pub fn paint_3d_lines(lines: &[Line3D<f32>], config: &DrawingConfig) {
     gl_color_3f(config.color.red, config.color.green, config.color.blue);
     gl_line_width(config.line_thickness);
 

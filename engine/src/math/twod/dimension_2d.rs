@@ -1,12 +1,13 @@
+use num_traits::Num;
 
 #[derive(Clone,Debug)]
-pub struct Dimension2D {
-    pub height: f32,
-    pub width: f32,
+pub struct Dimension2D<F: Num> {
+    pub height: F,
+    pub width: F,
 }
 
-impl Dimension2D {
-    pub fn new(height: f32, width: f32) -> Dimension2D {
+impl<F: Num> Dimension2D<F> {
+    pub fn new(height: F, width: F) -> Dimension2D<F> {
         Dimension2D { height, width }
     }
 }

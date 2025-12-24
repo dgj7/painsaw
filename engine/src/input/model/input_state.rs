@@ -9,10 +9,10 @@ pub struct InputState {
     pub g_key: KeyState,
 
     /* screen */
-    pub previous_client_dimensions: Dimension2D,
-    pub current_client_dimensions: Dimension2D,
-    pub previous_window_dimensions: Dimension2D,
-    pub current_window_dimensions: Dimension2D,
+    pub previous_client_dimensions: Dimension2D<f32>,
+    pub current_client_dimensions: Dimension2D<f32>,
+    pub previous_window_dimensions: Dimension2D<f32>,
+    pub current_window_dimensions: Dimension2D<f32>,
 }
 
 impl InputState {
@@ -33,7 +33,7 @@ impl InputState {
         }))
     }
 
-    pub fn update_client_dimensions(&mut self, current: Dimension2D) {
+    pub fn update_client_dimensions(&mut self, current: Dimension2D<f32>) {
         /* copy existing current into previous */
         self.previous_client_dimensions.height = self.current_client_dimensions.height;
         self.previous_client_dimensions.width = self.current_client_dimensions.width;
@@ -43,7 +43,7 @@ impl InputState {
         self.current_client_dimensions.width = current.width;
     }
     
-    pub fn update_window_dimensions(&mut self, current: Dimension2D) {
+    pub fn update_window_dimensions(&mut self, current: Dimension2D<f32>) {
         /* copy existing current into previous */
         self.previous_window_dimensions.height = self.current_window_dimensions.height;
         self.previous_window_dimensions.width = self.current_window_dimensions.width;

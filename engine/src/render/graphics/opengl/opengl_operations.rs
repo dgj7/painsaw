@@ -8,7 +8,7 @@ use crate::render::graphics::opengl::opengl_wrapper_2d::paint_2d_lines;
 use crate::render::graphics::opengl::opengl_wrapper_3d::paint_3d_lines;
 use crate::render::model::color::Color;
 
-pub fn paint_grid(client: &Dimension2D) {
+pub fn paint_grid(client: &Dimension2D<f32>) {
     /* draw x&y axes in white */
     paint_2d_lines(&*vec!(
         Line2D::new(Point2D::origin(), Point2D::new(0.0, client.height)),
@@ -18,7 +18,7 @@ pub fn paint_grid(client: &Dimension2D) {
     /* draw x-axis horizontal lines */
     let hgap = 10;
     let hiters = ((client.height + (hgap as f32))/(hgap as f32)) as u16;
-    let mut hlines: Vec<Line2D> = Vec::with_capacity((hiters + 10) as usize);
+    let mut hlines: Vec<Line2D<f32>> = Vec::with_capacity((hiters + 10) as usize);
     for h in 0..hiters {
         hlines.push(Line2D::new(Point2D::new(0.0, (h * hgap) as f32), Point2D::new(client.width, (h * hgap) as f32)));
     }
@@ -27,7 +27,7 @@ pub fn paint_grid(client: &Dimension2D) {
     /* draw y-axis vertical lines */
     let vgap = 10;
     let viters = ((client.width + (vgap as f32))/(vgap as f32)) as u16;
-    let mut vlines: Vec<Line2D> = Vec::with_capacity((viters + 10) as usize);
+    let mut vlines: Vec<Line2D<f32>> = Vec::with_capacity((viters + 10) as usize);
     for v in 0..viters {
         vlines.push(Line2D::new(Point2D::new((v * vgap) as f32, 0.0), Point2D::new((v * vgap) as f32, client.height)));
     }
