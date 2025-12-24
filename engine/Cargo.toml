@@ -6,8 +6,6 @@ edition = "2024"
 [dependencies]
 colored = "3.0.0"
 chrono = "0.4.42"
-gl = "0.14.0"
-glm = "0.3.0"
 num-traits = "0.2.19"
 
 # https://crates.io/crates/windows
