@@ -9,7 +9,7 @@ use crate::render::graphics::opengl::opengl_wrapper_3d::paint_3d_lines;
 use crate::render::model::color::Color;
 
 pub fn paint_grid(client: &Dimension2D<f32>) {
-    /* draw x&y axes in white */
+    /* draw x&y axes in purple */
     paint_2d_lines(&*vec!(
         Line2D::new(Point2D::origin(), Point2D::new(0.0, client.height)),
         Line2D::new(Point2D::origin(), Point2D::new(client.width, 0.0)),

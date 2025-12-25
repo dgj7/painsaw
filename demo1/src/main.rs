@@ -10,9 +10,15 @@ use crate::impls::game_renderer::GameRenderer;
 pub mod impls;
 
 fn main() {
+    configure(LoggerConfig { level: LogLevel::Debug, target: LogTarget::StdOut });
     log(LogLevel::Info, &|| "main(): begin".parse().unwrap());
 
-    configure(LoggerConfig { level: LogLevel::Debug, target: LogTarget::StdOut });
+    log(LogLevel::Error, &|| String::from("message"));
+    log(LogLevel::Warning, &|| String::from("message"));
+    log(LogLevel::Info, &|| String::from("message"));
+    log(LogLevel::Debug, &|| String::from("message"));
+    log(LogLevel::Trace, &|| String::from("message"));
+
     let cfg = WindowConfig::new(
         WindowDimensions::Dimensional { width: 800, height: 600 },
         "Demo1 - MsWin/OpenGL",
