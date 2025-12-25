@@ -9,6 +9,6 @@ initialized with code from the prior `painsaw`.
 |                                                Component                                                 |                 Purpose                  |
 |:--------------------------------------------------------------------------------------------------------:|:----------------------------------------:|
 | [![engine-mswin](https://github.com/dgj7/painsaw/actions/workflows/engine-mswin.yml/badge.svg)](/engine) | core engine, used by other related apps  |
-|   [![demo1-mswin](https://github.com/dgj7/painsaw/actions/workflows/game-mswin.yml/badge.svg)](/demo1)   | demo1 - first application  using the lib |
+|  [![demo1-mswin](https://github.com/dgj7/painsaw/actions/workflows/demo1-mswin.yml/badge.svg)](/demo1)   | demo1 - first application  using the lib |
 
 ---

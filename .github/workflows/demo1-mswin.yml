@@ -3,10 +3,10 @@ name: demo1
 on:
   push:
     paths:
-    - ../../demo1/**
+    - demo1/**
   pull_request:
     paths:
-    - ../../demo1/**
+    - demo1/**
 
 env:
   CARGO_TERM_COLOR: always

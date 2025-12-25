@@ -10,12 +10,13 @@ use crate::impls::game_renderer::GameRenderer;
 pub mod impls;
 
 fn main() {
+    log(LogLevel::Info, &|| "main(): begin".parse().unwrap());
+
     configure(LoggerConfig { level: LogLevel::Debug, target: LogTarget::StdOut });
     let cfg = WindowConfig::new(
         WindowDimensions::Dimensional { width: 800, height: 600 },
         "Demo1 - MsWin/OpenGL",
     "PAINSAW-DEMO1");
-    log(LogLevel::Info, &|| "begin".parse().unwrap());
 
     match create_window(&cfg) {
         Ok(mut win) => {
@@ -28,5 +29,5 @@ fn main() {
         }
     }
 
-    log(LogLevel::Info, &|| "end.".parse().unwrap());
+    log(LogLevel::Info, &|| "main(): end.".parse().unwrap());
 }
