@@ -64,8 +64,6 @@ where
 
 pub(crate) fn post_quit_message(nexitcode: i32) {
     unsafe { PostQuitMessage(nexitcode) }
-    // todo: check for errors properly here
-    check_errors_mswin("PostQuitMessage");
 }
 
 pub(crate) fn default_window_proc(hwnd: Foundation::HWND, msg: u32, wparam: Foundation::WPARAM, lparam: Foundation::LPARAM) -> LRESULT {
@@ -74,16 +72,20 @@ pub(crate) fn default_window_proc(hwnd: Foundation::HWND, msg: u32, wparam: Foun
 
 pub(crate) fn get_client_rect(hwnd: Foundation::HWND) -> Dimension2D<f32> {
     let rect = &mut RECT { left: 0, top: 0, right: 0, bottom: 0, };
-    unsafe { GetClientRect(hwnd, rect) }.expect("TODO: get client rect");
-    // todo: check for errors properly here
-    check_errors_mswin("GetClientRect");
+    let result = unsafe { GetClientRect(hwnd, rect) };
+    match result {
+        Ok(_) => {}
+        Err(_) => {check_errors_mswin("GetClientRect")}
+    }
     Dimension2D::new((rect.bottom - rect.top) as f32, (rect.right - rect.left) as f32)
 }
 
 pub(crate) fn get_window_rect(hwnd: Foundation::HWND) -> Dimension2D<f32> {
     let rect = &mut RECT { left: 0, top: 0, right: 0, bottom: 0, };
-    unsafe { GetWindowRect(hwnd, rect) }.expect("TODO: get window rect");
-    // todo: check for errors properly here
-    check_errors_mswin("GetWindowRect");
+    let result = unsafe { GetWindowRect(hwnd, rect) };
+    match result {
+        Ok(_) => {}
+        Err(_) => {check_errors_mswin("GetWindowRect")}
+    }
     Dimension2D::new((rect.bottom - rect.top) as f32, (rect.right - rect.left) as f32)
 }

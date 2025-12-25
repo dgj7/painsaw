@@ -35,7 +35,7 @@ pub fn paint_grid(client: &Dimension2D<f32>) {
 }
 
 pub fn paint_axes() {
-    let distance: f32 = 100.0;
+    let distance: f32 = 0.5;
 
     let x_abscissa = Line3D::new(Point3D::origin(), Point3D::new(distance, 0.0, 0.0));
     let y_ordinate = Line3D::new(Point3D::origin(), Point3D::new(0.0, distance, 0.0));
