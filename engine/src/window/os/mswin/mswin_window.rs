@@ -53,10 +53,10 @@ impl Window for MsWinWindow {
                 let _ = translate_message(&message);
                 dispatch_message(&message);
             } else {
-                /* update the game world */
+                /* update the demo1 world */
                 renderer.update_world(&mut context);
 
-                /* render the game world */
+                /* render the demo1 world */
                 renderer.before_render(&mut context);
                 renderer.render_3d_scene(&mut context);
                 renderer.render_2d_scene(&mut context);

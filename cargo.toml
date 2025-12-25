@@ -4,6 +4,6 @@ members = [
     "engine",
 
     # applications built with the engine
-    "game",
+    "demo1",
 ]
 resolver="1"

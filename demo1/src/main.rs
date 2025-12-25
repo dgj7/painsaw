@@ -12,8 +12,8 @@ pub mod impls;
 fn main() {
     configure(LoggerConfig { level: LogLevel::Debug, target: LogTarget::StdOut });
     let cfg = WindowConfig::new(
-        WindowDimensions::Dimensional { width: 800, height: 600 }, 
-        "OpenGL - Learning Graphics - Grid",
+        WindowDimensions::Dimensional { width: 800, height: 600 },
+        "Demo1 - MsWin/OpenGL",
     "PAINSAW-DEMO1");
     log(LogLevel::Info, &|| "begin".parse().unwrap());
 

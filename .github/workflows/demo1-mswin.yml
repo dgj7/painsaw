@@ -1,12 +1,12 @@
-name: game
+name: demo1
 
 on:
   push:
     paths:
-    - game/**
+    - ../../demo1/**
   pull_request:
     paths:
-    - game/**
+    - ../../demo1/**
 
 env:
   CARGO_TERM_COLOR: always
@@ -24,7 +24,7 @@ jobs:
           override: true
       - name: Build
         run: cargo build --verbose
-        working-directory: ./game
+        working-directory: ./demo1
       - name: Test
         run: cargo test --verbose
-        working-directory: ./game
+        working-directory: ./demo1

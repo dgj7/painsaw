@@ -68,8 +68,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "773648b94d0e5d620f64f280777445740e61fe701025087ec8b57f45c791888b"
 
 [[package]]
+name = "demo1"
+version = "0.0.13"
+dependencies = [
+ "engine",
+]
+
+[[package]]
 name = "engine"
-version = "0.0.28"
+version = "0.0.29"
 dependencies = [
  "chrono",
  "colored",
@@ -83,13 +90,6 @@ name = "find-msvc-tools"
 version = "0.1.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3a3076410a55c90011c298b04d0cfa770b00fa04e1e3c97d3f6c9de105a03844"
-
-[[package]]
-name = "game"
-version = "0.0.12"
-dependencies = [
- "engine",
-]
 
 [[package]]
 name = "iana-time-zone"
