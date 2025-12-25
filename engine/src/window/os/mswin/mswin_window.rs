@@ -79,6 +79,10 @@ impl Window for MsWinWindow {
 
 impl MsWinWindow {
     pub fn new(request : &WindowConfig) -> std::result::Result<Box<dyn Window>, Box<dyn std::error::Error>> {
+        /* make some variables */
+        let wndclass = PCWSTR::from_raw(HSTRING::from(request.wndclass.clone().unwrap_or(String::from("WindowConfig: set wndclass"))).as_ptr());
+        let title = PCWSTR::from_raw(HSTRING::from(request.title.clone().unwrap_or(String::from("WindowConfig: set title"))).as_ptr());
+
         /* get handle instance */
         let hinstance: HINSTANCE = HINSTANCE::from(get_module_handle(None)?);
         debug_assert!(hinstance.0 != std::ptr::null_mut());
@@ -88,7 +92,7 @@ impl MsWinWindow {
             hCursor: load_cursor(None, IDC_ARROW)?,
             hbrBackground: Default::default(),
             hInstance: hinstance,
-            lpszClassName: w!("PAINSAW"),
+            lpszClassName: wndclass,
             style: CS_OWNDC | CS_HREDRAW | CS_VREDRAW,
             lpfnWndProc: Some(wndproc),
             cbClsExtra: 0,
@@ -122,8 +126,8 @@ impl MsWinWindow {
         /* create the window */
         let hwnd = create_window_ex(
             WINDOW_EX_STYLE::default(),
-            w!("PAINSAW"),
-            PCWSTR::from_raw(HSTRING::from(request.title.clone().unwrap_or(String::from("WindowConfig: set title"))).as_ptr()),
+            wndclass,
+            title,
             dwstyle,
             x,
             y,
@@ -138,7 +142,7 @@ impl MsWinWindow {
         /* init opengl */
         let (hdc, hrc) = init_opengl(hwnd);
 
-        /* done; returning handles to window so we can create device context later */
+        /* done; returning handles to window */
         Ok(Box::new(MsWinWindow {
             input,
             hinstance,
@@ -154,9 +158,6 @@ impl MsWinWindow {
 
 extern "system" fn wndproc(window: HWND, message: u32, wparam: WPARAM, lparam: LPARAM) -> LRESULT {
     match message {
-        WM_NCCREATE => {// 0x0081: sent prior to WM_CREATE; https://learn.microsoft.com/en-us/windows/win32/winmsg/wm-nccreate
-            LRESULT(1)
-        }
         WM_CREATE => {// 0x0001: sent when createwindowex/createwindow is called; https://learn.microsoft.com/en-us/windows/win32/winmsg/wm-create
             create_and_write_pointer(window, lparam);
             LRESULT(0)

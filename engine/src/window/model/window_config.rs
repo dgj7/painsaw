@@ -1,6 +1,7 @@
 pub struct WindowConfig {
     pub dimensions: WindowDimensions,
     pub title: Option<String>,
+    pub wndclass: Option<String>,
 }
 
 pub enum WindowDimensions {
@@ -9,7 +10,7 @@ pub enum WindowDimensions {
 }
 
 impl WindowConfig {
-    pub fn new(dimensions: WindowDimensions, title: &str) -> WindowConfig {
-        WindowConfig { dimensions, title: Some(title.to_owned()) }
+    pub fn new(dimensions: WindowDimensions, title: &str, wndclass: &str) -> WindowConfig {
+        WindowConfig { dimensions, title: Some(title.to_owned()), wndclass: Some(wndclass.to_owned()) }
     }
 }
