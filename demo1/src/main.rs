@@ -5,9 +5,9 @@ use engine::logger::log_target::LogTarget;
 use engine::logger::{configure, log, LoggerConfig};
 use engine::window::model::window_config::{WindowConfig, WindowDimensions};
 use engine::window::window_factory::create_window;
-use crate::impls::game_renderer::GameRenderer;
+use demo1_renderer::Demo1Renderer;
 
-pub mod impls;
+pub mod demo1_renderer;
 
 fn main() {
     configure(LoggerConfig { level: LogLevel::Debug, target: LogTarget::StdOut });
@@ -20,7 +20,7 @@ fn main() {
 
     match create_window(&cfg) {
         Ok(mut win) => {
-            let renderer = GameRenderer::new();
+            let renderer = Demo1Renderer::new();
             win.begin_event_handling(&renderer).expect("window creation failed");
         }
         Err(_e) => {

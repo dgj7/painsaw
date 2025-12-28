@@ -9,9 +9,9 @@ use engine::render::model::color::Color;
 use engine::render::model::render_context::RendererContext;
 use engine::render::renderer::Renderer;
 
-pub(crate) struct GameRenderer {}
+pub(crate) struct Demo1Renderer {}
 
-impl Renderer for GameRenderer {
+impl Renderer for Demo1Renderer {
     fn update_world(&self, context: &mut RendererContext) {
         match context.input.clone().lock() {
             Ok(mut input) => {
@@ -69,7 +69,7 @@ impl Renderer for GameRenderer {
     }
 }
 
-impl GameRenderer {
+impl Demo1Renderer {
     pub(crate) fn new() -> Self {
         Self {}
     }
