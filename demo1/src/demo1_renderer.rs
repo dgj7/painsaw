@@ -1,13 +1,13 @@
 use engine::input::model::keyboard_state::{KeyInfo, KeyPosition};
 use engine::logger::log;
 use engine::logger::log_level::LogLevel;
-use engine::render::graphics::opengl::opengl_api::gl_viewport;
-use engine::render::graphics::opengl::opengl_operations::{paint_axes, paint_grid};
-use engine::render::graphics::opengl::opengl_wrapper_2d::{paint_background, prepare_2d};
-use engine::render::graphics::opengl::opengl_wrapper_3d::prepare_3d;
+use engine::render::subsystem::opengl::opengl_api::gl_viewport;
+use engine::render::subsystem::opengl::opengl_operations::{paint_axes, paint_grid};
+use engine::render::subsystem::opengl::opengl_wrapper_2d::{paint_background, prepare_2d};
+use engine::render::subsystem::opengl::opengl_wrapper_3d::prepare_3d;
 use engine::render::model::color::Color;
-use engine::render::model::render_context::RendererContext;
-use engine::render::renderer::Renderer;
+use engine::window::render::context::RendererContext;
+use engine::window::render::renderer::Renderer;
 
 pub(crate) struct Demo1Renderer {}
 

@@ -1,8 +1,8 @@
 use crate::geometry::config::draw_config::DrawingConfig;
 use crate::geometry::line::l2d::Line2D;
-use crate::render::graphics::opengl::opengl_api::{gl_begin_lines, gl_clear, gl_clear_color, gl_color_3f, gl_disable, gl_end, gl_line_width, gl_load_identity, gl_matrix_mode, gl_ortho, gl_vertex_2f};
+use crate::render::subsystem::opengl::opengl_api::{gl_begin_lines, gl_clear, gl_clear_color, gl_color_3f, gl_disable, gl_end, gl_line_width, gl_load_identity, gl_matrix_mode, gl_ortho, gl_vertex_2f};
 use crate::render::model::color::Color;
-use crate::render::model::render_context::RendererContext;
+use crate::window::render::context::RendererContext;
 use windows::Win32::Graphics::OpenGL::{GL_COLOR_BUFFER_BIT, GL_DEPTH_BUFFER_BIT, GL_DEPTH_TEST, GL_MODELVIEW, GL_PROJECTION};
 
 pub fn paint_background(color: Color) {

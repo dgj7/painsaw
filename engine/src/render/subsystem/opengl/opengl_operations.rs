@@ -4,8 +4,8 @@ use crate::geometry::vector::p3d::Point3D;
 use crate::geometry::dim::d2d::Dimension2D;
 use crate::geometry::line::l2d::Line2D;
 use crate::geometry::vector::p2d::Point2D;
-use crate::render::graphics::opengl::opengl_wrapper_2d::paint_2d_lines;
-use crate::render::graphics::opengl::opengl_wrapper_3d::paint_3d_lines;
+use crate::render::subsystem::opengl::opengl_wrapper_2d::paint_2d_lines;
+use crate::render::subsystem::opengl::opengl_wrapper_3d::paint_3d_lines;
 use crate::render::model::color::Color;
 
 pub fn paint_grid(client: &Dimension2D<f32>) {
