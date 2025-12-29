@@ -11,11 +11,9 @@ pub enum LogTarget {
     StdOut,
 }
 
-const MAX: usize = 80;
 const LEVEL: usize = 6;
 const CALLER: usize = 30;
 const TIME: usize = 9;
-const MSG: usize = MAX - (LEVEL + CALLER + TIME);
 
 impl LogTarget {
     pub(crate) fn print(
@@ -74,13 +72,12 @@ fn colorize_lvl(level: &LogLevel) -> ColoredString {
     }
 }
 
-// todo: don't truncate messages
 fn colorize_msg(level: &LogLevel, msg: &String) -> ColoredString {
     match level {
-        LogLevel::Error => truncate(msg, MSG).white().bold(),
-        LogLevel::Warning => truncate(msg, MSG).white(),
-        LogLevel::Info => truncate(msg, MSG).truecolor(IC, IC, IC).bold(),
-        LogLevel::Debug => truncate(msg, MSG).truecolor(DC, DC, DC).dimmed(),
-        LogLevel::Trace => truncate(msg, MSG).truecolor(TC, TC, TC).dimmed(),
+        LogLevel::Error => msg.white().bold(),
+        LogLevel::Warning => msg.white(),
+        LogLevel::Info => msg.truecolor(IC, IC, IC).bold(),
+        LogLevel::Debug => msg.truecolor(DC, DC, DC).dimmed(),
+        LogLevel::Trace => msg.truecolor(TC, TC, TC).dimmed(),
     }
 }
