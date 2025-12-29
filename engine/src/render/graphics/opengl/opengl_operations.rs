@@ -1,9 +1,9 @@
-use crate::math::draw_config::DrawingConfig;
-use crate::math::threed::line_3d::Line3D;
-use crate::math::threed::point_3d::Point3D;
-use crate::math::twod::dimension_2d::Dimension2D;
-use crate::math::twod::line_2d::Line2D;
-use crate::math::twod::point_2d::Point2D;
+use crate::geometry::config::draw_config::DrawingConfig;
+use crate::geometry::line::l3d::Line3D;
+use crate::geometry::vector::p3d::Point3D;
+use crate::geometry::dim::d2d::Dimension2D;
+use crate::geometry::line::l2d::Line2D;
+use crate::geometry::vector::p2d::Point2D;
 use crate::render::graphics::opengl::opengl_wrapper_2d::paint_2d_lines;
 use crate::render::graphics::opengl::opengl_wrapper_3d::paint_3d_lines;
 use crate::render::model::color::Color;

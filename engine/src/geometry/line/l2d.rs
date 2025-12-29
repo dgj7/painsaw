@@ -1,4 +1,4 @@
-use crate::math::twod::point_2d::Point2D;
+use crate::geometry::vector::p2d::Point2D;
 use num_traits::Float;
 use std::ops::{Add, Sub};
 

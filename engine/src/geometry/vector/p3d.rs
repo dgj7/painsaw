@@ -121,7 +121,7 @@ pub fn distance<F: Float>(left: &Point3D<F>, right: &Point3D<F>) -> F {
 
 #[cfg(test)]
 mod point3d_distance_tests {
-    use crate::math::threed::point_3d::Point3D;
+    use crate::geometry::vector::p3d::Point3D;
 
     #[test]
     fn test_positive1() {

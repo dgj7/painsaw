@@ -1,6 +1,6 @@
 use std::sync::{Arc, Mutex};
 use crate::input::model::input_state::InputState;
-use crate::math::twod::dimension_2d::Dimension2D;
+use crate::geometry::dim::d2d::Dimension2D;
 
 pub struct RendererContext {
     pub first_frame_rendered: bool,

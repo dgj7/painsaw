@@ -1,5 +1,5 @@
-use crate::math::draw_config::DrawingConfig;
-use crate::math::twod::line_2d::Line2D;
+use crate::geometry::config::draw_config::DrawingConfig;
+use crate::geometry::line::l2d::Line2D;
 use crate::render::graphics::opengl::opengl_api::{gl_begin_lines, gl_clear, gl_clear_color, gl_color_3f, gl_disable, gl_end, gl_line_width, gl_load_identity, gl_matrix_mode, gl_ortho, gl_vertex_2f};
 use crate::render::model::color::Color;
 use crate::render::model::render_context::RendererContext;

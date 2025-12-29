@@ -1,5 +1,5 @@
-use crate::math::draw_config::DrawingConfig;
-use crate::math::threed::line_3d::Line3D;
+use crate::geometry::config::draw_config::DrawingConfig;
+use crate::geometry::line::l3d::Line3D;
 use crate::render::graphics::opengl::opengl_api::{gl_begin_lines, gl_color_3f, gl_enable, gl_end, gl_line_width, gl_load_identity, gl_matrix_mode, gl_vertex_3f};
 use crate::render::model::render_context::RendererContext;
 use windows::Win32::Graphics::OpenGL::{GL_DEPTH_TEST, GL_MODELVIEW, GL_PROJECTION};

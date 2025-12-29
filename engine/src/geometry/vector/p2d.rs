@@ -22,7 +22,7 @@ impl<F: Float> Point2D<F> {
 
 #[cfg(test)]
 mod point2d_distance_tests {
-    use crate::math::twod::point_2d::Point2D;
+    use crate::geometry::vector::p2d::Point2D;
 
     #[test]
     fn test_positive1() {

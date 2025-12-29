@@ -1,4 +1,4 @@
-use crate::math::twod::dimension_2d::Dimension2D;
+use crate::geometry::dim::d2d::Dimension2D;
 use crate::window::os::mswin::mswin_errors::check_errors_mswin;
 use windows::Win32::Foundation;
 use windows::Win32::Foundation::{LRESULT, RECT};

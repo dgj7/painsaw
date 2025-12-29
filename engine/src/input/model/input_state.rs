@@ -1,7 +1,7 @@
 use std::sync::{Arc, Mutex};
 use std::time::Instant;
 use crate::input::model::keyboard_state::{KeyInfo, KeyPosition, KeyState};
-use crate::math::twod::dimension_2d::Dimension2D;
+use crate::geometry::dim::d2d::Dimension2D;
 
 #[derive(Clone,Debug)]
 pub struct InputState {

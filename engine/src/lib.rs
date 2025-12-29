@@ -3,3 +3,4 @@ pub mod input;
 pub mod render;
 pub mod window;
 pub mod math;
+pub mod geometry;
