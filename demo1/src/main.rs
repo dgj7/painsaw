@@ -6,6 +6,7 @@ use engine::logger::{configure, log, LoggerConfig};
 use engine::window::model::window_config::{WindowConfig, WindowDimensions};
 use engine::window::window_factory::create_window;
 use demo1_renderer::Demo1Renderer;
+use engine::render::handle::def::GraphicsSubSystem;
 
 pub mod demo1_renderer;
 
@@ -16,7 +17,9 @@ fn main() {
     let cfg = WindowConfig::new(
         WindowDimensions::Dimensional { width: 800, height: 600 },
         "Demo1 - MsWin/OpenGL",
-    "PAINSAW-DEMO1");
+    "PAINSAW-DEMO1",
+            GraphicsSubSystem::OpenGL,
+    );
 
     match create_window(&cfg) {
         Ok(mut win) => {

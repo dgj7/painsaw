@@ -2,6 +2,7 @@ use crate::geometry::vector::p2d::Point2D;
 use num_traits::Float;
 use std::ops::{Add, Sub};
 
+#[derive(Clone)]
 pub struct Line2D<F: Float + Add<F> + Sub<F>> {
     pub x: Point2D<F>,
     pub y: Point2D<F>,

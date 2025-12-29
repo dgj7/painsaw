@@ -74,6 +74,7 @@ fn colorize_lvl(level: &LogLevel) -> ColoredString {
     }
 }
 
+// todo: don't truncate messages
 fn colorize_msg(level: &LogLevel, msg: &String) -> ColoredString {
     match level {
         LogLevel::Error => truncate(msg, MSG).white().bold(),

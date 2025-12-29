@@ -2,6 +2,7 @@ use crate::geometry::vector::p3d::Point3D;
 use num_traits::Float;
 use std::ops::{Add, Sub};
 
+#[derive(Clone)]
 pub struct Line3D<F: Float + Add<F> + Sub<F>> {
     pub a: Point3D<F>,
     pub b: Point3D<F>,

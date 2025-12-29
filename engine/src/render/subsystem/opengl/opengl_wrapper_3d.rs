@@ -1,28 +1,16 @@
-use crate::geometry::config::draw_config::DrawingConfig;
-use crate::geometry::line::l3d::Line3D;
-use crate::render::subsystem::opengl::opengl_api::{gl_begin_lines, gl_color_3f, gl_enable, gl_end, gl_line_width, gl_load_identity, gl_matrix_mode, gl_vertex_3f};
-use crate::window::render::context::RendererContext;
-use windows::Win32::Graphics::OpenGL::{GL_DEPTH_TEST, GL_MODELVIEW, GL_PROJECTION};
-
+use crate::geometry::line::ls3d::Lines3D;
+use crate::render::subsystem::opengl::opengl_api::{gl_begin_lines, gl_color_3f, gl_end, gl_line_width, gl_vertex_3f};
+use num_traits::Float;
 //https://stackoverflow.com/questions/4280185/opengl-drawing-a-2d-overlay-on-a-3d-scene-problem
-pub fn prepare_3d(_context: &mut RendererContext) {
-    gl_enable(GL_DEPTH_TEST);
 
-    gl_matrix_mode(GL_PROJECTION);
-    gl_load_identity();
-    // todo: do camera; gluPerspective, glFrustum
-    gl_matrix_mode(GL_MODELVIEW);
-    gl_load_identity();
-}
-
-pub fn paint_3d_lines(lines: &[Line3D<f32>], config: &DrawingConfig) {
-    gl_color_3f(config.color.red, config.color.green, config.color.blue);
-    gl_line_width(config.line_thickness);
+pub fn paint_3d_lines<F: Float>(lines: &Lines3D<F>) {
+    gl_color_3f(lines.color.red, lines.color.green, lines.color.blue);
+    gl_line_width(lines.thickness.to_f32().unwrap());
 
     gl_begin_lines();
-    for line in lines {
-        gl_vertex_3f(line.a.x, line.a.y, line.a.z);
-        gl_vertex_3f(line.b.x, line.b.y, line.b.z);
+    for line in &lines.lines {
+        gl_vertex_3f(line.a.x.to_f32().unwrap(), line.a.y.to_f32().unwrap(), line.a.z.to_f32().unwrap());
+        gl_vertex_3f(line.b.x.to_f32().unwrap(), line.b.y.to_f32().unwrap(), line.b.z.to_f32().unwrap());
     }
     gl_end();
 }

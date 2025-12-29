@@ -8,7 +8,7 @@ use crate::input::model::input_state::InputState;
 ///
 /// Wrap with Some(is) and pass to CreateWindowExA().  Call within window creation method.
 ///
-pub(crate) fn input_state_to_raw_pointer(is: &Arc<Mutex<InputState>>) -> *const core::ffi::c_void {
+pub(crate) fn input_state_to_raw_pointer(is: &Arc<Mutex<InputState<f32>>>) -> *const core::ffi::c_void {
     let rc = Arc::clone(is);
     Box::into_raw(Box::new(rc)) as *mut _
 }
@@ -29,12 +29,12 @@ pub(crate) fn create_and_write_pointer(hwnd: HWND, lparam: LPARAM) {
 ///
 /// Call within event-handling procedure.
 ///
-pub(crate) fn read_window_data(hwnd: HWND) -> Option<Arc<Mutex<InputState>>> {
+pub(crate) fn read_window_data(hwnd: HWND) -> Option<Arc<Mutex<InputState<f32>>>> {
     let ptr = unsafe { GetWindowLongPtrA(hwnd, GWLP_USERDATA) };
     if ptr == 0 {
         return None;
     }
-    let x = unsafe { &*(ptr as *const Arc<Mutex<InputState>>) };
+    let x = unsafe { &*(ptr as *const Arc<Mutex<InputState<f32>>>) };
     Option::from(x.clone())
 }
 

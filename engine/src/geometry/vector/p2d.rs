@@ -1,6 +1,7 @@
 use num_traits::Float;
 use std::ops::{Add, Sub};
 
+#[derive(Clone)]
 pub struct Point2D<F: Float + Sub<F> + Add<F>> {
     pub x: F,
     pub y: F,

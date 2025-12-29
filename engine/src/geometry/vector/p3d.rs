@@ -1,6 +1,7 @@
 use num_traits::Float;
 use std::ops::{Add, Div, Mul, Sub};
 
+#[derive(Clone)]
 pub struct Point3D<F: Float + Add<F> + Sub<F> + Mul<F> + Div<F>> {
     pub x: F,
     pub y: F,

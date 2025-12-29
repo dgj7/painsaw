@@ -2,13 +2,14 @@ use crate::input::model::input_state::InputState;
 use crate::input::model::keyboard_state::{KeyInfo, KeyPosition};
 use crate::logger::log;
 use crate::logger::log_level::LogLevel;
+use crate::render::handle::def::{grss_factory, GraphicsSubSystem};
 use crate::render::subsystem::opengl::opengl_mswin::{init_opengl, swap_buffers};
 use crate::render::subsystem::opengl::opengl_mswin_api::{get_dc, release_dc, wgl_delete_context, wgl_get_current_context, wgl_make_current};
-use crate::window::render::context::RendererContext;
-use crate::window::render::renderer::Renderer;
 use crate::window::model::window_config::{WindowConfig, WindowDimensions};
 use crate::window::os::mswin::mswin_data::{create_and_write_pointer, input_state_to_raw_pointer, read_window_data};
 use crate::window::os::mswin::mswin_winapi::{create_window_ex, default_window_proc, dispatch_message, get_client_rect, get_module_handle, get_window_rect, load_cursor, peek_message, post_quit_message, register_class, translate_message};
+use crate::window::render::context::RendererContext;
+use crate::window::render::renderer::Renderer;
 use crate::window::window::Window;
 use std::sync::{Arc, Mutex};
 use std::time::Instant;
@@ -22,7 +23,7 @@ use windows::{
 };
 
 pub struct MsWinWindow {
-    pub input: Arc<Mutex<InputState>>,
+    pub input: Arc<Mutex<InputState<f32>>>,
 
     pub hinstance: HINSTANCE,
     pub wndclassw: WNDCLASSW,
@@ -30,16 +31,23 @@ pub struct MsWinWindow {
     pub hwnd: HWND,
     pub quit: bool,
 
+    pub grss: GraphicsSubSystem,
+
     pub hdc: HDC,
     pub hrc: HGLRC,
 }
 
 impl Window for MsWinWindow {
-    fn begin_event_handling(&mut self, renderer: &dyn Renderer) -> std::result::Result<(), Box<dyn std::error::Error>>
+    fn begin_event_handling(&mut self, renderer: &dyn Renderer<f32>) -> std::result::Result<(), Box<dyn std::error::Error>>
     {
         log(LogLevel::Info, &|| "begin event handling".parse().unwrap());
         let mut message: MSG = MSG::default();
-        let mut context = RendererContext::new(&self.input);
+        let gss = self.grss.clone();
+        let rssh = grss_factory(gss);
+        let mut context = RendererContext::new(&self.input, rssh);
+
+        /* initialize client renderer, if necessary */
+        renderer.initialize(&mut context);
 
         while !self.quit {
             if peek_message(&mut message, Default::default(), 0, 0, PM_REMOVE) {
@@ -53,14 +61,9 @@ impl Window for MsWinWindow {
                 let _ = translate_message(&message);
                 dispatch_message(&message);
             } else {
-                /* update the demo1 world */
+                /* update world info; render scene */
                 renderer.update_world(&mut context);
-
-                /* render the demo1 world */
-                renderer.before_render(&mut context);
-                renderer.render_3d_scene(&mut context);
-                renderer.render_2d_scene(&mut context);
-                renderer.after_render(&mut context);
+                renderer.render_scene(&mut context);
 
                 /* swap buffers after it's all done */
                 swap_buffers(self.hdc);
@@ -72,7 +75,7 @@ impl Window for MsWinWindow {
         Ok(())
     }
 
-    fn get_input_state(&self) -> Arc<Mutex<InputState>> {
+    fn get_input_state(&self) -> Arc<Mutex<InputState<f32>>> {
         self.input.clone()
     }
 }
@@ -82,6 +85,7 @@ impl MsWinWindow {
         /* make some variables */
         let wndclass = PCWSTR::from_raw(HSTRING::from(request.wndclass.clone().unwrap_or(String::from("WindowConfig: set wndclass"))).as_ptr());
         let title = PCWSTR::from_raw(HSTRING::from(request.title.clone().unwrap_or(String::from("WindowConfig: set title"))).as_ptr());
+        let grss = request.graphics.clone();
 
         /* get handle instance */
         let hinstance: HINSTANCE = HINSTANCE::from(get_module_handle(None)?);
@@ -150,6 +154,9 @@ impl MsWinWindow {
             atom,
             hwnd,
             quit: false,
+
+            grss,
+
             hdc,
             hrc,
         }))
@@ -206,7 +213,7 @@ extern "system" fn wndproc(window: HWND, message: u32, wparam: WPARAM, lparam: L
     }
 }
 
-fn handle_message_if_applicable(input: &Arc<Mutex<InputState>>, hwnd: HWND, message: u32, wparam: WPARAM, _lparam: LPARAM) -> bool {
+fn handle_message_if_applicable(input: &Arc<Mutex<InputState<f32>>>, hwnd: HWND, message: u32, wparam: WPARAM, _lparam: LPARAM) -> bool {
     match message {
         WM_KEYDOWN => {
             match VIRTUAL_KEY(wparam.0 as u16) {
@@ -242,10 +249,11 @@ fn handle_message_if_applicable(input: &Arc<Mutex<InputState>>, hwnd: HWND, mess
             // see also: WM_EXITSIZEMOVE: resizing ended
             let window_dimensions = get_window_rect(hwnd);
             let client_dimensions = get_client_rect(hwnd);
-            log(LogLevel::Trace, &|| format!("window_dimensions {:?}", window_dimensions));
-            log(LogLevel::Trace, &|| format!("client_dimensions {:?}", client_dimensions));
+            log(LogLevel::Trace, &|| String::from(format!("window: {:?}", window_dimensions)));
+            log(LogLevel::Trace, &|| String::from(format!("client: {:?}", client_dimensions)));
             match input.lock() {
                 Ok(mut is) => {
+                    is.screen_resized = true;
                     is.update_client_dimensions(client_dimensions);
                     is.update_window_dimensions(window_dimensions);
                 }

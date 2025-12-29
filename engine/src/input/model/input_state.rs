@@ -1,22 +1,25 @@
+use std::ops::{Add, Sub};
 use std::sync::{Arc, Mutex};
 use std::time::Instant;
+use num_traits::Float;
 use crate::input::model::keyboard_state::{KeyInfo, KeyPosition, KeyState};
 use crate::geometry::dim::d2d::Dimension2D;
 
 #[derive(Clone,Debug)]
-pub struct InputState {
+pub struct InputState<F: Float + Add<F> + Sub<F>> {
     /* keyboard */
     pub g_key: KeyState,
 
     /* screen */
-    pub previous_client_dimensions: Dimension2D<f32>,
-    pub current_client_dimensions: Dimension2D<f32>,
-    pub previous_window_dimensions: Dimension2D<f32>,
-    pub current_window_dimensions: Dimension2D<f32>,
+    pub previous_client_dimensions: Dimension2D<F>,
+    pub current_client_dimensions: Dimension2D<F>,
+    pub previous_window_dimensions: Dimension2D<F>,
+    pub current_window_dimensions: Dimension2D<F>,
+    pub screen_resized: bool,
 }
 
-impl InputState {
-    pub fn new() -> Arc<Mutex<InputState>> {
+impl<F: Float + Add<F> + Sub<F>> InputState<F> {
+    pub fn new() -> Arc<Mutex<InputState<F>>> {
         Arc::new(Mutex::new(InputState {
             /* keyboard */
             g_key: KeyState {
@@ -26,14 +29,15 @@ impl InputState {
 
 
             /* screen */
-            previous_client_dimensions: Dimension2D::new(0.0, 0.0),
-            current_client_dimensions: Dimension2D::new(0.0, 0.0),
-            previous_window_dimensions: Dimension2D::new(0.0, 0.0),
-            current_window_dimensions: Dimension2D::new(0.0, 0.0),
+            previous_client_dimensions: Dimension2D::new(F::zero(), F::zero()),
+            current_client_dimensions: Dimension2D::new(F::zero(), F::zero()),
+            previous_window_dimensions: Dimension2D::new(F::zero(), F::zero()),
+            current_window_dimensions: Dimension2D::new(F::zero(), F::zero()),
+            screen_resized: false,
         }))
     }
 
-    pub fn update_client_dimensions(&mut self, current: Dimension2D<f32>) {
+    pub fn update_client_dimensions(&mut self, current: Dimension2D<F>) {
         /* copy existing current into previous */
         self.previous_client_dimensions.height = self.current_client_dimensions.height;
         self.previous_client_dimensions.width = self.current_client_dimensions.width;
@@ -43,7 +47,7 @@ impl InputState {
         self.current_client_dimensions.width = current.width;
     }
     
-    pub fn update_window_dimensions(&mut self, current: Dimension2D<f32>) {
+    pub fn update_window_dimensions(&mut self, current: Dimension2D<F>) {
         /* copy existing current into previous */
         self.previous_window_dimensions.height = self.current_window_dimensions.height;
         self.previous_window_dimensions.width = self.current_window_dimensions.width;

@@ -4,14 +4,21 @@
 //! does NOT expose rendering subsystem methods; ie, opengl, directx, etc.
 //!
 
+use std::ops::{Add, Sub};
+use num_traits::Float;
 use crate::window::render::context::RendererContext;
 
-pub trait Renderer {
-    fn update_world(&self, context: &mut RendererContext);
+// todo: this needs a rename; it's not a renderer, it's more of a client controller
+pub trait Renderer<F: Float + Add<F> + Sub<F>> {
+    fn initialize(&self, context: &mut RendererContext<f32>);
 
-    fn before_render(&self, context: &mut RendererContext);
-    fn render_2d_scene(&self, context: &mut RendererContext);
-    fn render_3d_scene(&self, context: &mut RendererContext);
+    fn update_world(&self, context: &mut RendererContext<f32>);
 
-    fn after_render(&self, context: &mut RendererContext);
+    fn render_scene(&self, context: &mut RendererContext<f32>) {
+        let ss = &context.subsystem;
+        let ccd = &context.copy_client_dimensions();
+        ss.before_scene(ccd);
+        ss.render_2d(&context.g2d, ccd);
+        ss.render_3d(&context.g3d);
+    }
 }
