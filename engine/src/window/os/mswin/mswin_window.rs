@@ -2,7 +2,6 @@ use crate::input::model::input_state::InputState;
 use crate::input::model::keyboard_state::{KeyInfo, KeyPosition};
 use crate::logger::log;
 use crate::logger::log_level::LogLevel;
-use crate::graphics::handle::def::{grss_factory, GraphicsSubSystem};
 use crate::graphics::subsystem::opengl::opengl_mswin::{init_opengl, swap_buffers};
 use crate::graphics::subsystem::opengl::opengl_mswin_api::{get_dc, release_dc, wgl_delete_context, wgl_get_current_context, wgl_make_current};
 use crate::window::model::window_config::{WindowConfig, WindowDimensions};
@@ -21,6 +20,7 @@ use windows::{
     Win32::Foundation::*,
     Win32::UI::WindowsAndMessaging::*,
 };
+use crate::graphics::subsystem::{grss_factory, GraphicsSubSystem};
 
 pub struct MsWinWindow {
     pub input: Arc<Mutex<InputState<f32>>>,

@@ -6,7 +6,7 @@ use engine::logger::{configure, log, LoggerConfig};
 use engine::window::model::window_config::{WindowConfig, WindowDimensions};
 use engine::window::window_factory::create_window;
 use demo1_world_controller::Demo1WorldController;
-use engine::graphics::handle::def::GraphicsSubSystem;
+use engine::graphics::subsystem::GraphicsSubSystem;
 
 pub mod demo1_world_controller;
 
