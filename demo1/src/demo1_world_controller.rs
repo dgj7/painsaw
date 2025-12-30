@@ -7,6 +7,8 @@ use engine::geometry::storage::m2d::Model2D;
 use engine::geometry::storage::m3d::Model3D;
 use engine::geometry::vector::p2d::Point2D;
 use engine::geometry::vector::p3d::Point3D;
+use engine::geometry::vector::ps2d::Points2D;
+use engine::geometry::vector::ps3d::Points3D;
 use engine::input::model::keyboard_state::{KeyInfo, KeyPosition};
 use engine::logger::log;
 use engine::logger::log_level::LogLevel;
@@ -34,9 +36,18 @@ impl WorldController<f32> for Demo1WorldController {
         context.g2d.models.insert(M2D_Y_VERT.parse().unwrap(), create_2d_grid_y_lines(&ccd));
 
         /* 3d: origin axes */
-        context.g3d.models.insert(M3D_X_ABSCISSA.parse().unwrap(), Model3D::new(vec!(Lines3D::new(vec!(Line3D::new(Point3D::origin(), Point3D::new(0.5, 0.0, 0.0))), Color::RED, 1.0))));
-        context.g3d.models.insert(M3D_Y_ORDINATE.parse().unwrap(), Model3D::new(vec!(Lines3D::new(vec!(Line3D::new(Point3D::origin(), Point3D::new(0.0, 0.5, 0.0))), Color::GREEN, 1.0))));
-        context.g3d.models.insert(M3D_Z_APPLICATE.parse().unwrap(), Model3D::new(vec!(Lines3D::new(vec!(Line3D::new(Point3D::origin(), Point3D::new(0.0, 0.0, 0.5))), Color::BLUE, 1.0))));
+        context.g3d.models.insert(M3D_X_ABSCISSA.parse().unwrap(), Model3D::new(
+            vec!(Points3D::new(vec!(Point3D::origin(), Point3D::new(0.5, 0.0, 0.0)), Color::WHITE, 5.0)),
+            vec!(Lines3D::new(vec!(Line3D::new(Point3D::origin(), Point3D::new(0.5, 0.0, 0.0))), Color::RED, 1.0)))
+        );
+        context.g3d.models.insert(M3D_Y_ORDINATE.parse().unwrap(), Model3D::new(
+            vec!(Points3D::new(vec!(Point3D::new(0.0, 0.5, 0.0)), Color::WHITE, 5.0)),
+            vec!(Lines3D::new(vec!(Line3D::new(Point3D::origin(), Point3D::new(0.0, 0.5, 0.0))), Color::GREEN, 1.0)))
+        );
+        context.g3d.models.insert(M3D_Z_APPLICATE.parse().unwrap(), Model3D::new(
+            vec!(Points3D::new(vec!(Point3D::new(0.0, 0.0, 0.5)), Color::WHITE, 5.0)),
+            vec!(Lines3D::new(vec!(Line3D::new(Point3D::origin(), Point3D::new(0.0, 0.0, 0.5))), Color::BLUE, 1.0)))
+        );
     }
 
     fn update_world(&self, context: &mut RendererContext<f32>) {
@@ -88,12 +99,27 @@ impl Demo1WorldController {
 }
 
 fn create_2d_axes(ccd: &Dimension2D<f32>) -> Model2D<f32> {
+    /* define points */
+    let axes_points = Points2D::new(vec!(
+            Point2D::origin(),
+            Point2D::new(0.0, ccd.height),
+            Point2D::new(ccd.width, 0.0),
+        ), Color::GREEN,15.0);
+    let other_points = Points2D::new(vec!(
+            Point2D::new(100.0, 100.0),
+        ), Color::GREEN, 3.0);
+    let pointsvec = vec!(axes_points, other_points);
+
+    /* define lines */
     let axes = vec!(Line2D::new(Point2D::origin(), Point2D::new(0.0, ccd.height)), Line2D::new(Point2D::origin(), Point2D::new(ccd.width, 0.0)));
     let axeslines = vec!(Lines2D::new(axes, Color::from_rgb(0.498, 0.0, 1.0), 10.0));
-    Model2D::new(axeslines)
+
+    /* done */
+    Model2D::new(pointsvec, axeslines)
 }
 
 fn create_2d_grid_x_lines(ccd: &Dimension2D<f32>) -> Model2D<f32> {
+    /* define lines */
     let hgap = 10;
     let hiters = ((ccd.height + (hgap as f32))/(hgap as f32)) as u16;
     let mut hlines: Vec<Line2D<f32>> = Vec::with_capacity((hiters + 10) as usize);
@@ -101,10 +127,13 @@ fn create_2d_grid_x_lines(ccd: &Dimension2D<f32>) -> Model2D<f32> {
         hlines.push(Line2D::new(Point2D::new(0.0, (h * hgap) as f32), Point2D::new(ccd.width, (h * hgap) as f32)));
     }
     let hlinevec = vec!(Lines2D::new(hlines, Color::from_rgb(0.2, 0.2, 0.2), 1.0));
-    Model2D::new(hlinevec)
+
+    /* done */
+    Model2D::new(vec!(), hlinevec)
 }
 
 fn create_2d_grid_y_lines(ccd: &Dimension2D<f32>) -> Model2D<f32> {
+    /* define lines */
     let vgap = 10;
     let viters = ((ccd.width + (vgap as f32))/(vgap as f32)) as u16;
     let mut vlines: Vec<Line2D<f32>> = Vec::with_capacity((viters + 10) as usize);
@@ -112,5 +141,7 @@ fn create_2d_grid_y_lines(ccd: &Dimension2D<f32>) -> Model2D<f32> {
         vlines.push(Line2D::new(Point2D::new((v * vgap) as f32, 0.0), Point2D::new((v * vgap) as f32, ccd.height)));
     }
     let vlinevec = vec!(Lines2D::new(vlines, Color::from_rgb(0.2, 0.2, 0.2), 1.0));
-    Model2D::new(vlinevec)
+
+    /* done */
+    Model2D::new(vec!(), vlinevec)
 }

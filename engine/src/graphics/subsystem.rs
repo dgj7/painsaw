@@ -11,6 +11,8 @@ use crate::graphics::subsystem::opengl::OpenGLHandle;
 use num_traits::Float;
 use std::ops::{Add, Sub};
 use crate::geometry::line::ls3d::Lines3D;
+use crate::geometry::vector::ps2d::Points2D;
+use crate::geometry::vector::ps3d::Points3D;
 
 pub mod opengl;
 
@@ -21,17 +23,13 @@ pub enum GraphicsSubSystem {
 
 pub trait RenderingSubSystemHandle<F: Float + Add<F> + Sub<F>> {
     fn identify(&self) -> RendererInfo;
-
     fn initialize(&self);
-
     fn before_scene(&self, ccd: &Dimension2D<f32>);
-
     fn prepare_2d(&self, ccd: &Dimension2D<f32>);
-
     fn prepare_3d(&self);
-    
+    fn render_2d_points(&self, points: &Points2D<F>);
     fn render_2d_lines(&self, lines: &Lines2D<F>);
-    
+    fn render_3d_points(&self, points: &Points3D<F>);
     fn render_3d_lines(&self, lines: &Lines3D<F>);
 }
 

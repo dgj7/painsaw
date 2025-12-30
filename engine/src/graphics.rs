@@ -39,6 +39,7 @@ impl<F: Float + Add<F> + Sub<F>> GraphicsIntermediary<F> {
     pub(crate) fn render_2d(&self, g2d: &Graph2D<F>) {
         for (_, model) in g2d.models.iter() {
             model.lines.iter().for_each(|x| self.subsystem.render_2d_lines(x));
+            model.points.iter().for_each(|x| self.subsystem.render_2d_points(x));
         }
     }
 
@@ -49,6 +50,7 @@ impl<F: Float + Add<F> + Sub<F>> GraphicsIntermediary<F> {
     pub(crate) fn render_3d(&self, g3d: &Graph3D<F>) {
         for (_, model) in g3d.models.iter() {
             model.lines.iter().for_each(|x| self.subsystem.render_3d_lines(x));
+            model.points.iter().for_each(|x| self.subsystem.render_3d_points(x));
         }
     }
 }

@@ -1,4 +1,4 @@
-use windows::Win32::Graphics::OpenGL::{glBegin, glClear, glClearColor, glColor3f, glDisable, glEnable, glEnd, glFlush, glFrustum, glLineWidth, glLoadIdentity, glMatrixMode, glOrtho, glVertex2f, glVertex3f, glViewport, GL_LINES};
+use windows::Win32::Graphics::OpenGL::{glBegin, glClear, glClearColor, glColor3f, glDisable, glEnable, glEnd, glFlush, glFrustum, glLineWidth, glLoadIdentity, glMatrixMode, glOrtho, glPointSize, glVertex2f, glVertex3f, glViewport, GL_LINES, GL_POINTS};
 use crate::graphics::subsystem::opengl::opengl_errors::check_errors_gl;
 
 pub(crate) fn gl_clear(mask: u32) {
@@ -19,6 +19,10 @@ pub(crate) fn gl_frustum(left: f64, right: f64, bottom: f64, top: f64, znear: f6
 
 pub(crate) fn gl_begin_lines() {
     unsafe { glBegin(GL_LINES); }
+}
+
+pub(crate) fn gl_begin_points() {
+    unsafe { glBegin(GL_POINTS); }
 }
 
 pub(crate) fn gl_end() {
@@ -65,6 +69,11 @@ pub(crate) fn gl_disable(cap: u32) {
 pub(crate) fn gl_line_width(width_pixels: f32) {
     unsafe { glLineWidth(width_pixels); }
     check_errors_gl("glLineWidth");
+}
+
+pub(crate) fn gl_point_size(width_pixels: f32) {
+    unsafe { glPointSize(width_pixels); }
+    check_errors_gl("glPointSize");
 }
 
 pub(crate) fn gl_color_3f(red: f32, green: f32, blue: f32) {
