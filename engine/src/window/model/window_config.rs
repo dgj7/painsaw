@@ -1,4 +1,4 @@
-use crate::render::handle::def::GraphicsSubSystem;
+use crate::wc::handle::def::GraphicsSubSystem;
 
 pub struct WindowConfig {
     pub dimensions: WindowDimensions,

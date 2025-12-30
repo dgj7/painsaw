@@ -5,5 +5,5 @@
 //! subsystem in use (for ex: opengl, directx, etc).
 //!
 
-pub mod renderer;
+pub mod world_control;
 pub mod context;

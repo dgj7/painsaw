@@ -1,5 +1,5 @@
 use crate::geometry::line::ls3d::Lines3D;
-use crate::render::subsystem::opengl::opengl_api::{gl_begin_lines, gl_color_3f, gl_end, gl_line_width, gl_vertex_3f};
+use crate::wc::subsystem::opengl::opengl_api::{gl_begin_lines, gl_color_3f, gl_end, gl_line_width, gl_vertex_3f};
 use num_traits::Float;
 //https://stackoverflow.com/questions/4280185/opengl-drawing-a-2d-overlay-on-a-3d-scene-problem
 

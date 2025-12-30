@@ -1,5 +1,5 @@
 pub mod logger;
 pub mod input;
-pub mod render;
+pub mod wc;
 pub mod window;
 pub mod geometry;

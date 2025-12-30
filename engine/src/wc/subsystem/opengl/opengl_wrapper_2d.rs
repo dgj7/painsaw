@@ -1,5 +1,5 @@
 use crate::geometry::line::ls2d::Lines2D;
-use crate::render::subsystem::opengl::opengl_api::{gl_begin_lines, gl_color_3f, gl_end, gl_line_width, gl_vertex_2f};
+use crate::wc::subsystem::opengl::opengl_api::{gl_begin_lines, gl_color_3f, gl_end, gl_line_width, gl_vertex_2f};
 use num_traits::Float;
 
 pub fn paint_2d_lines<F: Float>(lines: &Lines2D<F>) {

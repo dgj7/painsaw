@@ -2,14 +2,14 @@ use crate::input::model::input_state::InputState;
 use crate::input::model::keyboard_state::{KeyInfo, KeyPosition};
 use crate::logger::log;
 use crate::logger::log_level::LogLevel;
-use crate::render::handle::def::{grss_factory, GraphicsSubSystem};
-use crate::render::subsystem::opengl::opengl_mswin::{init_opengl, swap_buffers};
-use crate::render::subsystem::opengl::opengl_mswin_api::{get_dc, release_dc, wgl_delete_context, wgl_get_current_context, wgl_make_current};
+use crate::wc::handle::def::{grss_factory, GraphicsSubSystem};
+use crate::wc::subsystem::opengl::opengl_mswin::{init_opengl, swap_buffers};
+use crate::wc::subsystem::opengl::opengl_mswin_api::{get_dc, release_dc, wgl_delete_context, wgl_get_current_context, wgl_make_current};
 use crate::window::model::window_config::{WindowConfig, WindowDimensions};
 use crate::window::os::mswin::mswin_data::{create_and_write_pointer, input_state_to_raw_pointer, read_window_data};
 use crate::window::os::mswin::mswin_winapi::{create_window_ex, default_window_proc, dispatch_message, get_client_rect, get_module_handle, get_window_rect, load_cursor, peek_message, post_quit_message, register_class, translate_message};
-use crate::window::render::context::RendererContext;
-use crate::window::render::renderer::Renderer;
+use crate::window::wc::context::RendererContext;
+use crate::window::wc::world_control::WorldController;
 use crate::window::window::Window;
 use std::sync::{Arc, Mutex};
 use std::time::Instant;
@@ -38,7 +38,7 @@ pub struct MsWinWindow {
 }
 
 impl Window for MsWinWindow {
-    fn begin_event_handling(&mut self, renderer: &dyn Renderer<f32>) -> std::result::Result<(), Box<dyn std::error::Error>>
+    fn begin_event_handling(&mut self, renderer: &dyn WorldController<f32>) -> std::result::Result<(), Box<dyn std::error::Error>>
     {
         log(LogLevel::Info, &|| "begin event handling".parse().unwrap());
         let mut message: MSG = MSG::default();
@@ -47,7 +47,7 @@ impl Window for MsWinWindow {
         let mut context = RendererContext::new(&self.input, rssh);
 
         /* initialize client renderer, if necessary */
-        renderer.initialize(&mut context);
+        renderer.initialize_world(&mut context);
 
         while !self.quit {
             if peek_message(&mut message, Default::default(), 0, 0, PM_REMOVE) {
@@ -61,9 +61,9 @@ impl Window for MsWinWindow {
                 let _ = translate_message(&message);
                 dispatch_message(&message);
             } else {
-                /* update world info; render scene */
+                /* update world info; wc scene */
                 renderer.update_world(&mut context);
-                renderer.render_scene(&mut context);
+                renderer.display_world_scene(&mut context);
 
                 /* swap buffers after it's all done */
                 swap_buffers(self.hdc);

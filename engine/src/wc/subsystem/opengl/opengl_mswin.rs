@@ -3,7 +3,7 @@ use windows::Win32::Graphics::Gdi::HDC;
 use windows::Win32::Graphics::OpenGL::{SwapBuffers, HGLRC, PFD_DOUBLEBUFFER, PFD_DRAW_TO_WINDOW, PFD_MAIN_PLANE, PFD_SUPPORT_OPENGL, PFD_TYPE_RGBA, PIXELFORMATDESCRIPTOR};
 use crate::logger::log;
 use crate::logger::log_level::LogLevel;
-use crate::render::subsystem::opengl::opengl_mswin_api::{choose_pixel_format, get_dc, set_pixel_format, wgl_create_context, wgl_make_current};
+use crate::wc::subsystem::opengl::opengl_mswin_api::{choose_pixel_format, get_dc, set_pixel_format, wgl_create_context, wgl_make_current};
 
 pub fn init_opengl(hwnd: HWND) -> (HDC, HGLRC) {
     /* opengl: create pixel format */

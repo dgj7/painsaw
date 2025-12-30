@@ -1,4 +1,4 @@
-use crate::render::model::color::Color;
+use crate::wc::model::color::Color;
 
 pub struct DrawingConfig {
     pub color: Color,

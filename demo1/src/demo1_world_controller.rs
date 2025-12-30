@@ -10,9 +10,9 @@ use engine::geometry::vector::p3d::Point3D;
 use engine::input::model::keyboard_state::{KeyInfo, KeyPosition};
 use engine::logger::log;
 use engine::logger::log_level::LogLevel;
-use engine::render::model::color::Color;
-use engine::window::render::context::RendererContext;
-use engine::window::render::renderer::Renderer;
+use engine::wc::model::color::Color;
+use engine::window::wc::context::RendererContext;
+use engine::window::wc::world_control::WorldController;
 
 static M2D_XY_PURPLE: &str = "2d-xy-purple";
 static M2D_X_HORIZ: &str = "2d-x-horizontal";
@@ -21,10 +21,10 @@ static M3D_X_ABSCISSA: &str = "3d-axes-abscissa";
 static M3D_Y_ORDINATE: &str = "3d-axes-ordinate";
 static M3D_Z_APPLICATE: &str = "3d-axes-applicate";
 
-pub(crate) struct Demo1Renderer {}
+pub(crate) struct Demo1WorldController {}
 
-impl Renderer<f32> for Demo1Renderer {
-    fn init_renderer(&self, context: &mut RendererContext<f32>) {
+impl WorldController<f32> for Demo1WorldController {
+    fn initialize_world_helper(&self, context: &mut RendererContext<f32>) {
         /* gather variables */
         let ccd = context.copy_client_dimensions();
 
@@ -81,7 +81,7 @@ impl Renderer<f32> for Demo1Renderer {
     }
 }
 
-impl Demo1Renderer {
+impl Demo1WorldController {
     pub(crate) fn new() -> Self {
         Self {}
     }

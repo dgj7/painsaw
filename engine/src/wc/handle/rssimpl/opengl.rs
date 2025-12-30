@@ -1,13 +1,13 @@
 use crate::geometry::dim::d2d::Dimension2D;
 use crate::geometry::storage::g2d::Graph2D;
 use crate::geometry::storage::g3d::Graph3D;
-use crate::render::handle::def::RenderingSubSystemHandle;
-use crate::render::handle::info::RendererInfo;
-use crate::render::model::color::Color;
-use crate::render::subsystem::opengl::opengl_api::{gl_clear, gl_clear_color, gl_disable, gl_enable, gl_load_identity, gl_matrix_mode, gl_ortho, gl_viewport};
-use crate::render::subsystem::opengl::opengl_wrapper_2d::paint_2d_lines;
-use crate::render::subsystem::opengl::opengl_wrapper_3d::paint_3d_lines;
-use crate::window::render::context::RendererContext;
+use crate::wc::handle::def::RenderingSubSystemHandle;
+use crate::wc::handle::info::RendererInfo;
+use crate::wc::model::color::Color;
+use crate::wc::subsystem::opengl::opengl_api::{gl_clear, gl_clear_color, gl_disable, gl_enable, gl_load_identity, gl_matrix_mode, gl_ortho, gl_viewport};
+use crate::wc::subsystem::opengl::opengl_wrapper_2d::paint_2d_lines;
+use crate::wc::subsystem::opengl::opengl_wrapper_3d::paint_3d_lines;
+use crate::window::wc::context::RendererContext;
 use num_traits::Float;
 use std::ops::{Add, Sub};
 use windows::Win32::Graphics::OpenGL::{GL_COLOR_BUFFER_BIT, GL_DEPTH_BUFFER_BIT, GL_DEPTH_TEST, GL_MODELVIEW, GL_PROJECTION};
@@ -44,7 +44,7 @@ impl<F: Float + Add<F> + Sub<F>> RenderingSubSystemHandle<F> for OpenGLHandle {
         );
         gl_matrix_mode(GL_MODELVIEW);
 
-        /* render 2d */
+        /* wc 2d */
         // todo: this is in need of another reorg
         for (_, model) in graph.models.iter() {
             for lines in &model.lines {
@@ -63,7 +63,7 @@ impl<F: Float + Add<F> + Sub<F>> RenderingSubSystemHandle<F> for OpenGLHandle {
         gl_matrix_mode(GL_MODELVIEW);
         gl_load_identity();
 
-        /* render 3d */
+        /* wc 3d */
         // todo: this is in need of another reorg
         for (_, model) in graph.models.iter() {
             for lines in &model.lines {
