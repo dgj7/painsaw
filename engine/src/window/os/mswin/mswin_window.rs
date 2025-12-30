@@ -1,9 +1,10 @@
+use crate::graphics::subsystem::opengl::opengl_mswin::{init_opengl, swap_buffers};
+use crate::graphics::subsystem::opengl::opengl_mswin_api::{get_dc, release_dc, wgl_delete_context, wgl_get_current_context, wgl_make_current};
+use crate::graphics::subsystem::GraphicsSubSystem;
 use crate::input::model::input_state::InputState;
 use crate::input::model::keyboard_state::{KeyInfo, KeyPosition};
 use crate::logger::log;
 use crate::logger::log_level::LogLevel;
-use crate::graphics::subsystem::opengl::opengl_mswin::{init_opengl, swap_buffers};
-use crate::graphics::subsystem::opengl::opengl_mswin_api::{get_dc, release_dc, wgl_delete_context, wgl_get_current_context, wgl_make_current};
 use crate::window::model::window_config::{WindowConfig, WindowDimensions};
 use crate::window::os::mswin::mswin_data::{create_and_write_pointer, input_state_to_raw_pointer, read_window_data};
 use crate::window::os::mswin::mswin_winapi::{create_window_ex, default_window_proc, dispatch_message, get_client_rect, get_module_handle, get_window_rect, load_cursor, peek_message, post_quit_message, register_class, translate_message};
@@ -20,7 +21,6 @@ use windows::{
     Win32::Foundation::*,
     Win32::UI::WindowsAndMessaging::*,
 };
-use crate::graphics::subsystem::{grss_factory, GraphicsSubSystem};
 
 pub struct MsWinWindow {
     pub input: Arc<Mutex<InputState<f32>>>,
@@ -38,16 +38,14 @@ pub struct MsWinWindow {
 }
 
 impl Window for MsWinWindow {
-    fn begin_event_handling(&mut self, renderer: &dyn WorldController<f32>) -> std::result::Result<(), Box<dyn std::error::Error>>
+    fn begin_event_handling(&mut self, wc: &dyn WorldController<f32>) -> std::result::Result<(), Box<dyn std::error::Error>>
     {
         log(LogLevel::Info, &|| "begin event handling".parse().unwrap());
         let mut message: MSG = MSG::default();
-        let gss = self.grss.clone();
-        let rssh = grss_factory(gss);
-        let mut context = RendererContext::new(&self.input, rssh);
+        let mut context = RendererContext::new(&self.input, self.grss.clone());
 
         /* initialize client renderer, if necessary */
-        renderer.initialize_world(&mut context);
+        wc.initialize_world(&mut context);
 
         while !self.quit {
             if peek_message(&mut message, Default::default(), 0, 0, PM_REMOVE) {
@@ -62,8 +60,8 @@ impl Window for MsWinWindow {
                 dispatch_message(&message);
             } else {
                 /* update world info; graphics scene */
-                renderer.update_world(&mut context);
-                renderer.display_world_scene(&mut context);
+                wc.update_world(&mut context);
+                wc.display_world_scene(&mut context);
 
                 /* swap buffers after it's all done */
                 swap_buffers(self.hdc);

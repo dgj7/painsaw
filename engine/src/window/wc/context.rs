@@ -1,12 +1,13 @@
-use std::ops::{Add, Sub};
 use crate::geometry::dim::d2d::Dimension2D;
 use crate::geometry::storage::g2d::Graph2D;
 use crate::geometry::storage::g3d::Graph3D;
-use crate::input::model::input_state::InputState;
 use crate::graphics::model::renderer_info::RendererInfo;
-use std::sync::{Arc, Mutex};
+use crate::graphics::subsystem::GraphicsSubSystem;
+use crate::graphics::GraphicsIntermediary;
+use crate::input::model::input_state::InputState;
 use num_traits::Float;
-use crate::graphics::subsystem::RenderingSubSystemHandle;
+use std::ops::{Add, Sub};
+use std::sync::{Arc, Mutex};
 
 pub struct RendererContext<F: Float + Add<F> + Sub<F>> {
     /* storage for game statistics */
@@ -22,11 +23,11 @@ pub struct RendererContext<F: Float + Add<F> + Sub<F>> {
     pub g3d: Graph3D<F>,
     
     /* rendering subsystem */
-    pub subsystem: Box<dyn RenderingSubSystemHandle<F>>,
+    pub(crate) graphics: GraphicsIntermediary<F>,
 }
 
 impl<F: Float + Add<F> + Sub<F>> RendererContext<F> {
-    pub(crate) fn new(input: &Arc<Mutex<InputState<f32>>>, grss: Box<dyn RenderingSubSystemHandle<F>>) -> RendererContext<F> {
+    pub(crate) fn new(input: &Arc<Mutex<InputState<f32>>>, grss: GraphicsSubSystem) -> RendererContext<F> {
         RendererContext {
             first_frame_rendered: false,
             frame_count: 0,
@@ -37,7 +38,7 @@ impl<F: Float + Add<F> + Sub<F>> RendererContext<F> {
             g2d: Graph2D::new(),
             g3d: Graph3D::new(),
             
-            subsystem: grss,
+            graphics: GraphicsIntermediary::new(grss),
         }
     }
 

@@ -1,6 +1,3 @@
-use std::ops::{Add, Sub};
-use num_traits::Float;
-use windows::Win32::Graphics::OpenGL::{GL_COLOR_BUFFER_BIT, GL_DEPTH_BUFFER_BIT, GL_DEPTH_TEST, GL_MODELVIEW, GL_PROJECTION};
 use crate::geometry::dim::d2d::Dimension2D;
 use crate::geometry::storage::g2d::Graph2D;
 use crate::geometry::storage::g3d::Graph3D;
@@ -12,7 +9,9 @@ use crate::graphics::subsystem::opengl::opengl_wrapper_3d::paint_3d_lines;
 use crate::graphics::subsystem::RenderingSubSystemHandle;
 use crate::logger::log;
 use crate::logger::log_level::LogLevel;
-use crate::window::wc::context::RendererContext;
+use num_traits::{Float, ToPrimitive};
+use std::ops::{Add, Sub};
+use windows::Win32::Graphics::OpenGL::{GL_COLOR_BUFFER_BIT, GL_DEPTH_BUFFER_BIT, GL_DEPTH_TEST, GL_MODELVIEW, GL_PROJECTION};
 
 pub(crate) mod opengl_mswin_api;
 pub(crate) mod opengl_mswin;
@@ -28,17 +27,16 @@ impl<F: Float + Add<F> + Sub<F>> RenderingSubSystemHandle<F> for OpenGLHandle {
         todo!()
     }
 
-    fn initialize(&self, _context: &RendererContext<F>) {
+    fn initialize(&self) {
         log(LogLevel::Debug, &|| String::from("initialization complete"));
     }
 
-    fn before_scene(&self, ccd: &Dimension2D<F>) {
+    fn before_scene(&self, ccd: &Dimension2D<f32>) {
         paint_background(Color::BLACK);
         gl_viewport(0, 0, ccd.width.to_i32().unwrap(), ccd.height.to_i32().unwrap());
     }
 
-    fn render_2d(&self, graph: &Graph2D<F>, ccd: &Dimension2D<F>) {
-        /* prepare 2d rendering */
+    fn prepare_2d(&self, ccd: &Dimension2D<f32>) {
         gl_disable(GL_DEPTH_TEST);
         gl_matrix_mode(GL_PROJECTION);
         gl_load_identity();
@@ -50,9 +48,9 @@ impl<F: Float + Add<F> + Sub<F>> RenderingSubSystemHandle<F> for OpenGLHandle {
                  99999.0
         );
         gl_matrix_mode(GL_MODELVIEW);
+    }
 
-        /* graphics 2d */
-        // todo: this is in need of another reorg
+    fn render_2d(&self, graph: &Graph2D<F>) {
         for (_, model) in graph.models.iter() {
             for lines in &model.lines {
                 paint_2d_lines(&lines);
@@ -60,8 +58,7 @@ impl<F: Float + Add<F> + Sub<F>> RenderingSubSystemHandle<F> for OpenGLHandle {
         }
     }
 
-    fn render_3d(&self, graph: &Graph3D<F>) {
-        /* prepare 3d rendering */
+    fn prepare_3d(&self) {
         gl_enable(GL_DEPTH_TEST);
 
         gl_matrix_mode(GL_PROJECTION);
@@ -69,9 +66,9 @@ impl<F: Float + Add<F> + Sub<F>> RenderingSubSystemHandle<F> for OpenGLHandle {
         // todo: do camera; gluPerspective, glFrustum
         gl_matrix_mode(GL_MODELVIEW);
         gl_load_identity();
+    }
 
-        /* graphics 3d */
-        // todo: this is in need of another reorg
+    fn render_3d(&self, graph: &Graph3D<F>) {
         for (_, model) in graph.models.iter() {
             for lines in &model.lines {
                 paint_3d_lines(&lines);
