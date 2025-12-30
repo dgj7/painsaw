@@ -2,9 +2,9 @@ use crate::input::model::input_state::InputState;
 use crate::input::model::keyboard_state::{KeyInfo, KeyPosition};
 use crate::logger::log;
 use crate::logger::log_level::LogLevel;
-use crate::wc::handle::def::{grss_factory, GraphicsSubSystem};
-use crate::wc::subsystem::opengl::opengl_mswin::{init_opengl, swap_buffers};
-use crate::wc::subsystem::opengl::opengl_mswin_api::{get_dc, release_dc, wgl_delete_context, wgl_get_current_context, wgl_make_current};
+use crate::graphics::handle::def::{grss_factory, GraphicsSubSystem};
+use crate::graphics::subsystem::opengl::opengl_mswin::{init_opengl, swap_buffers};
+use crate::graphics::subsystem::opengl::opengl_mswin_api::{get_dc, release_dc, wgl_delete_context, wgl_get_current_context, wgl_make_current};
 use crate::window::model::window_config::{WindowConfig, WindowDimensions};
 use crate::window::os::mswin::mswin_data::{create_and_write_pointer, input_state_to_raw_pointer, read_window_data};
 use crate::window::os::mswin::mswin_winapi::{create_window_ex, default_window_proc, dispatch_message, get_client_rect, get_module_handle, get_window_rect, load_cursor, peek_message, post_quit_message, register_class, translate_message};
@@ -61,7 +61,7 @@ impl Window for MsWinWindow {
                 let _ = translate_message(&message);
                 dispatch_message(&message);
             } else {
-                /* update world info; wc scene */
+                /* update world info; graphics scene */
                 renderer.update_world(&mut context);
                 renderer.display_world_scene(&mut context);
 

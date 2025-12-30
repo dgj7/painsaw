@@ -7,8 +7,8 @@
 use crate::geometry::dim::d2d::Dimension2D;
 use crate::geometry::storage::g2d::Graph2D;
 use crate::geometry::storage::g3d::Graph3D;
-use crate::wc::handle::info::RendererInfo;
-use crate::wc::handle::rssimpl::opengl::OpenGLHandle;
+use crate::graphics::handle::info::RendererInfo;
+use crate::graphics::handle::rssimpl::opengl::OpenGLHandle;
 use num_traits::Float;
 use std::ops::{Add, Sub};
 use crate::window::wc::context::RendererContext;

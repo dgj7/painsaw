@@ -10,7 +10,7 @@ use engine::geometry::vector::p3d::Point3D;
 use engine::input::model::keyboard_state::{KeyInfo, KeyPosition};
 use engine::logger::log;
 use engine::logger::log_level::LogLevel;
-use engine::wc::model::color::Color;
+use engine::graphics::model::color::Color;
 use engine::window::wc::context::RendererContext;
 use engine::window::wc::world_control::WorldController;
 

@@ -1,7 +1,7 @@
 use std::ops::{Add, Sub};
 use num_traits::Float;
 use crate::geometry::line::l2d::Line2D;
-use crate::wc::model::color::Color;
+use crate::graphics::model::color::Color;
 
 #[derive(Clone)]
 pub struct Lines2D<F: Float + Add<F> + Sub<F>> {

@@ -3,8 +3,8 @@ use crate::geometry::dim::d2d::Dimension2D;
 use crate::geometry::storage::g2d::Graph2D;
 use crate::geometry::storage::g3d::Graph3D;
 use crate::input::model::input_state::InputState;
-use crate::wc::handle::def::RenderingSubSystemHandle;
-use crate::wc::handle::info::RendererInfo;
+use crate::graphics::handle::def::RenderingSubSystemHandle;
+use crate::graphics::handle::info::RendererInfo;
 use std::sync::{Arc, Mutex};
 use num_traits::Float;
 

@@ -37,7 +37,7 @@ pub trait WorldController<F: Float + Add<F> + Sub<F>> {
     ///
     /// display the game world scene.
     ///
-    /// fully controlled by engine; the engine is data-driven, meaning that render instructions
+    /// fully controlled by engine; the engine is data-driven, meaning that graphics instructions
     /// come from models supplied during initialization, along with changes to those models
     /// during the update world step.
     ///

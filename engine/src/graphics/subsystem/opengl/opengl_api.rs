@@ -1,5 +1,5 @@
 use windows::Win32::Graphics::OpenGL::{glBegin, glClear, glClearColor, glColor3f, glDisable, glEnable, glEnd, glFlush, glFrustum, glLineWidth, glLoadIdentity, glMatrixMode, glOrtho, glVertex2f, glVertex3f, glViewport, GL_LINES};
-use crate::wc::subsystem::opengl::opengl_errors::check_errors_gl;
+use crate::graphics::subsystem::opengl::opengl_errors::check_errors_gl;
 
 pub(crate) fn gl_clear(mask: u32) {
     unsafe { glClear(mask); }
