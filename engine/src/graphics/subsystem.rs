@@ -5,12 +5,12 @@
 //!
 
 use crate::geometry::dim::d2d::Dimension2D;
-use crate::geometry::storage::g2d::Graph2D;
-use crate::geometry::storage::g3d::Graph3D;
+use crate::geometry::line::ls2d::Lines2D;
 use crate::graphics::model::renderer_info::RendererInfo;
 use crate::graphics::subsystem::opengl::OpenGLHandle;
 use num_traits::Float;
 use std::ops::{Add, Sub};
+use crate::geometry::line::ls3d::Lines3D;
 
 pub mod opengl;
 
@@ -28,11 +28,11 @@ pub trait RenderingSubSystemHandle<F: Float + Add<F> + Sub<F>> {
 
     fn prepare_2d(&self, ccd: &Dimension2D<f32>);
 
-    fn render_2d(&self, graph: &Graph2D<F>);
-
     fn prepare_3d(&self);
-
-    fn render_3d(&self, graph: &Graph3D<F>);
+    
+    fn render_2d_lines(&self, lines: &Lines2D<F>);
+    
+    fn render_3d_lines(&self, lines: &Lines3D<F>);
 }
 
 pub fn grss_factory<F: Float + Add<F> + Sub<F>>(gss: GraphicsSubSystem) -> Box<dyn RenderingSubSystemHandle<F>> {

@@ -37,7 +37,11 @@ impl<F: Float + Add<F> + Sub<F>> GraphicsIntermediary<F> {
     }
     
     pub(crate) fn render_2d(&self, g2d: &Graph2D<F>) {
-        self.subsystem.render_2d(g2d);
+        for (_, model) in g2d.models.iter() {
+            for lines in &model.lines {
+                self.subsystem.render_2d_lines(lines);
+            }
+        }
     }
     
     pub(crate) fn prepare_3d(&self) {
@@ -45,6 +49,10 @@ impl<F: Float + Add<F> + Sub<F>> GraphicsIntermediary<F> {
     }
     
     pub(crate) fn render_3d(&self, g3d: &Graph3D<F>) {
-        self.subsystem.render_3d(g3d);
+        for (_, model) in g3d.models.iter() {
+            for lines in &model.lines {
+                self.subsystem.render_3d_lines(lines);
+            }
+        }
     }
 }

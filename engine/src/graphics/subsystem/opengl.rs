@@ -1,11 +1,9 @@
 use crate::geometry::dim::d2d::Dimension2D;
-use crate::geometry::storage::g2d::Graph2D;
-use crate::geometry::storage::g3d::Graph3D;
+use crate::geometry::line::ls2d::Lines2D;
+use crate::geometry::line::ls3d::Lines3D;
 use crate::graphics::model::color::Color;
 use crate::graphics::model::renderer_info::RendererInfo;
-use crate::graphics::subsystem::opengl::opengl_api::{gl_clear, gl_clear_color, gl_disable, gl_enable, gl_load_identity, gl_matrix_mode, gl_ortho, gl_viewport};
-use crate::graphics::subsystem::opengl::opengl_wrapper_2d::paint_2d_lines;
-use crate::graphics::subsystem::opengl::opengl_wrapper_3d::paint_3d_lines;
+use crate::graphics::subsystem::opengl::opengl_api::{gl_begin_lines, gl_clear, gl_clear_color, gl_color_3f, gl_disable, gl_enable, gl_end, gl_line_width, gl_load_identity, gl_matrix_mode, gl_ortho, gl_vertex_2f, gl_vertex_3f, gl_viewport};
 use crate::graphics::subsystem::RenderingSubSystemHandle;
 use crate::logger::log;
 use crate::logger::log_level::LogLevel;
@@ -16,8 +14,6 @@ use windows::Win32::Graphics::OpenGL::{GL_COLOR_BUFFER_BIT, GL_DEPTH_BUFFER_BIT,
 pub(crate) mod opengl_mswin_api;
 pub(crate) mod opengl_mswin;
 pub(crate) mod opengl_api;
-pub(crate) mod opengl_wrapper_2d;
-pub(crate) mod opengl_wrapper_3d;
 mod opengl_errors;
 
 pub struct OpenGLHandle {}
@@ -50,14 +46,6 @@ impl<F: Float + Add<F> + Sub<F>> RenderingSubSystemHandle<F> for OpenGLHandle {
         gl_matrix_mode(GL_MODELVIEW);
     }
 
-    fn render_2d(&self, graph: &Graph2D<F>) {
-        for (_, model) in graph.models.iter() {
-            for lines in &model.lines {
-                paint_2d_lines(&lines);
-            }
-        }
-    }
-
     fn prepare_3d(&self) {
         gl_enable(GL_DEPTH_TEST);
 
@@ -68,12 +56,28 @@ impl<F: Float + Add<F> + Sub<F>> RenderingSubSystemHandle<F> for OpenGLHandle {
         gl_load_identity();
     }
 
-    fn render_3d(&self, graph: &Graph3D<F>) {
-        for (_, model) in graph.models.iter() {
-            for lines in &model.lines {
-                paint_3d_lines(&lines);
-            }
+    fn render_2d_lines(&self, lines: &Lines2D<F>) {
+        gl_color_3f(lines.color.red, lines.color.green, lines.color.blue);
+        gl_line_width(lines.thickness.to_f32().unwrap());
+
+        gl_begin_lines();
+        for line in lines.lines.iter() {
+            gl_vertex_2f(line.x.x.to_f32().unwrap(), line.x.y.to_f32().unwrap());
+            gl_vertex_2f(line.y.x.to_f32().unwrap(), line.y.y.to_f32().unwrap());
         }
+        gl_end();
+    }
+
+    fn render_3d_lines(&self, lines: &Lines3D<F>) {
+        gl_color_3f(lines.color.red, lines.color.green, lines.color.blue);
+        gl_line_width(lines.thickness.to_f32().unwrap());
+
+        gl_begin_lines();
+        for line in &lines.lines {
+            gl_vertex_3f(line.a.x.to_f32().unwrap(), line.a.y.to_f32().unwrap(), line.a.z.to_f32().unwrap());
+            gl_vertex_3f(line.b.x.to_f32().unwrap(), line.b.y.to_f32().unwrap(), line.b.z.to_f32().unwrap());
+        }
+        gl_end();
     }
 }
 
