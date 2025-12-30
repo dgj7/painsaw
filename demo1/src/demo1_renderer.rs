@@ -24,7 +24,7 @@ static M3D_Z_APPLICATE: &str = "3d-axes-applicate";
 pub(crate) struct Demo1Renderer {}
 
 impl Renderer<f32> for Demo1Renderer {
-    fn initialize(&self, context: &mut RendererContext<f32>) {
+    fn init_renderer(&self, context: &mut RendererContext<f32>) {
         /* gather variables */
         let ccd = context.copy_client_dimensions();
 

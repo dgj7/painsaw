@@ -11,6 +11,7 @@ use crate::render::handle::info::RendererInfo;
 use crate::render::handle::rssimpl::opengl::OpenGLHandle;
 use num_traits::Float;
 use std::ops::{Add, Sub};
+use crate::window::render::context::RendererContext;
 
 #[derive(Clone)]
 pub enum GraphicsSubSystem {
@@ -19,6 +20,8 @@ pub enum GraphicsSubSystem {
 
 pub trait RenderingSubSystemHandle<F: Float + Add<F> + Sub<F>> {
     fn identify(&self) -> RendererInfo;
+    
+    fn initialize(&self, context: &RendererContext<F>);
 
     fn before_scene(&self, ccd: &Dimension2D<F>);
 

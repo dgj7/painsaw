@@ -7,15 +7,22 @@ use crate::render::model::color::Color;
 use crate::render::subsystem::opengl::opengl_api::{gl_clear, gl_clear_color, gl_disable, gl_enable, gl_load_identity, gl_matrix_mode, gl_ortho, gl_viewport};
 use crate::render::subsystem::opengl::opengl_wrapper_2d::paint_2d_lines;
 use crate::render::subsystem::opengl::opengl_wrapper_3d::paint_3d_lines;
+use crate::window::render::context::RendererContext;
 use num_traits::Float;
 use std::ops::{Add, Sub};
 use windows::Win32::Graphics::OpenGL::{GL_COLOR_BUFFER_BIT, GL_DEPTH_BUFFER_BIT, GL_DEPTH_TEST, GL_MODELVIEW, GL_PROJECTION};
+use crate::logger::log;
+use crate::logger::log_level::LogLevel;
 
 pub struct OpenGLHandle {}
 
 impl<F: Float + Add<F> + Sub<F>> RenderingSubSystemHandle<F> for OpenGLHandle {
     fn identify(&self) -> RendererInfo {
         todo!()
+    }
+
+    fn initialize(&self, _context: &RendererContext<F>) {
+        log(LogLevel::Debug, &|| String::from("initialization complete"));
     }
 
     fn before_scene(&self, ccd: &Dimension2D<F>) {
