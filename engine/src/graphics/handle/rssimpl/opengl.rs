@@ -2,7 +2,7 @@ use crate::geometry::dim::d2d::Dimension2D;
 use crate::geometry::storage::g2d::Graph2D;
 use crate::geometry::storage::g3d::Graph3D;
 use crate::graphics::handle::def::RenderingSubSystemHandle;
-use crate::graphics::handle::info::RendererInfo;
+use crate::graphics::model::renderer_info::RendererInfo;
 use crate::graphics::model::color::Color;
 use crate::graphics::subsystem::opengl::opengl_api::{gl_clear, gl_clear_color, gl_disable, gl_enable, gl_load_identity, gl_matrix_mode, gl_ortho, gl_viewport};
 use crate::graphics::subsystem::opengl::opengl_wrapper_2d::paint_2d_lines;

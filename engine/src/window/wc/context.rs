@@ -4,7 +4,7 @@ use crate::geometry::storage::g2d::Graph2D;
 use crate::geometry::storage::g3d::Graph3D;
 use crate::input::model::input_state::InputState;
 use crate::graphics::handle::def::RenderingSubSystemHandle;
-use crate::graphics::handle::info::RendererInfo;
+use crate::graphics::model::renderer_info::RendererInfo;
 use std::sync::{Arc, Mutex};
 use num_traits::Float;
 
