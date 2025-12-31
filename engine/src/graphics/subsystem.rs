@@ -6,13 +6,13 @@
 
 use crate::geometry::dim::d2d::Dimension2D;
 use crate::geometry::line::ls2d::Lines2D;
+use crate::geometry::line::ls3d::Lines3D;
+use crate::geometry::vector::ps2d::Points2D;
+use crate::geometry::vector::ps3d::Points3D;
 use crate::graphics::model::renderer_info::RendererInfo;
 use crate::graphics::subsystem::opengl::OpenGLHandle;
 use num_traits::Float;
 use std::ops::{Add, Sub};
-use crate::geometry::line::ls3d::Lines3D;
-use crate::geometry::vector::ps2d::Points2D;
-use crate::geometry::vector::ps3d::Points3D;
 
 pub mod opengl;
 
