@@ -6,7 +6,7 @@ use engine::logger::{configure, log, LoggerConfig};
 use engine::window::model::window_config::{WindowConfig, WindowDimensions};
 use engine::window::window_factory::create_window;
 use demo1_world_controller::Demo1WorldController;
-use engine::graphics::subsystem::GraphicsSubSystem;
+use engine::graphics::subsystem::{GraphicsSubSystem, OpenGLPipeline};
 
 pub mod demo1_world_controller;
 
@@ -18,7 +18,7 @@ fn main() {
         WindowDimensions::Dimensional { width: 800, height: 600 },
         "Demo1 - MsWin/OpenGL",
     "PAINSAW-DEMO1",
-            GraphicsSubSystem::OpenGL,
+            GraphicsSubSystem::OpenGL { pipeline: OpenGLPipeline::FixedFunction }
     );
 
     match create_window(&cfg) {

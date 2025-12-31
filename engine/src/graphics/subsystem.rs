@@ -18,11 +18,17 @@ pub mod opengl;
 
 #[derive(Clone)]
 pub enum GraphicsSubSystem {
-    OpenGL,
+    OpenGL { pipeline: OpenGLPipeline },
+}
+
+#[derive(Clone)]
+pub enum OpenGLPipeline {
+    FixedFunction,
+    Shaders,
 }
 
 pub trait RenderingSubSystemHandle<F: Float + Add<F> + Sub<F>> {
-    fn identify(&self) -> RendererInfo;
+    fn identify(&self) -> Option<RendererInfo>;
     fn initialize(&self);
     fn before_scene(&self, ccd: &Dimension2D<f32>);
     fn prepare_2d(&self, ccd: &Dimension2D<f32>);
@@ -35,6 +41,6 @@ pub trait RenderingSubSystemHandle<F: Float + Add<F> + Sub<F>> {
 
 pub fn grss_factory<F: Float + Add<F> + Sub<F>>(gss: GraphicsSubSystem) -> Box<dyn RenderingSubSystemHandle<F>> {
     match gss {
-        GraphicsSubSystem::OpenGL => Box::new(OpenGLHandle {})
+        GraphicsSubSystem::OpenGL { pipeline: pl } => Box::new(OpenGLHandle { pipeline: pl })
     }
 }
