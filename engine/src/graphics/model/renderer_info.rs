@@ -1,4 +1,5 @@
 
+#[derive(Debug)]
 pub struct RendererInfo {
     pub name: Option<String>,
     pub version: Option<String>,

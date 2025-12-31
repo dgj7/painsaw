@@ -4,13 +4,13 @@ use crate::geometry::line::ls3d::Lines3D;
 use crate::geometry::vector::ps2d::Points2D;
 use crate::geometry::vector::ps3d::Points3D;
 use crate::graphics::model::renderer_info::RendererInfo;
-use crate::graphics::subsystem::opengl::opengl_api::{gl_begin_lines, gl_begin_points, gl_clear, gl_clear_color, gl_color_3f, gl_disable, gl_enable, gl_end, gl_line_width, gl_load_identity, gl_matrix_mode, gl_ortho, gl_point_size, gl_vertex_2f, gl_vertex_3f, gl_viewport};
+use crate::graphics::subsystem::opengl::opengl_api::{gl_begin_lines, gl_begin_points, gl_clear, gl_clear_color, gl_color_3f, gl_disable, gl_enable, gl_end, gl_get_string, gl_line_width, gl_load_identity, gl_matrix_mode, gl_ortho, gl_point_size, gl_vertex_2f, gl_vertex_3f, gl_viewport};
 use crate::graphics::subsystem::{OpenGLPipeline, RenderingSubSystemHandle};
 use crate::logger::log;
 use crate::logger::log_level::LogLevel;
 use num_traits::{Float, ToPrimitive};
 use std::ops::{Add, Sub};
-use windows::Win32::Graphics::OpenGL::{GL_COLOR_BUFFER_BIT, GL_DEPTH_BUFFER_BIT, GL_DEPTH_TEST, GL_MODELVIEW, GL_PROJECTION};
+use windows::Win32::Graphics::OpenGL::{GL_COLOR_BUFFER_BIT, GL_DEPTH_BUFFER_BIT, GL_DEPTH_TEST, GL_MODELVIEW, GL_PROJECTION, GL_RENDERER, GL_VENDOR};
 
 pub(crate) mod opengl_mswin_api;
 pub(crate) mod opengl_mswin;
@@ -25,7 +25,10 @@ impl<F: Float + Add<F> + Sub<F>> RenderingSubSystemHandle<F> for OpenGLHandle {
     fn identify(&self) -> Option<RendererInfo> {
         match self.pipeline {
             OpenGLPipeline::FixedFunction => {
-                None
+                let version = gl_get_string(GL_VENDOR);
+                let vendor = gl_get_string(GL_VENDOR);
+                let device = gl_get_string(GL_RENDERER);
+                Some(RendererInfo { name: Some(String::from("OpenGL")), version, vendor, device })
             }
             OpenGLPipeline::Shaders => {
                 None

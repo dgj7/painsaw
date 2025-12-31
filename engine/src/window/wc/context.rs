@@ -1,7 +1,6 @@
 use crate::geometry::dim::d2d::Dimension2D;
 use crate::geometry::storage::g2d::Graph2D;
 use crate::geometry::storage::g3d::Graph3D;
-use crate::graphics::model::renderer_info::RendererInfo;
 use crate::graphics::subsystem::GraphicsSubSystem;
 use crate::graphics::GraphicsIntermediary;
 use crate::input::model::input_state::InputState;
@@ -13,7 +12,6 @@ pub struct RendererContext<F: Float + Add<F> + Sub<F>> {
     /* storage for game statistics */
     pub first_frame_rendered: bool,
     pub frame_count: u128,
-    pub info: Option<RendererInfo>,
 
     /* storage for input state */
     pub input: Arc<Mutex<InputState<f32>>>,
@@ -31,7 +29,6 @@ impl<F: Float + Add<F> + Sub<F>> RendererContext<F> {
         RendererContext {
             first_frame_rendered: false,
             frame_count: 0,
-            info: None,
 
             input: input.clone(),
             

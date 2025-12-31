@@ -1,5 +1,8 @@
-use windows::Win32::Graphics::OpenGL::{glBegin, glClear, glClearColor, glColor3f, glDisable, glEnable, glEnd, glFlush, glFrustum, glLineWidth, glLoadIdentity, glMatrixMode, glOrtho, glPointSize, glVertex2f, glVertex3f, glViewport, GL_LINES, GL_POINTS};
 use crate::graphics::subsystem::opengl::opengl_errors::check_errors_gl;
+use crate::logger::log;
+use crate::logger::log_level::LogLevel;
+use std::ffi::{c_char, CStr};
+use windows::Win32::Graphics::OpenGL::{glBegin, glClear, glClearColor, glColor3f, glDisable, glEnable, glEnd, glFlush, glFrustum, glGetString, glLineWidth, glLoadIdentity, glMatrixMode, glOrtho, glPointSize, glVertex2f, glVertex3f, glViewport, GL_LINES, GL_POINTS};
 
 pub(crate) fn gl_clear(mask: u32) {
     unsafe { glClear(mask); }
@@ -54,6 +57,23 @@ pub(crate) fn gl_load_identity() {
 pub(crate) fn gl_ortho(left: f64, right: f64, bottom: f64, top: f64, znear: f64, zfar: f64) {
     unsafe { glOrtho(left, right, bottom, top, znear, zfar) }
     check_errors_gl("glOrtho");
+}
+
+pub(crate) fn gl_get_string(name: u32) -> Option<String> {
+    let result = unsafe { glGetString(name) };
+    check_errors_gl("glGetString");
+    if result.is_null() {
+        return None;
+    }
+
+    let c_str = unsafe { CStr::from_ptr(result as *const c_char) };
+    match c_str.to_str() {
+        Ok(s) => Some(s.to_string()),
+        Err(_e) => {
+            log(LogLevel::Error, &|| String::from("glGetString returned invalid string"));
+            None
+        }
+    }
 }
 
 pub(crate) fn gl_enable(cap: u32) {

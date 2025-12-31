@@ -4,6 +4,9 @@ use crate::geometry::storage::g3d::Graph3D;
 use crate::graphics::subsystem::{grss_factory, GraphicsSubSystem, RenderingSubSystemHandle};
 use num_traits::Float;
 use std::ops::{Add, Sub};
+use crate::graphics::model::renderer_info::RendererInfo;
+use crate::logger::log;
+use crate::logger::log_level::LogLevel;
 
 pub mod model;
 pub mod subsystem;
@@ -15,17 +18,22 @@ pub mod subsystem;
 /// from both the operating system and the geometry systems.
 pub(crate) struct GraphicsIntermediary<F: Float + Add<F> + Sub<F>> {
     subsystem: Box<dyn RenderingSubSystemHandle<F>>,
+    info: Option<RendererInfo>,
 }
 
 impl<F: Float + Add<F> + Sub<F>> GraphicsIntermediary<F> {
     pub(crate) fn new(grss: GraphicsSubSystem) -> GraphicsIntermediary<F> {
         GraphicsIntermediary {
             subsystem: grss_factory(grss),
+            info: None,
         }
     }
 
-    pub(crate) fn initialize(&self) {
+    pub(crate) fn initialize(&mut self) {
         self.subsystem.initialize();
+        self.info = self.subsystem.identify();
+        log(LogLevel::Info, &|| String::from(format!("{:?}", self.info)));
+        log(LogLevel::Debug, &|| String::from("initialization complete"));
     }
 
     pub(crate) fn before_scene(&self, ccd: &Dimension2D<f32>) {
