@@ -78,6 +78,7 @@ impl WorldController<f32> for Demo1WorldController {
                     context.g2d.models.entry(M2D_XY_PURPLE.parse().unwrap()).and_modify(|e| *e = create_2d_axes(&ccd));
                     context.g2d.models.entry(M2D_X_HORIZ.parse().unwrap()).and_modify(|e| *e = create_2d_grid_x_lines(&ccd));
                     context.g2d.models.entry(M2D_Y_VERT.parse().unwrap()).and_modify(|e| *e = create_2d_grid_y_lines(&ccd));
+
                     log(LogLevel::Debug, &|| String::from(format!("window size changed; 2d model count is [{}]", context.g2d.models.len())));
                 }
                 is.screen_resized = false;

@@ -28,6 +28,7 @@ impl<F: Float + Add<F> + Sub<F>> RenderingSubSystemHandle<F> for OpenGLHandle {
                 let version = gl_get_string(GL_VENDOR);
                 let vendor = gl_get_string(GL_VENDOR);
                 let device = gl_get_string(GL_RENDERER);
+
                 Some(RendererInfo { name: Some(String::from("OpenGL")), version, vendor, device })
             }
             OpenGLPipeline::Shaders => {
@@ -39,6 +40,7 @@ impl<F: Float + Add<F> + Sub<F>> RenderingSubSystemHandle<F> for OpenGLHandle {
     fn initialize(&self) {
         match self.pipeline {
             OpenGLPipeline::FixedFunction => {
+                // todo: load/bind textures here
                 log(LogLevel::Debug, &|| String::from("initialization complete"));
             }
             OpenGLPipeline::Shaders => {}
@@ -50,6 +52,7 @@ impl<F: Float + Add<F> + Sub<F>> RenderingSubSystemHandle<F> for OpenGLHandle {
             OpenGLPipeline::FixedFunction => {
                 gl_clear_color(0.0, 0.0, 0.0, 1.0);
                 gl_clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
                 gl_viewport(0, 0, ccd.width.to_i32().unwrap(), ccd.height.to_i32().unwrap());
             }
             OpenGLPipeline::Shaders => {}
@@ -82,7 +85,9 @@ impl<F: Float + Add<F> + Sub<F>> RenderingSubSystemHandle<F> for OpenGLHandle {
 
                 gl_matrix_mode(GL_PROJECTION);
                 gl_load_identity();
+
                 // todo: do camera; gluPerspective, glFrustum
+
                 gl_matrix_mode(GL_MODELVIEW);
                 gl_load_identity();
             }
