@@ -21,9 +21,9 @@ impl<P: Pixel> RawImage<P> {
     /// into the given pixel format.
     ///
     #[allow(dead_code)]// todo: remove this
-    pub fn one_bpp_to_raw_img<F>(width: u32, height: u32, bytes: Vec<u8>, color: &Color, func: F) -> RawImage<P>
+    pub fn one_bpp_to_raw_img<F>(width: u32, height: u32, bytes: Vec<u8>, on_color: &Color, off_color: &Color, func: F) -> RawImage<P>
     where
-        F: Fn(bool, &Color) -> P,
+        F: Fn(bool, &Color, &Color) -> P,
     {
         /* intermediary data storage */
         let mut data = vec!();
@@ -32,7 +32,7 @@ impl<P: Pixel> RawImage<P> {
         for byte in bytes {
             for i in 0..8 {
                 let bit = ((byte >> i) & 1) != 0;
-                let expanded = func(bit, color);
+                let expanded = func(bit, on_color, off_color);
                 data.push(expanded);
             }
         }

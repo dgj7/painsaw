@@ -16,12 +16,13 @@ impl Pixel for PixelRgba8 {}
 
 impl PixelRgba8 {
     #[allow(dead_code)]// todo: remove this
-    pub(crate) fn from_bit_per_pixel(bit: bool, color: &Color) -> PixelRgba8 {
+    pub(crate) fn from_bit_per_pixel(bit: bool, on_color: &Color, off_color: &Color) -> PixelRgba8 {
         if bit {
-            let (r, g, b, a) = convert_u8(color);
+            let (r, g, b, a) = convert_u8(on_color);
             PixelRgba8 { r, g, b, a}
         } else {
-            PixelRgba8 { r: 0, g: 0, b: 0, a: 255 }
+            let (r, g, b, a) = convert_u8(off_color);
+            PixelRgba8 { r, g, b, a}
         }
     }
 }
