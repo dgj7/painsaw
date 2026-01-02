@@ -1,3 +1,4 @@
+
 #[derive(Clone)]
 pub struct Color {
     pub red: f32,
@@ -6,21 +7,24 @@ pub struct Color {
     pub alpha: f32,
 }
 
+// todo: should these float values be clamped?  what to do if they're above an expected value?  panic??
+
 impl Color {
     pub const fn from_rgba(red: f32, green: f32, blue: f32, alpha: f32) -> Color {
         Color {red, green, blue, alpha }
     }
     
     pub const fn from_rgb(red: f32, green: f32, blue: f32) -> Color {
-        Color {red, green, blue, alpha: 1.0}
+        Self::from_rgba(red, green, blue, 1.0)
     }
     
     pub const fn from_rgba_int(red: i32, green: i32, blue: i32, alpha: i32) -> Color {
-        Color { red: (red / 256) as f32, green: (green / 256) as f32, blue: (blue / 256) as f32, alpha: alpha as f32 }
-    }
-    
-    pub const fn from_rgb_int(red: i32, green: i32, blue: i32) -> Color {
-        Color { red: (red / 256) as f32, green: (green / 256) as f32, blue: (blue / 256) as f32, alpha: 1.0 }
+        Self::from_rgba(
+            red as f32 / 255f32,
+            green as f32 / 255f32,
+            blue as f32 / 255f32,
+            alpha as f32 / 255f32,
+        )
     }
     
     pub const RED: Color = Color::from_rgb(1.0, 0.0, 0.0);
@@ -29,4 +33,47 @@ impl Color {
     
     pub const WHITE: Color = Color::from_rgb(1.0, 1.0, 1.0);
     pub const BLACK: Color = Color::from_rgb(0.0, 0.0, 0.0);
+}
+
+pub fn convert_u8(color: &Color) -> (u8, u8, u8, u8) {
+    let red = (color.red * 255.0) as u8;
+    let green = (color.green * 255.0) as u8;
+    let blue = (color.blue * 255.0) as u8;
+    let alpha = (color.alpha * 255.0) as u8;
+    (red, green, blue, alpha)
+}
+
+#[cfg(test)]
+mod test_convert_u8 {
+    use crate::graphics::model::color::{convert_u8, Color};
+
+    fn run_case(input: f32, expected: f32) {
+        let step1 = Color::from_rgba(input, input, input, input);
+        let (red1, green1, blue1, alpha1) = convert_u8(&step1);
+
+        let step2 = Color::from_rgba_int(red1 as i32, green1 as i32, blue1 as i32, alpha1 as i32);
+        validate(expected, &step2);
+
+        let (red2, green2, blue2, alpha2) = convert_u8(&step2);
+        let step3 = Color::from_rgba_int(red2 as i32, green2 as i32, blue2 as i32, alpha2 as i32);
+
+        validate(expected, &step3);
+    }
+
+    fn validate(expected: f32, color: &Color) {
+        assert_eq!(expected, color.red);
+        assert_eq!(expected, color.green);
+        assert_eq!(expected, color.blue);
+        assert_eq!(expected, color.alpha);
+    }
+
+    #[test]
+    fn test_min() {
+        run_case(0.0, 0.0);
+    }
+
+    #[test]
+    fn test_max() {
+        run_case(1.0, 1.0);
+    }
 }

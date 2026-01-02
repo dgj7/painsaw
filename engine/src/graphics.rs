@@ -10,6 +10,7 @@ use crate::logger::log_level::LogLevel;
 
 pub mod model;
 pub mod subsystem;
+pub mod image;
 
 ///
 /// Graphics rendering intermediary.
