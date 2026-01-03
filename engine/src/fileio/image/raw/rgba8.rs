@@ -1,4 +1,4 @@
-use crate::fileio::image::raw::ri::Pixel;
+use crate::fileio::image::raw::Pixel;
 use crate::graphics::model::color::{convert_u8, Color};
 
 ///

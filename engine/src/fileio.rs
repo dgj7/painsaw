@@ -1,1 +1,2 @@
-pub mod image;
+pub(crate) mod image;
+pub(crate) mod endianness;

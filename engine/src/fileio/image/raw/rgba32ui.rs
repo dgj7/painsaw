@@ -1,4 +1,4 @@
-use crate::fileio::image::raw::ri::Pixel;
+use crate::fileio::image::raw::Pixel;
 
 ///
 /// opengl GL_RGBA_INTEGER (internal GL_RGBA32UI).
