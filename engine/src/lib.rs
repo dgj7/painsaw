@@ -3,3 +3,4 @@ pub mod input;
 pub mod graphics;
 pub mod window;
 pub mod geometry;
+pub(crate) mod fileio;
