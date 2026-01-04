@@ -2,6 +2,8 @@
 //! various "raw" image formats; these are the ones uploaded to the graphics chip.
 //!
 
+use crate::fileio::resources::memory::MemoryResource;
+use crate::fileio::resources::Resource;
 use crate::graphics::model::color::Color;
 
 pub mod rgba8;
@@ -17,11 +19,10 @@ pub trait Pixel {}
 ///
 /// raw opengl image data.
 ///
-#[allow(dead_code)]// todo: remove this
 pub struct RawImage<P: Pixel> {
-    pub(crate) width: u32,
-    pub(crate) height: u32,
-    pub(crate) data: Vec<P>,
+    pub width: u32,
+    pub height: u32,
+    pub data: Vec<P>,
 }
 
 impl<P: Pixel> RawImage<P> {
@@ -30,12 +31,16 @@ impl<P: Pixel> RawImage<P> {
     /// into the given pixel format.
     ///
     #[allow(dead_code)]// todo: remove this
-    pub fn one_bpp_to_raw_img<F>(width: u32, height: u32, bytes: Vec<u8>, on_color: &Color, off_color: &Color, func: F) -> RawImage<P>
+    pub fn one_bpp_to_raw_img<F>(width: u32, height: u32, resource: Box<dyn Resource>, on_color: &Color, off_color: &Color, func: F) -> RawImage<P>
     where
         F: Fn(bool, &Color, &Color) -> P,
     {
         /* intermediary data storage */
         let mut data = vec!();
+        let bytes = match resource.bytes() {
+            Ok(bytes) => bytes,
+            Err(e) => panic!("[{}]: error loading bytes", e)
+        };
 
         /* iterate over bits and expand */
         for byte in bytes {
