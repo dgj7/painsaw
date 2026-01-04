@@ -2,7 +2,7 @@ use crate::graphics::subsystem::opengl::opengl_errors::check_errors_gl;
 use crate::logger::log;
 use crate::logger::log_level::LogLevel;
 use std::ffi::{c_char, CStr};
-use windows::Win32::Graphics::OpenGL::{glBegin, glClear, glClearColor, glColor3f, glDisable, glEnable, glEnd, glFlush, glFrustum, glGetString, glLineWidth, glLoadIdentity, glMatrixMode, glOrtho, glPointSize, glVertex2f, glVertex3f, glViewport, GL_LINES, GL_POINTS};
+use windows::Win32::Graphics::OpenGL::{glBegin, glBindTexture, glClear, glClearColor, glColor3f, glDisable, glEnable, glEnd, glFlush, glFrustum, glGenTextures, glGetString, glLineWidth, glLoadIdentity, glMatrixMode, glOrtho, glPixelStorei, glPointSize, glTexCoord2f, glTexImage2D, glTexParameteri, glVertex2f, glVertex3f, glViewport, GL_LINES, GL_POINTS, GL_QUADS};
 
 pub(crate) fn gl_clear(mask: u32) {
     unsafe { glClear(mask); }
@@ -26,6 +26,10 @@ pub(crate) fn gl_begin_lines() {
 
 pub(crate) fn gl_begin_points() {
     unsafe { glBegin(GL_POINTS); }
+}
+
+pub(crate) fn gl_begin_quads() {
+    unsafe { glBegin(GL_QUADS); }
 }
 
 pub(crate) fn gl_end() {
@@ -62,6 +66,7 @@ pub(crate) fn gl_ortho(left: f64, right: f64, bottom: f64, top: f64, znear: f64,
 pub(crate) fn gl_get_string(name: u32) -> Option<String> {
     let result = unsafe { glGetString(name) };
     check_errors_gl("glGetString");
+
     if result.is_null() {
         return None;
     }
@@ -103,8 +108,40 @@ pub(crate) fn gl_color_3f(red: f32, green: f32, blue: f32) {
 
 pub(crate) fn gl_vertex_2f(x: f32, y: f32) {
     unsafe { glVertex2f(x, y); }
+    //check_errors_gl("glVertex2f");
 }
 
 pub(crate) fn gl_vertex_3f(x: f32, y: f32, z: f32) {
     unsafe { glVertex3f(x, y, z); }
+    //check_errors_gl("glVertex3f");
+}
+
+pub(crate) fn gl_pixel_store_i(pname: u32, param1: i32) {
+    unsafe { glPixelStorei(pname, param1) }
+    check_errors_gl("glPixelStorei");
+}
+
+pub(crate) fn gl_gen_textures(n: i32, textures: *mut u32) {
+    unsafe { glGenTextures(n, textures) }
+    check_errors_gl("glGenTextures");
+}
+
+pub(crate) fn gl_bind_texture(target: u32, texture: u32) {
+    unsafe { glBindTexture(target, texture); }
+    check_errors_gl("glBindTexture");
+}
+
+pub(crate) fn gl_tex_parameter_i(target: u32, pname: u32, param2: i32) {
+    unsafe { glTexParameteri(target, pname, param2) }
+    check_errors_gl("glTexParameteri");
+}
+
+pub(crate) fn gl_tex_image_2d(target: u32, level: i32, internalformat: i32, width: i32, height: i32, border: i32, format: u32, r#type: u32, pixels: *const core::ffi::c_void) {
+    unsafe { glTexImage2D(target, level, internalformat, width, height, border, format, r#type, pixels) }
+    check_errors_gl("glTexImage2D");
+}
+
+pub(crate) fn gl_tex_coord_2f(s: f32, t: f32) {
+    unsafe { glTexCoord2f(s, t) }
+    check_errors_gl("glTexCoord2f");
 }
