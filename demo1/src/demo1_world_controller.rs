@@ -116,7 +116,7 @@ fn create_2d_axes(ccd: &Dimension2D<f32>) -> Model2D<f32> {
     let axeslines = vec!(Lines2D::new(axes, Color::from_rgb(0.498, 0.0, 1.0), 10.0));
 
     /* done */
-    Model2D::new(pointsvec, axeslines)
+    Model2D::new(pointsvec, axeslines, vec!())
 }
 
 fn create_2d_grid_x_lines(ccd: &Dimension2D<f32>) -> Model2D<f32> {
@@ -130,7 +130,7 @@ fn create_2d_grid_x_lines(ccd: &Dimension2D<f32>) -> Model2D<f32> {
     let hlinevec = vec!(Lines2D::new(hlines, Color::from_rgb(0.2, 0.2, 0.2), 1.0));
 
     /* done */
-    Model2D::new(vec!(), hlinevec)
+    Model2D::new(vec!(), hlinevec, vec!())
 }
 
 fn create_2d_grid_y_lines(ccd: &Dimension2D<f32>) -> Model2D<f32> {
@@ -144,5 +144,5 @@ fn create_2d_grid_y_lines(ccd: &Dimension2D<f32>) -> Model2D<f32> {
     let vlinevec = vec!(Lines2D::new(vlines, Color::from_rgb(0.2, 0.2, 0.2), 1.0));
 
     /* done */
-    Model2D::new(vec!(), vlinevec)
+    Model2D::new(vec!(), vlinevec, vec!())
 }

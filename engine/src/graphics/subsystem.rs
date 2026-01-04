@@ -13,6 +13,7 @@ use crate::graphics::model::renderer_info::RendererInfo;
 use crate::graphics::subsystem::opengl::OpenGLHandle;
 use num_traits::Float;
 use std::ops::{Add, Sub};
+use crate::fileio::image::tex::t2d::Texture2D;
 
 pub mod opengl;
 
@@ -35,6 +36,7 @@ pub trait RenderingSubSystemHandle<F: Float + Add<F> + Sub<F>> {
     fn prepare_3d(&self);
     fn render_2d_points(&self, points: &Points2D<F>);
     fn render_2d_lines(&self, lines: &Lines2D<F>);
+    fn render_2d_textures(&self, textures: &Texture2D<F>);
     fn render_3d_points(&self, points: &Points3D<F>);
     fn render_3d_lines(&self, lines: &Lines3D<F>);
 }

@@ -4,21 +4,21 @@
 
 use crate::graphics::model::color::Color;
 
-pub(crate) mod rgba8;
-pub(crate) mod rgba8f;
-pub(crate) mod rgba32ui;
-pub(crate) mod rgba32i;
+pub mod rgba8;
+pub mod rgba8f;
+pub mod rgba32ui;
+pub mod rgba32i;
 
 ///
 /// marker trait for any pixel type.
 ///
-pub(crate) trait Pixel {}
+pub trait Pixel {}
 
 ///
 /// raw opengl image data.
 ///
 #[allow(dead_code)]// todo: remove this
-pub(crate) struct RawImage<P: Pixel> {
+pub struct RawImage<P: Pixel> {
     pub(crate) width: u32,
     pub(crate) height: u32,
     pub(crate) data: Vec<P>,

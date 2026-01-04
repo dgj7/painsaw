@@ -11,6 +11,7 @@ use crate::logger::log_level::LogLevel;
 use num_traits::{Float, ToPrimitive};
 use std::ops::{Add, Sub};
 use windows::Win32::Graphics::OpenGL::{GL_COLOR_BUFFER_BIT, GL_DEPTH_BUFFER_BIT, GL_DEPTH_TEST, GL_MODELVIEW, GL_PROJECTION, GL_RENDERER, GL_VENDOR};
+use crate::fileio::image::tex::t2d::Texture2D;
 
 pub(crate) mod opengl_mswin_api;
 pub(crate) mod opengl_mswin;
@@ -126,6 +127,10 @@ impl<F: Float + Add<F> + Sub<F>> RenderingSubSystemHandle<F> for OpenGLHandle {
             }
             OpenGLPipeline::Shaders => {}
         }
+    }
+
+    fn render_2d_textures(&self, textures: &Texture2D<F>) {
+        todo!()
     }
 
     fn render_3d_points(&self, points: &Points3D<F>) {

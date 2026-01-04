@@ -48,6 +48,7 @@ impl<F: Float + Add<F> + Sub<F>> GraphicsIntermediary<F> {
         for (_, model) in g2d.models.iter() {
             model.lines.iter().for_each(|x| self.subsystem.render_2d_lines(x));
             model.points.iter().for_each(|x| self.subsystem.render_2d_points(x));
+            model.textures.iter().for_each(|x| self.subsystem.render_2d_textures(x));
         }
     }
 
