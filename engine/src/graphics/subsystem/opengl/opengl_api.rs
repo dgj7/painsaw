@@ -14,7 +14,7 @@ pub(crate) fn gl_clear_color(red: f32, green: f32, blue: f32, alpha: f32) {
     check_errors_gl("glClearColor");
 }
 
-#[allow(unused)]
+#[allow(unused)] // todo: remove this
 pub(crate) fn gl_frustum(left: f64, right: f64, bottom: f64, top: f64, znear: f64, zfar: f64) {
     unsafe { glFrustum(left, right, bottom, top, znear, zfar); }
     check_errors_gl(&format!("glFrustum({},{},{},{},{},{})", left, right, bottom, top, znear, zfar));
@@ -37,7 +37,7 @@ pub(crate) fn gl_end() {
     check_errors_gl("glEnd");
 }
 
-#[allow(unused)]
+#[allow(unused)] // todo: remove this
 pub(crate) fn gl_flush() {
     unsafe { glFlush(); }
     check_errors_gl("glFlush");

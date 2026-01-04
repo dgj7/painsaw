@@ -8,7 +8,7 @@ pub struct Point3D<F: Float + Add<F> + Sub<F> + Mul<F> + Div<F>> {
     pub z: F,
 }
 
-#[allow(dead_code)]
+#[allow(dead_code)] // todo: remove this
 type Vector3D<F> = Point3D<F>;
 
 impl<F: Float + Add<F> + Sub<F> + Mul<F> + Div<F>> Point3D<F> {

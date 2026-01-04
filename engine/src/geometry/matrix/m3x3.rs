@@ -14,5 +14,5 @@ pub struct Matrix3x3<F: Float> {
     pub m33: F,
 }
 
-#[allow(dead_code)]
+#[allow(dead_code)] // todo: remove this
 type RotationMatrix<F> = Matrix3x3<F>;
