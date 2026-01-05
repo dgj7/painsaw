@@ -2,7 +2,7 @@ use crate::graphics::subsystem::opengl::opengl_errors::check_errors_gl;
 use crate::logger::log;
 use crate::logger::log_level::LogLevel;
 use std::ffi::{c_char, CStr};
-use windows::Win32::Graphics::OpenGL::{glBegin, glBindTexture, glClear, glClearColor, glColor3f, glDisable, glEnable, glEnd, glFlush, glFrustum, glGenTextures, glGetString, glLineWidth, glLoadIdentity, glMatrixMode, glOrtho, glPixelStorei, glPointSize, glTexCoord2f, glTexImage2D, glTexParameteri, glVertex2f, glVertex3f, glViewport, GL_LINES, GL_POINTS, GL_QUADS};
+use windows::Win32::Graphics::OpenGL::{glBegin, glBindTexture, glClear, glClearColor, glColor3f, glDisable, glEnable, glEnd, glFlush, glFrustum, glGenTextures, glGetString, glLineWidth, glLoadIdentity, glMatrixMode, glOrtho, glPointSize, glTexCoord2f, glTexImage2D, glTexParameteri, glVertex2f, glVertex3f, glViewport, GL_LINES, GL_POINTS, GL_QUADS};
 
 pub(crate) fn gl_clear(mask: u32) {
     unsafe { glClear(mask); }
@@ -28,6 +28,7 @@ pub(crate) fn gl_begin_points() {
     unsafe { glBegin(GL_POINTS); }
 }
 
+#[allow(unused)] // todo: remove this
 pub(crate) fn gl_begin_quads() {
     unsafe { glBegin(GL_QUADS); }
 }
@@ -116,11 +117,6 @@ pub(crate) fn gl_vertex_3f(x: f32, y: f32, z: f32) {
     //check_errors_gl("glVertex3f");
 }
 
-pub(crate) fn gl_pixel_store_i(pname: u32, param1: i32) {
-    unsafe { glPixelStorei(pname, param1) }
-    check_errors_gl("glPixelStorei");
-}
-
 pub(crate) fn gl_gen_textures(n: i32, textures: *mut u32) {
     unsafe { glGenTextures(n, textures) }
     check_errors_gl("glGenTextures");
@@ -141,6 +137,7 @@ pub(crate) fn gl_tex_image_2d(target: u32, level: i32, internalformat: i32, widt
     check_errors_gl("glTexImage2D");
 }
 
+#[allow(unused)] // todo: remove this
 pub(crate) fn gl_tex_coord_2f(s: f32, t: f32) {
     unsafe { glTexCoord2f(s, t) }
     check_errors_gl("glTexCoord2f");

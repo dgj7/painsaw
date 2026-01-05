@@ -9,7 +9,7 @@ pub struct MemoryResource {
 }
 
 impl MemoryResource {
-    fn from_array(bytes: Vec<u8>) -> MemoryResource {
+    pub fn from_array(bytes: Vec<u8>) -> MemoryResource {
         MemoryResource { bytes }
     }
 }

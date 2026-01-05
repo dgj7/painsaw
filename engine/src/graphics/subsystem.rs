@@ -4,16 +4,18 @@
 //! for example, opengl or directx.
 //!
 
+use crate::fileio::image::tex::t2d::Texture2D;
 use crate::geometry::dim::d2d::Dimension2D;
 use crate::geometry::line::ls2d::Lines2D;
 use crate::geometry::line::ls3d::Lines3D;
+use crate::geometry::storage::g2d::Graph2D;
+use crate::geometry::storage::g3d::Graph3D;
 use crate::geometry::vector::ps2d::Points2D;
 use crate::geometry::vector::ps3d::Points3D;
 use crate::graphics::model::renderer_info::RendererInfo;
 use crate::graphics::subsystem::opengl::OpenGLHandle;
 use num_traits::Float;
 use std::ops::{Add, Sub};
-use crate::fileio::image::tex::t2d::Texture2D;
 
 pub mod opengl;
 
@@ -30,7 +32,7 @@ pub enum OpenGLPipeline {
 
 pub trait RenderingSubSystemHandle<F: Float + Add<F> + Sub<F>> {
     fn identify(&self) -> Option<RendererInfo>;
-    fn initialize(&self);
+    fn initialize(&self, g2d: &mut Graph2D<F>, g3d: &mut Graph3D<F>);
     fn before_scene(&self, ccd: &Dimension2D<f32>);
     fn prepare_2d(&self, ccd: &Dimension2D<f32>);
     fn prepare_3d(&self);

@@ -1,2 +1,2 @@
-pub(crate) mod raw;
+pub mod raw;
 pub mod tex;

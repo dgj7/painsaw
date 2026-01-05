@@ -27,6 +27,14 @@ impl Color {
         )
     }
     
+    pub fn to_u8(&self) -> (u8, u8, u8, u8) {
+        let red = (self.red * 255.0) as u8;
+        let green = (self.green * 255.0) as u8;
+        let blue = (self.blue * 255.0) as u8;
+        let alpha = (self.alpha * 255.0) as u8;
+        (red, green, blue, alpha)
+    }
+    
     pub const RED: Color = Color::from_rgb(1.0, 0.0, 0.0);
     pub const GREEN: Color = Color::from_rgb(0.0, 1.0, 0.0);
     pub const BLUE: Color = Color::from_rgb(0.0, 0.0, 1.0);
@@ -35,26 +43,18 @@ impl Color {
     pub const BLACK: Color = Color::from_rgb(0.0, 0.0, 0.0);
 }
 
-pub fn convert_u8(color: &Color) -> (u8, u8, u8, u8) {
-    let red = (color.red * 255.0) as u8;
-    let green = (color.green * 255.0) as u8;
-    let blue = (color.blue * 255.0) as u8;
-    let alpha = (color.alpha * 255.0) as u8;
-    (red, green, blue, alpha)
-}
-
 #[cfg(test)]
 mod test_convert_u8 {
-    use crate::graphics::model::color::{convert_u8, Color};
+    use crate::graphics::model::color::{Color};
 
     fn run_case(input: f32, expected: f32) {
         let step1 = Color::from_rgba(input, input, input, input);
-        let (red1, green1, blue1, alpha1) = convert_u8(&step1);
+        let (red1, green1, blue1, alpha1) = step1.to_u8();
 
         let step2 = Color::from_rgba_int(red1 as i32, green1 as i32, blue1 as i32, alpha1 as i32);
         validate(expected, &step2);
 
-        let (red2, green2, blue2, alpha2) = convert_u8(&step2);
+        let (red2, green2, blue2, alpha2) = step2.to_u8();
         let step3 = Color::from_rgba_int(red2 as i32, green2 as i32, blue2 as i32, alpha2 as i32);
 
         validate(expected, &step3);

@@ -29,12 +29,9 @@ impl<F: Float + Add<F> + Sub<F>> GraphicsIntermediary<F> {
         }
     }
 
-    pub(crate) fn initialize(&mut self) {
-        self.subsystem.initialize();
+    pub(crate) fn initialize(&mut self, g2d: &mut Graph2D<F>, g3d: &mut Graph3D<F>) {
+        self.subsystem.initialize(g2d, g3d);
         self.info = self.subsystem.identify();
-        
-        // todo: initialize for 2d textures
-        // todo: initialize for 3d textures
         
         log(LogLevel::Info, &|| String::from(format!("{:?}", self.info)));
         log(LogLevel::Debug, &|| String::from("initialization complete"));

@@ -18,10 +18,10 @@ pub trait WorldController<F: Float + Add<F> + Sub<F>> {
     /// initialize the game world.
     ///
     fn initialize_world(&self, context: &mut RendererContext<F>) {
-        let graphics = &mut context.graphics;
-        graphics.initialize();
-
         self.initialize_world_helper(context);
+
+        let graphics = &mut context.graphics;
+        graphics.initialize(&mut context.g2d, &mut context.g3d);
 
         log(LogLevel::Debug, &|| String::from("initialization complete"));
     }

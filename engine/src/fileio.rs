@@ -1,3 +1,3 @@
-pub(crate) mod image;
-pub(crate) mod endianness;
+pub mod image;
+pub mod endianness;
 pub mod resources;

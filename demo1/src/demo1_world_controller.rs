@@ -1,3 +1,6 @@
+use engine::fileio::image::raw::{Pixel, RawImage};
+use engine::fileio::image::tex::t2d::Texture2D;
+use engine::fileio::resources::memory::MemoryResource;
 use engine::geometry::dim::d2d::Dimension2D;
 use engine::geometry::line::l2d::Line2D;
 use engine::geometry::line::l3d::Line3D;
@@ -22,6 +25,7 @@ static M2D_Y_VERT: &str = "2d-y-vertical";
 static M3D_X_ABSCISSA: &str = "3d-axes-abscissa";
 static M3D_Y_ORDINATE: &str = "3d-axes-ordinate";
 static M3D_Z_APPLICATE: &str = "3d-axes-applicate";
+static M2D_LETTER_A_TEXTURE: &str = "2d-letter-a-texture";
 
 pub(crate) struct Demo1WorldController {}
 
@@ -34,6 +38,9 @@ impl WorldController<f32> for Demo1WorldController {
         context.g2d.models.insert(M2D_XY_PURPLE.parse().unwrap(), create_2d_axes(&ccd));
         context.g2d.models.insert(M2D_X_HORIZ.parse().unwrap(), create_2d_grid_x_lines(&ccd));
         context.g2d.models.insert(M2D_Y_VERT.parse().unwrap(), create_2d_grid_y_lines(&ccd));
+
+        /* 2d textures */
+        context.g2d.models.insert(M2D_LETTER_A_TEXTURE.parse().unwrap(), create_2d_letter_a());
 
         /* 3d: origin axes */
         context.g3d.models.insert(M3D_X_ABSCISSA.parse().unwrap(), Model3D::new(
@@ -145,4 +152,13 @@ fn create_2d_grid_y_lines(ccd: &Dimension2D<f32>) -> Model2D<f32> {
 
     /* done */
     Model2D::new(vec!(), vlinevec, vec!())
+}
+
+fn create_2d_letter_a() -> Model2D<f32> {
+    let bitmap: [u8; 7] = [0x6f, 0x49, 0xc9, 0x7b, 0x00, 0x00, 0x00];
+    let letter = MemoryResource::from_array(Vec::from(bitmap));
+    let image = RawImage::one_bpp_to_raw_img(8, 7, Box::new(letter), &Color::WHITE, &Color::BLACK, Pixel::bit_per_pixel);
+    let textures = vec!(Texture2D::new(image, Point2D::new(100.0, 100.0)));
+
+    Model2D::new(vec!(), vec!(), textures)
 }

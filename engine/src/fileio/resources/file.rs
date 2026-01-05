@@ -1,7 +1,7 @@
+use crate::fileio::resources::Resource;
 use std::error::Error;
 use std::fs;
-use std::path::{Path, PathBuf};
-use crate::fileio::resources::Resource;
+use std::path::PathBuf;
 
 ///
 /// a resource that comes from a file.
