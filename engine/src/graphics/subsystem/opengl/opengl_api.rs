@@ -2,7 +2,7 @@ use crate::graphics::subsystem::opengl::opengl_errors::check_errors_gl;
 use crate::logger::log;
 use crate::logger::log_level::LogLevel;
 use std::ffi::{c_char, CStr};
-use windows::Win32::Graphics::OpenGL::{glBegin, glBindTexture, glClear, glClearColor, glColor3f, glDisable, glEnable, glEnd, glFlush, glFrustum, glGenTextures, glGetString, glLineWidth, glLoadIdentity, glMatrixMode, glOrtho, glPointSize, glTexCoord2f, glTexImage2D, glTexParameteri, glVertex2f, glVertex3f, glViewport, GL_LINES, GL_POINTS, GL_QUADS};
+use windows::Win32::Graphics::OpenGL::{glBegin, glBindTexture, glClear, glClearColor, glColor3f, glDisable, glEnable, glEnd, glFrustum, glGenTextures, glGetString, glLineWidth, glLoadIdentity, glMatrixMode, glOrtho, glPointSize, glPopMatrix, glPushMatrix, glTexCoord2f, glTexEnvf, glTexImage2D, glTexParameteri, glVertex2f, glVertex3f, glViewport, GL_LINES, GL_POINTS, GL_QUADS};
 
 pub(crate) fn gl_clear(mask: u32) {
     unsafe { glClear(mask); }
@@ -28,7 +28,6 @@ pub(crate) fn gl_begin_points() {
     unsafe { glBegin(GL_POINTS); }
 }
 
-#[allow(unused)] // todo: remove this
 pub(crate) fn gl_begin_quads() {
     unsafe { glBegin(GL_QUADS); }
 }
@@ -36,12 +35,6 @@ pub(crate) fn gl_begin_quads() {
 pub(crate) fn gl_end() {
     unsafe { glEnd(); }
     check_errors_gl("glEnd");
-}
-
-#[allow(unused)] // todo: remove this
-pub(crate) fn gl_flush() {
-    unsafe { glFlush(); }
-    check_errors_gl("glFlush");
 }
 
 pub(crate) fn gl_viewport(x: i32, y: i32, width: i32, height: i32) {
@@ -52,6 +45,16 @@ pub(crate) fn gl_viewport(x: i32, y: i32, width: i32, height: i32) {
 pub(crate) fn gl_matrix_mode(mode: u32) {
     unsafe { glMatrixMode(mode) }
     check_errors_gl("glMatrixMode");
+}
+
+pub(crate) fn gl_push_matrix() {
+    unsafe { glPushMatrix(); }
+    check_errors_gl("glPushMatrix");
+}
+
+pub(crate) fn gl_pop_matrix() {
+    unsafe { glPopMatrix(); }
+    check_errors_gl("glPopMatrix");
 }
 
 pub(crate) fn gl_load_identity() {
@@ -137,8 +140,13 @@ pub(crate) fn gl_tex_image_2d(target: u32, level: i32, internalformat: i32, widt
     check_errors_gl("glTexImage2D");
 }
 
-#[allow(unused)] // todo: remove this
 pub(crate) fn gl_tex_coord_2f(s: f32, t: f32) {
     unsafe { glTexCoord2f(s, t) }
-    check_errors_gl("glTexCoord2f");
+    //check_errors_gl("glTexCoord2f");
+}
+
+#[allow(unused)] // todo: remove this
+pub(crate) fn gl_tex_env_f(target: u32, pname: u32, param2: f32) {
+    unsafe { glTexEnvf(target, pname, param2) }
+    check_errors_gl("glTexEnvf");
 }

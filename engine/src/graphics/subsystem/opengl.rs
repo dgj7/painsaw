@@ -7,7 +7,7 @@ use crate::geometry::storage::g3d::Graph3D;
 use crate::geometry::vector::ps2d::Points2D;
 use crate::geometry::vector::ps3d::Points3D;
 use crate::graphics::model::renderer_info::RendererInfo;
-use crate::graphics::subsystem::opengl::opengl_api::{gl_begin_lines, gl_begin_points, gl_bind_texture, gl_clear, gl_clear_color, gl_color_3f, gl_disable, gl_enable, gl_end, gl_gen_textures, gl_get_string, gl_line_width, gl_load_identity, gl_matrix_mode, gl_ortho, gl_point_size, gl_tex_image_2d, gl_tex_parameter_i, gl_vertex_2f, gl_vertex_3f, gl_viewport};
+use crate::graphics::subsystem::opengl::opengl_api::{gl_begin_lines, gl_begin_points, gl_begin_quads, gl_bind_texture, gl_clear, gl_clear_color, gl_color_3f, gl_disable, gl_enable, gl_end, gl_gen_textures, gl_get_string, gl_line_width, gl_load_identity, gl_matrix_mode, gl_ortho, gl_point_size, gl_pop_matrix, gl_push_matrix, gl_tex_coord_2f, gl_tex_image_2d, gl_tex_parameter_i, gl_vertex_2f, gl_vertex_3f, gl_viewport};
 use crate::graphics::subsystem::{OpenGLPipeline, RenderingSubSystemHandle};
 use crate::logger::log;
 use crate::logger::log_level::LogLevel;
@@ -30,11 +30,9 @@ impl OpenGLHandle {
     /// utility method to initialize a 2d texture in opengl.
     /// 
     pub(crate) fn initialize_texture_2d<F: Float>(texture: &mut Texture2D<F>) {
-        /* gen 1 texture */
+        /* gen 1 texture; bind it */
         let texture_id_ptr: *mut u32 = (&mut texture.id) as *mut u32;
         gl_gen_textures(1, texture_id_ptr);
-
-        /* bind the texture as 2d */
         gl_bind_texture(GL_TEXTURE_2D, texture.id);
 
         /* set texture params */
@@ -79,6 +77,7 @@ impl<F: Float + Add<F> + Sub<F>> RenderingSubSystemHandle<F> for OpenGLHandle {
         match self.pipeline {
             OpenGLPipeline::FixedFunction => {
                 /* initialize textures */
+                gl_enable(GL_TEXTURE_2D);
                 for (_, value) in g2d.models.iter_mut() {
                     for tex in &mut value.textures {
                         Self::initialize_texture_2d(tex);
@@ -109,6 +108,7 @@ impl<F: Float + Add<F> + Sub<F>> RenderingSubSystemHandle<F> for OpenGLHandle {
             OpenGLPipeline::FixedFunction => {
                 gl_disable(GL_DEPTH_TEST);
                 gl_matrix_mode(GL_PROJECTION);
+                gl_push_matrix();
                 gl_load_identity();
                 gl_ortho(0.0,
                          ccd.width.to_f64().unwrap(),
@@ -118,9 +118,18 @@ impl<F: Float + Add<F> + Sub<F>> RenderingSubSystemHandle<F> for OpenGLHandle {
                          99999.0
                 );
                 gl_matrix_mode(GL_MODELVIEW);
+                gl_push_matrix();
+                gl_load_identity();
             }
             OpenGLPipeline::Shaders => {}
         }
+    }
+
+    fn after_2d(&self) {
+        gl_matrix_mode(GL_PROJECTION);
+        gl_pop_matrix();
+        gl_matrix_mode(GL_MODELVIEW);
+        gl_pop_matrix();
     }
 
     fn prepare_3d(&self) {
@@ -138,6 +147,10 @@ impl<F: Float + Add<F> + Sub<F>> RenderingSubSystemHandle<F> for OpenGLHandle {
             }
             OpenGLPipeline::Shaders => {}
         }
+    }
+
+    fn after_3d(&self) {
+        // todo: needed later?
     }
 
     fn render_2d_points(&self, points: &Points2D<F>) {
@@ -173,8 +186,42 @@ impl<F: Float + Add<F> + Sub<F>> RenderingSubSystemHandle<F> for OpenGLHandle {
         }
     }
 
-    fn render_2d_textures(&self, _textures: &Texture2D<F>) {
-        // todo: implement texture rendering
+    fn render_2d_textures(&self, texture: &Texture2D<F>) {
+        match self.pipeline {
+            OpenGLPipeline::FixedFunction => {
+                /* gather variables */
+                let scale = texture.scale.to_f32().unwrap();
+                let x = texture.world_pos.x.to_f32().unwrap();
+                let y = texture.world_pos.y.to_f32().unwrap();
+                let width = texture.image.width as f32;
+                let height = texture.image.height as f32;
+
+                /* start drawing texture */
+                gl_bind_texture(GL_TEXTURE_2D, texture.id);
+                //gl_tex_env_f(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE as f32);
+                gl_begin_quads();
+
+                /* top left */
+                gl_tex_coord_2f(0.0, 0.0);
+                gl_vertex_2f(x, y);
+
+                /* bottom left */
+                gl_tex_coord_2f(0.0, 1.0);
+                gl_vertex_2f(x, y + height * scale);
+
+                /* bottom right */
+                gl_tex_coord_2f(1.0, 1.0);
+                gl_vertex_2f(x + width * scale, y +  height * scale);
+
+                /* top right */
+                gl_tex_coord_2f(1.0, 0.0);
+                gl_vertex_2f(x + width * scale, y);
+
+                /* done */
+                gl_end();
+            }
+            OpenGLPipeline::Shaders => {}
+        }
     }
 
     fn render_3d_points(&self, points: &Points3D<F>) {

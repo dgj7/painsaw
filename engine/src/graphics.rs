@@ -53,6 +53,10 @@ impl<F: Float + Add<F> + Sub<F>> GraphicsIntermediary<F> {
         }
     }
 
+    pub(crate) fn after_2d(&self) {
+        self.subsystem.after_2d();
+    }
+
     pub(crate) fn prepare_3d(&self) {
         self.subsystem.prepare_3d();
     }
@@ -62,5 +66,9 @@ impl<F: Float + Add<F> + Sub<F>> GraphicsIntermediary<F> {
             model.lines.iter().for_each(|x| self.subsystem.render_3d_lines(x));
             model.points.iter().for_each(|x| self.subsystem.render_3d_points(x));
         }
+    }
+
+    pub(crate) fn after_3d(&self) {
+        self.subsystem.after_3d();
     }
 }

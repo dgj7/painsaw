@@ -157,8 +157,12 @@ fn create_2d_grid_y_lines(ccd: &Dimension2D<f32>) -> Model2D<f32> {
 fn create_2d_letter_a() -> Model2D<f32> {
     let bitmap: [u8; 7] = [0x6f, 0x49, 0xc9, 0x7b, 0x00, 0x00, 0x00];
     let letter = MemoryResource::from_array(Vec::from(bitmap));
-    let image = RawImage::one_bpp_to_raw_img(8, 7, Box::new(letter), &Color::WHITE, &Color::BLACK, Pixel::bit_per_pixel);
-    let textures = vec!(Texture2D::new(image, Point2D::new(100.0, 100.0)));
+    let image = RawImage::one_bpp_to_raw_img(8, 8, Box::new(letter), &Color::WHITE, &Color::BLACK, Pixel::bit_per_pixel);
+    let textures = vec!(Texture2D::new(image, Point2D::new(100.0, 300.0), 10.0));
+
+    //for byte in textures[0].image.data.iter() {
+    //    log(LogLevel::Info, &|| String::from(format!("{}", byte)));
+    //}
 
     Model2D::new(vec!(), vec!(), textures)
 }

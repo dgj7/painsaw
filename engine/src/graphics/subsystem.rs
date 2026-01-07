@@ -35,7 +35,9 @@ pub trait RenderingSubSystemHandle<F: Float + Add<F> + Sub<F>> {
     fn initialize(&self, g2d: &mut Graph2D<F>, g3d: &mut Graph3D<F>);
     fn before_scene(&self, ccd: &Dimension2D<f32>);
     fn prepare_2d(&self, ccd: &Dimension2D<f32>);
+    fn after_2d(&self);
     fn prepare_3d(&self);
+    fn after_3d(&self);
     fn render_2d_points(&self, points: &Points2D<F>);
     fn render_2d_lines(&self, lines: &Lines2D<F>);
     fn render_2d_textures(&self, textures: &Texture2D<F>);
