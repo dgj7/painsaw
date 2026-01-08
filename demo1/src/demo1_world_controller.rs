@@ -19,13 +19,13 @@ use engine::graphics::model::color::Color;
 use engine::window::wc::context::RendererContext;
 use engine::window::wc::world_control::WorldController;
 
-static M2D_XY_PURPLE: &str = "2d-xy-purple";
-static M2D_X_HORIZ: &str = "2d-x-horizontal";
-static M2D_Y_VERT: &str = "2d-y-vertical";
-static M3D_X_ABSCISSA: &str = "3d-axes-abscissa";
-static M3D_Y_ORDINATE: &str = "3d-axes-ordinate";
-static M3D_Z_APPLICATE: &str = "3d-axes-applicate";
-static M2D_LETTER_A_TEXTURE: &str = "2d-letter-a-texture";
+static M2D_XY_PURPLE: &str = "1-2d-xy-purple";
+static M2D_X_HORIZ: &str = "2-2d-x-horizontal";
+static M2D_Y_VERT: &str = "2-2d-y-vertical";
+static M3D_X_ABSCISSA: &str = "4-3d-axes-abscissa";
+static M3D_Y_ORDINATE: &str = "4-3d-axes-ordinate";
+static M3D_Z_APPLICATE: &str = "4-3d-axes-applicate";
+static M2D_LETTER_A_TEXTURE: &str = "6-2d-letter-a-texture";
 
 pub(crate) struct Demo1WorldController {}
 
