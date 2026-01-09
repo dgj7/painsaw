@@ -41,15 +41,27 @@ impl<F: Float + Add<F> + Sub<F>> GraphicsIntermediary<F> {
         self.subsystem.before_scene(ccd);
     }
 
-    pub(crate) fn prepare_2d(&self, ccd: &Dimension2D<f32>) {
+    pub(crate) fn prepare_2d(&self, g2d: &mut Graph2D<F>, ccd: &Dimension2D<f32>) {
+        /* prepare the screen for 2d */
         self.subsystem.prepare_2d(ccd);
+
+        /* initialize un-initialized (new) textures */
+        for (_, model) in &mut g2d.models {
+            for texture in &mut model.textures {
+                if !texture.initialized {
+                    self.subsystem.initialize_texture_2d(texture);
+                }
+            }
+        }
     }
 
     pub(crate) fn render_2d(&self, g2d: &Graph2D<F>) {
         for (_, model) in g2d.models.iter() {
             model.lines.iter().for_each(|x| self.subsystem.render_2d_lines(x));
             model.points.iter().for_each(|x| self.subsystem.render_2d_points(x));
-            model.textures.iter().for_each(|x| self.subsystem.render_2d_textures(x));
+            model.textures.iter()
+                .filter(|x| x.initialized)
+                .for_each(|x| self.subsystem.render_2d_textures(x));
         }
     }
 

@@ -26,35 +26,7 @@ pub struct OpenGLHandle {
 }
 
 impl OpenGLHandle {
-    ///
-    /// utility method to initialize a 2d texture in opengl.
-    /// 
-    pub(crate) fn initialize_texture_2d<F: Float>(texture: &mut Texture2D<F>) {
-        /* gen 1 texture; bind it */
-        let texture_id_ptr: *mut u32 = (&mut texture.id) as *mut u32;
-        gl_gen_textures(1, texture_id_ptr);
-        gl_bind_texture(GL_TEXTURE_2D, texture.id);
-
-        /* set texture params */
-        gl_tex_parameter_i(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST as i32);
-        gl_tex_parameter_i(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST as i32);
-
-        /* inform opengl of the texture data */
-        gl_tex_image_2d(
-            GL_TEXTURE_2D,                                  // target
-            0,                                              // level
-            GL_RGBA as i32,                                 // internal format; the number of color components in the texture data
-            texture.image.width as i32,                     // width
-            texture.image.height as i32,                    // height
-            0,                                              // border
-            GL_RGBA,                                        // format: (or order) of pixel data (r,g,b,a)
-            GL_UNSIGNED_BYTE,                               // r-type: the data type of the pixel data
-            texture.image.data.as_ptr() as *const c_void,   // pixels
-        );
-
-        /* done */
-        log(LogLevel::Info, &|| String::from(format!("created texture, id=[{}]", texture.id)));
-    }
+    
 }
 
 impl<F: Float + Add<F> + Sub<F>> RenderingSubSystemHandle<F> for OpenGLHandle {
@@ -80,7 +52,7 @@ impl<F: Float + Add<F> + Sub<F>> RenderingSubSystemHandle<F> for OpenGLHandle {
                 gl_enable(GL_TEXTURE_2D);
                 for (_, value) in g2d.models.iter_mut() {
                     for tex in &mut value.textures {
-                        Self::initialize_texture_2d(tex);
+                        self.initialize_texture_2d(tex);
                     }
                 }
 
@@ -89,6 +61,36 @@ impl<F: Float + Add<F> + Sub<F>> RenderingSubSystemHandle<F> for OpenGLHandle {
             }
             OpenGLPipeline::Shaders => {}
         }
+    }
+
+    fn initialize_texture_2d(&self, texture: &mut Texture2D<F>) {
+        /* gen 1 texture; bind it */
+        let texture_id_ptr: *mut u32 = (&mut texture.id) as *mut u32;
+        gl_gen_textures(1, texture_id_ptr);
+        gl_bind_texture(GL_TEXTURE_2D, texture.id);
+
+        /* set texture params */
+        gl_tex_parameter_i(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST as i32);
+        gl_tex_parameter_i(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST as i32);
+
+        /* inform opengl of the texture data */
+        gl_tex_image_2d(
+            GL_TEXTURE_2D,                                  // target
+            0,                                              // level
+            GL_RGBA as i32,                                 // internal format; the number of color components in the texture data
+            texture.image.width as i32,                     // width
+            texture.image.height as i32,                    // height
+            0,                                              // border
+            GL_RGBA,                                        // format: (or order) of pixel data (r,g,b,a)
+            GL_UNSIGNED_BYTE,                               // r-type: the data type of the pixel data
+            texture.image.data.as_ptr() as *const c_void,   // pixels
+        );
+
+        /* mark the texture as initialized (ready) */
+        texture.initialized = true;
+
+        /* done */
+        log(LogLevel::Info, &|| String::from(format!("created texture, id=[{}]", texture.id)));
     }
 
     fn before_scene(&self, ccd: &Dimension2D<f32>) {

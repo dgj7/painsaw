@@ -52,7 +52,7 @@ pub trait WorldController<F: Float + Add<F> + Sub<F>> {
         graphics.before_scene(ccd);
 
         /* draw 2d, if desired */
-        graphics.prepare_2d(ccd);
+        graphics.prepare_2d(&mut context.g2d, ccd);
         graphics.render_2d(&context.g2d);
         graphics.after_2d();
 
