@@ -59,6 +59,14 @@ pub struct RawImage {
 }
 
 impl RawImage {
+    pub fn new(width: u32, height: u32, data: Vec<u8>) -> RawImage {
+        RawImage {
+            width,
+            height,
+            data,
+        }
+    }
+
     ///
     /// Convert from an array of bytes, presumed to be encoded as one bit-per-pixel,
     /// into the given pixel format.
