@@ -26,10 +26,10 @@ pub fn create_generic<F: Float>(config: &TextConfig<F>, message: String) -> RawI
         }
     }
 
-    log(LogLevel::Error, &|| String::from(format!("[{}] rows; should be equal to [{}]", rows.len(), HEIGHT)));
-    for i in 0..HEIGHT {
-        log(LogLevel::Error, &|| String::from(format!("row[{}] has [{}] elements", i, rows[i].len())));
-    }
+    //log(LogLevel::Error, &|| String::from(format!("[{}] rows; should be equal to [{}]", rows.len(), HEIGHT)));
+    //for i in 0..HEIGHT {
+    //    log(LogLevel::Error, &|| String::from(format!("row[{}] has [{}] elements", i, rows[i].len())));
+    //}
 
     /* create storage for u8 */
     let mut output = vec!();

@@ -156,7 +156,6 @@ fn create_2d_letters() -> Model2D<f32> {
     let config = TextConfig {
         top_left: Point2D::new(200.0, 40.0),
         foreground: Color::RED,
-        background: Color::GREEN,
         scale: 6.0,
         ..Default::default()
     };

@@ -1,6 +1,6 @@
 [package]
 name = "engine"
-version = "0.0.66"
+version = "0.0.67"
 edition = "2024"
 
 [dependencies]
@@ -20,3 +20,4 @@ windows = { version = "0.62.2", features = [
     "Win32_System_SystemServices",
 ] }
 windows-core = "0.62.2"
+glcore-rs = "0.3.3"

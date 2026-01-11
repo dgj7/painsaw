@@ -37,7 +37,7 @@ impl<F: Float> Default for TextConfig<F> {
             top_left: Point2D::new(F::zero(), F::zero()),
             scale: F::one(),
             foreground: Color::WHITE,
-            background: Color::BLACK,
+            background: Color::TRANSPARENT,
         }
     }
 }

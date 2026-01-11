@@ -7,14 +7,14 @@ use crate::geometry::storage::g3d::Graph3D;
 use crate::geometry::vector::ps2d::Points2D;
 use crate::geometry::vector::ps3d::Points3D;
 use crate::graphics::model::renderer_info::RendererInfo;
-use crate::graphics::subsystem::opengl::opengl_api::{gl_begin_lines, gl_begin_points, gl_begin_quads, gl_bind_texture, gl_clear, gl_clear_color, gl_color_3f, gl_disable, gl_enable, gl_end, gl_gen_textures, gl_get_string, gl_line_width, gl_load_identity, gl_matrix_mode, gl_ortho, gl_point_size, gl_pop_matrix, gl_push_matrix, gl_tex_coord_2f, gl_tex_env_f, gl_tex_image_2d, gl_tex_parameter_i, gl_vertex_2f, gl_vertex_3f, gl_viewport};
+use crate::graphics::subsystem::opengl::opengl_api::{gl_begin_lines, gl_begin_points, gl_begin_quads, gl_bind_texture, gl_blend_func, gl_clear, gl_clear_color, gl_color_3f, gl_disable, gl_enable, gl_end, gl_gen_textures, gl_get_string, gl_line_width, gl_load_identity, gl_matrix_mode, gl_ortho, gl_point_size, gl_pop_matrix, gl_push_matrix, gl_tex_coord_2f, gl_tex_env_f, gl_tex_image_2d, gl_tex_parameter_i, gl_vertex_2f, gl_vertex_3f, gl_viewport};
 use crate::graphics::subsystem::{OpenGLPipeline, RenderingSubSystemHandle};
 use crate::logger::log;
 use crate::logger::log_level::LogLevel;
 use num_traits::{Float, ToPrimitive};
 use std::ffi::c_void;
 use std::ops::{Add, Sub};
-use windows::Win32::Graphics::OpenGL::{GL_COLOR_BUFFER_BIT, GL_DEPTH_BUFFER_BIT, GL_DEPTH_TEST, GL_MODELVIEW, GL_NEAREST, GL_PROJECTION, GL_RENDERER, GL_REPLACE, GL_RGBA, GL_TEXTURE_2D, GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_TEXTURE_MAG_FILTER, GL_TEXTURE_MIN_FILTER, GL_UNSIGNED_BYTE, GL_VENDOR};
+use windows::Win32::Graphics::OpenGL::{GL_BLEND, GL_COLOR_BUFFER_BIT, GL_DEPTH_BUFFER_BIT, GL_DEPTH_TEST, GL_MODELVIEW, GL_NEAREST, GL_ONE_MINUS_SRC_ALPHA, GL_PROJECTION, GL_RENDERER, GL_REPLACE, GL_RGBA, GL_SRC_ALPHA, GL_TEXTURE_2D, GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_TEXTURE_MAG_FILTER, GL_TEXTURE_MIN_FILTER, GL_UNSIGNED_BYTE, GL_VENDOR};
 
 pub(crate) mod opengl_mswin_api;
 pub(crate) mod opengl_mswin;
@@ -198,10 +198,16 @@ impl<F: Float + Add<F> + Sub<F>> RenderingSubSystemHandle<F> for OpenGLHandle {
                 let width = texture.image.width as f32;
                 let height = texture.image.height as f32;
 
-                /* start drawing texture */
+                /* prepare to render textures */
                 gl_enable(GL_TEXTURE_2D);
                 gl_bind_texture(GL_TEXTURE_2D, texture.id);
                 gl_tex_env_f(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE as f32);
+
+                /* enable transparency in textures */
+                gl_enable(GL_BLEND);
+                gl_blend_func(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+                /* start drawing texture; only text coords and vertexes until gl-end! */
                 gl_begin_quads();
 
                 /* top left */
@@ -222,7 +228,10 @@ impl<F: Float + Add<F> + Sub<F>> RenderingSubSystemHandle<F> for OpenGLHandle {
 
                 /* done */
                 gl_end();
+
+                /* turn off the stuff we enabled (specifically for texturing) */
                 gl_disable(GL_TEXTURE_2D);
+                gl_disable(GL_BLEND);
             }
             OpenGLPipeline::Shaders => {}
         }

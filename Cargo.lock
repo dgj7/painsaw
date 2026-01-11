@@ -69,17 +69,18 @@ checksum = "773648b94d0e5d620f64f280777445740e61fe701025087ec8b57f45c791888b"
 
 [[package]]
 name = "demo1"
-version = "0.0.31"
+version = "0.0.32"
 dependencies = [
  "engine",
 ]
 
 [[package]]
 name = "engine"
-version = "0.0.66"
+version = "0.0.67"
 dependencies = [
  "chrono",
  "colored",
+ "glcore-rs",
  "num-traits",
  "windows",
  "windows-core",
@@ -90,6 +91,12 @@ name = "find-msvc-tools"
 version = "0.1.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3a3076410a55c90011c298b04d0cfa770b00fa04e1e3c97d3f6c9de105a03844"
+
+[[package]]
+name = "glcore-rs"
+version = "0.3.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "78afae7b5895b97e446afae8e64b148cf7879adb343ea6cd7568a258e198e00f"
 
 [[package]]
 name = "iana-time-zone"
