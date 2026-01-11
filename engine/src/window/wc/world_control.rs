@@ -45,20 +45,19 @@ pub trait WorldController<F: Float + Add<F> + Sub<F>> {
     ///
     fn display_world_scene(&self, context: &mut RendererContext<F>) {
         /* gather variables */
-        let graphics = &context.graphics;
-        let ccd = &context.copy_client_dimensions();
+        let ccd = context.copy_client_dimensions();
 
         /* prepare for drawing */
-        graphics.before_scene(ccd);
+        context.graphics.before_scene(&ccd);
 
         /* draw 2d, if desired */
-        graphics.prepare_2d(&mut context.g2d, ccd);
-        graphics.render_2d(&context.g2d);
-        graphics.after_2d();
+        context.graphics.prepare_2d(&mut context.g2d, &ccd);
+        context.graphics.render_2d(&mut context.g2d);
+        context.graphics.after_2d();
 
         /* draw 3d, if desired */
-        graphics.prepare_3d();
-        graphics.render_3d(&context.g3d);
-        graphics.after_3d();
+        context.graphics.prepare_3d();
+        context.graphics.render_3d(&context.g3d);
+        context.graphics.after_3d();
     }
 }

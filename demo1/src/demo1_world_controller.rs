@@ -13,7 +13,7 @@ use engine::graphics::model::color::Color;
 use engine::input::model::keyboard_state::{KeyInfo, KeyPosition};
 use engine::logger::log;
 use engine::logger::log_level::LogLevel;
-use engine::text::{text_2d, TextConfig};
+use engine::text::{text_2d_texture, TextConfig};
 use engine::window::wc::context::RendererContext;
 use engine::window::wc::world_control::WorldController;
 
@@ -158,19 +158,19 @@ fn create_2d_grid_y_lines(ccd: &Dimension2D<f32>) -> Model2D<f32> {
 fn create_2d_text() -> Model2D<f32> {
     let mut textures = vec!();
 
-    textures.push(text_2d(TextConfig {
+    textures.push(text_2d_texture(TextConfig {
         top_left: Point2D::new(20.0, 20.0),
         foreground: Color::RED,
         scale: 2.0,
         ..Default::default()
     }, || String::from("AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz")));
-    textures.push(text_2d(TextConfig {
+    textures.push(text_2d_texture(TextConfig {
         top_left: Point2D::new(20.0, 50.0),
         foreground: Color::RED,
         scale: 2.0,
         ..Default::default()
     }, || String::from("!\"#$%&\\()*+,-./[]^_`{|}~:;<=>?@")));
-    textures.push(text_2d(TextConfig {
+    textures.push(text_2d_texture(TextConfig {
         top_left: Point2D::new(20.0, 80.0),
         foreground: Color::RED,
         scale: 2.0,

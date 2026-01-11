@@ -3,13 +3,16 @@ use crate::geometry::vector::p2d::Point2D;
 use crate::graphics::model::color::Color;
 use crate::text::generic::create_generic;
 use num_traits::Float;
+use crate::fileio::image::raw::RawImage;
 
 pub mod generic;
 
+#[derive(Clone)]
 pub enum Typeface {
     Generic,
 }
 
+#[derive(Clone)]
 pub struct TextConfig<F: Float> {
     pub typeface: Typeface,
     pub top_left: Point2D<F>,
@@ -18,7 +21,7 @@ pub struct TextConfig<F: Float> {
     pub background: Color,
 }
 
-pub fn text_2d<P, F: Float>(config: TextConfig<F>, provider: P) -> Texture2D<F>
+pub fn text_2d_texture<P, F: Float>(config: TextConfig<F>, provider: P) -> Texture2D<F>
 where
     P: Fn() -> String,
 {
@@ -26,6 +29,15 @@ where
         Typeface::Generic => create_generic(&config, provider()),
     };
     Texture2D::new(image, config.top_left, config.scale)
+}
+
+pub fn text_2d_image<P, F: Float>(config: TextConfig<F>, provider: P) -> RawImage
+where
+    P: Fn() -> String,
+{
+    match config.typeface {
+        Typeface::Generic => create_generic(&config, provider()),
+    }
 }
 
 impl<F: Float> TextConfig<F> {}

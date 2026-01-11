@@ -2,7 +2,7 @@ use crate::graphics::subsystem::opengl::opengl_errors::check_errors_gl;
 use crate::logger::log;
 use crate::logger::log_level::LogLevel;
 use std::ffi::{c_char, CStr};
-use windows::Win32::Graphics::OpenGL::{glBegin, glBindTexture, glBlendFunc, glClear, glClearColor, glColor3f, glDisable, glEnable, glEnd, glFrustum, glGenTextures, glGetString, glLineWidth, glLoadIdentity, glMatrixMode, glOrtho, glPointSize, glPopAttrib, glPopMatrix, glPushAttrib, glPushMatrix, glTexCoord2f, glTexEnvf, glTexImage2D, glTexParameteri, glVertex2f, glVertex3f, glViewport, GL_LINES, GL_POINTS, GL_QUADS};
+use windows::Win32::Graphics::OpenGL::{glBegin, glBindTexture, glBlendFunc, glClear, glClearColor, glColor3f, glDisable, glEnable, glEnd, glFrustum, glGenTextures, glGetString, glLineWidth, glLoadIdentity, glMatrixMode, glOrtho, glPointSize, glPopAttrib, glPopMatrix, glPushAttrib, glPushMatrix, glTexCoord2f, glTexEnvf, glTexImage2D, glTexParameteri, glTexSubImage2D, glVertex2f, glVertex3f, glViewport, GL_LINES, GL_POINTS, GL_QUADS};
 
 pub(crate) fn gl_clear(mask: u32) {
     unsafe { glClear(mask); }
@@ -138,6 +138,11 @@ pub(crate) fn gl_tex_parameter_i(target: u32, pname: u32, param2: i32) {
 pub(crate) fn gl_tex_image_2d(target: u32, level: i32, internalformat: i32, width: i32, height: i32, border: i32, format: u32, r#type: u32, pixels: *const core::ffi::c_void) {
     unsafe { glTexImage2D(target, level, internalformat, width, height, border, format, r#type, pixels) }
     check_errors_gl("glTexImage2D");
+}
+
+pub(crate) fn gl_tex_sub_image_2d(target: u32, level: i32, xoffset: i32, yoffset: i32, width: i32, height: i32, format: u32, r#type: u32, pixels: *const core::ffi::c_void) {
+    unsafe { glTexSubImage2D(target, level, xoffset, yoffset, width, height, format, r#type, pixels) }
+    check_errors_gl("glTexSubImage2D");
 }
 
 pub(crate) fn gl_tex_coord_2f(s: f32, t: f32) {

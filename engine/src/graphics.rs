@@ -1,12 +1,18 @@
 use crate::geometry::dim::d2d::Dimension2D;
 use crate::geometry::storage::g2d::Graph2D;
 use crate::geometry::storage::g3d::Graph3D;
-use crate::graphics::subsystem::{grss_factory, GraphicsSubSystem, RenderingSubSystemHandle};
-use num_traits::Float;
-use std::ops::{Add, Sub};
+use crate::geometry::storage::m2d::Model2D;
+use crate::geometry::vector::p2d::Point2D;
+use crate::graphics::model::color::Color;
 use crate::graphics::model::renderer_info::RendererInfo;
+use crate::graphics::subsystem::{grss_factory, GraphicsSubSystem, RenderingSubSystemHandle};
 use crate::logger::log;
 use crate::logger::log_level::LogLevel;
+use crate::text::{text_2d_image, TextConfig};
+use num_traits::Float;
+use std::ops::{Add, Sub};
+use std::time::Instant;
+use crate::fileio::image::tex::t2d::Texture2D;
 
 pub mod model;
 pub mod subsystem;
@@ -19,6 +25,9 @@ pub mod subsystem;
 pub(crate) struct GraphicsIntermediary<F: Float + Add<F> + Sub<F>> {
     subsystem: Box<dyn RenderingSubSystemHandle<F>>,
     info: Option<RendererInfo>,
+
+    pub(crate) last_frame: Instant,
+    pub(crate) fps_enabled: bool,
 }
 
 impl<F: Float + Add<F> + Sub<F>> GraphicsIntermediary<F> {
@@ -26,6 +35,8 @@ impl<F: Float + Add<F> + Sub<F>> GraphicsIntermediary<F> {
         GraphicsIntermediary {
             subsystem: grss_factory(grss),
             info: None,
+            last_frame: Instant::now(),
+            fps_enabled: true,
         }
     }
 
@@ -51,17 +62,44 @@ impl<F: Float + Add<F> + Sub<F>> GraphicsIntermediary<F> {
                 if !texture.initialized {
                     self.subsystem.initialize_texture_2d(texture);
                 }
+                self.subsystem.update_texture_2d(texture);
             }
         }
     }
 
-    pub(crate) fn render_2d(&self, g2d: &Graph2D<F>) {
+    pub(crate) fn render_2d(&mut self, g2d: &mut Graph2D<F>) {
         for (_, model) in g2d.models.iter() {
             model.lines.iter().for_each(|x| self.subsystem.render_2d_lines(x));
             model.points.iter().for_each(|x| self.subsystem.render_2d_points(x));
             model.textures.iter()
                 .filter(|x| x.initialized)
                 .for_each(|x| self.subsystem.render_2d_textures(x));
+        }
+
+        if self.fps_enabled {
+            /* calculate fps */
+            let next = Instant::now();
+            let duration_seconds = next.duration_since(self.last_frame).as_secs_f64();
+            self.last_frame = next;
+            let fps_float = 1.0 / duration_seconds;
+            let fps = fps_float as u16;
+
+            /* prepare to render text */
+            let config = TextConfig {
+                top_left: Point2D { x: 100.0, y: 100.0 },
+                foreground: Color::RED,
+                ..Default::default()
+            };
+
+            /* add or update models */
+            g2d.models
+                .entry("99-builtin-fps".parse().unwrap())
+                .and_modify(|m| m.textures[0].replacement = Option::from(text_2d_image(config.clone(), || String::from(format!("FPS:{:3}", fps)))))
+                .or_insert(Model2D::new(vec!(), vec!(),
+                        vec!(Texture2D::new(
+                                text_2d_image(config.clone(), || String::from(format!("FPS:{:3}", fps))),
+                                Point2D::new(F::from(1700.0).unwrap(), F::from(20.0).unwrap()),
+                                F::from(2).unwrap()))));
         }
     }
 

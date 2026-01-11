@@ -8,6 +8,8 @@ pub struct Texture2D<F: Float> {
     pub image: RawImage,
     pub world_pos: Point2D<F>,
     pub scale: F,
+    
+    pub replacement: Option<RawImage>,
 }
 
 impl<F: Float> Texture2D<F> {
@@ -18,6 +20,8 @@ impl<F: Float> Texture2D<F> {
             image,
             world_pos,
             scale,
+            
+            replacement: None,
         }
     }
 }

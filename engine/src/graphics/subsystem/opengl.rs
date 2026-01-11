@@ -7,7 +7,7 @@ use crate::geometry::storage::g3d::Graph3D;
 use crate::geometry::vector::ps2d::Points2D;
 use crate::geometry::vector::ps3d::Points3D;
 use crate::graphics::model::renderer_info::RendererInfo;
-use crate::graphics::subsystem::opengl::opengl_api::{gl_begin_lines, gl_begin_points, gl_begin_quads, gl_bind_texture, gl_blend_func, gl_clear, gl_clear_color, gl_color_3f, gl_disable, gl_enable, gl_end, gl_gen_textures, gl_get_string, gl_line_width, gl_load_identity, gl_matrix_mode, gl_ortho, gl_point_size, gl_pop_matrix, gl_push_matrix, gl_tex_coord_2f, gl_tex_env_f, gl_tex_image_2d, gl_tex_parameter_i, gl_vertex_2f, gl_vertex_3f, gl_viewport};
+use crate::graphics::subsystem::opengl::opengl_api::{gl_begin_lines, gl_begin_points, gl_begin_quads, gl_bind_texture, gl_blend_func, gl_clear, gl_clear_color, gl_color_3f, gl_disable, gl_enable, gl_end, gl_gen_textures, gl_get_string, gl_line_width, gl_load_identity, gl_matrix_mode, gl_ortho, gl_point_size, gl_pop_matrix, gl_push_matrix, gl_tex_coord_2f, gl_tex_env_f, gl_tex_image_2d, gl_tex_parameter_i, gl_tex_sub_image_2d, gl_vertex_2f, gl_vertex_3f, gl_viewport};
 use crate::graphics::subsystem::{OpenGLPipeline, RenderingSubSystemHandle};
 use crate::logger::log;
 use crate::logger::log_level::LogLevel;
@@ -91,6 +91,25 @@ impl<F: Float + Add<F> + Sub<F>> RenderingSubSystemHandle<F> for OpenGLHandle {
 
         /* done */
         log(LogLevel::Info, &|| String::from(format!("created texture, id=[{}]", texture.id)));
+    }
+
+    fn update_texture_2d(&self, texture: &mut Texture2D<F>) {
+        if texture.replacement.is_some() {
+            let repl = texture.replacement.take().unwrap();
+            gl_bind_texture(GL_TEXTURE_2D, texture.id);
+            gl_tex_sub_image_2d(
+                GL_TEXTURE_2D,                              // target
+                0,                                          // level
+                0,                                          // x-offset
+                0,                                          // y-offset
+                repl.width as i32,                          // width
+                repl.height as i32,                         // height
+                GL_RGBA,                                    // format: (order) of pixel data (r, g, b, a)
+                GL_UNSIGNED_BYTE,                           // r-type: the dat type of the pixel data
+                repl.data.as_ptr() as *const c_void,        // pixels
+            );
+            texture.image = repl;
+        }
     }
 
     fn before_scene(&self, ccd: &Dimension2D<f32>) {
