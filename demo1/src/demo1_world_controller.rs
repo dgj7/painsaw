@@ -154,13 +154,13 @@ fn create_2d_grid_y_lines(ccd: &Dimension2D<f32>) -> Model2D<f32> {
 
 fn create_2d_letters() -> Model2D<f32> {
     let config = TextConfig {
-        top_left: Point2D::new(150.0, 150.0),
+        top_left: Point2D::new(200.0, 40.0),
         foreground: Color::RED,
         background: Color::GREEN,
         scale: 6.0,
         ..Default::default()
     };
-    let textures = vec!(text_2d(config, || String::from(format!("A"))));
+    let textures = vec!(text_2d(config, || String::from(format!("AaWwYyA"))));
 
     Model2D::new(vec!(), vec!(), textures)
 }
