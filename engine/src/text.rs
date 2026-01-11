@@ -6,16 +6,16 @@ use num_traits::Float;
 
 pub mod generic;
 
-enum Typeface {
+pub enum Typeface {
     Generic,
 }
 
 pub struct TextConfig<F: Float> {
-    typeface: Typeface,
-    top_left: Point2D<F>,
-    scale: F,
-    foreground: Color,
-    background: Color,
+    pub typeface: Typeface,
+    pub top_left: Point2D<F>,
+    pub scale: F,
+    pub foreground: Color,
+    pub background: Color,
 }
 
 pub fn text_2d<P, F: Float>(config: TextConfig<F>, provider: P) -> Texture2D<F>

@@ -41,6 +41,8 @@ impl Color {
     
     pub const WHITE: Color = Color::from_rgb(1.0, 1.0, 1.0);
     pub const BLACK: Color = Color::from_rgb(0.0, 0.0, 0.0);
+
+    pub const TRANSPARENT: Color = Color::from_rgba(0.0, 0.0, 0.0, 0.0);
 }
 
 #[cfg(test)]

@@ -1,6 +1,3 @@
-use engine::fileio::image::raw::{Pixel, RawImage};
-use engine::fileio::image::tex::t2d::Texture2D;
-use engine::fileio::resources::memory::MemoryResource;
 use engine::geometry::dim::d2d::Dimension2D;
 use engine::geometry::line::l2d::Line2D;
 use engine::geometry::line::l3d::Line3D;
@@ -12,10 +9,11 @@ use engine::geometry::vector::p2d::Point2D;
 use engine::geometry::vector::p3d::Point3D;
 use engine::geometry::vector::ps2d::Points2D;
 use engine::geometry::vector::ps3d::Points3D;
+use engine::graphics::model::color::Color;
 use engine::input::model::keyboard_state::{KeyInfo, KeyPosition};
 use engine::logger::log;
 use engine::logger::log_level::LogLevel;
-use engine::graphics::model::color::Color;
+use engine::text::{text_2d, TextConfig};
 use engine::window::wc::context::RendererContext;
 use engine::window::wc::world_control::WorldController;
 
@@ -25,7 +23,7 @@ static M2D_Y_VERT: &str = "2-2d-y-vertical";
 static M3D_X_ABSCISSA: &str = "4-3d-axes-abscissa";
 static M3D_Y_ORDINATE: &str = "4-3d-axes-ordinate";
 static M3D_Z_APPLICATE: &str = "4-3d-axes-applicate";
-static M2D_LETTER_A_TEXTURE: &str = "6-2d-letter-a-texture";
+static M2D_LETTERS_TEXTURE: &str = "6-2d-A-texture";
 
 pub(crate) struct Demo1WorldController {}
 
@@ -40,7 +38,7 @@ impl WorldController<f32> for Demo1WorldController {
         context.g2d.models.insert(M2D_Y_VERT.parse().unwrap(), create_2d_grid_y_lines(&ccd));
 
         /* 2d textures */
-        context.g2d.models.insert(M2D_LETTER_A_TEXTURE.parse().unwrap(), create_2d_letter_a());
+        context.g2d.models.insert(M2D_LETTERS_TEXTURE.parse().unwrap(), create_2d_letters());
 
         /* 3d: origin axes */
         context.g3d.models.insert(M3D_X_ABSCISSA.parse().unwrap(), Model3D::new(
@@ -154,15 +152,15 @@ fn create_2d_grid_y_lines(ccd: &Dimension2D<f32>) -> Model2D<f32> {
     Model2D::new(vec!(), vlinevec, vec!())
 }
 
-fn create_2d_letter_a() -> Model2D<f32> {
-    let bitmap: [u8; 7] = [0x6f, 0x49, 0xc9, 0x7b, 0x00, 0x00, 0x00];
-    let letter = MemoryResource::from_array(Vec::from(bitmap));
-    let image = RawImage::one_bpp_to_raw_img(8, 8, Box::new(letter), &Color::WHITE, &Color::BLACK, Pixel::bit_per_pixel);
-    let textures = vec!(Texture2D::new(image, Point2D::new(100.0, 300.0), 10.0));
-
-    //for byte in textures[0].image.data.iter() {
-    //    log(LogLevel::Info, &|| String::from(format!("{}", byte)));
-    //}
+fn create_2d_letters() -> Model2D<f32> {
+    let config = TextConfig {
+        top_left: Point2D::new(150.0, 150.0),
+        foreground: Color::RED,
+        background: Color::GREEN,
+        scale: 6.0,
+        ..Default::default()
+    };
+    let textures = vec!(text_2d(config, || String::from(format!("A"))));
 
     Model2D::new(vec!(), vec!(), textures)
 }

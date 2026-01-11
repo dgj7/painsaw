@@ -2,7 +2,7 @@ use crate::graphics::subsystem::opengl::opengl_errors::check_errors_gl;
 use crate::logger::log;
 use crate::logger::log_level::LogLevel;
 use std::ffi::{c_char, CStr};
-use windows::Win32::Graphics::OpenGL::{glBegin, glBindTexture, glClear, glClearColor, glColor3f, glDisable, glEnable, glEnd, glFrustum, glGenTextures, glGetString, glLineWidth, glLoadIdentity, glMatrixMode, glOrtho, glPointSize, glPopMatrix, glPushMatrix, glTexCoord2f, glTexEnvf, glTexImage2D, glTexParameteri, glVertex2f, glVertex3f, glViewport, GL_LINES, GL_POINTS, GL_QUADS};
+use windows::Win32::Graphics::OpenGL::{glBegin, glBindTexture, glClear, glClearColor, glColor3f, glDisable, glEnable, glEnd, glFrustum, glGenTextures, glGetString, glLineWidth, glLoadIdentity, glMatrixMode, glOrtho, glPointSize, glPopAttrib, glPopMatrix, glPushAttrib, glPushMatrix, glTexCoord2f, glTexEnvf, glTexImage2D, glTexParameteri, glVertex2f, glVertex3f, glViewport, GL_LINES, GL_POINTS, GL_QUADS};
 
 pub(crate) fn gl_clear(mask: u32) {
     unsafe { glClear(mask); }
@@ -149,4 +149,16 @@ pub(crate) fn gl_tex_coord_2f(s: f32, t: f32) {
 pub(crate) fn gl_tex_env_f(target: u32, pname: u32, param2: f32) {
     unsafe { glTexEnvf(target, pname, param2) }
     check_errors_gl("glTexEnvf");
+}
+
+#[allow(unused)] // todo: remove this
+pub(crate) fn gl_push_attrib(mask: u32) {
+    unsafe { glPushAttrib(mask) }
+    check_errors_gl("glPushAttrib");
+}
+
+#[allow(unused)] // todo: remove this
+pub(crate) fn gl_pop_attrib() {
+    unsafe { glPopAttrib() }
+    check_errors_gl("glPopAttrib");
 }
