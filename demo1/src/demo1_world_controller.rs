@@ -23,7 +23,7 @@ static M2D_Y_VERT: &str = "2-2d-y-vertical";
 static M3D_X_ABSCISSA: &str = "4-3d-axes-abscissa";
 static M3D_Y_ORDINATE: &str = "4-3d-axes-ordinate";
 static M3D_Z_APPLICATE: &str = "4-3d-axes-applicate";
-static M2D_LETTERS_TEXTURE: &str = "6-2d-A-texture";
+static M2D_TEXT_TEXTURE: &str = "6-2d-text-texture";
 
 pub(crate) struct Demo1WorldController {}
 
@@ -38,7 +38,7 @@ impl WorldController<f32> for Demo1WorldController {
         context.g2d.models.insert(M2D_Y_VERT.parse().unwrap(), create_2d_grid_y_lines(&ccd));
 
         /* 2d textures */
-        context.g2d.models.insert(M2D_LETTERS_TEXTURE.parse().unwrap(), create_2d_letters());
+        context.g2d.models.insert(M2D_TEXT_TEXTURE.parse().unwrap(), create_2d_text());
 
         /* 3d: origin axes */
         context.g3d.models.insert(M3D_X_ABSCISSA.parse().unwrap(), Model3D::new(
@@ -84,7 +84,7 @@ impl WorldController<f32> for Demo1WorldController {
                     context.g2d.models.entry(M2D_X_HORIZ.parse().unwrap()).and_modify(|e| *e = create_2d_grid_x_lines(&ccd));
                     context.g2d.models.entry(M2D_Y_VERT.parse().unwrap()).and_modify(|e| *e = create_2d_grid_y_lines(&ccd));
 
-                    log(LogLevel::Debug, &|| String::from(format!("window size changed; 2d model count is [{}]", context.g2d.models.len())));
+                    log(LogLevel::Debug, &|| String::from(format!("window size changed ({}x{}); 2d model count is [{}]", ccd.width, ccd.height, context.g2d.models.len())));
                 }
                 is.screen_resized = false;
             },
@@ -112,7 +112,10 @@ fn create_2d_axes(ccd: &Dimension2D<f32>) -> Model2D<f32> {
             Point2D::new(ccd.width, 0.0),
         ), Color::GREEN,15.0);
     let other_points = Points2D::new(vec!(
-            Point2D::new(100.0, 100.0),
+            Point2D::new(20.0, 20.0),
+            Point2D::new(20.0, 50.0),
+            Point2D::new(20.0, 80.0),
+            Point2D::new(20.0, 110.0),
         ), Color::GREEN, 3.0);
     let pointsvec = vec!(axes_points, other_points);
 
@@ -152,14 +155,27 @@ fn create_2d_grid_y_lines(ccd: &Dimension2D<f32>) -> Model2D<f32> {
     Model2D::new(vec!(), vlinevec, vec!())
 }
 
-fn create_2d_letters() -> Model2D<f32> {
-    let config = TextConfig {
-        top_left: Point2D::new(200.0, 40.0),
+fn create_2d_text() -> Model2D<f32> {
+    let mut textures = vec!();
+
+    textures.push(text_2d(TextConfig {
+        top_left: Point2D::new(20.0, 20.0),
         foreground: Color::RED,
-        scale: 6.0,
+        scale: 2.0,
         ..Default::default()
-    };
-    let textures = vec!(text_2d(config, || String::from(format!("AaWwYyA"))));
+    }, || String::from("AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz")));
+    textures.push(text_2d(TextConfig {
+        top_left: Point2D::new(20.0, 50.0),
+        foreground: Color::RED,
+        scale: 2.0,
+        ..Default::default()
+    }, || String::from("!\"#$%&\\()*+,-./[]^_`{|}~:;<=>?@")));
+    textures.push(text_2d(TextConfig {
+        top_left: Point2D::new(20.0, 80.0),
+        foreground: Color::RED,
+        scale: 2.0,
+        ..Default::default()
+    }, || String::from("0123456789")));
 
     Model2D::new(vec!(), vec!(), textures)
 }

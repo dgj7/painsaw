@@ -15,7 +15,7 @@ fn main() {
     log(LogLevel::Info, &|| "main(): begin".parse().unwrap());
 
     let cfg = WindowConfig::new(
-        WindowDimensions::Dimensional { width: 800, height: 600 },
+        WindowDimensions::Dimensional { width: 1920, height: 1080 },
         "Demo1 - MsWin/OpenGL",
     "PAINSAW-DEMO1",
             GraphicsSubSystem::OpenGL { pipeline: OpenGLPipeline::FixedFunction }
