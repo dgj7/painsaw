@@ -3,10 +3,10 @@
 use engine::logger::log_level::LogLevel;
 use engine::logger::log_target::LogTarget;
 use engine::logger::{configure, log, LoggerConfig};
-use engine::window::model::window_config::{WindowConfig, WindowDimensions};
-use engine::window::window_factory::create_window;
+use engine::window::window_config::{WindowConfig, WindowDimensions};
 use demo1_world_controller::Demo1WorldController;
 use engine::graphics::subsystem::{GraphicsSubSystem, OpenGLPipeline};
+use engine::window::create_window;
 
 pub mod demo1_world_controller;
 

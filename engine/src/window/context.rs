@@ -3,10 +3,10 @@ use crate::geometry::storage::g2d::Graph2D;
 use crate::geometry::storage::g3d::Graph3D;
 use crate::graphics::subsystem::GraphicsSubSystem;
 use crate::graphics::GraphicsIntermediary;
-use crate::input::model::input_state::InputState;
 use num_traits::Float;
 use std::ops::{Add, Sub};
 use std::sync::{Arc, Mutex};
+use crate::input::InputState;
 
 pub struct RendererContext<F: Float + Add<F> + Sub<F>> {
     /* storage for game statistics */

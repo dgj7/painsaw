@@ -5,5 +5,60 @@
 //! subsystem in use (for ex: opengl, directx, etc).
 //!
 
-pub mod world_control;
-pub mod context;
+use std::ops::{Add, Sub};
+use num_traits::Float;
+use crate::logger::log;
+use crate::logger::log_level::LogLevel;
+use crate::window::context::RendererContext;
+
+///
+/// Control various aspects of the world, as called by the windowing system.
+///
+pub trait WorldController<F: Float + Add<F> + Sub<F>> {
+    ///
+    /// initialize the game world.
+    ///
+    fn initialize_world(&self, context: &mut RendererContext<F>) {
+        self.initialize_world_helper(context);
+
+        let graphics = &mut context.graphics;
+        graphics.initialize(&mut context.g2d, &mut context.g3d);
+
+        log(LogLevel::Debug, &|| String::from("initialization complete"));
+    }
+
+    ///
+    /// initialize game world - customizer for client.
+    ///
+    fn initialize_world_helper(&self, context: &mut RendererContext<F>);
+
+    ///
+    /// update the game world state - fully controlled by client.
+    ///
+    fn update_world(&self, context: &mut RendererContext<F>);
+
+    ///
+    /// display the game world scene.
+    ///
+    /// fully controlled by engine; the engine is data-driven, meaning that graphics instructions
+    /// come from models supplied during initialization, along with changes to those models
+    /// during the update world step.
+    ///
+    fn display_world_scene(&self, context: &mut RendererContext<F>) {
+        /* gather variables */
+        let ccd = context.copy_client_dimensions();
+
+        /* prepare for drawing */
+        context.graphics.before_scene(&ccd);
+
+        /* draw 2d, if desired */
+        context.graphics.prepare_2d(&mut context.g2d, &ccd);
+        context.graphics.render_2d(&mut context.g2d);
+        context.graphics.after_2d();
+
+        /* draw 3d, if desired */
+        context.graphics.prepare_3d();
+        context.graphics.render_3d(&context.g3d);
+        context.graphics.after_3d();
+    }
+}

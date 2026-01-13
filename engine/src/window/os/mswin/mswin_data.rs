@@ -1,7 +1,7 @@
 use std::sync::{Arc, Mutex};
 use windows::Win32::Foundation::{HWND, LPARAM};
 use windows::Win32::UI::WindowsAndMessaging::{GetWindowLongPtrA, SetWindowLongPtrA, CREATESTRUCTA, GWLP_USERDATA};
-use crate::input::model::input_state::InputState;
+use crate::input::InputState;
 
 ///
 /// InputState to raw pointer.

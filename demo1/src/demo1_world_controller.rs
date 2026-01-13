@@ -10,12 +10,13 @@ use engine::geometry::vector::p3d::Point3D;
 use engine::geometry::vector::ps2d::Points2D;
 use engine::geometry::vector::ps3d::Points3D;
 use engine::graphics::model::color::Color;
-use engine::input::model::keyboard_state::{KeyInfo, KeyPosition};
+use engine::input::ki::KeyInfo;
+use engine::input::kp::KeyPosition;
 use engine::logger::log;
 use engine::logger::log_level::LogLevel;
 use engine::text::{text_2d_texture, TextConfig};
-use engine::window::wc::context::RendererContext;
-use engine::window::wc::world_control::WorldController;
+use engine::window::context::RendererContext;
+use engine::window::wc::WorldController;
 
 static M2D_XY_PURPLE: &str = "1-2d-xy-purple";
 static M2D_X_HORIZ: &str = "2-2d-x-horizontal";
