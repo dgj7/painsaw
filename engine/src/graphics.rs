@@ -1,3 +1,4 @@
+use std::cmp;
 use crate::geometry::dim::d2d::Dimension2D;
 use crate::geometry::storage::g2d::Graph2D;
 use crate::geometry::storage::g3d::Graph3D;
@@ -82,7 +83,7 @@ impl<F: Float + Add<F> + Sub<F>> GraphicsIntermediary<F> {
             let duration_seconds = next.duration_since(self.last_frame).as_secs_f64();
             self.last_frame = next;
             let fps_float = 1.0 / duration_seconds;
-            let fps = fps_float as u16;
+            let fps = cmp::min(fps_float as u16, 999);
 
             /* prepare to render text */
             let config = TextConfig {
