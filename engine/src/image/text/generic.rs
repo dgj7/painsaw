@@ -1,4 +1,4 @@
-use crate::text::TextConfig;
+use crate::image::text::TextConfig;
 use num_traits::Float;
 use std::collections::HashMap;
 use std::sync::{LazyLock, Mutex};

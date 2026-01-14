@@ -1,11 +1,10 @@
 use std::f64::consts::PI;
 use num_traits::Float;
 
-pub mod vector;
+pub mod point;
 pub mod line;
 pub mod dim;
 pub mod matrix;
-pub mod scene;
 
 static C_2_PI: f64 = PI * 2.0;
 static C_PI_OVER_2: f64 = PI / 2.0;

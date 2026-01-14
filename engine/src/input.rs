@@ -2,7 +2,7 @@ use std::ops::{Add, Sub};
 use std::sync::{Arc, Mutex};
 use std::time::Instant;
 use num_traits::Float;
-use crate::geometry::dim::d2d::Dimension2D;
+use crate::geometry::dim::Dimension2D;
 use crate::input::ki::KeyInfo;
 use crate::input::kp::KeyPosition;
 use crate::input::ks::KeyState;

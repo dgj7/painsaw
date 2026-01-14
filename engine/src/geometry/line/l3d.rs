@@ -1,4 +1,4 @@
-use crate::geometry::vector::p3d::Point3D;
+use crate::geometry::point::p3d::Point3D;
 use num_traits::Float;
 use std::ops::{Add, Sub};
 

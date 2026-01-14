@@ -1,7 +1,7 @@
 use crate::image::t2d::Texture2D;
-use crate::geometry::vector::p2d::Point2D;
+use crate::geometry::point::p2d::Point2D;
 use crate::graphics::model::color::Color;
-use crate::text::generic::create_generic;
+use crate::image::text::generic::create_generic;
 use num_traits::Float;
 use crate::image::RawImage;
 

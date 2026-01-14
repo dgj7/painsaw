@@ -1,20 +1,20 @@
-use engine::geometry::dim::d2d::Dimension2D;
+use engine::geometry::dim::Dimension2D;
 use engine::geometry::line::l2d::Line2D;
 use engine::geometry::line::l3d::Line3D;
 use engine::geometry::line::ls2d::Lines2D;
 use engine::geometry::line::ls3d::Lines3D;
-use engine::geometry::scene::m2d::Model2D;
-use engine::geometry::scene::m3d::Model3D;
-use engine::geometry::vector::p2d::Point2D;
-use engine::geometry::vector::p3d::Point3D;
-use engine::geometry::vector::ps2d::Points2D;
-use engine::geometry::vector::ps3d::Points3D;
+use engine::graphics::model::m2d::Model2D;
+use engine::graphics::model::m3d::Model3D;
+use engine::geometry::point::p2d::Point2D;
+use engine::geometry::point::p3d::Point3D;
+use engine::geometry::point::ps2d::Points2D;
+use engine::geometry::point::ps3d::Points3D;
 use engine::graphics::model::color::Color;
 use engine::input::ki::KeyInfo;
 use engine::input::kp::KeyPosition;
 use engine::logger::log;
 use engine::logger::log_level::LogLevel;
-use engine::text::{text_2d_texture, TextConfig};
+use engine::image::text::{text_2d_texture, TextConfig};
 use engine::window::context::RendererContext;
 use engine::window::wc::WorldController;
 

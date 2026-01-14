@@ -1,6 +1,6 @@
 use std::ops::{Add, Sub};
 use num_traits::Float;
-use crate::geometry::vector::p2d::Point2D;
+use crate::geometry::point::p2d::Point2D;
 use crate::graphics::model::color::Color;
 
 #[derive(Clone)]

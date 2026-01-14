@@ -1,11 +1,11 @@
-use crate::geometry::dim::d2d::Dimension2D;
-use crate::geometry::scene::g2d::Graph2D;
-use crate::geometry::scene::g3d::Graph3D;
+use crate::graphics::model::g2d::Graph2D;
+use crate::graphics::model::g3d::Graph3D;
 use crate::graphics::subsystem::GraphicsSubSystem;
 use crate::graphics::GraphicsIntermediary;
 use num_traits::Float;
 use std::ops::{Add, Sub};
 use std::sync::{Arc, Mutex};
+use crate::geometry::dim::Dimension2D;
 use crate::input::InputState;
 
 pub struct RendererContext<F: Float + Add<F> + Sub<F>> {

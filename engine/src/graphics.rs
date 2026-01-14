@@ -1,18 +1,18 @@
 use std::cmp;
-use crate::geometry::dim::d2d::Dimension2D;
-use crate::geometry::scene::g2d::Graph2D;
-use crate::geometry::scene::g3d::Graph3D;
-use crate::geometry::scene::m2d::Model2D;
-use crate::geometry::vector::p2d::Point2D;
+use model::g2d::Graph2D;
+use model::g3d::Graph3D;
+use model::m2d::Model2D;
+use crate::geometry::point::p2d::Point2D;
 use crate::graphics::model::color::Color;
 use crate::graphics::model::renderer_info::RendererInfo;
 use crate::graphics::subsystem::{grss_factory, GraphicsSubSystem, RenderingSubSystemHandle};
 use crate::logger::log;
 use crate::logger::log_level::LogLevel;
-use crate::text::{text_2d_image, TextConfig};
+use crate::image::text::{text_2d_image, TextConfig};
 use num_traits::Float;
 use std::ops::{Add, Sub};
 use std::time::Instant;
+use crate::geometry::dim::Dimension2D;
 use crate::image::t2d::Texture2D;
 
 pub mod model;

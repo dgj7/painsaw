@@ -1,4 +1,4 @@
-use crate::geometry::scene::m3d::Model3D;
+use crate::graphics::model::m3d::Model3D;
 use num_traits::Float;
 use std::collections::BTreeMap;
 use std::ops::{Add, Sub};
