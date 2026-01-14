@@ -1,5 +1,5 @@
 use std::error::Error;
-use crate::fileio::resources::Resource;
+use crate::resource::Resource;
 
 ///
 /// a resource that comes from memory.

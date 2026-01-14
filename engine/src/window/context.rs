@@ -1,6 +1,6 @@
 use crate::geometry::dim::d2d::Dimension2D;
-use crate::geometry::storage::g2d::Graph2D;
-use crate::geometry::storage::g3d::Graph3D;
+use crate::geometry::scene::g2d::Graph2D;
+use crate::geometry::scene::g3d::Graph3D;
 use crate::graphics::subsystem::GraphicsSubSystem;
 use crate::graphics::GraphicsIntermediary;
 use num_traits::Float;
@@ -9,14 +9,14 @@ use std::sync::{Arc, Mutex};
 use crate::input::InputState;
 
 pub struct RendererContext<F: Float + Add<F> + Sub<F>> {
-    /* storage for game statistics */
+    /* scene for game statistics */
     pub first_frame_rendered: bool,
     pub frame_count: u128,
 
-    /* storage for input state */
+    /* scene for input state */
     pub input: Arc<Mutex<InputState<f32>>>,
 
-    /* storage for world state */
+    /* scene for world state */
     pub g2d: Graph2D<F>,
     pub g3d: Graph3D<F>,
     

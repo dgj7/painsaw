@@ -1,8 +1,8 @@
-use crate::fileio::image::raw::RawImage;
 use crate::text::TextConfig;
 use num_traits::Float;
 use std::collections::HashMap;
 use std::sync::{LazyLock, Mutex};
+use crate::image::RawImage;
 
 static ALPHABET : LazyLock<Mutex<HashMap<char, Vec<u16>>>> = LazyLock::new(|| Mutex::new(define_alphabet()));
 static HEIGHT: usize = 15;
@@ -24,7 +24,7 @@ pub fn create_generic<F: Float>(config: &TextConfig<F>, message: String) -> RawI
         }
     }
 
-    /* create storage for u8 */
+    /* create scene for u8 */
     let mut output = vec!();
 
     /* iterate over u16 and convert to u8 */

@@ -2,6 +2,8 @@
 //! "raw" image format; uploaded to the graphics chip.
 //!
 
+pub mod t2d;
+
 pub struct RawImage {
     pub width: u32,
     pub height: u32,

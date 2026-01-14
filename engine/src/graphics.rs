@@ -1,8 +1,8 @@
 use std::cmp;
 use crate::geometry::dim::d2d::Dimension2D;
-use crate::geometry::storage::g2d::Graph2D;
-use crate::geometry::storage::g3d::Graph3D;
-use crate::geometry::storage::m2d::Model2D;
+use crate::geometry::scene::g2d::Graph2D;
+use crate::geometry::scene::g3d::Graph3D;
+use crate::geometry::scene::m2d::Model2D;
 use crate::geometry::vector::p2d::Point2D;
 use crate::graphics::model::color::Color;
 use crate::graphics::model::renderer_info::RendererInfo;
@@ -13,7 +13,7 @@ use crate::text::{text_2d_image, TextConfig};
 use num_traits::Float;
 use std::ops::{Add, Sub};
 use std::time::Instant;
-use crate::fileio::image::tex::t2d::Texture2D;
+use crate::image::t2d::Texture2D;
 
 pub mod model;
 pub mod subsystem;

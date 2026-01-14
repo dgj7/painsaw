@@ -1,7 +1,7 @@
 //!
-//! storage for world state.
+//! scene for world state.
 //!
-//! 3d: eventually, scene graph.
+//! 3d: eventually, scene scene.
 //! 2d: eventually, quad tree.
 //!
 

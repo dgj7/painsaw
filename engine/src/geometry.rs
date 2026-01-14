@@ -5,8 +5,7 @@ pub mod vector;
 pub mod line;
 pub mod dim;
 pub mod matrix;
-pub mod config;
-pub mod storage;
+pub mod scene;
 
 static C_2_PI: f64 = PI * 2.0;
 static C_PI_OVER_2: f64 = PI / 2.0;

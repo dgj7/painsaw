@@ -1,6 +1,6 @@
-use crate::fileio::image::raw::RawImage;
 use crate::geometry::vector::p2d::Point2D;
 use num_traits::Float;
+use crate::image::RawImage;
 
 pub struct Texture2D<F: Float> {
     pub initialized: bool,

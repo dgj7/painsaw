@@ -1,9 +1,9 @@
-use crate::fileio::image::tex::t2d::Texture2D;
+use crate::image::t2d::Texture2D;
 use crate::geometry::dim::d2d::Dimension2D;
 use crate::geometry::line::ls2d::Lines2D;
 use crate::geometry::line::ls3d::Lines3D;
-use crate::geometry::storage::g2d::Graph2D;
-use crate::geometry::storage::g3d::Graph3D;
+use crate::geometry::scene::g2d::Graph2D;
+use crate::geometry::scene::g3d::Graph3D;
 use crate::geometry::vector::ps2d::Points2D;
 use crate::geometry::vector::ps3d::Points3D;
 use crate::graphics::model::renderer_info::RendererInfo;

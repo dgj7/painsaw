@@ -1,11 +1,11 @@
 //!
-//! access to resources that are external to the engine.
+//! access to restype that are external to the engine.
 //!
 
 use std::error::Error;
 
-pub mod file;
-pub mod memory;
+pub mod restype;
+pub mod endianness;
 
 ///
 /// any resource that exists outside the engine.
