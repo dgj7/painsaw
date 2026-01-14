@@ -1,10 +1,10 @@
 use crate::image::t2d::Texture2D;
-use crate::geometry::line::ls2d::Lines2D;
-use crate::geometry::line::ls3d::Lines3D;
+use crate::geometry::line::Lines2D;
+use crate::geometry::line::Lines3D;
 use crate::graphics::model::g2d::Graph2D;
 use crate::graphics::model::g3d::Graph3D;
-use crate::geometry::point::ps2d::Points2D;
-use crate::geometry::point::ps3d::Points3D;
+use crate::geometry::point::Points2D;
+use crate::geometry::point::Points3D;
 use crate::graphics::model::renderer_info::RendererInfo;
 use crate::graphics::subsystem::opengl::opengl_api::{gl_begin_lines, gl_begin_points, gl_begin_quads, gl_bind_texture, gl_blend_func, gl_clear, gl_clear_color, gl_color_3f, gl_disable, gl_enable, gl_end, gl_gen_textures, gl_get_string, gl_line_width, gl_load_identity, gl_matrix_mode, gl_ortho, gl_point_size, gl_pop_matrix, gl_push_matrix, gl_tex_coord_2f, gl_tex_env_f, gl_tex_image_2d, gl_tex_parameter_i, gl_tex_sub_image_2d, gl_vertex_2f, gl_vertex_3f, gl_viewport};
 use crate::graphics::subsystem::{OpenGLPipeline, RenderingSubSystemHandle};
