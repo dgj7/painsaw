@@ -147,6 +147,17 @@ impl<F: Float> Quaternion<F> {
     }
 }
 
+impl<F: Float> Quaternion<F> {
+    pub fn identity() -> Quaternion<F> {
+        Quaternion {
+            w: F::one(),
+            x: F::zero(),
+            y: F::zero(),
+            z: F::zero(),
+        }
+    }
+}
+
 pub fn dot_product<F: Float>(left: &Quaternion<F>, right: &Quaternion<F>) -> F {
     left.w*right.w + left.x*right.x + left.y*right.y + left.z*right.z
 }
