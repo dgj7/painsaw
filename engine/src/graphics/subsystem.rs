@@ -42,7 +42,7 @@ pub trait RenderingSubSystemHandle<F: Float + Add<F> + Sub<F>> {
     fn prepare_2d(&self, ccd: &Dimension2D<f32>);
     fn after_2d(&self);
 
-    fn prepare_3d(&self);
+    fn prepare_3d(&self, ccd: &Dimension2D<f32>);
     fn after_3d(&self);
 
     fn render_2d_points(&self, points: &Points2D<F>);

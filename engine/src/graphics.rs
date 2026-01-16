@@ -108,8 +108,8 @@ impl<F: Float + Add<F> + Sub<F>> GraphicsIntermediary<F> {
         self.subsystem.after_2d();
     }
 
-    pub(crate) fn prepare_3d(&self) {
-        self.subsystem.prepare_3d();
+    pub(crate) fn prepare_3d(&self, ccd: &Dimension2D<f32>) {
+        self.subsystem.prepare_3d(ccd);
     }
 
     pub(crate) fn render_3d(&self, g3d: &Graph3D<F>) {

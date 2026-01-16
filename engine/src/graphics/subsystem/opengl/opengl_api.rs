@@ -2,7 +2,7 @@ use crate::graphics::subsystem::opengl::opengl_errors::check_errors_gl;
 use crate::logger::log;
 use crate::logger::log_level::LogLevel;
 use std::ffi::{c_char, CStr};
-use windows::Win32::Graphics::OpenGL::{glBegin, glBindTexture, glBlendFunc, glClear, glClearColor, glColor3f, glDisable, glEnable, glEnd, glFrustum, glGenTextures, glGetString, glLineWidth, glLoadIdentity, glMatrixMode, glOrtho, glPointSize, glPopAttrib, glPopMatrix, glPushAttrib, glPushMatrix, glTexCoord2f, glTexEnvf, glTexImage2D, glTexParameteri, glTexSubImage2D, glVertex2f, glVertex3f, glViewport, GL_LINES, GL_POINTS, GL_QUADS};
+use windows::Win32::Graphics::OpenGL::{glBegin, glBindTexture, glBlendFunc, glClear, glClearColor, glColor3f, glDisable, glEnable, glEnd, glFrustum, glGenTextures, glGetString, glLineWidth, glLoadIdentity, glMatrixMode, glOrtho, glPointSize, glPopAttrib, glPopMatrix, glPushAttrib, glPushMatrix, glRotatef, glTexCoord2f, glTexEnvf, glTexImage2D, glTexParameteri, glTexSubImage2D, glTranslatef, glVertex2f, glVertex3f, glViewport, gluPerspective, GL_LINES, GL_POINTS, GL_QUADS};
 
 pub(crate) fn gl_clear(mask: u32) {
     unsafe { glClear(mask); }
@@ -171,4 +171,19 @@ pub(crate) fn gl_pop_attrib() {
 pub(crate) fn gl_blend_func(sfactor: u32, dfactor: u32) {
     unsafe { glBlendFunc(sfactor, dfactor) }
     check_errors_gl("glBlendFunc");
+}
+
+pub(crate) fn glu_perspective(fovy: f64, aspect: f64, znear: f64, zfar: f64) {
+    unsafe { gluPerspective(fovy, aspect, znear, zfar) }
+    check_errors_gl("gluPerspective");
+}
+
+pub(crate) fn gl_translate_f(x: f32, y: f32, z: f32) {
+    unsafe { glTranslatef(x, y, z) }
+    check_errors_gl("glTranslatef");
+}
+
+pub(crate) fn gl_rotate_f(angle: f32, x: f32, y: f32, z: f32) {
+    unsafe { glRotatef(angle, x, y, z); }
+    check_errors_gl("glRotatef");
 }

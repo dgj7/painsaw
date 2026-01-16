@@ -6,7 +6,7 @@ use crate::graphics::model::g3d::Graph3D;
 use crate::geometry::point::Points2D;
 use crate::geometry::point::Points3D;
 use crate::graphics::model::renderer_info::RendererInfo;
-use crate::graphics::subsystem::opengl::opengl_api::{gl_begin_lines, gl_begin_points, gl_begin_quads, gl_bind_texture, gl_blend_func, gl_clear, gl_clear_color, gl_color_3f, gl_disable, gl_enable, gl_end, gl_gen_textures, gl_get_string, gl_line_width, gl_load_identity, gl_matrix_mode, gl_ortho, gl_point_size, gl_pop_matrix, gl_push_matrix, gl_tex_coord_2f, gl_tex_env_f, gl_tex_image_2d, gl_tex_parameter_i, gl_tex_sub_image_2d, gl_vertex_2f, gl_vertex_3f, gl_viewport};
+use crate::graphics::subsystem::opengl::opengl_api::{gl_begin_lines, gl_begin_points, gl_begin_quads, gl_bind_texture, gl_blend_func, gl_clear, gl_clear_color, gl_color_3f, gl_disable, gl_enable, gl_end, gl_frustum, gl_gen_textures, gl_get_string, gl_line_width, gl_load_identity, gl_matrix_mode, gl_ortho, gl_point_size, gl_pop_matrix, gl_push_matrix, gl_rotate_f, gl_tex_coord_2f, gl_tex_env_f, gl_tex_image_2d, gl_tex_parameter_i, gl_tex_sub_image_2d, gl_translate_f, gl_vertex_2f, gl_vertex_3f, gl_viewport, glu_perspective};
 use crate::graphics::subsystem::{OpenGLPipeline, RenderingSubSystemHandle};
 use crate::logger::log;
 use crate::logger::log_level::LogLevel;
@@ -153,7 +153,7 @@ impl<F: Float + Add<F> + Sub<F>> RenderingSubSystemHandle<F> for OpenGLHandle {
         gl_pop_matrix();
     }
 
-    fn prepare_3d(&self) {
+    fn prepare_3d(&self, ccd: &Dimension2D<f32>) {
         match self.pipeline {
             OpenGLPipeline::FixedFunction => {
                 gl_enable(GL_DEPTH_TEST);
@@ -161,10 +161,17 @@ impl<F: Float + Add<F> + Sub<F>> RenderingSubSystemHandle<F> for OpenGLHandle {
                 gl_matrix_mode(GL_PROJECTION);
                 gl_load_identity();
 
-                // todo: do camera; gluPerspective, glFrustum
+                glu_perspective(45.0, (ccd.width / ccd.height) as f64, 0.01, 500.0);
+                //gl_frustum(-1.0, 1.0, -1.0, 1.0, 1.5, 20.0);
 
                 gl_matrix_mode(GL_MODELVIEW);
                 gl_load_identity();
+
+                gl_translate_f(0.0, 0.0, -10.0);
+
+                gl_rotate_f(-45.0, 0.0, 1.0, 0.0);// rotate: yaw,  y-axis; only degrees and y-axis are set
+                gl_rotate_f(-20.0, 1.0, 0.0, 0.0);// rotate: pitch, x-axis; only degrees and x-axis are set; positive rotates forward down
+                //gl_rotate_f(0.0, 0.0, 0.0, 1.0);// rotate: roll/bank, z-axis; only degrees and z-axis are set
             }
             OpenGLPipeline::Shaders => {}
         }
