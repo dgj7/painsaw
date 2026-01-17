@@ -1,20 +1,20 @@
-use crate::image::t2d::Texture2D;
 use crate::geometry::line::Lines2D;
 use crate::geometry::line::Lines3D;
-use crate::graphics::model::g2d::Graph2D;
-use crate::graphics::model::g3d::Graph3D;
 use crate::geometry::point::Points2D;
 use crate::geometry::point::Points3D;
+use crate::graphics::camera::Camera;
+use crate::graphics::model::g2d::Graph2D;
+use crate::graphics::model::g3d::Graph3D;
 use crate::graphics::model::renderer_info::RendererInfo;
-use crate::graphics::subsystem::opengl::opengl_api::{gl_begin_lines, gl_begin_points, gl_begin_quads, gl_bind_texture, gl_blend_func, gl_clear, gl_clear_color, gl_color_3f, gl_disable, gl_enable, gl_end, gl_frustum, gl_gen_textures, gl_get_string, gl_line_width, gl_load_identity, gl_matrix_mode, gl_ortho, gl_point_size, gl_pop_matrix, gl_push_matrix, gl_rotate_f, gl_tex_coord_2f, gl_tex_env_f, gl_tex_image_2d, gl_tex_parameter_i, gl_tex_sub_image_2d, gl_translate_f, gl_vertex_2f, gl_vertex_3f, gl_viewport, glu_perspective};
+use crate::graphics::subsystem::opengl::opengl_api::{gl_begin_lines, gl_begin_points, gl_begin_quads, gl_bind_texture, gl_blend_func, gl_clear, gl_clear_color, gl_color_3f, gl_disable, gl_enable, gl_end, gl_gen_textures, gl_get_string, gl_line_width, gl_load_identity, gl_matrix_mode, gl_ortho, gl_point_size, gl_pop_matrix, gl_push_matrix, gl_rotate_f, gl_tex_coord_2f, gl_tex_env_f, gl_tex_image_2d, gl_tex_parameter_i, gl_tex_sub_image_2d, gl_translate_f, gl_vertex_2f, gl_vertex_3f, gl_viewport, glu_perspective};
 use crate::graphics::subsystem::{OpenGLPipeline, RenderingSubSystemHandle};
+use crate::image::t2d::Texture2D;
 use crate::logger::log;
 use crate::logger::log_level::LogLevel;
-use num_traits::{Float, ToPrimitive};
+use num_traits::Float;
 use std::ffi::c_void;
 use std::ops::{Add, Sub};
 use windows::Win32::Graphics::OpenGL::{GL_BLEND, GL_COLOR_BUFFER_BIT, GL_DEPTH_BUFFER_BIT, GL_DEPTH_TEST, GL_MODELVIEW, GL_NEAREST, GL_ONE_MINUS_SRC_ALPHA, GL_PROJECTION, GL_RENDERER, GL_REPLACE, GL_RGBA, GL_SRC_ALPHA, GL_TEXTURE_2D, GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_TEXTURE_MAG_FILTER, GL_TEXTURE_MIN_FILTER, GL_UNSIGNED_BYTE, GL_VENDOR};
-use crate::geometry::dim::Dimension2D;
 
 pub(crate) mod opengl_mswin_api;
 pub(crate) mod opengl_mswin;
@@ -112,19 +112,19 @@ impl<F: Float + Add<F> + Sub<F>> RenderingSubSystemHandle<F> for OpenGLHandle {
         }
     }
 
-    fn before_scene(&self, ccd: &Dimension2D<f32>) {
+    fn before_scene(&self, camera: &Camera) {
         match self.pipeline {
             OpenGLPipeline::FixedFunction => {
                 gl_clear_color(0.0, 0.0, 0.0, 1.0);
                 gl_clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-                gl_viewport(0, 0, ccd.width.to_i32().unwrap(), ccd.height.to_i32().unwrap());
+                gl_viewport(0, 0, camera.width as i32, camera.height as i32);
             }
             OpenGLPipeline::Shaders => {}
         }
     }
 
-    fn prepare_2d(&self, ccd: &Dimension2D<f32>) {
+    fn prepare_2d(&self, camera: &Camera) {
         match self.pipeline {
             OpenGLPipeline::FixedFunction => {
                 gl_disable(GL_DEPTH_TEST);
@@ -132,8 +132,8 @@ impl<F: Float + Add<F> + Sub<F>> RenderingSubSystemHandle<F> for OpenGLHandle {
                 gl_push_matrix();
                 gl_load_identity();
                 gl_ortho(0.0,
-                         ccd.width.to_f64().unwrap(),
-                         ccd.height.to_f64().unwrap(),
+                         camera.width as f64,
+                         camera.height as f64,
                          0.0,
                          -99999.0,
                          99999.0
@@ -153,7 +153,7 @@ impl<F: Float + Add<F> + Sub<F>> RenderingSubSystemHandle<F> for OpenGLHandle {
         gl_pop_matrix();
     }
 
-    fn prepare_3d(&self, ccd: &Dimension2D<f32>) {
+    fn prepare_3d(&self, camera: &Camera) {
         match self.pipeline {
             OpenGLPipeline::FixedFunction => {
                 gl_enable(GL_DEPTH_TEST);
@@ -161,17 +161,21 @@ impl<F: Float + Add<F> + Sub<F>> RenderingSubSystemHandle<F> for OpenGLHandle {
                 gl_matrix_mode(GL_PROJECTION);
                 gl_load_identity();
 
-                glu_perspective(45.0, (ccd.width / ccd.height) as f64, 0.01, 500.0);
+                glu_perspective(45.0, (camera.width / camera.height) as f64, 0.01, 500.0);
                 //gl_frustum(-1.0, 1.0, -1.0, 1.0, 1.5, 20.0);
 
                 gl_matrix_mode(GL_MODELVIEW);
                 gl_load_identity();
 
-                gl_translate_f(0.0, 0.0, -10.0);
+                //gl_translate_f(0.0, 0.0, -1.0);
 
-                gl_rotate_f(-45.0, 0.0, 1.0, 0.0);// rotate: yaw,  y-axis; only degrees and y-axis are set
-                gl_rotate_f(-20.0, 1.0, 0.0, 0.0);// rotate: pitch, x-axis; only degrees and x-axis are set; positive rotates forward down
+                //gl_rotate_f(-45.0, 0.0, 1.0, 0.0);// rotate: yaw,  y-axis; only degrees and y-axis are set
+                //gl_rotate_f(-20.0, 1.0, 0.0, 0.0);// rotate: pitch, x-axis; only degrees and x-axis are set; positive rotates forward down
                 //gl_rotate_f(0.0, 0.0, 0.0, 1.0);// rotate: roll/bank, z-axis; only degrees and z-axis are set
+
+                gl_rotate_f(-camera.pitch, 1.0, 0.0, 0.0);
+                gl_rotate_f(-camera.yaw, 0.0, 1.0, 0.0);
+                gl_translate_f(-camera.position.x, -camera.position.y, -camera.position.z);
             }
             OpenGLPipeline::Shaders => {}
         }

@@ -178,11 +178,13 @@ pub(crate) fn glu_perspective(fovy: f64, aspect: f64, znear: f64, zfar: f64) {
     check_errors_gl("gluPerspective");
 }
 
+#[allow(unused)] // todo: remove this
 pub(crate) fn gl_translate_f(x: f32, y: f32, z: f32) {
     unsafe { glTranslatef(x, y, z) }
     check_errors_gl("glTranslatef");
 }
 
+#[allow(unused)] // todo: remove this
 pub(crate) fn gl_rotate_f(angle: f32, x: f32, y: f32, z: f32) {
     unsafe { glRotatef(angle, x, y, z); }
     check_errors_gl("glRotatef");

@@ -2,7 +2,6 @@ use crate::geometry::quaternion::Quaternion;
 use crate::geometry::{wrap_pi, C_PI_OVER_2};
 use num_traits::Float;
 use std::f64::consts::PI;
-use num_traits::real::Real;
 
 ///
 /// three rotations, which describe the orientation of an object in 3d space.

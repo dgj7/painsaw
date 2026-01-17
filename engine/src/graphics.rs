@@ -12,11 +12,12 @@ use crate::image::text::{text_2d_image, TextConfig};
 use num_traits::Float;
 use std::ops::{Add, Sub};
 use std::time::Instant;
-use crate::geometry::dim::Dimension2D;
+use crate::graphics::camera::Camera;
 use crate::image::t2d::Texture2D;
 
 pub mod model;
 pub mod subsystem;
+pub mod camera;
 
 ///
 /// Graphics rendering intermediary.
@@ -49,13 +50,13 @@ impl<F: Float + Add<F> + Sub<F>> GraphicsIntermediary<F> {
         log(LogLevel::Debug, &|| String::from("initialization complete"));
     }
 
-    pub(crate) fn before_scene(&self, ccd: &Dimension2D<f32>) {
-        self.subsystem.before_scene(ccd);
+    pub(crate) fn before_scene(&self, camera: &Camera) {
+        self.subsystem.before_scene(camera);
     }
 
-    pub(crate) fn prepare_2d(&self, g2d: &mut Graph2D<F>, ccd: &Dimension2D<f32>) {
+    pub(crate) fn prepare_2d(&self, g2d: &mut Graph2D<F>, camera: &Camera) {
         /* prepare the screen for 2d */
-        self.subsystem.prepare_2d(ccd);
+        self.subsystem.prepare_2d(camera);
 
         /* initialize un-initialized (new) textures */
         for (_, model) in &mut g2d.models {
@@ -108,8 +109,8 @@ impl<F: Float + Add<F> + Sub<F>> GraphicsIntermediary<F> {
         self.subsystem.after_2d();
     }
 
-    pub(crate) fn prepare_3d(&self, ccd: &Dimension2D<f32>) {
-        self.subsystem.prepare_3d(ccd);
+    pub(crate) fn prepare_3d(&self, camera: &Camera) {
+        self.subsystem.prepare_3d(camera);
     }
 
     pub(crate) fn render_3d(&self, g3d: &Graph3D<F>) {

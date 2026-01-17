@@ -10,6 +10,7 @@ pub mod euler;
 
 static C_2_PI: f64 = PI * 2.0;
 static C_PI_OVER_2: f64 = PI / 2.0;
+#[allow(unused)]// todo: remove
 static C_1_OVER_PI: f64 = 1.0 / PI;
 static C_1_OVER_2PI: f64 = 1.0 / C_2_PI;
 static C_PI_OVER_180 : f64 = PI / 180.0;

@@ -5,11 +5,11 @@
 //! subsystem in use (for ex: opengl, directx, etc).
 //!
 
-use std::ops::{Add, Sub};
-use num_traits::Float;
 use crate::logger::log;
 use crate::logger::log_level::LogLevel;
 use crate::window::context::RendererContext;
+use num_traits::Float;
+use std::ops::{Add, Sub};
 
 ///
 /// Control various aspects of the world, as called by the windowing system.
@@ -35,7 +35,27 @@ pub trait WorldController<F: Float + Add<F> + Sub<F>> {
     ///
     /// update the game world state - fully controlled by client.
     ///
-    fn update_world(&self, context: &mut RendererContext<F>);
+    fn update_world(&self, context: &mut RendererContext<F>) {
+        match context.input.lock() {
+            Ok(is) => {
+                if is.screen_resized {
+                    context.camera.update_screen(&is.current_client_dimensions);
+                }
+            }
+            Err(_) => {panic!("todo: updating screen")}
+        }
+
+        self.update_world_helper(context);
+
+        match context.input.lock() {
+            Ok(mut is) => {
+                is.screen_resized = false;
+            }
+            Err(_) => {panic!("todo: resetting screen_resized")}
+        }
+    }
+
+    fn update_world_helper(&self, context: &mut RendererContext<F>);
 
     ///
     /// display the game world scene.
@@ -45,19 +65,16 @@ pub trait WorldController<F: Float + Add<F> + Sub<F>> {
     /// during the update world step.
     ///
     fn display_world_scene(&self, context: &mut RendererContext<F>) {
-        /* gather variables */
-        let ccd = context.copy_client_dimensions();
-
         /* prepare for drawing */
-        context.graphics.before_scene(&ccd);
+        context.graphics.before_scene(&context.camera);
 
         /* draw 2d, if desired */
-        context.graphics.prepare_2d(&mut context.g2d, &ccd);
+        context.graphics.prepare_2d(&mut context.g2d, &context.camera);
         context.graphics.render_2d(&mut context.g2d);
         context.graphics.after_2d();
 
         /* draw 3d, if desired */
-        context.graphics.prepare_3d(&ccd);
+        context.graphics.prepare_3d(&context.camera);
         context.graphics.render_3d(&context.g3d);
         context.graphics.after_3d();
     }

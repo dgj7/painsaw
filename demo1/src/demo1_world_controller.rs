@@ -1,20 +1,20 @@
-use engine::geometry::dim::Dimension2D;
 use engine::geometry::line::l2d::Line2D;
 use engine::geometry::line::l3d::Line3D;
 use engine::geometry::line::Lines2D;
 use engine::geometry::line::Lines3D;
-use engine::graphics::model::m2d::Model2D;
-use engine::graphics::model::m3d::Model3D;
 use engine::geometry::point::p2d::Point2D;
 use engine::geometry::point::p3d::Point3D;
 use engine::geometry::point::Points2D;
 use engine::geometry::point::Points3D;
+use engine::graphics::camera::Camera;
 use engine::graphics::model::color::Color;
+use engine::graphics::model::m2d::Model2D;
+use engine::graphics::model::m3d::Model3D;
+use engine::image::text::{text_2d_texture, TextConfig};
 use engine::input::ki::KeyInfo;
 use engine::input::kp::KeyPosition;
 use engine::logger::log;
 use engine::logger::log_level::LogLevel;
-use engine::image::text::{text_2d_texture, TextConfig};
 use engine::window::context::RendererContext;
 use engine::window::wc::WorldController;
 
@@ -30,13 +30,10 @@ pub(crate) struct Demo1WorldController {}
 
 impl WorldController<f32> for Demo1WorldController {
     fn initialize_world_helper(&self, context: &mut RendererContext<f32>) {
-        /* gather variables */
-        let ccd = context.copy_client_dimensions();
-
         /* 2d grid: axes (in thicc purple), x, and y lines */
-        context.g2d.models.insert(M2D_XY_PURPLE.parse().unwrap(), create_2d_axes(&ccd));
-        context.g2d.models.insert(M2D_X_HORIZ.parse().unwrap(), create_2d_grid_x_lines(&ccd));
-        context.g2d.models.insert(M2D_Y_VERT.parse().unwrap(), create_2d_grid_y_lines(&ccd));
+        context.g2d.models.insert(M2D_XY_PURPLE.parse().unwrap(), create_2d_axes(&context.camera));
+        context.g2d.models.insert(M2D_X_HORIZ.parse().unwrap(), create_2d_grid_x_lines(&context.camera));
+        context.g2d.models.insert(M2D_Y_VERT.parse().unwrap(), create_2d_grid_y_lines(&context.camera));
 
         /* 2d textures */
         context.g2d.models.insert(M2D_TEXT_TEXTURE.parse().unwrap(), create_2d_text());
@@ -56,7 +53,7 @@ impl WorldController<f32> for Demo1WorldController {
         );
     }
 
-    fn update_world(&self, context: &mut RendererContext<f32>) {
+    fn update_world_helper(&self, context: &mut RendererContext<f32>) {
         match context.input.clone().lock() {
             Ok(mut is) => {
                 /* gather some variables */
@@ -81,13 +78,12 @@ impl WorldController<f32> for Demo1WorldController {
 
                 /* handle window resize for grid */
                 if is.screen_resized {
-                    context.g2d.models.entry(M2D_XY_PURPLE.parse().unwrap()).and_modify(|e| *e = create_2d_axes(&ccd));
-                    context.g2d.models.entry(M2D_X_HORIZ.parse().unwrap()).and_modify(|e| *e = create_2d_grid_x_lines(&ccd));
-                    context.g2d.models.entry(M2D_Y_VERT.parse().unwrap()).and_modify(|e| *e = create_2d_grid_y_lines(&ccd));
+                    context.g2d.models.entry(M2D_XY_PURPLE.parse().unwrap()).and_modify(|e| *e = create_2d_axes(&context.camera));
+                    context.g2d.models.entry(M2D_X_HORIZ.parse().unwrap()).and_modify(|e| *e = create_2d_grid_x_lines(&context.camera));
+                    context.g2d.models.entry(M2D_Y_VERT.parse().unwrap()).and_modify(|e| *e = create_2d_grid_y_lines(&context.camera));
 
                     log(LogLevel::Debug, &|| String::from(format!("window size changed ({}x{}); 2d model count is [{}]", ccd.width, ccd.height, context.g2d.models.len())));
                 }
-                is.screen_resized = false;
             },
             Err(_) => {
                 panic!("todo: handle mutex lock failure")
@@ -105,12 +101,12 @@ impl Demo1WorldController {
     }
 }
 
-fn create_2d_axes(ccd: &Dimension2D<f32>) -> Model2D<f32> {
+fn create_2d_axes(camera: &Camera) -> Model2D<f32> {
     /* define points */
     let axes_points = Points2D::new(vec!(
             Point2D::origin(),
-            Point2D::new(0.0, ccd.height),
-            Point2D::new(ccd.width, 0.0),
+            Point2D::new(0.0, camera.height),
+            Point2D::new(camera.width, 0.0),
         ), Color::GREEN,15.0);
     let other_points = Points2D::new(vec!(
             Point2D::new(20.0, 20.0),
@@ -121,20 +117,20 @@ fn create_2d_axes(ccd: &Dimension2D<f32>) -> Model2D<f32> {
     let pointsvec = vec!(axes_points, other_points);
 
     /* define lines */
-    let axes = vec!(Line2D::new(Point2D::origin(), Point2D::new(0.0, ccd.height)), Line2D::new(Point2D::origin(), Point2D::new(ccd.width, 0.0)));
+    let axes = vec!(Line2D::new(Point2D::origin(), Point2D::new(0.0, camera.height)), Line2D::new(Point2D::origin(), Point2D::new(camera.width, 0.0)));
     let axeslines = vec!(Lines2D::new(axes, Color::from_rgb(0.498, 0.0, 1.0), 10.0));
 
     /* done */
     Model2D::new(pointsvec, axeslines, vec!())
 }
 
-fn create_2d_grid_x_lines(ccd: &Dimension2D<f32>) -> Model2D<f32> {
+fn create_2d_grid_x_lines(camera: &Camera) -> Model2D<f32> {
     /* define lines */
     let hgap = 10;
-    let hiters = ((ccd.height + (hgap as f32))/(hgap as f32)) as u16;
+    let hiters = ((camera.height + (hgap as f32))/(hgap as f32)) as u16;
     let mut hlines: Vec<Line2D<f32>> = Vec::with_capacity((hiters + 10) as usize);
     for h in 0..hiters {
-        hlines.push(Line2D::new(Point2D::new(0.0, (h * hgap) as f32), Point2D::new(ccd.width, (h * hgap) as f32)));
+        hlines.push(Line2D::new(Point2D::new(0.0, (h * hgap) as f32), Point2D::new(camera.width, (h * hgap) as f32)));
     }
     let hlinevec = vec!(Lines2D::new(hlines, Color::from_rgb(0.2, 0.2, 0.2), 1.0));
 
@@ -142,13 +138,13 @@ fn create_2d_grid_x_lines(ccd: &Dimension2D<f32>) -> Model2D<f32> {
     Model2D::new(vec!(), hlinevec, vec!())
 }
 
-fn create_2d_grid_y_lines(ccd: &Dimension2D<f32>) -> Model2D<f32> {
+fn create_2d_grid_y_lines(camera: &Camera) -> Model2D<f32> {
     /* define lines */
     let vgap = 10;
-    let viters = ((ccd.width + (vgap as f32))/(vgap as f32)) as u16;
+    let viters = ((camera.width + (vgap as f32))/(vgap as f32)) as u16;
     let mut vlines: Vec<Line2D<f32>> = Vec::with_capacity((viters + 10) as usize);
     for v in 0..viters {
-        vlines.push(Line2D::new(Point2D::new((v * vgap) as f32, 0.0), Point2D::new((v * vgap) as f32, ccd.height)));
+        vlines.push(Line2D::new(Point2D::new((v * vgap) as f32, 0.0), Point2D::new((v * vgap) as f32, camera.height)));
     }
     let vlinevec = vec!(Lines2D::new(vlines, Color::from_rgb(0.2, 0.2, 0.2), 1.0));
 
