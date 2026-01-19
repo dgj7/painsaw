@@ -16,6 +16,7 @@ use crate::graphics::subsystem::opengl::OpenGLHandle;
 use num_traits::Float;
 use std::ops::{Add, Sub};
 use crate::graphics::camera::Camera;
+use crate::window::context::RendererContext;
 
 pub mod opengl;
 
@@ -42,7 +43,7 @@ pub trait RenderingSubSystemHandle<F: Float + Add<F> + Sub<F>> {
     fn prepare_2d(&self, camera: &Camera);
     fn after_2d(&self);
 
-    fn prepare_3d(&self, camera: &Camera);
+    fn prepare_3d(&self, context: &RendererContext<F>);
     fn after_3d(&self);
 
     fn render_2d_points(&self, points: &Points2D<F>);

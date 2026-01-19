@@ -14,6 +14,7 @@ use std::ops::{Add, Sub};
 use std::time::Instant;
 use crate::graphics::camera::Camera;
 use crate::image::t2d::Texture2D;
+use crate::window::context::RendererContext;
 
 pub mod model;
 pub mod subsystem;
@@ -109,8 +110,8 @@ impl<F: Float + Add<F> + Sub<F>> GraphicsIntermediary<F> {
         self.subsystem.after_2d();
     }
 
-    pub(crate) fn prepare_3d(&self, camera: &Camera) {
-        self.subsystem.prepare_3d(camera);
+    pub(crate) fn prepare_3d(&self, context: &RendererContext<F>) {
+        self.subsystem.prepare_3d(context);
     }
 
     pub(crate) fn render_3d(&self, g3d: &Graph3D<F>) {
