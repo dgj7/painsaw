@@ -38,6 +38,8 @@ pub trait RenderingSubSystemHandle<F: Float + Add<F> + Sub<F>> {
     fn initialize_texture_2d(&self, texture: &mut Texture2D<F>);
     fn update_texture_2d(&self, texture: &mut Texture2D<F>);
 
+    fn resize(&self, context: &RendererContext<F>);
+
     fn before_scene(&self, camera: &Camera);
 
     fn prepare_2d(&self, camera: &Camera);

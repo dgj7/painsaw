@@ -40,6 +40,7 @@ pub trait WorldController<F: Float + Add<F> + Sub<F>> {
             Ok(is) => {
                 if is.screen_resized {
                     context.camera.update_screen(&is.current_client_dimensions);
+                    context.graphics.resize(context);
                 }
             }
             Err(_) => {panic!("todo: updating screen")}

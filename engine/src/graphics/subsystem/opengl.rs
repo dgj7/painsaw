@@ -113,13 +113,21 @@ impl<F: Float + Add<F> + Sub<F>> RenderingSubSystemHandle<F> for OpenGLHandle {
         }
     }
 
-    fn before_scene(&self, camera: &Camera) {
+    fn resize(&self, context: &RendererContext<F>) {
+        let camera = &context.camera;
+        let fov: f64 = context.get_cvar(CVAR_FOV, |x| x.parse().unwrap()).unwrap_or(DEFAULT_FOV);
+        gl_viewport(0, 0, camera.width as i32, camera.height as i32);
+        gl_matrix_mode(GL_PROJECTION);
+        gl_load_identity();
+        glu_perspective(fov, (camera.width / camera.height) as f64, 0.01, 500.0);
+        //gl_frustum(-1.0, 1.0, -1.0, 1.0, 1.5, 20.0);
+    }
+
+    fn before_scene(&self, _camera: &Camera) {
         match self.pipeline {
             OpenGLPipeline::FixedFunction => {
                 gl_clear_color(0.0, 0.0, 0.0, 1.0);
                 gl_clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-                gl_viewport(0, 0, camera.width as i32, camera.height as i32);
             }
             OpenGLPipeline::Shaders => {}
         }
@@ -158,15 +166,8 @@ impl<F: Float + Add<F> + Sub<F>> RenderingSubSystemHandle<F> for OpenGLHandle {
         match self.pipeline {
             OpenGLPipeline::FixedFunction => {
                 let camera = &context.camera;
-                let fov: f64 = context.get_cvar(CVAR_FOV, |x| x.parse().unwrap()).unwrap_or(DEFAULT_FOV);
 
                 gl_enable(GL_DEPTH_TEST);
-
-                gl_matrix_mode(GL_PROJECTION);
-                gl_load_identity();
-
-                glu_perspective(fov, (camera.width / camera.height) as f64, 0.01, 500.0);
-                //gl_frustum(-1.0, 1.0, -1.0, 1.0, 1.5, 20.0);
 
                 gl_matrix_mode(GL_MODELVIEW);
                 gl_load_identity();

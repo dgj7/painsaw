@@ -51,6 +51,10 @@ impl<F: Float + Add<F> + Sub<F>> GraphicsIntermediary<F> {
         log(LogLevel::Debug, &|| String::from("initialization complete"));
     }
 
+    pub(crate) fn resize(&self, context: &RendererContext<F>) {
+        self.subsystem.resize(context);
+    }
+
     pub(crate) fn before_scene(&self, camera: &Camera) {
         self.subsystem.before_scene(camera);
     }
