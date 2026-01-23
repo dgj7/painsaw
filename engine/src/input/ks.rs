@@ -1,6 +1,6 @@
+use crate::input::ki::KeyInfo;
 use crate::input::kp::KeyPosition;
 use std::time::Duration;
-use crate::input::ki::KeyInfo;
 
 #[derive(Clone,Debug)]
 pub struct KeyState {
@@ -9,10 +9,10 @@ pub struct KeyState {
 }
 
 impl KeyState {
-    pub fn new() -> KeyState {
+    pub fn new(position: KeyPosition) -> KeyState {
         KeyState {
             previous: KeyPosition::KeyUp { info: KeyInfo::handled() },
-            current: KeyPosition::KeyDown { info: KeyInfo::unhandled() },
+            current: position,
         }
     }
 

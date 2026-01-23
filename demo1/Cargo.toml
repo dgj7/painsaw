@@ -1,7 +1,8 @@
 [package]
 name = "demo1"
-version = "0.0.43"
+version = "0.0.44"
 edition = "2024"
 
 [dependencies]
 engine = { path = "../engine" }
+state = "0.6.0"

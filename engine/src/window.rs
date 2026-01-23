@@ -3,6 +3,8 @@ use crate::window::os::mswin::MsWinWindow;
 use crate::window::os::Window;
 use std::error::Error;
 use std::panic;
+use std::panic::AssertUnwindSafe;
+use num_traits::Float;
 use window_error::WindowError;
 
 pub mod os;
@@ -17,7 +19,7 @@ pub mod window_error;
 ///
 /// See also: https://doc.rust-lang.org/reference/conditional-compilation.html
 ///
-pub fn create_window(request: &EngineConfig) -> Result<Box<dyn Window>, Box<dyn Error>> {
+pub fn create_window<F: Float>(request: &EngineConfig<F>) -> Result<Box<dyn Window<F>>, Box<dyn Error>> {
     create_window_os(request)
 }
 
@@ -25,10 +27,10 @@ pub fn create_window(request: &EngineConfig) -> Result<Box<dyn Window>, Box<dyn 
 /// Create a window for Microsoft Windows.
 ///
 #[cfg(target_os="windows")]
-fn create_window_os(request: &EngineConfig) -> Result<Box<dyn Window>, Box<dyn Error>> {
-    let result = panic::catch_unwind(|| {
+fn create_window_os<F: Float>(request: &EngineConfig<F>) -> Result<Box<dyn Window<F>>, Box<dyn Error>> {
+    let result = panic::catch_unwind(AssertUnwindSafe(|| {
         return MsWinWindow::new(request);
-    });
+    }));
     result.unwrap_or_else(|_err| Err(WindowError(String::from("TODO: gather error info here")).into()))
 }
 
@@ -36,7 +38,7 @@ fn create_window_os(request: &EngineConfig) -> Result<Box<dyn Window>, Box<dyn E
 /// Create a window for Linux.
 ///
 #[cfg(target_os="linux")]
-fn create_window_os(request: &EngineConfig) -> Result<Box<dyn Window>, Box<dyn Error>> {
+fn create_window_os<F: Float>(request: &EngineConfig<F>) -> Result<Box<dyn Window>, Box<dyn Error>> {
     todo!("linux windowing not yet implemented")
 }
 
@@ -44,6 +46,6 @@ fn create_window_os(request: &EngineConfig) -> Result<Box<dyn Window>, Box<dyn E
 /// Create a window for MacOS.
 ///
 #[cfg(target_os="macos")]
-fn create_window_os(request: &EngineConfig) -> Result<Box<dyn Window>, Box<dyn Error>> {
+fn create_window_os<F: Float>(request: &EngineConfig<F>) -> Result<Box<dyn Window>, Box<dyn Error>> {
     todo!("macos windowing not yet implemented")
 }

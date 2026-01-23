@@ -34,6 +34,7 @@ impl<F: Float + Add<F> + Sub<F>> InputState<F> {
     pub fn new() -> Arc<Mutex<InputState<F>>> {
         Arc::new(Mutex::new(InputState {
             /* keyboard */
+            // todo: remove g_key
             g_key: KeyState {
                 previous: KeyPosition::KeyUp { info: KeyInfo { when: Instant::now(), handled: true } },
                 current: KeyPosition::KeyUp { info: KeyInfo { when: Instant::now(), handled: true } }
@@ -55,8 +56,8 @@ impl<F: Float + Add<F> + Sub<F>> InputState<F> {
         self.changes.push_back(name.clone());
         self.states
             .entry(name)
-            .and_modify(|e| e.update(position))
-            .or_insert(KeyState::new());
+            .and_modify(|e| e.update(position.clone()))
+            .or_insert(KeyState::new(position));
     }
 
     pub fn update_client_dimensions(&mut self, current: Dimension2D<F>) {

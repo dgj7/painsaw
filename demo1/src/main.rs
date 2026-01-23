@@ -16,7 +16,7 @@ fn main() {
 
     let cfg = create_engine_config();
     match create_window(&cfg) {
-        Ok(mut win) => { win.begin_event_handling(Box::new(Demo1WorldController::new())).expect("window creation failed"); }
+        Ok(mut win) => { win.begin_event_handling(Box::new(Demo1WorldController::new()), cfg).expect("window creation failed"); }
         Err(_e) => {
             log(LogLevel::Error, &|| "window creation failed".parse().unwrap());
             std::process::exit(1);

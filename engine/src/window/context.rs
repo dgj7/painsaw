@@ -1,15 +1,15 @@
-use std::collections::BTreeMap;
+use crate::config::EngineConfig;
 use crate::graphics::camera::Camera;
 use crate::graphics::model::g2d::Graph2D;
 use crate::graphics::model::g3d::Graph3D;
-use crate::graphics::subsystem::GraphicsSubSystem;
 use crate::graphics::GraphicsIntermediary;
 use crate::input::InputState;
-use num_traits::Float;
-use std::ops::{Add, Sub};
-use std::sync::{Arc, Mutex};
 use crate::logger::log;
 use crate::logger::log_level::LogLevel;
+use num_traits::Float;
+use std::collections::BTreeMap;
+use std::ops::{Add, Sub};
+use std::sync::{Arc, Mutex};
 
 /* cvar keys */
 pub static CVAR_FOV: &str = "cvar-fov";
@@ -35,6 +35,7 @@ pub struct RendererContext<F: Float + Add<F> + Sub<F>> {
 
     /* configurations */
     cvars: BTreeMap<String, String>,
+    pub config: EngineConfig<F>,
 }
 
 impl<F: Float> RendererContext<F> {
@@ -48,7 +49,7 @@ impl<F: Float> RendererContext<F> {
 }
 
 impl<F: Float + Add<F> + Sub<F>> RendererContext<F> {
-    pub(crate) fn new(input: &Arc<Mutex<InputState<f32>>>, grss: GraphicsSubSystem) -> RendererContext<F> {
+    pub(crate) fn new(input: &Arc<Mutex<InputState<f32>>>, config: EngineConfig<F>) -> RendererContext<F> {
         let dim = &input.lock().unwrap().current_client_dimensions.clone();
         log(LogLevel::Info, &|| String::from(format!("initializing camera with width={},height={}", &dim.width, &dim.height)));
         RendererContext {
@@ -61,11 +62,12 @@ impl<F: Float + Add<F> + Sub<F>> RendererContext<F> {
             g3d: Graph3D::new(),
             camera: Camera::new(dim),
             
-            graphics: GraphicsIntermediary::new(grss),
+            graphics: GraphicsIntermediary::new(config.renderer.graphics.clone()),
 
             cvars: BTreeMap::from([
                 (CVAR_FOV.to_string(), DEFAULT_FOV.to_string()),
-            ])
+            ]),
+            config,
         }
     }
 }

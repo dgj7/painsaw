@@ -15,6 +15,7 @@ use crate::window::os::mswin::mswin_winapi::{create_window_ex, default_window_pr
 use crate::window::os::Window;
 use crate::window::wc::WorldController;
 use std::sync::{Arc, Mutex};
+use num_traits::Float;
 use windows::Win32::Foundation::{HINSTANCE, HWND, LPARAM, LRESULT, WPARAM};
 use windows::Win32::Graphics::Gdi::HDC;
 use windows::Win32::Graphics::OpenGL::HGLRC;
@@ -41,12 +42,12 @@ pub struct MsWinWindow {
     pub hrc: HGLRC,
 }
 
-impl Window for MsWinWindow {
-    fn begin_event_handling(&mut self, wc: Box<dyn WorldController<f32>>) -> Result<(), Box<dyn std::error::Error>>
+impl<F: Float> Window<F> for MsWinWindow {
+    fn begin_event_handling(&mut self, wc: Box<dyn WorldController<F>>, config: EngineConfig<F>) -> Result<(), Box<dyn std::error::Error>>
     {
         log(LogLevel::Info, &|| "begin event handling".parse().unwrap());
         let mut message: MSG = MSG::default();
-        let mut context = RendererContext::new(&self.input, self.grss.clone());
+        let mut context = RendererContext::new(&self.input, config);
 
         /* initialize client renderer, if necessary */
         wc.initialize_world(&mut context);
@@ -83,7 +84,7 @@ impl Window for MsWinWindow {
 }
 
 impl MsWinWindow {
-    pub fn new(request : &EngineConfig) -> std::result::Result<Box<dyn Window>, Box<dyn std::error::Error>> {
+    pub fn new<F: Float>(request : &EngineConfig<F>) -> std::result::Result<Box<dyn Window<F>>, Box<dyn std::error::Error>> {
         /* make some variables */
         let wndclass = PCWSTR::from_raw(HSTRING::from(request.window.wndclass.clone().unwrap_or(String::from("WindowConfig: set wndclass"))).as_ptr());
         let title = PCWSTR::from_raw(HSTRING::from(request.window.title.clone().unwrap_or(String::from("WindowConfig: set title"))).as_ptr());

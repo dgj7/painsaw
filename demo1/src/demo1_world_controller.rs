@@ -53,20 +53,9 @@ impl WorldController<f32> for Demo1WorldController {
 
     fn update_world_helper(&self, context: &mut RendererContext<f32>) {
         match context.input.clone().lock() {
-            Ok(mut is) => {
+            Ok(is) => {
                 /* gather some variables */
                 let ccd = is.current_client_dimensions.clone();
-
-                /* handle key changes */
-                while !is.changes.is_empty() {
-                    let change = is.changes.pop_front().unwrap();
-                    let state = is.states.get_mut(&change).unwrap();
-                    if !state.current.is_handled() {
-                        state.current.set_handled();
-                        let duration = state.previous_key_state_duration();
-                        log(LogLevel::Debug, &|| String::from(format!("{}: {}    ({} for {}ms)", change, state.current, state.previous, duration.as_millis())));
-                    }
-                }
 
                 /* handle window resize for grid */
                 if is.screen_resized {

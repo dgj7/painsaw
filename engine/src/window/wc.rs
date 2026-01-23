@@ -36,14 +36,28 @@ pub trait WorldController<F: Float + Add<F> + Sub<F>> {
     /// update the game world state - fully controlled by client.
     ///
     fn update_world(&self, context: &mut RendererContext<F>) {
-        match context.input.lock() {
-            Ok(is) => {
+        match context.input.clone().lock() {
+            Ok(mut is) => {
+                /* handle key changes */
+                while !is.changes.is_empty() {
+                    let change = is.changes.pop_front().unwrap();
+                    let state = is.states.get_mut(&change).unwrap();
+                    if !state.current.is_handled() {
+                        match context.config.input.behaviors.get(&change) {
+                            None => {}
+                            Some(behavior) => behavior(context, state)
+                        }
+                        state.current.set_handled();
+                    }
+                }
+
+                /* handle screen resize */
                 if is.screen_resized {
                     context.camera.update_screen(&is.current_client_dimensions);
                     context.graphics.resize(context);
                 }
             }
-            Err(_) => {panic!("todo: updating screen")}
+            Err(_) => {}
         }
 
         self.update_world_helper(context);
