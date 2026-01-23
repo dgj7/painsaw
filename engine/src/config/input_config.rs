@@ -15,3 +15,11 @@ impl<F: Float> InputConfig<F> {
         }
     }
 }
+
+impl<F: Float> Default for InputConfig<F> {
+    fn default() -> InputConfig<F> {
+        InputConfig {
+            behaviors: HashMap::new(),
+        }
+    }
+}

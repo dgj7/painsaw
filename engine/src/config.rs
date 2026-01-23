@@ -42,9 +42,24 @@ impl<F: Float> EngineConfig<F> {
             window,
             renderer,
             input,
-            cvars: BTreeMap::from([
-                (CVAR_FOV.to_string(), DEFAULT_FOV.to_string()),
-            ]),
+            cvars: create_initial_cvars(),
         }
     }
+}
+
+impl<F: Float> Default for EngineConfig<F> {
+    fn default() -> EngineConfig<F> {
+        EngineConfig {
+            window: WindowConfig::default(),
+            renderer: RendererConfig::default(),
+            input: InputConfig::default(),
+            cvars: create_initial_cvars(),
+        }
+    }
+}
+
+fn create_initial_cvars() -> BTreeMap<String, String> {
+    BTreeMap::from([
+        (CVAR_FOV.to_string(), DEFAULT_FOV.to_string()),
+    ])
 }
