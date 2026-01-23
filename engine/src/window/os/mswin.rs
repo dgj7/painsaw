@@ -20,7 +20,7 @@ use windows::Win32::Foundation::{HINSTANCE, HWND, LPARAM, LRESULT, WPARAM};
 use windows::Win32::Graphics::Gdi::HDC;
 use windows::Win32::Graphics::OpenGL::HGLRC;
 use windows::Win32::UI::Input::KeyboardAndMouse::{VIRTUAL_KEY, VK_ESCAPE, VK_G, VK_M};
-use windows::Win32::UI::WindowsAndMessaging::{CS_HREDRAW, CS_OWNDC, CS_VREDRAW, CW_USEDEFAULT, IDC_ARROW, MSG, PM_REMOVE, WINDOW_EX_STYLE, WM_CREATE, WM_DESTROY, WM_KEYDOWN, WM_KEYUP, WM_QUIT, WM_SIZE, WNDCLASSW, WS_OVERLAPPEDWINDOW, WS_THICKFRAME, WS_VISIBLE};
+use windows::Win32::UI::WindowsAndMessaging::{CS_HREDRAW, CS_OWNDC, CS_VREDRAW, CW_USEDEFAULT, IDC_ARROW, MSG, PM_REMOVE, WINDOW_EX_STYLE, WM_CREATE, WM_DESTROY, WM_KEYDOWN, WM_KEYUP, WM_QUIT, WM_CLOSE, WM_SIZE, WNDCLASSW, WS_OVERLAPPEDWINDOW, WS_THICKFRAME, WS_VISIBLE};
 use windows_core::{HSTRING, PCWSTR};
 
 pub mod mswin_winapi;
@@ -172,11 +172,25 @@ extern "system" fn wndproc(window: HWND, message: u32, wparam: WPARAM, lparam: L
             create_and_write_pointer(window, lparam);
             LRESULT(0)
         }
-        WM_DESTROY => {
+        WM_DESTROY => {// 0x0002: sent when (uncancellable) window removal (not shown anymore); https://learn.microsoft.com/en-us/windows/win32/winmsg/wm-destroy
             log(LogLevel::Debug, &|| String::from("WM_DESTROY"));
+
+            post_quit_message(0);// this probably isn't necessary
+
+            LRESULT(0)
+        }
+        WM_QUIT => {// 0x0012: called when PostQuitMessage(0) is called; https://learn.microsoft.com/en-us/windows/win32/winmsg/wm-quit
+            log(LogLevel::Debug, &|| String::from("WM_QUIT"));
 
             let input = read_window_data(window).unwrap();
             drop(input);
+
+            post_quit_message(0);// this probably isn't necessary
+
+            LRESULT(0)
+        }
+        WM_CLOSE => {// 0x0010: called when window 'x' is clicked to close the window; https://learn.microsoft.com/en-us/windows/win32/winmsg/wm-close
+            log(LogLevel::Debug, &|| String::from("WM_CLOSE"));
 
             post_quit_message(0);
 
