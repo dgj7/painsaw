@@ -1,7 +1,7 @@
-use crate::geometry::line::Lines3D;
+use crate::graphics::geometry::line::Lines3D;
 use num_traits::Float;
 use std::ops::{Add, Sub};
-use crate::geometry::point::Points3D;
+use crate::graphics::geometry::point::Points3D;
 
 pub struct Model3D<F: Float + Add<F> + Sub<F>> {
     pub points: Vec<Points3D<F>>,

@@ -1,8 +1,8 @@
-use crate::image::text::TextConfig;
+use crate::graphics::image::text::TextConfig;
 use num_traits::Float;
 use std::collections::HashMap;
 use std::sync::{LazyLock, Mutex};
-use crate::image::RawImage;
+use crate::graphics::image::RawImage;
 
 static ALPHABET : LazyLock<Mutex<HashMap<char, Vec<u16>>>> = LazyLock::new(|| Mutex::new(define_alphabet()));
 static HEIGHT: usize = 15;

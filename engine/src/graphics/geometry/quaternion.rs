@@ -1,6 +1,6 @@
-use crate::geometry::euler::EulerAngles;
-use crate::geometry::point::p3d::{magnitude, Point3D};
-use crate::geometry::safe_a_cos;
+use crate::graphics::geometry::euler::EulerAngles;
+use crate::graphics::geometry::point::p3d::{magnitude, Point3D};
+use crate::graphics::geometry::safe_a_cos;
 use num_traits::Float;
 
 ///

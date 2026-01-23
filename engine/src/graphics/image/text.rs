@@ -1,9 +1,9 @@
-use crate::image::t2d::Texture2D;
-use crate::geometry::point::p2d::Point2D;
+use crate::graphics::image::t2d::Texture2D;
+use crate::graphics::geometry::point::p2d::Point2D;
 use crate::graphics::model::color::Color;
-use crate::image::text::generic::create_generic;
+use crate::graphics::image::text::generic::create_generic;
 use num_traits::Float;
-use crate::image::RawImage;
+use crate::graphics::image::RawImage;
 
 pub mod generic;
 

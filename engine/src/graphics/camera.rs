@@ -1,5 +1,5 @@
-use crate::geometry::dim::Dimension2D;
-use crate::geometry::point::p3d::Point3D;
+use crate::graphics::geometry::dim::Dimension2D;
+use crate::graphics::geometry::point::p3d::Point3D;
 use crate::logger::log;
 use crate::logger::log_level::LogLevel;
 

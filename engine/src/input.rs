@@ -1,4 +1,4 @@
-use crate::geometry::dim::Dimension2D;
+use crate::graphics::geometry::dim::Dimension2D;
 use crate::input::ki::KeyInfo;
 use crate::input::kn::KeyName;
 use crate::input::kp::KeyPosition;

@@ -2,23 +2,25 @@ use std::cmp;
 use model::g2d::Graph2D;
 use model::g3d::Graph3D;
 use model::m2d::Model2D;
-use crate::geometry::point::p2d::Point2D;
+use geometry::point::p2d::Point2D;
 use crate::graphics::model::color::Color;
 use crate::graphics::model::renderer_info::RendererInfo;
 use crate::graphics::subsystem::{grss_factory, GraphicsSubSystem, RenderingSubSystemHandle};
 use crate::logger::log;
 use crate::logger::log_level::LogLevel;
-use crate::image::text::{text_2d_image, TextConfig};
+use image::text::{text_2d_image, TextConfig};
 use num_traits::Float;
 use std::ops::{Add, Sub};
 use std::time::Instant;
 use crate::graphics::camera::Camera;
-use crate::image::t2d::Texture2D;
+use image::t2d::Texture2D;
 use crate::window::context::RendererContext;
 
 pub mod model;
 pub mod subsystem;
 pub mod camera;
+pub mod image;
+pub mod geometry;
 
 ///
 /// Graphics rendering intermediary.
