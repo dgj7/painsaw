@@ -18,3 +18,13 @@ impl WindowConfig {
         }
     }
 }
+
+impl Default for WindowConfig {
+    fn default() -> WindowConfig {
+        WindowConfig {
+            title: Some("window title".to_owned()),
+            dimensions: WindowDimensions::Dimensional { width: 800, height: 600 },
+            window_id: Some("PAINSAW".to_owned()),
+        }
+    }
+}
