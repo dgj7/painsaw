@@ -1,5 +1,4 @@
 use crate::graphics::geometry::dim::Dimension2D;
-use crate::input::ki::KeyInfo;
 use crate::input::kn::KeyName;
 use crate::input::kp::KeyPosition;
 use crate::input::ks::KeyState;
@@ -7,7 +6,6 @@ use num_traits::Float;
 use std::collections::{HashMap, VecDeque};
 use std::ops::{Add, Sub};
 use std::sync::{Arc, Mutex};
-use std::time::Instant;
 
 pub mod ks;
 pub mod ki;
@@ -17,8 +15,6 @@ pub mod kn;
 #[derive(Clone,Debug)]
 pub struct InputState<F: Float + Add<F> + Sub<F>> {
     /* keyboard */
-    pub g_key: KeyState,
-
     pub changes: VecDeque<KeyName>,
     pub states: HashMap<KeyName,KeyState>,
 
@@ -34,12 +30,6 @@ impl<F: Float + Add<F> + Sub<F>> InputState<F> {
     pub fn new() -> Arc<Mutex<InputState<F>>> {
         Arc::new(Mutex::new(InputState {
             /* keyboard */
-            // todo: remove g_key
-            g_key: KeyState {
-                previous: KeyPosition::KeyUp { info: KeyInfo { when: Instant::now(), handled: true } },
-                current: KeyPosition::KeyUp { info: KeyInfo { when: Instant::now(), handled: true } }
-            },
-
             changes: VecDeque::new(),
             states: HashMap::new(),
 
