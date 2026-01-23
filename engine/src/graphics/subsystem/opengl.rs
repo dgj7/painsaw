@@ -15,7 +15,8 @@ use num_traits::Float;
 use std::ffi::c_void;
 use std::ops::{Add, Sub};
 use windows::Win32::Graphics::OpenGL::{GL_BLEND, GL_COLOR_BUFFER_BIT, GL_DEPTH_BUFFER_BIT, GL_DEPTH_TEST, GL_MODELVIEW, GL_NEAREST, GL_ONE_MINUS_SRC_ALPHA, GL_PROJECTION, GL_RENDERER, GL_REPLACE, GL_RGBA, GL_SRC_ALPHA, GL_TEXTURE_2D, GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_TEXTURE_MAG_FILTER, GL_TEXTURE_MIN_FILTER, GL_UNSIGNED_BYTE, GL_VENDOR};
-use crate::window::context::{RendererContext, CVAR_FOV, DEFAULT_FOV};
+use crate::config::{CVAR_FOV, DEFAULT_FOV};
+use crate::window::context::RendererContext;
 
 pub(crate) mod opengl_mswin_api;
 pub(crate) mod opengl_mswin;
@@ -115,7 +116,7 @@ impl<F: Float + Add<F> + Sub<F>> RenderingSubSystemHandle<F> for OpenGLHandle {
 
     fn resize(&self, context: &RendererContext<F>) {
         let camera = &context.camera;
-        let fov: f64 = context.get_cvar(CVAR_FOV, |x| x.parse().unwrap()).unwrap_or(DEFAULT_FOV);
+        let fov: f64 = context.config.get_cvar(CVAR_FOV, |x| x.parse().unwrap()).unwrap_or(DEFAULT_FOV);
         gl_viewport(0, 0, camera.width as i32, camera.height as i32);
         gl_matrix_mode(GL_PROJECTION);
         gl_load_identity();

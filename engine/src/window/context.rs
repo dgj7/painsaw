@@ -7,15 +7,8 @@ use crate::input::InputState;
 use crate::logger::log;
 use crate::logger::log_level::LogLevel;
 use num_traits::Float;
-use std::collections::BTreeMap;
 use std::ops::{Add, Sub};
 use std::sync::{Arc, Mutex};
-
-/* cvar keys */
-pub static CVAR_FOV: &str = "cvar-fov";
-
-/* cvar defaults */
-pub static DEFAULT_FOV: f64 = 45.0;
 
 pub struct RendererContext<F: Float + Add<F> + Sub<F>> {
     /* scene for game statistics */
@@ -34,18 +27,7 @@ pub struct RendererContext<F: Float + Add<F> + Sub<F>> {
     pub(crate) graphics: GraphicsIntermediary<F>,
 
     /* configurations */
-    cvars: BTreeMap<String, String>,
     pub config: EngineConfig<F>,
-}
-
-impl<F: Float> RendererContext<F> {
-    pub fn get_cvar<FN, O>(&self, name: &str, f: FN) -> Option<O>
-    where
-        FN: Fn(&str) -> O,
-    {
-        let maybe = self.cvars.get(name);
-        maybe.map(|x| f(x))
-    }
 }
 
 impl<F: Float + Add<F> + Sub<F>> RendererContext<F> {
@@ -63,10 +45,7 @@ impl<F: Float + Add<F> + Sub<F>> RendererContext<F> {
             camera: Camera::new(dim),
             
             graphics: GraphicsIntermediary::new(config.renderer.graphics.clone()),
-
-            cvars: BTreeMap::from([
-                (CVAR_FOV.to_string(), DEFAULT_FOV.to_string()),
-            ]),
+            
             config,
         }
     }

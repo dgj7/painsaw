@@ -1,4 +1,3 @@
-use std::collections::HashMap;
 use engine::config::EngineConfig;
 use engine::config::input_config::InputConfig;
 use engine::config::renderer_config::RendererConfig;
@@ -9,10 +8,11 @@ use engine::input::ks::KeyState;
 use engine::logger::log;
 use engine::logger::log_level::LogLevel;
 use engine::window::context::RendererContext;
+use std::collections::HashMap;
 
 pub fn create_engine_config() -> EngineConfig<f32> {
-    EngineConfig {
-        window: WindowConfig {
+    EngineConfig::new(
+        WindowConfig {
             dimensions: WindowDimensions::Dimensional {
                 width: 1920,
                 height: 1080,
@@ -20,15 +20,15 @@ pub fn create_engine_config() -> EngineConfig<f32> {
             title: Some(String::from("Demo1 - MsWin/OpenGL")),
             wndclass: Some(String::from("PAINSAW-DEMO1")),
         },
-        renderer: RendererConfig {
+        RendererConfig {
             graphics: GraphicsSubSystem::OpenGL {
                 pipeline: OpenGLPipeline::FixedFunction,
             },
         },
-        input: InputConfig {
+        InputConfig {
             behaviors: create_behaviors(),
         },
-    }
+    )
 }
 
 fn create_behaviors() -> HashMap<KeyName, fn(&RendererContext<f32>, &KeyState)> {
@@ -45,5 +45,13 @@ fn handle_g(_context: &RendererContext<f32>, state: &KeyState) {
 
 fn logging_key_behavior(name: KeyName, state: &KeyState) {
     let duration = state.previous_key_state_duration();
-    log(LogLevel::Debug, &|| String::from(format!("{}: {}    ({} for {}ms)", name, state.current, state.previous, duration.as_millis())));
+    log(LogLevel::Debug, &|| {
+        String::from(format!(
+            "{}: {}    ({} for {}ms)",
+            name,
+            state.current,
+            state.previous,
+            duration.as_millis()
+        ))
+    });
 }
