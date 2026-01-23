@@ -1,3 +1,5 @@
+use crate::config::window_config::WindowDimensions;
+use crate::config::EngineConfig;
 use crate::graphics::subsystem::opengl::opengl_mswin::{init_opengl, swap_buffers};
 use crate::graphics::subsystem::opengl::opengl_mswin_api::{get_dc, release_dc, wgl_delete_context, wgl_get_current_context, wgl_make_current};
 use crate::graphics::subsystem::GraphicsSubSystem;
@@ -12,7 +14,6 @@ use crate::window::os::mswin::mswin_data::{create_and_write_pointer, input_state
 use crate::window::os::mswin::mswin_winapi::{create_window_ex, default_window_proc, dispatch_message, get_client_rect, get_module_handle, get_window_rect, load_cursor, peek_message, post_quit_message, register_class, translate_message};
 use crate::window::os::Window;
 use crate::window::wc::WorldController;
-use crate::window::window_config::{WindowConfig, WindowDimensions};
 use std::sync::{Arc, Mutex};
 use windows::Win32::Foundation::{HINSTANCE, HWND, LPARAM, LRESULT, WPARAM};
 use windows::Win32::Graphics::Gdi::HDC;
@@ -82,11 +83,11 @@ impl Window for MsWinWindow {
 }
 
 impl MsWinWindow {
-    pub fn new(request : &WindowConfig) -> std::result::Result<Box<dyn Window>, Box<dyn std::error::Error>> {
+    pub fn new(request : &EngineConfig) -> std::result::Result<Box<dyn Window>, Box<dyn std::error::Error>> {
         /* make some variables */
-        let wndclass = PCWSTR::from_raw(HSTRING::from(request.wndclass.clone().unwrap_or(String::from("WindowConfig: set wndclass"))).as_ptr());
-        let title = PCWSTR::from_raw(HSTRING::from(request.title.clone().unwrap_or(String::from("WindowConfig: set title"))).as_ptr());
-        let grss = request.graphics.clone();
+        let wndclass = PCWSTR::from_raw(HSTRING::from(request.window.wndclass.clone().unwrap_or(String::from("WindowConfig: set wndclass"))).as_ptr());
+        let title = PCWSTR::from_raw(HSTRING::from(request.window.title.clone().unwrap_or(String::from("WindowConfig: set title"))).as_ptr());
+        let grss = request.renderer.graphics.clone();
 
         /* get handle instance */
         let hinstance: HINSTANCE = HINSTANCE::from(get_module_handle(None)?);
@@ -111,15 +112,15 @@ impl MsWinWindow {
         debug_assert!(atom != 0);
 
         /* determine some settings based on configuration */
-        let dwstyle = match request.dimensions {
+        let dwstyle = match request.window.dimensions {
             WindowDimensions::Fullscreen => WS_VISIBLE,
             WindowDimensions::Dimensional { width: _width, height: _height } => WS_OVERLAPPEDWINDOW | WS_VISIBLE | WS_THICKFRAME,
         };
-        let (x, y) = match request.dimensions {
+        let (x, y) = match request.window.dimensions {
             WindowDimensions::Fullscreen => (0, 0),
             WindowDimensions::Dimensional { width: _width, height: _height } => (CW_USEDEFAULT, CW_USEDEFAULT),
         };
-        let (width,height) = match request.dimensions {
+        let (width,height) = match request.window.dimensions {
             WindowDimensions::Fullscreen => (CW_USEDEFAULT, CW_USEDEFAULT),
             WindowDimensions::Dimensional { width, height } => (width, height),
         };

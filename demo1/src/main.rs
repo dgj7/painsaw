@@ -1,6 +1,6 @@
 #![cfg_attr(all(not(debug_assertions), target_os = "windows"), windows_subsystem = "windows")]// if windows, and release build, don't display console window
 
-use crate::config::create_window_config;
+use crate::config::create_engine_config;
 use demo1_world_controller::Demo1WorldController;
 use engine::logger::log_level::LogLevel;
 use engine::logger::log_target::LogTarget;
@@ -14,7 +14,7 @@ fn main() {
     configure(LoggerConfig { level: LogLevel::Debug, target: LogTarget::StdOut });
     log(LogLevel::Info, &|| "main(): begin".parse().unwrap());
 
-    let cfg = create_window_config();
+    let cfg = create_engine_config();
     match create_window(&cfg) {
         Ok(mut win) => { win.begin_event_handling(Box::new(Demo1WorldController::new())).expect("window creation failed"); }
         Err(_e) => {
