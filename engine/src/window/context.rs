@@ -15,9 +15,6 @@ pub struct RendererContext<F: Float + Add<F> + Sub<F>> {
     pub first_frame_rendered: bool,
     pub frame_count: u128,
 
-    /* scene for input state */
-    pub input: Arc<Mutex<InputState<f32>>>,
-
     /* scene for world state */
     pub g2d: Graph2D<F>,
     pub g3d: Graph3D<F>,
@@ -26,7 +23,8 @@ pub struct RendererContext<F: Float + Add<F> + Sub<F>> {
     /* rendering subsystem */
     pub(crate) graphics: GraphicsIntermediary<F>,
 
-    /* configurations */
+    /* scene for input state */
+    pub input: Arc<Mutex<InputState<f32>>>,
     pub config: EngineConfig<F>,
 }
 
@@ -37,15 +35,14 @@ impl<F: Float + Add<F> + Sub<F>> RendererContext<F> {
         RendererContext {
             first_frame_rendered: false,
             frame_count: 0,
-
-            input: input.clone(),
             
             g2d: Graph2D::new(),
             g3d: Graph3D::new(),
             camera: Camera::new(dim),
             
             graphics: GraphicsIntermediary::new(config.renderer.graphics.clone()),
-            
+
+            input: input.clone(),
             config,
         }
     }
