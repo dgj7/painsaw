@@ -1,7 +1,7 @@
 pub struct WindowConfig {
     pub dimensions: WindowDimensions,
     pub title: Option<String>,
-    pub wndclass: Option<String>,
+    pub window_id: Option<String>,
 }
 
 pub enum WindowDimensions {
@@ -14,7 +14,7 @@ impl WindowConfig {
         WindowConfig {
             dimensions,
             title: Some(title.to_owned()),
-            wndclass: Some(wndclass.to_owned()),
+            window_id: Some(wndclass.to_owned()),
         }
     }
 }

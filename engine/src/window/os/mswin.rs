@@ -14,8 +14,8 @@ use crate::window::os::mswin::mswin_data::{create_and_write_pointer, input_state
 use crate::window::os::mswin::mswin_winapi::{create_window_ex, default_window_proc, dispatch_message, get_client_rect, get_module_handle, get_window_rect, load_cursor, peek_message, post_quit_message, register_class, translate_message};
 use crate::window::os::Window;
 use crate::window::wc::WorldController;
-use std::sync::{Arc, Mutex};
 use num_traits::Float;
+use std::sync::{Arc, Mutex};
 use windows::Win32::Foundation::{HINSTANCE, HWND, LPARAM, LRESULT, WPARAM};
 use windows::Win32::Graphics::Gdi::HDC;
 use windows::Win32::Graphics::OpenGL::HGLRC;
@@ -84,9 +84,9 @@ impl<F: Float> Window<F> for MsWinWindow {
 }
 
 impl MsWinWindow {
-    pub fn new<F: Float>(request : &EngineConfig<F>) -> std::result::Result<Box<dyn Window<F>>, Box<dyn std::error::Error>> {
+    pub fn new<F: Float>(request : &EngineConfig<F>) -> Result<Box<dyn Window<F>>, Box<dyn std::error::Error>> {
         /* make some variables */
-        let wndclass = PCWSTR::from_raw(HSTRING::from(request.window.wndclass.clone().unwrap_or(String::from("WindowConfig: set wndclass"))).as_ptr());
+        let wndclass = PCWSTR::from_raw(HSTRING::from(request.window.window_id.clone().unwrap_or(String::from("WindowConfig: set wndclass"))).as_ptr());
         let title = PCWSTR::from_raw(HSTRING::from(request.window.title.clone().unwrap_or(String::from("WindowConfig: set title"))).as_ptr());
         let grss = request.renderer.graphics.clone();
 

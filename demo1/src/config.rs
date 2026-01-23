@@ -18,7 +18,7 @@ pub fn create_engine_config() -> EngineConfig<f32> {
                 height: 1080,
             },
             title: Some(String::from("Demo1 - MsWin/OpenGL")),
-            wndclass: Some(String::from("PAINSAW-DEMO1")),
+            window_id: Some(String::from("PAINSAW-DEMO1")),
         },
         RendererConfig {
             graphics: GraphicsSubSystem::OpenGL {
