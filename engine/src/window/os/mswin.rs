@@ -1,25 +1,25 @@
-use std::sync::{Arc, Mutex};
-use std::time::Instant;
-use windows::Win32::Foundation::{HINSTANCE, HWND, LPARAM, LRESULT, WPARAM};
-use windows::Win32::Graphics::Gdi::HDC;
-use windows::Win32::Graphics::OpenGL::HGLRC;
-use windows::Win32::UI::Input::KeyboardAndMouse::{VIRTUAL_KEY, VK_ESCAPE, VK_G};
-use windows::Win32::UI::WindowsAndMessaging::{CS_HREDRAW, CS_OWNDC, CS_VREDRAW, CW_USEDEFAULT, IDC_ARROW, MSG, PM_REMOVE, WINDOW_EX_STYLE, WM_CREATE, WM_DESTROY, WM_KEYDOWN, WM_KEYUP, WM_QUIT, WM_SIZE, WNDCLASSW, WS_OVERLAPPEDWINDOW, WS_THICKFRAME, WS_VISIBLE};
-use windows_core::{HSTRING, PCWSTR};
-use crate::graphics::subsystem::GraphicsSubSystem;
 use crate::graphics::subsystem::opengl::opengl_mswin::{init_opengl, swap_buffers};
 use crate::graphics::subsystem::opengl::opengl_mswin_api::{get_dc, release_dc, wgl_delete_context, wgl_get_current_context, wgl_make_current};
-use crate::input::InputState;
+use crate::graphics::subsystem::GraphicsSubSystem;
 use crate::input::ki::KeyInfo;
+use crate::input::kn::KeyName;
 use crate::input::kp::KeyPosition;
+use crate::input::InputState;
 use crate::logger::log;
 use crate::logger::log_level::LogLevel;
 use crate::window::context::RendererContext;
-use crate::window::window_config::{WindowConfig, WindowDimensions};
 use crate::window::os::mswin::mswin_data::{create_and_write_pointer, input_state_to_raw_pointer, read_window_data};
 use crate::window::os::mswin::mswin_winapi::{create_window_ex, default_window_proc, dispatch_message, get_client_rect, get_module_handle, get_window_rect, load_cursor, peek_message, post_quit_message, register_class, translate_message};
 use crate::window::os::Window;
 use crate::window::wc::WorldController;
+use crate::window::window_config::{WindowConfig, WindowDimensions};
+use std::sync::{Arc, Mutex};
+use windows::Win32::Foundation::{HINSTANCE, HWND, LPARAM, LRESULT, WPARAM};
+use windows::Win32::Graphics::Gdi::HDC;
+use windows::Win32::Graphics::OpenGL::HGLRC;
+use windows::Win32::UI::Input::KeyboardAndMouse::{VIRTUAL_KEY, VK_ESCAPE, VK_G, VK_M};
+use windows::Win32::UI::WindowsAndMessaging::{CS_HREDRAW, CS_OWNDC, CS_VREDRAW, CW_USEDEFAULT, IDC_ARROW, MSG, PM_REMOVE, WINDOW_EX_STYLE, WM_CREATE, WM_DESTROY, WM_KEYDOWN, WM_KEYUP, WM_QUIT, WM_SIZE, WNDCLASSW, WS_OVERLAPPEDWINDOW, WS_THICKFRAME, WS_VISIBLE};
+use windows_core::{HSTRING, PCWSTR};
 
 pub mod mswin_winapi;
 pub mod mswin_data;
@@ -218,30 +218,17 @@ fn handle_message_if_applicable(input: &Arc<Mutex<InputState<f32>>>, hwnd: HWND,
     match message {
         WM_KEYDOWN => {
             match VIRTUAL_KEY(wparam.0 as u16) {
-                VK_ESCAPE => {
-                    post_quit_message(0);
-                    true
-                }
-                VK_G => {
-                    match input.lock() {
-                        Ok(mut is) => {is.g_key.update(KeyPosition::KeyDown { info: KeyInfo { when: Instant::now(), handled: false } })}
-                        Err(_) => panic!("todo: g: down")
-                    }
-                    true
-                }
-                _ => true
+                VK_ESCAPE => { post_quit_message(0);true }
+                VK_G => { input.lock().expect("todo: g: down").handle_change(KeyName::KeyG, KeyPosition::KeyDown { info: KeyInfo::unhandled() }); true }
+                VK_M => { input.lock().expect("todo: m: down").handle_change(KeyName::KeyM, KeyPosition::KeyDown { info: KeyInfo::unhandled() }); true }
+                _ => false
             }
         }
         WM_KEYUP => {
             match VIRTUAL_KEY(wparam.0 as u16) {
-                VK_G => {
-                    match input.lock() {
-                        Ok(mut is) => {is.g_key.update(KeyPosition::KeyUp { info: KeyInfo { when: Instant::now(), handled: false } })}
-                        Err(_) => panic!("todo: g: up")
-                    }
-                    true
-                }
-                _ => true
+                VK_G => { input.lock().expect("todo: g: up").handle_change(KeyName::KeyG, KeyPosition::KeyUp { info: KeyInfo::unhandled() }); true }
+                VK_M => { input.lock().expect("todo: m: up").handle_change(KeyName::KeyM, KeyPosition::KeyUp { info: KeyInfo::unhandled() }); true }
+                _ => false
             }
         }
         WM_SIZE => {

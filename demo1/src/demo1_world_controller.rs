@@ -11,8 +11,6 @@ use engine::graphics::model::color::Color;
 use engine::graphics::model::m2d::Model2D;
 use engine::graphics::model::m3d::Model3D;
 use engine::image::text::{text_2d_texture, TextConfig};
-use engine::input::ki::KeyInfo;
-use engine::input::kp::KeyPosition;
 use engine::logger::log;
 use engine::logger::log_level::LogLevel;
 use engine::window::context::RendererContext;
@@ -59,20 +57,14 @@ impl WorldController<f32> for Demo1WorldController {
                 /* gather some variables */
                 let ccd = is.current_client_dimensions.clone();
 
-                /*  handle g key up/down */
-                let duration = is.g_key.previous_key_state_duration();
-                match &is.g_key.current {
-                    KeyPosition::KeyDown { info } => {
-                        if !info.handled {
-                            log(LogLevel::Debug, &|| String::from(format!("G: DOWN    (up for {}ms)", duration.as_millis())));
-                            is.g_key.current = KeyPosition::KeyDown { info: KeyInfo { when: info.when, handled: true, } };
-                        }
-                    }
-                    KeyPosition::KeyUp { info } => {
-                        if !info.handled {
-                            log(LogLevel::Debug, &|| String::from(format!("G: UP      (down for {}ms)", duration.as_millis())));
-                            is.g_key.current = KeyPosition::KeyUp { info: KeyInfo { when: info.when, handled: true } };
-                        }
+                /* handle key changes */
+                while !is.changes.is_empty() {
+                    let change = is.changes.pop_front().unwrap();
+                    let state = is.states.get_mut(&change).unwrap();
+                    if !state.current.is_handled() {
+                        state.current.set_handled();
+                        let duration = state.previous_key_state_duration();
+                        log(LogLevel::Debug, &|| String::from(format!("{}: {}    ({} for {}ms)", change, state.current, state.previous, duration.as_millis())));
                     }
                 }
 
