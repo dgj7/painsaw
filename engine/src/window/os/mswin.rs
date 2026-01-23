@@ -41,7 +41,7 @@ pub struct MsWinWindow {
 }
 
 impl Window for MsWinWindow {
-    fn begin_event_handling(&mut self, wc: &dyn WorldController<f32>) -> Result<(), Box<dyn std::error::Error>>
+    fn begin_event_handling(&mut self, wc: Box<dyn WorldController<f32>>) -> Result<(), Box<dyn std::error::Error>>
     {
         log(LogLevel::Info, &|| "begin event handling".parse().unwrap());
         let mut message: MSG = MSG::default();
@@ -221,6 +221,7 @@ fn handle_message_if_applicable(input: &Arc<Mutex<InputState<f32>>>, hwnd: HWND,
                 VK_ESCAPE => { post_quit_message(0);true }
                 VK_G => { input.lock().expect("todo: g: down").handle_change(KeyName::KeyG, KeyPosition::KeyDown { info: KeyInfo::unhandled() }); true }
                 VK_M => { input.lock().expect("todo: m: down").handle_change(KeyName::KeyM, KeyPosition::KeyDown { info: KeyInfo::unhandled() }); true }
+                // todo: add remaining keys down
                 _ => false
             }
         }
@@ -228,6 +229,7 @@ fn handle_message_if_applicable(input: &Arc<Mutex<InputState<f32>>>, hwnd: HWND,
             match VIRTUAL_KEY(wparam.0 as u16) {
                 VK_G => { input.lock().expect("todo: g: up").handle_change(KeyName::KeyG, KeyPosition::KeyUp { info: KeyInfo::unhandled() }); true }
                 VK_M => { input.lock().expect("todo: m: up").handle_change(KeyName::KeyM, KeyPosition::KeyUp { info: KeyInfo::unhandled() }); true }
+                // todo: add remaining keys up
                 _ => false
             }
         }
