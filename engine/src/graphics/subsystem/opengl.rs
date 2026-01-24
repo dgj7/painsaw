@@ -166,12 +166,8 @@ impl<F: Float + Add<F> + Sub<F>> RenderingSubSystemHandle<F> for OpenGLHandle {
                 gl_load_identity();
 
                 /* adjust perspective (removes ortho) */
-                // todo: these variables (other than fov) should live on the camera struct
                 let fov: f64 = context.config.get_cvar(CVAR_FOV, |x| x.parse().unwrap()).unwrap_or(DEFAULT_FOV);
-                let aspect = (camera.width / camera.height) as f64;
-                let near = 0.01;
-                let far = 500.0;
-                glu_perspective(fov, aspect, near, far);
+                glu_perspective(fov, camera.aspect(), camera.near, camera.far);
 
                 /* model/view: reset matrix; enable depth test; ready for 3d drawing */
                 gl_matrix_mode(GL_MODELVIEW);
