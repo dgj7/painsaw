@@ -117,21 +117,12 @@ impl<F: Float + Add<F> + Sub<F>> RenderingSubSystemHandle<F> for OpenGLHandle {
     fn resize(&self, context: &RendererContext<F>) {
         /* get camera data */
         let camera = &context.camera;
-        let fov: f64 = context.config.get_cvar(CVAR_FOV, |x| x.parse().unwrap()).unwrap_or(DEFAULT_FOV);
-        let aspect = (camera.width / camera.height) as f64;
-        let near = 0.01;
-        let far = 500.0;
 
         /* set the viewport; this call doesn't need a specific matrix mode as it's an independent function */
         gl_viewport(0, 0, camera.width as i32, camera.height as i32);
 
-        /* projection matrix: set up the perspective */
-        gl_matrix_mode(GL_PROJECTION);
-        gl_load_identity();
-        glu_perspective(fov, aspect, near, far);
-
         /* observe and report */
-        log(LogLevel::Debug, &|| String::from(format!("resize(): w=[{}],h=[{}],fov=[{:.2}],aspect=[{:.2}],near=[{:.2}],far=[{:.2}]",camera.width,camera.height,fov,aspect,near,far)));
+        log(LogLevel::Debug, &|| String::from(format!("resize(): w=[{}],h=[{}]",camera.width,camera.height)));
     }
 
     fn before_scene(&self, _camera: &Camera) {
@@ -164,38 +155,46 @@ impl<F: Float + Add<F> + Sub<F>> RenderingSubSystemHandle<F> for OpenGLHandle {
         /* purposely empty */
     }
 
-    fn prepare_3d(&self, _context: &RendererContext<F>) {
+    fn prepare_3d(&self, context: &RendererContext<F>) {
         match self.pipeline {
             OpenGLPipeline::FixedFunction => {
-                /* projection: reset matrix (removes ortho) */
+                /* gather camera data */
+                let camera = &context.camera;
+
+                /* projection: reset matrix */
                 gl_matrix_mode(GL_PROJECTION);
                 gl_load_identity();
+
+                /* adjust perspective (removes ortho) */
+                // todo: these variables (other than fov) should live on the camera struct
+                let fov: f64 = context.config.get_cvar(CVAR_FOV, |x| x.parse().unwrap()).unwrap_or(DEFAULT_FOV);
+                let aspect = (camera.width / camera.height) as f64;
+                let near = 0.01;
+                let far = 500.0;
+                glu_perspective(fov, aspect, near, far);
 
                 /* model/view: reset matrix; enable depth test; ready for 3d drawing */
                 gl_matrix_mode(GL_MODELVIEW);
                 gl_load_identity();
                 gl_enable(GL_DEPTH_TEST);
+
+                /* model/view: adjust camera, before drawing */
+                gl_rotate_f(-camera.pitch, 1.0, 0.0, 0.0);
+                gl_rotate_f(-camera.yaw, 0.0, 1.0, 0.0);
+                gl_translate_f(-camera.position.x, -camera.position.y, -camera.position.z);
+                //gl_translate_f(0.0, 0.0, -2.0);
+                //gl_rotate_f(-8.0, 0.0, 1.0, 0.0);// rotate: yaw,  y-axis; only degrees and y-axis are set
+                //gl_rotate_f(-20.0, 1.0, 0.0, 0.0);// rotate: pitch, x-axis; only degrees and x-axis are set; positive rotates forward down
+                //gl_rotate_f(0.0, 0.0, 0.0, 1.0);// rotate: roll/bank, z-axis; only degrees and z-axis are set
             }
             OpenGLPipeline::Shaders => {}
         }
     }
 
-    fn after_3d(&self, context: &RendererContext<F>) {
-        /* gather camera data */
-        let camera = &context.camera;
-
+    fn after_3d(&self, _context: &RendererContext<F>) {
         /* model/view: reset matrix */
         gl_matrix_mode(GL_MODELVIEW);
         gl_load_identity();
-
-        /* model/view: final translations */
-        gl_rotate_f(-camera.pitch, 1.0, 0.0, 0.0);
-        gl_rotate_f(-camera.yaw, 0.0, 1.0, 0.0);
-        gl_translate_f(-camera.position.x, -camera.position.y, -camera.position.z);
-        //gl_translate_f(0.0, 0.0, -2.0);
-        //gl_rotate_f(-45.0, 0.0, 1.0, 0.0);// rotate: yaw,  y-axis; only degrees and y-axis are set
-        //gl_rotate_f(-20.0, 1.0, 0.0, 0.0);// rotate: pitch, x-axis; only degrees and x-axis are set; positive rotates forward down
-        //gl_rotate_f(0.0, 0.0, 0.0, 1.0);// rotate: roll/bank, z-axis; only degrees and z-axis are set
 
         /* disable stuff we don't need anymore */
         gl_disable(GL_DEPTH_TEST);
