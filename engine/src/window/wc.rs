@@ -91,6 +91,6 @@ pub trait WorldController<F: Float + Add<F> + Sub<F>> {
         /* draw 3d, if desired */
         context.graphics.prepare_3d(&context);
         context.graphics.render_3d(&context.g3d);
-        context.graphics.after_3d();
+        context.graphics.after_3d(&context);
     }
 }

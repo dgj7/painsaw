@@ -46,7 +46,7 @@ pub trait RenderingSubSystemHandle<F: Float + Add<F> + Sub<F>> {
     fn after_2d(&self);
 
     fn prepare_3d(&self, context: &RendererContext<F>);
-    fn after_3d(&self);
+    fn after_3d(&self, context: &RendererContext<F>);
 
     fn render_2d_points(&self, points: &Points2D<F>);
     fn render_2d_lines(&self, lines: &Lines2D<F>);

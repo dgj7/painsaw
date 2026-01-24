@@ -47,11 +47,13 @@ pub(crate) fn gl_matrix_mode(mode: u32) {
     check_errors_gl("glMatrixMode");
 }
 
+#[allow(unused)] // todo: remove this
 pub(crate) fn gl_push_matrix() {
     unsafe { glPushMatrix(); }
     check_errors_gl("glPushMatrix");
 }
 
+#[allow(unused)] // todo: remove this
 pub(crate) fn gl_pop_matrix() {
     unsafe { glPopMatrix(); }
     check_errors_gl("glPopMatrix");

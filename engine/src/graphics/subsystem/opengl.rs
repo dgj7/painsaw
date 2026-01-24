@@ -1,22 +1,22 @@
+use crate::config::{CVAR_FOV, DEFAULT_FOV};
+use crate::graphics::camera::Camera;
 use crate::graphics::geometry::line::Lines2D;
 use crate::graphics::geometry::line::Lines3D;
 use crate::graphics::geometry::point::Points2D;
 use crate::graphics::geometry::point::Points3D;
-use crate::graphics::camera::Camera;
+use crate::graphics::image::t2d::Texture2D;
 use crate::graphics::model::g2d::Graph2D;
 use crate::graphics::model::g3d::Graph3D;
 use crate::graphics::model::renderer_info::RendererInfo;
-use crate::graphics::subsystem::opengl::opengl_api::{gl_begin_lines, gl_begin_points, gl_begin_quads, gl_bind_texture, gl_blend_func, gl_clear, gl_clear_color, gl_color_3f, gl_disable, gl_enable, gl_end, gl_gen_textures, gl_get_string, gl_line_width, gl_load_identity, gl_matrix_mode, gl_ortho, gl_point_size, gl_pop_matrix, gl_push_matrix, gl_rotate_f, gl_tex_coord_2f, gl_tex_env_f, gl_tex_image_2d, gl_tex_parameter_i, gl_tex_sub_image_2d, gl_translate_f, gl_vertex_2f, gl_vertex_3f, gl_viewport, glu_perspective};
+use crate::graphics::subsystem::opengl::opengl_api::{gl_begin_lines, gl_begin_points, gl_begin_quads, gl_bind_texture, gl_blend_func, gl_clear, gl_clear_color, gl_color_3f, gl_disable, gl_enable, gl_end, gl_gen_textures, gl_get_string, gl_line_width, gl_load_identity, gl_matrix_mode, gl_ortho, gl_point_size, gl_rotate_f, gl_tex_coord_2f, gl_tex_env_f, gl_tex_image_2d, gl_tex_parameter_i, gl_tex_sub_image_2d, gl_translate_f, gl_vertex_2f, gl_vertex_3f, gl_viewport, glu_perspective};
 use crate::graphics::subsystem::{OpenGLPipeline, RenderingSubSystemHandle};
-use crate::graphics::image::t2d::Texture2D;
 use crate::logger::log;
 use crate::logger::log_level::LogLevel;
+use crate::window::context::RendererContext;
 use num_traits::Float;
 use std::ffi::c_void;
 use std::ops::{Add, Sub};
 use windows::Win32::Graphics::OpenGL::{GL_BLEND, GL_COLOR_BUFFER_BIT, GL_DEPTH_BUFFER_BIT, GL_DEPTH_TEST, GL_MODELVIEW, GL_NEAREST, GL_ONE_MINUS_SRC_ALPHA, GL_PROJECTION, GL_RENDERER, GL_REPLACE, GL_RGBA, GL_SRC_ALPHA, GL_TEXTURE_2D, GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_TEXTURE_MAG_FILTER, GL_TEXTURE_MIN_FILTER, GL_UNSIGNED_BYTE, GL_VENDOR};
-use crate::config::{CVAR_FOV, DEFAULT_FOV};
-use crate::window::context::RendererContext;
 
 pub(crate) mod opengl_mswin_api;
 pub(crate) mod opengl_mswin;
@@ -115,13 +115,23 @@ impl<F: Float + Add<F> + Sub<F>> RenderingSubSystemHandle<F> for OpenGLHandle {
     }
 
     fn resize(&self, context: &RendererContext<F>) {
+        /* get camera data */
         let camera = &context.camera;
         let fov: f64 = context.config.get_cvar(CVAR_FOV, |x| x.parse().unwrap()).unwrap_or(DEFAULT_FOV);
+        let aspect = (camera.width / camera.height) as f64;
+        let near = 0.01;
+        let far = 500.0;
+
+        /* set the viewport; this call doesn't need a specific matrix mode as it's an independent function */
         gl_viewport(0, 0, camera.width as i32, camera.height as i32);
+
+        /* projection matrix: set up the perspective */
         gl_matrix_mode(GL_PROJECTION);
         gl_load_identity();
-        glu_perspective(fov, (camera.width / camera.height) as f64, 0.01, 500.0);
-        //gl_frustum(-1.0, 1.0, -1.0, 1.0, 1.5, 20.0);
+        glu_perspective(fov, aspect, near, far);
+
+        /* observe and report */
+        log(LogLevel::Debug, &|| String::from(format!("resize(): w=[{}],h=[{}],fov=[{:.2}],aspect=[{:.2}],near=[{:.2}],far=[{:.2}]",camera.width,camera.height,fov,aspect,near,far)));
     }
 
     fn before_scene(&self, _camera: &Camera) {
@@ -137,19 +147,13 @@ impl<F: Float + Add<F> + Sub<F>> RenderingSubSystemHandle<F> for OpenGLHandle {
     fn prepare_2d(&self, camera: &Camera) {
         match self.pipeline {
             OpenGLPipeline::FixedFunction => {
-                gl_disable(GL_DEPTH_TEST);
+                /* projection: reset matrix; setup ortho for 2d drawing */
                 gl_matrix_mode(GL_PROJECTION);
-                gl_push_matrix();
                 gl_load_identity();
-                gl_ortho(0.0,
-                         camera.width as f64,
-                         camera.height as f64,
-                         0.0,
-                         -99999.0,
-                         99999.0
-                );
+                gl_ortho(0.0, camera.width as f64, camera.height as f64, 0.0, -99999.0, 99999.0);
+
+                /* model/view: reset matrix; ready for 2d drawing */
                 gl_matrix_mode(GL_MODELVIEW);
-                gl_push_matrix();
                 gl_load_identity();
             }
             OpenGLPipeline::Shaders => {}
@@ -157,38 +161,44 @@ impl<F: Float + Add<F> + Sub<F>> RenderingSubSystemHandle<F> for OpenGLHandle {
     }
 
     fn after_2d(&self) {
-        gl_matrix_mode(GL_PROJECTION);
-        gl_pop_matrix();
-        gl_matrix_mode(GL_MODELVIEW);
-        gl_pop_matrix();
+        /* purposely empty */
     }
 
-    fn prepare_3d(&self, context: &RendererContext<F>) {
+    fn prepare_3d(&self, _context: &RendererContext<F>) {
         match self.pipeline {
             OpenGLPipeline::FixedFunction => {
-                let camera = &context.camera;
-
-                gl_enable(GL_DEPTH_TEST);
-
-                gl_matrix_mode(GL_MODELVIEW);
+                /* projection: reset matrix (removes ortho) */
+                gl_matrix_mode(GL_PROJECTION);
                 gl_load_identity();
 
-                //gl_translate_f(0.0, 0.0, -1.0);
-
-                //gl_rotate_f(-45.0, 0.0, 1.0, 0.0);// rotate: yaw,  y-axis; only degrees and y-axis are set
-                //gl_rotate_f(-20.0, 1.0, 0.0, 0.0);// rotate: pitch, x-axis; only degrees and x-axis are set; positive rotates forward down
-                //gl_rotate_f(0.0, 0.0, 0.0, 1.0);// rotate: roll/bank, z-axis; only degrees and z-axis are set
-
-                gl_rotate_f(-camera.pitch, 1.0, 0.0, 0.0);
-                gl_rotate_f(-camera.yaw, 0.0, 1.0, 0.0);
-                gl_translate_f(-camera.position.x, -camera.position.y, -camera.position.z);
+                /* model/view: reset matrix; enable depth test; ready for 3d drawing */
+                gl_matrix_mode(GL_MODELVIEW);
+                gl_load_identity();
+                gl_enable(GL_DEPTH_TEST);
             }
             OpenGLPipeline::Shaders => {}
         }
     }
 
-    fn after_3d(&self) {
-        // todo: needed later?
+    fn after_3d(&self, context: &RendererContext<F>) {
+        /* gather camera data */
+        let camera = &context.camera;
+
+        /* model/view: reset matrix */
+        gl_matrix_mode(GL_MODELVIEW);
+        gl_load_identity();
+
+        /* model/view: final translations */
+        gl_rotate_f(-camera.pitch, 1.0, 0.0, 0.0);
+        gl_rotate_f(-camera.yaw, 0.0, 1.0, 0.0);
+        gl_translate_f(-camera.position.x, -camera.position.y, -camera.position.z);
+        //gl_translate_f(0.0, 0.0, -2.0);
+        //gl_rotate_f(-45.0, 0.0, 1.0, 0.0);// rotate: yaw,  y-axis; only degrees and y-axis are set
+        //gl_rotate_f(-20.0, 1.0, 0.0, 0.0);// rotate: pitch, x-axis; only degrees and x-axis are set; positive rotates forward down
+        //gl_rotate_f(0.0, 0.0, 0.0, 1.0);// rotate: roll/bank, z-axis; only degrees and z-axis are set
+
+        /* disable stuff we don't need anymore */
+        gl_disable(GL_DEPTH_TEST);
     }
 
     fn render_2d_points(&self, points: &Points2D<F>) {

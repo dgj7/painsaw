@@ -127,7 +127,7 @@ impl<F: Float + Add<F> + Sub<F>> GraphicsIntermediary<F> {
         }
     }
 
-    pub(crate) fn after_3d(&self) {
-        self.subsystem.after_3d();
+    pub(crate) fn after_3d(&self, context: &RendererContext<F>) {
+        self.subsystem.after_3d(context);
     }
 }
