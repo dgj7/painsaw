@@ -94,6 +94,7 @@ fn create_2d_axes(camera: &Camera) -> Model2D<f32> {
             Point2D::new(20.0, 50.0),
             Point2D::new(20.0, 80.0),
             Point2D::new(20.0, 110.0),
+            Point2D::new(20.0, 140.0),
         ), Color::GREEN, 3.0);
     let pointsvec = vec!(axes_points, other_points);
 

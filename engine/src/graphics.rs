@@ -91,7 +91,7 @@ impl<F: Float + Add<F> + Sub<F>> GraphicsIntermediary<F> {
             let duration_seconds = next.duration_since(self.last_frame).as_secs_f64();
             self.last_frame = next;
             let fps_float = 1.0 / duration_seconds;
-            let fps = cmp::min(fps_float as u16, 999);
+            let fps = cmp::min(fps_float as u16, 9999);
 
             /* prepare to render text */
             let config = TextConfig {
@@ -103,11 +103,11 @@ impl<F: Float + Add<F> + Sub<F>> GraphicsIntermediary<F> {
             /* add or update models */
             g2d.models
                 .entry("99-builtin-fps".parse().unwrap())
-                .and_modify(|m| m.textures[0].replacement = Option::from(text_2d_image(config.clone(), || String::from(format!("FPS:{:3}", fps)))))
+                .and_modify(|m| m.textures[0].replacement = Option::from(text_2d_image(config.clone(), || String::from(format!("FPS:{:4}", fps)))))
                 .or_insert(Model2D::new(vec!(), vec!(),
                         vec!(Texture2D::new(
-                                text_2d_image(config.clone(), || String::from(format!("FPS:{:3}", fps))),
-                                Point2D::new(F::from(1700.0).unwrap(), F::from(20.0).unwrap()),
+                                text_2d_image(config.clone(), || String::from(format!("FPS:{:4}", fps))),
+                                Point2D::new(F::from(20.0).unwrap(), F::from(110.0).unwrap()),
                                 F::from(2).unwrap()))));
         }
     }
