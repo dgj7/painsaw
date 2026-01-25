@@ -29,7 +29,11 @@ pub fn create_engine_config() -> EngineConfig<f32> {
         InputConfig {
             behaviors: create_behaviors(),
         },
-        MoveConfig::default(),
+        MoveConfig {
+            forward_speed: 2.0,
+            backward_speed: 2.0,
+            ..Default::default()
+        },
     )
 }
 
