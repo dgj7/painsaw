@@ -64,6 +64,18 @@ impl<F: Float + Add<F> + Sub<F> + Mul<F> + Div<F>> Point3D<F> {
         Point3D::new(F::zero(), F::zero(), F::zero())
     }
 
+    pub fn create_x_unit() -> Point3D<F> {
+        Point3D::new(F::one(), F::zero(), F::zero())
+    }
+
+    pub fn create_y_unit() -> Point3D<F> {
+        Point3D::new(F::zero(), F::one(), F::zero())
+    }
+
+    pub fn create_z_unit() -> Point3D<F> {
+        Point3D::new(F::zero(), F::zero(), F::one())
+    }
+
     pub fn new_add(left_addend: &Point3D<F>, right_addend: &Point3D<F>) -> Point3D<F> {
         Point3D {
             x: left_addend.x + right_addend.x,

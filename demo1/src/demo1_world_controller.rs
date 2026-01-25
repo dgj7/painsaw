@@ -82,7 +82,7 @@ impl Demo1WorldController {
     }
 }
 
-fn create_2d_axes(camera: &Camera) -> Model2D<f32> {
+fn create_2d_axes(camera: &Camera<f32>) -> Model2D<f32> {
     /* define points */
     let axes_points = Points2D::new(vec!(
             Point2D::origin(),
@@ -106,7 +106,7 @@ fn create_2d_axes(camera: &Camera) -> Model2D<f32> {
     Model2D::new(pointsvec, axeslines, vec!())
 }
 
-fn create_2d_grid_x_lines(camera: &Camera) -> Model2D<f32> {
+fn create_2d_grid_x_lines(camera: &Camera<f32>) -> Model2D<f32> {
     /* define lines */
     let hgap = 10;
     let hiters = ((camera.height + (hgap as f32))/(hgap as f32)) as u16;
@@ -120,7 +120,7 @@ fn create_2d_grid_x_lines(camera: &Camera) -> Model2D<f32> {
     Model2D::new(vec!(), hlinevec, vec!())
 }
 
-fn create_2d_grid_y_lines(camera: &Camera) -> Model2D<f32> {
+fn create_2d_grid_y_lines(camera: &Camera<f32>) -> Model2D<f32> {
     /* define lines */
     let vgap = 10;
     let viters = ((camera.width + (vgap as f32))/(vgap as f32)) as u16;

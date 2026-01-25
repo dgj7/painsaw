@@ -54,11 +54,11 @@ impl<F: Float + Add<F> + Sub<F>> GraphicsIntermediary<F> {
         self.subsystem.resize(context);
     }
 
-    pub(crate) fn before_scene(&mut self, camera: &Camera) {
+    pub(crate) fn before_scene(&mut self, camera: &Camera<F>) {
         self.subsystem.before_scene(camera);
     }
 
-    pub(crate) fn prepare_2d(&self, g2d: &mut Graph2D<F>, camera: &Camera) {
+    pub(crate) fn prepare_2d(&self, g2d: &mut Graph2D<F>, camera: &Camera<F>) {
         /* prepare the screen for 2d */
         self.subsystem.prepare_2d(camera);
 

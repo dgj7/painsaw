@@ -23,7 +23,7 @@ pub struct RendererContext<F: Float + Add<F> + Sub<F>> {
     /* scene for world state */
     pub g2d: Graph2D<F>,
     pub g3d: Graph3D<F>,
-    pub camera: Camera,
+    pub camera: Camera<F>,
     
     /* rendering subsystem */
     pub(crate) graphics: GraphicsIntermediary<F>,

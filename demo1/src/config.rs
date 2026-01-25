@@ -9,6 +9,7 @@ use engine::logger::log;
 use engine::logger::log_level::LogLevel;
 use engine::window::context::RendererContext;
 use std::collections::HashMap;
+use engine::config::move_config::MoveConfig;
 
 pub fn create_engine_config() -> EngineConfig<f32> {
     EngineConfig::new(
@@ -28,6 +29,7 @@ pub fn create_engine_config() -> EngineConfig<f32> {
         InputConfig {
             behaviors: create_behaviors(),
         },
+        MoveConfig::default(),
     )
 }
 

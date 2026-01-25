@@ -40,9 +40,9 @@ pub trait RenderingSubSystemHandle<F: Float + Add<F> + Sub<F>> {
 
     fn resize(&self, context: &RendererContext<F>);
 
-    fn before_scene(&self, camera: &Camera);
+    fn before_scene(&self, camera: &Camera<F>);
 
-    fn prepare_2d(&self, camera: &Camera);
+    fn prepare_2d(&self, camera: &Camera<F>);
     fn after_2d(&self);
 
     fn prepare_3d(&self, context: &RendererContext<F>);

@@ -119,13 +119,13 @@ impl<F: Float + Add<F> + Sub<F>> RenderingSubSystemHandle<F> for OpenGLHandle {
         let camera = &context.camera;
 
         /* set the viewport; this call doesn't need a specific matrix mode as it's an independent function */
-        gl_viewport(0, 0, camera.width as i32, camera.height as i32);
+        gl_viewport(0, 0, camera.width.to_i32().unwrap(), camera.height.to_i32().unwrap());
 
         /* observe and report */
-        log(LogLevel::Debug, &|| String::from(format!("resize(): w=[{}],h=[{}]",camera.width,camera.height)));
+        log(LogLevel::Debug, &|| String::from(format!("resize(): w=[{}],h=[{}]",camera.width.to_f32().unwrap(),camera.height.to_f32().unwrap())));
     }
 
-    fn before_scene(&self, _camera: &Camera) {
+    fn before_scene(&self, _camera: &Camera<F>) {
         match self.pipeline {
             OpenGLPipeline::FixedFunction => {
                 gl_clear_color(0.0, 0.0, 0.0, 1.0);
@@ -135,13 +135,13 @@ impl<F: Float + Add<F> + Sub<F>> RenderingSubSystemHandle<F> for OpenGLHandle {
         }
     }
 
-    fn prepare_2d(&self, camera: &Camera) {
+    fn prepare_2d(&self, camera: &Camera<F>) {
         match self.pipeline {
             OpenGLPipeline::FixedFunction => {
                 /* projection: reset matrix; setup ortho for 2d drawing */
                 gl_matrix_mode(GL_PROJECTION);
                 gl_load_identity();
-                gl_ortho(0.0, camera.width as f64, camera.height as f64, 0.0, -99999.0, 99999.0);
+                gl_ortho(0.0, camera.width.to_f64().unwrap(), camera.height.to_f64().unwrap(), 0.0, -99999.0, 99999.0);
 
                 /* model/view: reset matrix; ready for 2d drawing */
                 gl_matrix_mode(GL_MODELVIEW);
@@ -160,6 +160,7 @@ impl<F: Float + Add<F> + Sub<F>> RenderingSubSystemHandle<F> for OpenGLHandle {
             OpenGLPipeline::FixedFunction => {
                 /* gather camera data */
                 let camera = &context.camera;
+                let position = camera.orientation.column_major_translation();
 
                 /* projection: reset matrix */
                 gl_matrix_mode(GL_PROJECTION);
@@ -167,7 +168,7 @@ impl<F: Float + Add<F> + Sub<F>> RenderingSubSystemHandle<F> for OpenGLHandle {
 
                 /* adjust perspective (removes ortho) */
                 let fov: f64 = context.config.get_cvar(CVAR_FOV, |x| x.parse().unwrap()).unwrap_or(DEFAULT_FOV);
-                glu_perspective(fov, camera.aspect(), camera.near, camera.far);
+                glu_perspective(fov, camera.aspect(), camera.near.to_f64().unwrap(), camera.far.to_f64().unwrap());
 
                 /* model/view: reset matrix; enable depth test; ready for 3d drawing */
                 gl_matrix_mode(GL_MODELVIEW);
@@ -175,9 +176,9 @@ impl<F: Float + Add<F> + Sub<F>> RenderingSubSystemHandle<F> for OpenGLHandle {
                 gl_enable(GL_DEPTH_TEST);
 
                 /* model/view: adjust camera, before drawing */
-                gl_rotate_f(-camera.pitch, 1.0, 0.0, 0.0);
-                gl_rotate_f(-camera.yaw, 0.0, 1.0, 0.0);
-                gl_translate_f(-camera.position.x, -camera.position.y, -camera.position.z);
+                gl_rotate_f(-camera.pitch.to_f32().unwrap(), 1.0, 0.0, 0.0);
+                gl_rotate_f(-camera.yaw.to_f32().unwrap(), 0.0, 1.0, 0.0);
+                gl_translate_f(-position.x.to_f32().unwrap(), -position.y.to_f32().unwrap(), -position.z.to_f32().unwrap());
                 //gl_translate_f(0.0, 0.0, -2.0);
                 //gl_rotate_f(-8.0, 0.0, 1.0, 0.0);// rotate: yaw,  y-axis; only degrees and y-axis are set
                 //gl_rotate_f(-20.0, 1.0, 0.0, 0.0);// rotate: pitch, x-axis; only degrees and x-axis are set; positive rotates forward down

@@ -51,6 +51,33 @@ pub struct Matrix4x4<F: Float> {
 }
 
 impl<F: Float> Matrix4x4<F> {
+    pub fn from(x_right: Point3D<F>, y_up: Point3D<F>, z_forward: Point3D<F>, position: Point3D<F>) -> Matrix4x4<F> {
+        Matrix4x4 {
+            c1r1: x_right.x,
+            c1r2: x_right.y,
+            c1r3: x_right.z,
+            c1r4: F::from(0.0).unwrap(),
+
+            c2r1: y_up.x,
+            c2r2: y_up.y,
+            c2r3: y_up.z,
+            c2r4: F::from(0.0).unwrap(),
+
+
+            c3r1: z_forward.x,
+            c3r2: z_forward.y,
+            c3r3: z_forward.z,
+            c3r4: F::from(0.0).unwrap(),
+
+            c4r1: position.x,
+            c4r2: position.y,
+            c4r3: position.z,
+            c4r4: F::from(0.0).unwrap(),
+        }
+    }
+}
+
+impl<F: Float> Matrix4x4<F> {
     pub fn column_major_x_right(&self) -> Point3D<F> {
         Point3D {
             x: self.c1r1,
@@ -93,6 +120,12 @@ impl<F: Float> Matrix4x4<F> {
 
     pub fn column_major_z_scale(&self) -> F {
         scale(self.column_major_z_forward())
+    }
+}
+
+impl<F: Float> Default for Matrix4x4<F> {
+    fn default() -> Matrix4x4<F> {
+        Matrix4x4::from(Point3D::create_x_unit(), Point3D::create_y_unit(), Point3D::create_z_unit(), Point3D::origin())
     }
 }
 
