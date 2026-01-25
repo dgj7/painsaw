@@ -5,11 +5,11 @@ use crate::input::ks::KeyState;
 use crate::window::context::RendererContext;
 
 pub struct InputConfig<F: Float> {
-    pub behaviors: HashMap<KeyName, fn(&RendererContext<F>, &KeyState)>,
+    pub behaviors: HashMap<KeyName, fn(&mut RendererContext<F>, &KeyState)>,
 }
 
 impl<F: Float> InputConfig<F> {
-    pub fn new(behaviors: HashMap<KeyName, fn(&RendererContext<F>, &KeyState)>) -> InputConfig<F> {
+    pub fn new(behaviors: HashMap<KeyName, fn(&mut RendererContext<F>, &KeyState)>) -> InputConfig<F> {
         InputConfig {
             behaviors,
         }

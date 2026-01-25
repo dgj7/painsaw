@@ -6,6 +6,10 @@ pub enum KeyName {
     /* keyboard */
     KeyG,
     KeyM,
+    KeyW,
+    KeyA,
+    KeyS,
+    KeyD,
 
     /* mouse */
     MouseLeft,
@@ -19,6 +23,10 @@ impl Display for KeyName {
         match self {
             KeyName::KeyG => write!(f, "{}", "KeyG"),
             KeyName::KeyM => write!(f, "{}", "KeyM"),
+            KeyName::KeyW => write!(f, "{}", "KeyW"),
+            KeyName::KeyA => write!(f, "{}", "KeyA"),
+            KeyName::KeyS => write!(f, "{}", "KeyS"),
+            KeyName::KeyD => write!(f, "{}", "KeyD"),
             KeyName::MouseLeft => write!(f, "{}", "MouseLeft"),
             KeyName::MouseRight => write!(f, "{}", "MouseRight"),
             KeyName::MouseScroll => write!(f, "{}", "MouseScroll"),

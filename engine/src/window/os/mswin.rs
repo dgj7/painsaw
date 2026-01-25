@@ -19,7 +19,7 @@ use std::sync::{Arc, Mutex};
 use windows::Win32::Foundation::{HINSTANCE, HWND, LPARAM, LRESULT, WPARAM};
 use windows::Win32::Graphics::Gdi::HDC;
 use windows::Win32::Graphics::OpenGL::HGLRC;
-use windows::Win32::UI::Input::KeyboardAndMouse::{VIRTUAL_KEY, VK_ESCAPE, VK_G, VK_M};
+use windows::Win32::UI::Input::KeyboardAndMouse::{VIRTUAL_KEY, VK_A, VK_D, VK_ESCAPE, VK_G, VK_M, VK_S, VK_W};
 use windows::Win32::UI::WindowsAndMessaging::{CS_HREDRAW, CS_OWNDC, CS_VREDRAW, CW_USEDEFAULT, IDC_ARROW, MSG, PM_REMOVE, WINDOW_EX_STYLE, WM_CREATE, WM_DESTROY, WM_KEYDOWN, WM_KEYUP, WM_QUIT, WM_CLOSE, WM_SIZE, WNDCLASSW, WS_OVERLAPPEDWINDOW, WS_THICKFRAME, WS_VISIBLE};
 use windows_core::{HSTRING, PCWSTR};
 
@@ -237,6 +237,10 @@ fn handle_message_if_applicable(input: &Arc<Mutex<InputState<f32>>>, hwnd: HWND,
                 VK_ESCAPE => { post_quit_message(0);true }
                 VK_G => { input.lock().expect("todo: g: down").handle_change(KeyName::KeyG, KeyPosition::KeyDown { info: KeyInfo::unhandled() }); true }
                 VK_M => { input.lock().expect("todo: m: down").handle_change(KeyName::KeyM, KeyPosition::KeyDown { info: KeyInfo::unhandled() }); true }
+                VK_W => { input.lock().expect("todo: w: down").handle_change(KeyName::KeyW, KeyPosition::KeyDown { info: KeyInfo::unhandled() }); true }
+                VK_A => { input.lock().expect("todo: a: down").handle_change(KeyName::KeyA, KeyPosition::KeyDown { info: KeyInfo::unhandled() }); true }
+                VK_S => { input.lock().expect("todo: s: down").handle_change(KeyName::KeyS, KeyPosition::KeyDown { info: KeyInfo::unhandled() }); true }
+                VK_D => { input.lock().expect("todo: d: down").handle_change(KeyName::KeyD, KeyPosition::KeyDown { info: KeyInfo::unhandled() }); true }
                 // todo: add remaining keys down
                 _ => false
             }
@@ -245,6 +249,10 @@ fn handle_message_if_applicable(input: &Arc<Mutex<InputState<f32>>>, hwnd: HWND,
             match VIRTUAL_KEY(wparam.0 as u16) {
                 VK_G => { input.lock().expect("todo: g: up").handle_change(KeyName::KeyG, KeyPosition::KeyUp { info: KeyInfo::unhandled() }); true }
                 VK_M => { input.lock().expect("todo: m: up").handle_change(KeyName::KeyM, KeyPosition::KeyUp { info: KeyInfo::unhandled() }); true }
+                VK_W => { input.lock().expect("todo: w: up").handle_change(KeyName::KeyW, KeyPosition::KeyUp { info: KeyInfo::unhandled() }); true }
+                VK_A => { input.lock().expect("todo: a: up").handle_change(KeyName::KeyA, KeyPosition::KeyUp { info: KeyInfo::unhandled() }); true }
+                VK_S => { input.lock().expect("todo: s: up").handle_change(KeyName::KeyS, KeyPosition::KeyUp { info: KeyInfo::unhandled() }); true }
+                VK_D => { input.lock().expect("todo: d: up").handle_change(KeyName::KeyD, KeyPosition::KeyUp { info: KeyInfo::unhandled() }); true }
                 // todo: add remaining keys up
                 _ => false
             }

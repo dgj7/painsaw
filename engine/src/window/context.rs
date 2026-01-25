@@ -18,7 +18,7 @@ pub struct RendererContext<F: Float + Add<F> + Sub<F>> {
     
     /* timing */
     pub(crate) last_frame: Instant,
-    pub(crate) delta_time: f64,
+    pub delta_time: f64,
 
     /* scene for world state */
     pub g2d: Graph2D<F>,

@@ -11,6 +11,7 @@ use engine::graphics::model::color::Color;
 use engine::graphics::model::m2d::Model2D;
 use engine::graphics::model::m3d::Model3D;
 use engine::graphics::image::text::{text_2d_texture, TextConfig};
+use engine::input::kn::KeyName;
 use engine::logger::log;
 use engine::logger::log_level::LogLevel;
 use engine::window::context::RendererContext;
@@ -64,6 +65,14 @@ impl WorldController<f32> for Demo1WorldController {
                     context.g2d.models.entry(M2D_Y_VERT.parse().unwrap()).and_modify(|e| *e = create_2d_grid_y_lines(&context.camera));
 
                     log(LogLevel::Debug, &|| String::from(format!("window size changed ({}x{}); 2d model count is [{}]", ccd.width, ccd.height, context.g2d.models.len())));
+                }
+
+                /* camera controls */
+                if let Some(wk) = is.states.get(&KeyName::KeyW) && wk.current.is_down() {
+                    context.camera.move_forward(&context.config, context.delta_time as f32);
+                }
+                if let Some(sk) = is.states.get(&KeyName::KeyS) && sk.current.is_down() {
+                    context.camera.move_backward(&context.config, context.delta_time as f32);
                 }
             },
             Err(_) => {

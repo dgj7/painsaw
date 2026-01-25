@@ -160,7 +160,7 @@ impl<F: Float + Add<F> + Sub<F>> RenderingSubSystemHandle<F> for OpenGLHandle {
             OpenGLPipeline::FixedFunction => {
                 /* gather camera data */
                 let camera = &context.camera;
-                let position = camera.orientation.column_major_translation();
+                let position = camera.orientation.column_major_position();
 
                 /* projection: reset matrix */
                 gl_matrix_mode(GL_PROJECTION);
@@ -179,6 +179,8 @@ impl<F: Float + Add<F> + Sub<F>> RenderingSubSystemHandle<F> for OpenGLHandle {
                 gl_rotate_f(-camera.pitch.to_f32().unwrap(), 1.0, 0.0, 0.0);
                 gl_rotate_f(-camera.yaw.to_f32().unwrap(), 0.0, 1.0, 0.0);
                 gl_translate_f(-position.x.to_f32().unwrap(), -position.y.to_f32().unwrap(), -position.z.to_f32().unwrap());
+
+                // todo: remove these once the camera works
                 //gl_translate_f(0.0, 0.0, -2.0);
                 //gl_rotate_f(-8.0, 0.0, 1.0, 0.0);// rotate: yaw,  y-axis; only degrees and y-axis are set
                 //gl_rotate_f(-20.0, 1.0, 0.0, 0.0);// rotate: pitch, x-axis; only degrees and x-axis are set; positive rotates forward down

@@ -102,7 +102,7 @@ impl<F: Float> Matrix4x4<F> {
         }
     }
 
-    pub fn column_major_translation(&self) -> Point3D<F> {
+    pub fn column_major_position(&self) -> Point3D<F> {
         Point3D {
             x: self.c4r1,
             y: self.c4r2,
@@ -120,6 +120,12 @@ impl<F: Float> Matrix4x4<F> {
 
     pub fn column_major_z_scale(&self) -> F {
         scale(self.column_major_z_forward())
+    }
+
+    pub fn column_major_update_position(&mut self, position: &Point3D<F>) {
+        self.c4r1 = position.x;
+        self.c4r2 = position.y;
+        self.c4r3 = position.z;
     }
 }
 

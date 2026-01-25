@@ -33,15 +33,15 @@ pub fn create_engine_config() -> EngineConfig<f32> {
     )
 }
 
-fn create_behaviors() -> HashMap<KeyName, fn(&RendererContext<f32>, &KeyState)> {
-    let mut behaviors: HashMap<KeyName, fn(&RendererContext<f32>, &KeyState)> = HashMap::new();
+fn create_behaviors() -> HashMap<KeyName, fn(&mut RendererContext<f32>, &KeyState)> {
+    let mut behaviors: HashMap<KeyName, fn(&mut RendererContext<f32>, &KeyState)> = HashMap::new();
 
     behaviors.insert(KeyName::KeyG, handle_g);
 
     behaviors
 }
 
-fn handle_g(_context: &RendererContext<f32>, state: &KeyState) {
+fn handle_g(_context: &mut RendererContext<f32>, state: &KeyState) {
     logging_key_behavior(KeyName::KeyG, state);
 }
 
