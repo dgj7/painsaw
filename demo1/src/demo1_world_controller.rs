@@ -1,3 +1,4 @@
+use engine::graphics::camera::Camera;
 use engine::graphics::geometry::line::l2d::Line2D;
 use engine::graphics::geometry::line::l3d::Line3D;
 use engine::graphics::geometry::line::Lines2D;
@@ -6,13 +7,9 @@ use engine::graphics::geometry::point::p2d::Point2D;
 use engine::graphics::geometry::point::p3d::Point3D;
 use engine::graphics::geometry::point::Points2D;
 use engine::graphics::geometry::point::Points3D;
-use engine::graphics::camera::Camera;
-use engine::graphics::geometry::dim::Dimension2D;
-use engine::graphics::image::t2d::Texture2D;
 use engine::graphics::model::color::Color;
 use engine::graphics::model::m2d::Model2D;
 use engine::graphics::model::m3d::Model3D;
-use engine::graphics::image::text::{text_2d_image, text_2d_texture, TextConfig};
 use engine::input::kn::KeyName;
 use engine::logger::log;
 use engine::logger::log_level::LogLevel;
@@ -25,11 +22,6 @@ static M2D_Y_VERT: &str = "2-2d-y-vertical";
 static M3D_X_ABSCISSA: &str = "4-3d-axes-abscissa";
 static M3D_Y_ORDINATE: &str = "4-3d-axes-ordinate";
 static M3D_Z_APPLICATE: &str = "4-3d-axes-applicate";
-static M2D_TEXT_TEXTURE: &str = "6-2d-text-texture";
-static M2D_TEXT_CAM_POS: &str = "6-2d-text-cam-pos";
-static M2D_TEXT_FORWARD: &str = "6-2d-text-forward";
-static M2D_TEXT_RIGHT: &str = "6-2d-text-right";
-static M2D_TEXT_UP: &str = "6-2d-text-up";
 
 pub(crate) struct Demo1WorldController {}
 
@@ -83,50 +75,6 @@ impl WorldController<f32> for Demo1WorldController {
                 if let Some(dk) = is.states.get(&KeyName::KeyD) && dk.current.is_down() {
                     context.camera.move_right(&context.config, context.delta_time as f32);
                 }
-
-                /* handle update and reprint of various statistic */
-                let position = context.camera.orientation.column_major_position();
-                let forward = context.camera.orientation.column_major_z_forward();
-                let right = context.camera.orientation.column_major_x_right();
-                let up = context.camera.orientation.column_major_y_up();
-                let config = TextConfig {
-                    top_left: Point2D { x: 20.0, y: 20.0 },
-                    foreground: Color::RED,
-                    scale: 2.0,
-                    ..Default::default()
-                };
-                context.g2d.models
-                    .entry(M2D_TEXT_CAM_POS.parse().unwrap())
-                    .and_modify(|m| m.textures[0].replacement = Option::from(text_2d_image(config.clone(), || String::from(format!("cam-pos: ({:+.2},{:+.2},{:+.2})", position.x, position.y, position.z)))))
-                    .or_insert(Model2D::new(vec!(), vec!(),
-                                            vec!(Texture2D::new(
-                                                text_2d_image(config.clone(), || String::from(format!("cam-pos: ({:+.2},{:+.2},{:+.2})", position.x, position.y, position.z))),
-                                                Point2D::new(20.0, 20.0),
-                                                2.0))));
-                context.g2d.models
-                    .entry(M2D_TEXT_FORWARD.parse().unwrap())
-                    .and_modify(|m| m.textures[0].replacement = Option::from(text_2d_image(config.clone(), || String::from(format!("forward: ({:+.2},{:+.2},{:+.2})", forward.x, forward.y, forward.z)))))
-                    .or_insert(Model2D::new(vec!(), vec!(),
-                                            vec!(Texture2D::new(
-                                                text_2d_image(config.clone(), || String::from(format!("forward: ({:+.2},{:+.2},{:+.2})", forward.x, forward.y, forward.z))),
-                                                Point2D::new(20.0, 50.0),
-                                                2.0))));
-                context.g2d.models
-                    .entry(M2D_TEXT_RIGHT.parse().unwrap())
-                    .and_modify(|m| m.textures[0].replacement = Option::from(text_2d_image(config.clone(), || String::from(format!("right:   ({:+.2},{:+.2},{:+.2})", right.x, right.y, right.z)))))
-                    .or_insert(Model2D::new(vec!(), vec!(),
-                                            vec!(Texture2D::new(
-                                                text_2d_image(config.clone(), || String::from(format!("right:   ({:+.2},{:+.2},{:+.2})", right.x, right.y, right.z))),
-                                                Point2D::new(20.0, 80.0),
-                                                2.0))));
-                context.g2d.models
-                    .entry(M2D_TEXT_UP.parse().unwrap())
-                    .and_modify(|m| m.textures[0].replacement = Option::from(text_2d_image(config.clone(), || String::from(format!("up:      ({:+.2},{:+.2},{:+.2})", up.x, up.y, up.z)))))
-                    .or_insert(Model2D::new(vec!(), vec!(),
-                                            vec!(Texture2D::new(
-                                                text_2d_image(config.clone(), || String::from(format!("up:      ({:+.2},{:+.2},{:+.2})", up.x, up.y, up.z))),
-                                                Point2D::new(20.0, 110.0),
-                                                2.0))));
             },
             Err(_) => {
                 panic!("todo: handle mutex lock failure")
@@ -194,28 +142,4 @@ fn create_2d_grid_y_lines(camera: &Camera<f32>) -> Model2D<f32> {
 
     /* done */
     Model2D::new(vec!(), vlinevec, vec!())
-}
-
-fn create_2d_text(camera: &Camera<f32>) -> Model2D<f32> {
-    let mut textures = vec!();
-
-    let position = camera.orientation.column_major_position();
-    let forward = camera.orientation.column_major_z_forward();
-    let right = camera.orientation.column_major_x_right();
-    let up = camera.orientation.column_major_position();
-
-    textures.push(text_2d_texture(TextConfig {
-        top_left: Point2D::new(20.0, 50.0),
-        foreground: Color::RED,
-        scale: 2.0,
-        ..Default::default()
-    }, || String::from(format!("forward: ({},{},{})", forward.x, forward.y, forward.z))));
-    textures.push(text_2d_texture(TextConfig {
-        top_left: Point2D::new(20.0, 80.0),
-        foreground: Color::RED,
-        scale: 2.0,
-        ..Default::default()
-    }, || String::from(format!("up:      ({},{},{})", up.x, up.y, up.z))));
-
-    Model2D::new(vec!(), vec!(), textures)
 }

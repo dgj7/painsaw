@@ -25,6 +25,8 @@ pub fn create_engine_config() -> EngineConfig<f32> {
             graphics: GraphicsSubSystem::OpenGL {
                 pipeline: OpenGLPipeline::FixedFunction,
             },
+            show_fps: true,
+            show_cam_coords: true,
         },
         InputConfig {
             behaviors: create_behaviors(),

@@ -91,7 +91,7 @@ pub trait WorldController<F: Float + Add<F> + Sub<F>> {
 
         /* draw 2d, if desired */
         context.graphics.prepare_2d(&mut context.g2d, &context.camera);
-        context.graphics.render_2d(&mut context.g2d, context.delta_time);
+        context.graphics.render_2d(&mut context.g2d, context.delta_time, &context.config, &context.camera);
         context.graphics.after_2d();
 
         /* draw 3d, if desired */
