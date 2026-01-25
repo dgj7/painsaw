@@ -101,7 +101,7 @@ impl<F: Float + Add<F> + Sub<F>> GraphicsIntermediary<F> {
                 .or_insert(Model2D::new(vec!(), vec!(),
                         vec!(Texture2D::new(
                                 text_2d_image(config.clone(), || String::from(format!("FPS:{:4}", fps))),
-                                Point2D::new(F::from(20.0).unwrap(), F::from(110.0).unwrap()),
+                                Point2D::new(F::from(20.0).unwrap(), F::from(140.0).unwrap()),
                                 F::from(2).unwrap()))));
         }
     }
