@@ -157,19 +157,19 @@ fn create_2d_text() -> Model2D<f32> {
         foreground: Color::RED,
         scale: 2.0,
         ..Default::default()
-    }, || String::from("AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz")));
+    }, || String::from("[AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz]")));
     textures.push(text_2d_texture(TextConfig {
         top_left: Point2D::new(20.0, 50.0),
         foreground: Color::RED,
         scale: 2.0,
         ..Default::default()
-    }, || String::from("!\"#$%&\\()*+,-./[]^_`{|}~:;<=>?@")));
+    }, || String::from(format!("[!\"#$%&{}()*+,-./^_`{}|{}~:;<=>?@]", '\\', '{', '}'))));
     textures.push(text_2d_texture(TextConfig {
         top_left: Point2D::new(20.0, 80.0),
         foreground: Color::RED,
         scale: 2.0,
         ..Default::default()
-    }, || String::from("0123456789")));
+    }, || String::from("[0123456789]")));
 
     Model2D::new(vec!(), vec!(), textures)
 }
