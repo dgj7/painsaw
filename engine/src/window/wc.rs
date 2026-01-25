@@ -10,6 +10,7 @@ use crate::logger::log_level::LogLevel;
 use crate::window::context::RendererContext;
 use num_traits::Float;
 use std::ops::{Add, Sub};
+use std::time::Instant;
 
 ///
 /// Control various aspects of the world, as called by the windowing system.
@@ -80,12 +81,17 @@ pub trait WorldController<F: Float + Add<F> + Sub<F>> {
     /// during the update world step.
     ///
     fn display_world_scene(&self, context: &mut RendererContext<F>) {
+        /* update delta time */
+        let next = Instant::now();
+        context.delta_time = next.duration_since(context.last_frame).as_secs_f64();
+        context.last_frame = next;
+
         /* prepare for drawing */
         context.graphics.before_scene(&context.camera);
 
         /* draw 2d, if desired */
         context.graphics.prepare_2d(&mut context.g2d, &context.camera);
-        context.graphics.render_2d(&mut context.g2d);
+        context.graphics.render_2d(&mut context.g2d, context.delta_time);
         context.graphics.after_2d();
 
         /* draw 3d, if desired */

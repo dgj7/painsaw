@@ -1,20 +1,19 @@
-use std::cmp;
-use model::g2d::Graph2D;
-use model::g3d::Graph3D;
-use model::m2d::Model2D;
-use geometry::point::p2d::Point2D;
+use crate::graphics::camera::Camera;
 use crate::graphics::model::color::Color;
 use crate::graphics::model::renderer_info::RendererInfo;
 use crate::graphics::subsystem::{grss_factory, GraphicsSubSystem, RenderingSubSystemHandle};
 use crate::logger::log;
 use crate::logger::log_level::LogLevel;
-use image::text::{text_2d_image, TextConfig};
-use num_traits::Float;
-use std::ops::{Add, Sub};
-use std::time::Instant;
-use crate::graphics::camera::Camera;
-use image::t2d::Texture2D;
 use crate::window::context::RendererContext;
+use geometry::point::p2d::Point2D;
+use image::t2d::Texture2D;
+use image::text::{text_2d_image, TextConfig};
+use model::g2d::Graph2D;
+use model::g3d::Graph3D;
+use model::m2d::Model2D;
+use num_traits::Float;
+use std::cmp;
+use std::ops::{Add, Sub};
 
 pub mod model;
 pub mod subsystem;
@@ -31,7 +30,6 @@ pub(crate) struct GraphicsIntermediary<F: Float + Add<F> + Sub<F>> {
     subsystem: Box<dyn RenderingSubSystemHandle<F>>,
     info: Option<RendererInfo>,
 
-    pub(crate) last_frame: Instant,
     pub(crate) fps_enabled: bool,
 }
 
@@ -40,7 +38,6 @@ impl<F: Float + Add<F> + Sub<F>> GraphicsIntermediary<F> {
         GraphicsIntermediary {
             subsystem: grss_factory(grss),
             info: None,
-            last_frame: Instant::now(),
             fps_enabled: true,
         }
     }
@@ -57,7 +54,7 @@ impl<F: Float + Add<F> + Sub<F>> GraphicsIntermediary<F> {
         self.subsystem.resize(context);
     }
 
-    pub(crate) fn before_scene(&self, camera: &Camera) {
+    pub(crate) fn before_scene(&mut self, camera: &Camera) {
         self.subsystem.before_scene(camera);
     }
 
@@ -76,7 +73,7 @@ impl<F: Float + Add<F> + Sub<F>> GraphicsIntermediary<F> {
         }
     }
 
-    pub(crate) fn render_2d(&mut self, g2d: &mut Graph2D<F>) {
+    pub(crate) fn render_2d(&mut self, g2d: &mut Graph2D<F>, delta_time: f64) {
         for (_, model) in g2d.models.iter() {
             model.lines.iter().for_each(|x| self.subsystem.render_2d_lines(x));
             model.points.iter().for_each(|x| self.subsystem.render_2d_points(x));
@@ -87,10 +84,7 @@ impl<F: Float + Add<F> + Sub<F>> GraphicsIntermediary<F> {
 
         if self.fps_enabled {
             /* calculate fps */
-            let next = Instant::now();
-            let duration_seconds = next.duration_since(self.last_frame).as_secs_f64();
-            self.last_frame = next;
-            let fps_float = 1.0 / duration_seconds;
+            let fps_float = 1.0 / delta_time;
             let fps = cmp::min(fps_float as u16, 9999);
 
             /* prepare to render text */
