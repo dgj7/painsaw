@@ -5,12 +5,12 @@
 //!
 
 use crate::graphics::image::t2d::Texture2D;
-use crate::graphics::geometry::line::Lines2D;
-use crate::graphics::geometry::line::Lines3D;
+use crate::graphics::geometry::primitive::line::Lines2D;
+use crate::graphics::geometry::primitive::line::Lines3D;
 use crate::graphics::model::g2d::Graph2D;
 use crate::graphics::model::g3d::Graph3D;
-use crate::graphics::geometry::point::Points2D;
-use crate::graphics::geometry::point::Points3D;
+use crate::graphics::geometry::primitive::point::Points2D;
+use crate::graphics::geometry::primitive::point::Points3D;
 use crate::graphics::model::renderer_info::RendererInfo;
 use crate::graphics::subsystem::opengl::OpenGLHandle;
 use num_traits::Float;

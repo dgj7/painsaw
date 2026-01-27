@@ -1,7 +1,7 @@
 use num_traits::Float;
 use crate::config::EngineConfig;
 use crate::graphics::camera::Camera;
-use crate::graphics::geometry::point::p3d::Point3D;
+use crate::graphics::geometry::primitive::point::p3d::Point3D;
 
 impl<F: Float> Camera<F> {
     pub fn move_forward(&mut self, config: &EngineConfig<F>, delta_time: F) {

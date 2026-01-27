@@ -1,4 +1,4 @@
-use crate::graphics::geometry::point::p2d::Point2D;
+use crate::graphics::geometry::primitive::point::p2d::Point2D;
 use num_traits::Float;
 use std::ops::{Add, Sub};
 

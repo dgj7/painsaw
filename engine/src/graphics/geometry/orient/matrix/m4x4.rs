@@ -1,4 +1,4 @@
-use crate::graphics::geometry::point::p3d::Point3D;
+use crate::graphics::geometry::primitive::point::p3d::Point3D;
 use num_traits::Float;
 
 ///

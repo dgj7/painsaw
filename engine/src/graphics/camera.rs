@@ -4,7 +4,7 @@ pub mod camera_update;
 pub mod camera_projection;
 pub mod camera_move;
 
-use crate::graphics::geometry::matrix::m4x4::Matrix4x4;
+use crate::graphics::geometry::orient::matrix::m4x4::Matrix4x4;
 use num_traits::Float;
 
 pub struct Camera<F: Float> {

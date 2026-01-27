@@ -1,4 +1,4 @@
-use crate::graphics::geometry::quaternion::Quaternion;
+use crate::graphics::geometry::orient::quaternion::Quaternion;
 use crate::graphics::geometry::{wrap_pi, C_PI_OVER_2};
 use num_traits::Float;
 use std::f64::consts::PI;

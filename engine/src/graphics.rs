@@ -2,13 +2,13 @@ use crate::config::EngineConfig;
 use crate::graphics::camera::Camera;
 use crate::graphics::model::color::Color;
 use crate::graphics::model::renderer_info::RendererInfo;
-use crate::graphics::subsystem::{GraphicsSubSystem, RenderingSubSystemHandle, grss_factory};
+use crate::graphics::subsystem::{grss_factory, GraphicsSubSystem, RenderingSubSystemHandle};
 use crate::logger::log;
 use crate::logger::log_level::LogLevel;
 use crate::window::context::RendererContext;
-use geometry::point::p2d::Point2D;
+use geometry::primitive::point::p2d::Point2D;
 use image::t2d::Texture2D;
-use image::text::{TextConfig, text_2d_image};
+use image::text::{text_2d_image, TextConfig};
 use model::g2d::Graph2D;
 use model::g3d::Graph3D;
 use model::m2d::Model2D;
@@ -27,6 +27,7 @@ pub mod subsystem;
 ///
 /// This system separates/abstracts the concrete graphics rendering subsystem
 /// from both the operating system and the geometry systems.
+///
 pub(crate) struct GraphicsIntermediary<F: Float + Add<F> + Sub<F>> {
     subsystem: Box<dyn RenderingSubSystemHandle<F>>,
     info: Option<RendererInfo>,

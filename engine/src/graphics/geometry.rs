@@ -1,20 +1,17 @@
 use std::f64::consts::PI;
 use num_traits::Float;
 
-pub mod point;
-pub mod line;
 pub mod dim;
-pub mod matrix;
-pub mod quaternion;
-pub mod euler;
+pub mod orient;
+pub mod primitive;
 
-static C_2_PI: f64 = PI * 2.0;
-static C_PI_OVER_2: f64 = PI / 2.0;
+pub(crate) static C_2_PI: f64 = PI * 2.0;
+pub(crate) static C_PI_OVER_2: f64 = PI / 2.0;
 #[allow(unused)]// todo: remove
-static C_1_OVER_PI: f64 = 1.0 / PI;
-static C_1_OVER_2PI: f64 = 1.0 / C_2_PI;
-static C_PI_OVER_180 : f64 = PI / 180.0;
-static C_180_OVER_PI: f64 = 180.0 / PI;
+pub(crate) static C_1_OVER_PI: f64 = 1.0 / PI;
+pub(crate) static C_1_OVER_2PI: f64 = 1.0 / C_2_PI;
+pub(crate) static C_PI_OVER_180 : f64 = PI / 180.0;
+pub(crate) static C_180_OVER_PI: f64 = 180.0 / PI;
 
 ///
 /// wrap an angle in the range -pi..pi.

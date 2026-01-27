@@ -1,8 +1,8 @@
-use crate::graphics::geometry::line::Lines2D;
+use crate::graphics::geometry::primitive::line::Lines2D;
 use num_traits::Float;
 use std::ops::{Add, Sub};
 use crate::graphics::image::t2d::Texture2D;
-use crate::graphics::geometry::point::Points2D;
+use crate::graphics::geometry::primitive::point::Points2D;
 
 pub struct Model2D<F: Float + Add<F> + Sub<F>> {
     pub points: Vec<Points2D<F>>,

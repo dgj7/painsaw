@@ -1,5 +1,5 @@
 use crate::graphics::camera::Camera;
-use crate::graphics::geometry::matrix::m4x4::Matrix4x4;
+use crate::graphics::geometry::orient::matrix::m4x4::Matrix4x4;
 use num_traits::Float;
 
 impl<F: Float> Default for Camera<F> {
