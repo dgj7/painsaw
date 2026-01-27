@@ -8,7 +8,7 @@ use crate::graphics::image::t2d::Texture2D;
 use crate::graphics::model::g2d::Graph2D;
 use crate::graphics::model::g3d::Graph3D;
 use crate::graphics::model::renderer_info::RendererInfo;
-use crate::graphics::subsystem::opengl::opengl_api::{gl_begin_lines, gl_begin_points, gl_begin_quads, gl_bind_texture, gl_blend_func, gl_clear, gl_clear_color, gl_color_3f, gl_disable, gl_enable, gl_end, gl_gen_textures, gl_get_string, gl_line_width, gl_load_identity, gl_matrix_mode, gl_ortho, gl_point_size, gl_rotate_f, gl_tex_coord_2f, gl_tex_env_f, gl_tex_image_2d, gl_tex_parameter_i, gl_tex_sub_image_2d, gl_translate_f, gl_vertex_2f, gl_vertex_3f, gl_viewport, glu_perspective};
+use crate::graphics::subsystem::opengl::opengl_api::{gl_begin_lines, gl_begin_points, gl_begin_quads, gl_bind_texture, gl_blend_func, gl_clear, gl_clear_color, gl_color_3f, gl_disable, gl_enable, gl_end, gl_gen_textures, gl_get_string, gl_line_width, gl_load_identity, gl_matrix_mode, gl_ortho, gl_point_size, gl_pop_attrib, gl_pop_matrix, gl_push_attrib, gl_push_matrix, gl_rotate_f, gl_tex_coord_2f, gl_tex_env_f, gl_tex_image_2d, gl_tex_parameter_i, gl_tex_sub_image_2d, gl_translate_f, gl_vertex_2f, gl_vertex_3f, gl_viewport, glu_perspective};
 use crate::graphics::subsystem::{OpenGLPipeline, RenderingSubSystemHandle};
 use crate::logger::log;
 use crate::logger::log_level::LogLevel;
@@ -16,7 +16,7 @@ use crate::window::context::RendererContext;
 use num_traits::Float;
 use std::ffi::c_void;
 use std::ops::{Add, Sub};
-use windows::Win32::Graphics::OpenGL::{GL_BLEND, GL_COLOR_BUFFER_BIT, GL_DEPTH_BUFFER_BIT, GL_DEPTH_TEST, GL_MODELVIEW, GL_NEAREST, GL_ONE_MINUS_SRC_ALPHA, GL_PROJECTION, GL_RENDERER, GL_REPLACE, GL_RGBA, GL_SRC_ALPHA, GL_TEXTURE_2D, GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_TEXTURE_MAG_FILTER, GL_TEXTURE_MIN_FILTER, GL_UNSIGNED_BYTE, GL_VENDOR, GL_VERSION};
+use windows::Win32::Graphics::OpenGL::{GL_ALL_ATTRIB_BITS, GL_BLEND, GL_COLOR_BUFFER_BIT, GL_DEPTH_BUFFER_BIT, GL_DEPTH_TEST, GL_MODELVIEW, GL_NEAREST, GL_ONE_MINUS_SRC_ALPHA, GL_PROJECTION, GL_RENDERER, GL_REPLACE, GL_RGBA, GL_SRC_ALPHA, GL_TEXTURE_2D, GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_TEXTURE_MAG_FILTER, GL_TEXTURE_MIN_FILTER, GL_UNSIGNED_BYTE, GL_VENDOR, GL_VERSION};
 
 pub(crate) mod opengl_mswin_api;
 pub(crate) mod opengl_mswin;
@@ -25,10 +25,6 @@ mod opengl_errors;
 
 pub struct OpenGLHandle {
     pub(crate) pipeline: OpenGLPipeline,
-}
-
-impl OpenGLHandle {
-    
 }
 
 impl<F: Float + Add<F> + Sub<F>> RenderingSubSystemHandle<F> for OpenGLHandle {
@@ -66,63 +62,78 @@ impl<F: Float + Add<F> + Sub<F>> RenderingSubSystemHandle<F> for OpenGLHandle {
     }
 
     fn initialize_texture_2d(&self, texture: &mut Texture2D<F>) {
-        /* gen 1 texture; bind it */
-        let texture_id_ptr: *mut u32 = (&mut texture.id) as *mut u32;
-        gl_gen_textures(1, texture_id_ptr);
-        gl_bind_texture(GL_TEXTURE_2D, texture.id);
+        match self.pipeline {
+            OpenGLPipeline::FixedFunction => {
+                /* gen 1 texture; bind it */
+                let texture_id_ptr: *mut u32 = (&mut texture.id) as *mut u32;
+                gl_gen_textures(1, texture_id_ptr);
+                gl_bind_texture(GL_TEXTURE_2D, texture.id);
 
-        /* set texture params */
-        gl_tex_parameter_i(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST as i32);
-        gl_tex_parameter_i(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST as i32);
+                /* set texture params */
+                gl_tex_parameter_i(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST as i32);
+                gl_tex_parameter_i(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST as i32);
 
-        /* inform opengl of the texture data; see https://registry.khronos.org/OpenGL-Refpages/gl4/html/glTexImage2D.xhtml */
-        gl_tex_image_2d(
-            GL_TEXTURE_2D,                                  // target
-            0,                                              // level
-            GL_RGBA as i32,                                 // internal format; the number of color components in the texture data
-            texture.image.width as i32,                     // width
-            texture.image.height as i32,                    // height
-            0,                                              // border
-            GL_RGBA,                                        // format: (or order) of pixel data (r,g,b,a)
-            GL_UNSIGNED_BYTE,                               // r-type: the data type of the pixel data
-            texture.image.data.as_ptr() as *const c_void,   // pixels
-        );
+                /* inform opengl of the texture data; see https://registry.khronos.org/OpenGL-Refpages/gl4/html/glTexImage2D.xhtml */
+                gl_tex_image_2d(
+                    GL_TEXTURE_2D,                                  // target
+                    0,                                              // level
+                    GL_RGBA as i32,                                 // internal format; the number of color components in the texture data
+                    texture.image.width as i32,                     // width
+                    texture.image.height as i32,                    // height
+                    0,                                              // border
+                    GL_RGBA,                                        // format: (or order) of pixel data (r,g,b,a)
+                    GL_UNSIGNED_BYTE,                               // r-type: the data type of the pixel data
+                    texture.image.data.as_ptr() as *const c_void,   // pixels
+                );
 
-        /* mark the texture as initialized (ready) */
-        texture.initialized = true;
+                /* mark the texture as initialized (ready) */
+                texture.initialized = true;
 
-        /* done */
-        log(LogLevel::Info, &|| String::from(format!("created texture, id=[{}]", texture.id)));
+                /* done */
+                log(LogLevel::Info, &|| String::from(format!("created texture, id=[{}]", texture.id)));
+            }
+            OpenGLPipeline::Shaders => {}
+        }
     }
 
     fn update_texture_2d(&self, texture: &mut Texture2D<F>) {
-        if texture.replacement.is_some() {
-            let repl = texture.replacement.take().unwrap();
-            gl_bind_texture(GL_TEXTURE_2D, texture.id);
-            gl_tex_sub_image_2d(
-                GL_TEXTURE_2D,                              // target
-                0,                                          // level
-                0,                                          // x-offset
-                0,                                          // y-offset
-                repl.width as i32,                          // width
-                repl.height as i32,                         // height
-                GL_RGBA,                                    // format: (order) of pixel data (r, g, b, a)
-                GL_UNSIGNED_BYTE,                           // r-type: the dat type of the pixel data
-                repl.data.as_ptr() as *const c_void,        // pixels
-            );
-            texture.image = repl;
+        match self.pipeline {
+            OpenGLPipeline::FixedFunction => {
+                if texture.replacement.is_some() {
+                    let repl = texture.replacement.take().unwrap();
+                    gl_bind_texture(GL_TEXTURE_2D, texture.id);
+                    gl_tex_sub_image_2d(
+                        GL_TEXTURE_2D,                              // target
+                        0,                                          // level
+                        0,                                          // x-offset
+                        0,                                          // y-offset
+                        repl.width as i32,                          // width
+                        repl.height as i32,                         // height
+                        GL_RGBA,                                    // format: (order) of pixel data (r, g, b, a)
+                        GL_UNSIGNED_BYTE,                           // r-type: the dat type of the pixel data
+                        repl.data.as_ptr() as *const c_void,        // pixels
+                    );
+                    texture.image = repl;
+                }
+            }
+            OpenGLPipeline::Shaders => {}
         }
     }
 
     fn resize(&self, context: &RendererContext<F>) {
-        /* get camera data */
-        let camera = &context.camera;
+        match self.pipeline {
+            OpenGLPipeline::FixedFunction => {
+                /* get camera data */
+                let camera = &context.camera;
 
-        /* set the viewport; this call doesn't need a specific matrix mode as it's an independent function */
-        gl_viewport(0, 0, camera.width.to_i32().unwrap(), camera.height.to_i32().unwrap());
+                /* set the viewport; this call doesn't need a specific matrix mode as it's an independent function */
+                gl_viewport(0, 0, camera.width.to_i32().unwrap(), camera.height.to_i32().unwrap());
 
-        /* observe and report */
-        log(LogLevel::Debug, &|| String::from(format!("resize(): w=[{}],h=[{}]",camera.width.to_f32().unwrap(),camera.height.to_f32().unwrap())));
+                /* observe and report */
+                log(LogLevel::Debug, &|| String::from(format!("resize(): w=[{}],h=[{}]", camera.width.to_f32().unwrap(), camera.height.to_f32().unwrap())));
+            }
+            OpenGLPipeline::Shaders => {}
+        }
     }
 
     fn before_scene(&self, _camera: &Camera<F>) {
@@ -138,6 +149,10 @@ impl<F: Float + Add<F> + Sub<F>> RenderingSubSystemHandle<F> for OpenGLHandle {
     fn prepare_2d(&self, camera: &Camera<F>) {
         match self.pipeline {
             OpenGLPipeline::FixedFunction => {
+                /* save prior state before 2d rendering */
+                gl_push_matrix();
+                gl_push_attrib(GL_ALL_ATTRIB_BITS);
+
                 /* projection: reset matrix; setup ortho for 2d drawing */
                 gl_matrix_mode(GL_PROJECTION);
                 gl_load_identity();
@@ -152,12 +167,22 @@ impl<F: Float + Add<F> + Sub<F>> RenderingSubSystemHandle<F> for OpenGLHandle {
     }
 
     fn after_2d(&self) {
-        /* purposely empty */
+        match self.pipeline {
+            OpenGLPipeline::FixedFunction => {
+                gl_pop_attrib();
+                gl_pop_matrix();
+            },
+            OpenGLPipeline::Shaders => {},
+        }
     }
 
     fn prepare_3d(&self, context: &RendererContext<F>) {
         match self.pipeline {
             OpenGLPipeline::FixedFunction => {
+                /* save prior state before 3d rendering */
+                gl_push_matrix();
+                gl_push_attrib(GL_ALL_ATTRIB_BITS);
+
                 /* gather camera data */
                 let camera = &context.camera;
                 let position = camera.orientation.column_major_position();
@@ -179,29 +204,36 @@ impl<F: Float + Add<F> + Sub<F>> RenderingSubSystemHandle<F> for OpenGLHandle {
                 gl_rotate_f(-camera.pitch.to_f32().unwrap(), 1.0, 0.0, 0.0);
                 gl_rotate_f(-camera.yaw.to_f32().unwrap(), 0.0, 1.0, 0.0);
                 gl_translate_f(-position.x.to_f32().unwrap(), -position.y.to_f32().unwrap(), -position.z.to_f32().unwrap());
-
-                // todo: remove these once the camera works
-                //gl_translate_f(0.0, 0.0, -2.0);
-                //gl_rotate_f(-8.0, 0.0, 1.0, 0.0);// rotate: yaw,  y-axis; only degrees and y-axis are set
-                //gl_rotate_f(-20.0, 1.0, 0.0, 0.0);// rotate: pitch, x-axis; only degrees and x-axis are set; positive rotates forward down
-                //gl_rotate_f(0.0, 0.0, 0.0, 1.0);// rotate: roll/bank, z-axis; only degrees and z-axis are set
             }
             OpenGLPipeline::Shaders => {}
         }
     }
 
     fn after_3d(&self, _context: &RendererContext<F>) {
-        /* model/view: reset matrix */
-        gl_matrix_mode(GL_MODELVIEW);
-        gl_load_identity();
+        match self.pipeline {
+            OpenGLPipeline::FixedFunction => {
+                /* model/view: reset matrix */
+                //gl_matrix_mode(GL_MODELVIEW);
+                //gl_load_identity();
 
-        /* disable stuff we don't need anymore */
-        gl_disable(GL_DEPTH_TEST);
+                /* disable stuff we don't need anymore */
+                //gl_disable(GL_DEPTH_TEST);
+
+
+                gl_pop_attrib();
+                gl_pop_matrix();
+            },
+            OpenGLPipeline::Shaders => {},
+        }
     }
 
     fn render_2d_points(&self, points: &Points2D<F>) {
         match self.pipeline {
             OpenGLPipeline::FixedFunction => {
+                /* save prior state before making changes */
+                gl_push_matrix();
+                gl_push_attrib(GL_ALL_ATTRIB_BITS);
+
                 gl_color_3f(points.color.red, points.color.green, points.color.blue);
                 gl_point_size(points.thickness.to_f32().unwrap());
 
@@ -210,6 +242,10 @@ impl<F: Float + Add<F> + Sub<F>> RenderingSubSystemHandle<F> for OpenGLHandle {
                     gl_vertex_2f(point.x.to_f32().unwrap(), point.y.to_f32().unwrap());
                 }
                 gl_end();
+
+                /* restore prior state */
+                gl_pop_attrib();
+                gl_pop_matrix();
             }
             OpenGLPipeline::Shaders => {}
         }
@@ -218,6 +254,10 @@ impl<F: Float + Add<F> + Sub<F>> RenderingSubSystemHandle<F> for OpenGLHandle {
     fn render_2d_lines(&self, lines: &Lines2D<F>) {
         match self.pipeline {
             OpenGLPipeline::FixedFunction => {
+                /* save prior state before making changes */
+                gl_push_matrix();
+                gl_push_attrib(GL_ALL_ATTRIB_BITS);
+
                 gl_color_3f(lines.color.red, lines.color.green, lines.color.blue);
                 gl_line_width(lines.thickness.to_f32().unwrap());
 
@@ -227,6 +267,10 @@ impl<F: Float + Add<F> + Sub<F>> RenderingSubSystemHandle<F> for OpenGLHandle {
                     gl_vertex_2f(line.y.x.to_f32().unwrap(), line.y.y.to_f32().unwrap());
                 }
                 gl_end();
+
+                /* restore prior state */
+                gl_pop_attrib();
+                gl_pop_matrix();
             }
             OpenGLPipeline::Shaders => {}
         }
@@ -235,6 +279,10 @@ impl<F: Float + Add<F> + Sub<F>> RenderingSubSystemHandle<F> for OpenGLHandle {
     fn render_2d_textures(&self, texture: &Texture2D<F>) {
         match self.pipeline {
             OpenGLPipeline::FixedFunction => {
+                /* save prior state before making changes */
+                gl_push_matrix();
+                gl_push_attrib(GL_ALL_ATTRIB_BITS);
+
                 /* gather variables */
                 let scale = texture.scale.to_f32().unwrap();
                 let x = texture.world_pos.x.to_f32().unwrap();
@@ -274,8 +322,13 @@ impl<F: Float + Add<F> + Sub<F>> RenderingSubSystemHandle<F> for OpenGLHandle {
                 gl_end();
 
                 /* turn off the stuff we enabled (specifically for texturing) */
+                // todo: can these be removed?
                 gl_disable(GL_TEXTURE_2D);
                 gl_disable(GL_BLEND);
+
+                /* restore prior state */
+                gl_pop_attrib();
+                gl_pop_matrix();
             }
             OpenGLPipeline::Shaders => {}
         }
@@ -284,6 +337,10 @@ impl<F: Float + Add<F> + Sub<F>> RenderingSubSystemHandle<F> for OpenGLHandle {
     fn render_3d_points(&self, points: &Points3D<F>) {
         match self.pipeline {
             OpenGLPipeline::FixedFunction => {
+                /* save prior state before making changes */
+                gl_push_matrix();
+                gl_push_attrib(GL_ALL_ATTRIB_BITS);
+
                 gl_color_3f(points.color.red, points.color.green, points.color.blue);
                 gl_point_size(points.thickness.to_f32().unwrap());
 
@@ -292,6 +349,10 @@ impl<F: Float + Add<F> + Sub<F>> RenderingSubSystemHandle<F> for OpenGLHandle {
                     gl_vertex_3f(point.x.to_f32().unwrap(), point.y.to_f32().unwrap(), point.z.to_f32().unwrap());
                 }
                 gl_end();
+
+                /* restore prior state */
+                gl_pop_attrib();
+                gl_pop_matrix();
             }
             OpenGLPipeline::Shaders => {}
         }
@@ -300,6 +361,10 @@ impl<F: Float + Add<F> + Sub<F>> RenderingSubSystemHandle<F> for OpenGLHandle {
     fn render_3d_lines(&self, lines: &Lines3D<F>) {
         match self.pipeline {
             OpenGLPipeline::FixedFunction => {
+                /* save prior state before making changes */
+                gl_push_matrix();
+                gl_push_attrib(GL_ALL_ATTRIB_BITS);
+
                 gl_color_3f(lines.color.red, lines.color.green, lines.color.blue);
                 gl_line_width(lines.thickness.to_f32().unwrap());
 
@@ -309,6 +374,10 @@ impl<F: Float + Add<F> + Sub<F>> RenderingSubSystemHandle<F> for OpenGLHandle {
                     gl_vertex_3f(line.b.x.to_f32().unwrap(), line.b.y.to_f32().unwrap(), line.b.z.to_f32().unwrap());
                 }
                 gl_end();
+
+                /* restore prior state */
+                gl_pop_attrib();
+                gl_pop_matrix();
             }
             OpenGLPipeline::Shaders => {}
         }
