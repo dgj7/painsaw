@@ -2,7 +2,7 @@ use std::ops::{Add, Sub};
 use num_traits::Float;
 use crate::graphics::geometry::primitive::line::l2d::Line2D;
 use crate::graphics::geometry::primitive::line::l3d::Line3D;
-use crate::graphics::model::color::Color;
+use crate::graphics::color::Color;
 
 pub mod l3d;
 pub mod l2d;

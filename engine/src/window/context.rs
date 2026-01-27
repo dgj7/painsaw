@@ -1,7 +1,7 @@
 use crate::config::EngineConfig;
 use crate::graphics::camera::Camera;
-use crate::graphics::model::g2d::Graph2D;
-use crate::graphics::model::g3d::Graph3D;
+use crate::graphics::storage::g2d::Graph2D;
+use crate::graphics::storage::g3d::Graph3D;
 use crate::graphics::GraphicsIntermediary;
 use crate::input::InputState;
 use crate::logger::log;

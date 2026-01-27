@@ -2,7 +2,7 @@ use std::ops::{Add, Sub};
 use num_traits::Float;
 use crate::graphics::geometry::primitive::point::p2d::Point2D;
 use crate::graphics::geometry::primitive::point::p3d::Point3D;
-use crate::graphics::model::color::Color;
+use crate::graphics::color::Color;
 
 pub mod p3d;
 pub mod p2d;

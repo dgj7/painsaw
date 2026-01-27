@@ -1,4 +1,3 @@
-pub mod color;
 pub mod g2d;
 pub mod g3d;
 pub mod m2d;

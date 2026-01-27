@@ -1,6 +1,6 @@
 use crate::config::EngineConfig;
 use crate::graphics::camera::Camera;
-use crate::graphics::model::color::Color;
+use color::Color;
 use subsystem::RendererInfo;
 use crate::graphics::subsystem::{grss_factory, GraphicsSubSystem, RenderingSubSystemHandle};
 use crate::logger::log;
@@ -9,9 +9,9 @@ use crate::window::context::RendererContext;
 use geometry::primitive::point::p2d::Point2D;
 use image::t2d::Texture2D;
 use image::text::{text_2d_image, TextConfig};
-use model::g2d::Graph2D;
-use model::g3d::Graph3D;
-use model::m2d::Model2D;
+use storage::g2d::Graph2D;
+use storage::g3d::Graph3D;
+use storage::m2d::Model2D;
 use num_traits::Float;
 use std::cmp;
 use std::ops::{Add, Sub};
@@ -19,8 +19,9 @@ use std::ops::{Add, Sub};
 pub mod camera;
 pub mod geometry;
 pub mod image;
-pub mod model;
+pub mod storage;
 pub mod subsystem;
+pub mod color;
 
 ///
 /// Graphics rendering intermediary.

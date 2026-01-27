@@ -68,7 +68,7 @@ impl<F: Float> Quaternion<F> {
     ///
     /// rotate from object space to inertial space.
     ///
-    /// note that inertial space is 'transitional' space between object/model
+    /// note that inertial space is 'transitional' space between object/storage
     /// space and world space (coordinates).
     ///
     pub fn rotate_object_to_inertial(&mut self, orientation: &EulerAngles<F>) {

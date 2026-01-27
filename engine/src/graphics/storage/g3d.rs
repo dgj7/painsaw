@@ -1,9 +1,9 @@
-use crate::graphics::model::m3d::Model3D;
+use crate::graphics::storage::m3d::Model3D;
 use num_traits::Float;
 use std::collections::BTreeMap;
 use std::ops::{Add, Sub};
 
-// todo: better organization; scene scene?
+// todo: better organization; scene graph?
 pub struct Graph3D<F: Float + Add<F> + Sub<F>> {
     pub models: BTreeMap<String, Model3D<F>>
 }

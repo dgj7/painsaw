@@ -7,9 +7,9 @@ use engine::graphics::geometry::primitive::point::p2d::Point2D;
 use engine::graphics::geometry::primitive::point::p3d::Point3D;
 use engine::graphics::geometry::primitive::point::Points2D;
 use engine::graphics::geometry::primitive::point::Points3D;
-use engine::graphics::model::color::Color;
-use engine::graphics::model::m2d::Model2D;
-use engine::graphics::model::m3d::Model3D;
+use engine::graphics::color::Color;
+use engine::graphics::storage::m2d::Model2D;
+use engine::graphics::storage::m3d::Model3D;
 use engine::input::kn::KeyName;
 use engine::logger::log;
 use engine::logger::log_level::LogLevel;
@@ -59,7 +59,7 @@ impl WorldController<f32> for Demo1WorldController {
                     context.g2d.models.entry(M2D_X_HORIZ.parse().unwrap()).and_modify(|e| *e = create_2d_grid_x_lines(&context.camera));
                     context.g2d.models.entry(M2D_Y_VERT.parse().unwrap()).and_modify(|e| *e = create_2d_grid_y_lines(&context.camera));
 
-                    log(LogLevel::Debug, &|| String::from(format!("window size changed ({}x{}); 2d model count is [{}]", ccd.width, ccd.height, context.g2d.models.len())));
+                    log(LogLevel::Debug, &|| String::from(format!("window size changed ({}x{}); 2d storage count is [{}]", ccd.width, ccd.height, context.g2d.models.len())));
                 }
 
                 /* camera controls */
