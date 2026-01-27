@@ -11,7 +11,6 @@ use crate::graphics::model::g2d::Graph2D;
 use crate::graphics::model::g3d::Graph3D;
 use crate::graphics::geometry::primitive::point::Points2D;
 use crate::graphics::geometry::primitive::point::Points3D;
-use crate::graphics::model::renderer_info::RendererInfo;
 use crate::graphics::subsystem::opengl::OpenGLHandle;
 use num_traits::Float;
 use std::ops::{Add, Sub};
@@ -29,6 +28,14 @@ pub enum GraphicsSubSystem {
 pub enum OpenGLPipeline {
     FixedFunction,
     Shaders,
+}
+
+#[derive(Debug)]
+pub struct RendererInfo {
+    pub name: Option<String>,
+    pub version: Option<String>,
+    pub vendor: Option<String>,
+    pub device: Option<String>,
 }
 
 pub trait RenderingSubSystemHandle<F: Float + Add<F> + Sub<F>> {

@@ -1,7 +1,7 @@
 use crate::config::EngineConfig;
 use crate::graphics::camera::Camera;
 use crate::graphics::model::color::Color;
-use crate::graphics::model::renderer_info::RendererInfo;
+use subsystem::RendererInfo;
 use crate::graphics::subsystem::{grss_factory, GraphicsSubSystem, RenderingSubSystemHandle};
 use crate::logger::log;
 use crate::logger::log_level::LogLevel;
@@ -174,10 +174,10 @@ fn show_cam_coords<F: Float>(
     }
 
     /* get all the camera info */
-    let position = camera.orientation.column_major_position();
-    let forward = camera.orientation.column_major_z_forward();
-    let right = camera.orientation.column_major_x_right();
-    let up = camera.orientation.column_major_y_up();
+    let position = camera.orientation.position.column_major_position();
+    let forward = camera.orientation.position.column_major_z_forward();
+    let right = camera.orientation.position.column_major_x_right();
+    let up = camera.orientation.position.column_major_y_up();
 
     /* positioning variables */
     let height = 13.7 * scale;

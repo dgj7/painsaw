@@ -64,16 +64,16 @@ impl WorldController<f32> for Demo1WorldController {
 
                 /* camera controls */
                 if let Some(wk) = is.states.get(&KeyName::KeyW) && wk.current.is_down() {
-                    context.camera.move_forward(&context.config, context.delta_time as f32);
+                    context.camera.orientation.move_forward(&context.config, context.delta_time as f32);
                 }
                 if let Some(sk) = is.states.get(&KeyName::KeyS) && sk.current.is_down() {
-                    context.camera.move_backward(&context.config, context.delta_time as f32);
+                    context.camera.orientation.move_backward(&context.config, context.delta_time as f32);
                 }
                 if let Some(ak) = is.states.get(&KeyName::KeyA) && ak.current.is_down() {
-                    context.camera.move_left(&context.config, context.delta_time as f32);
+                    context.camera.orientation.move_left(&context.config, context.delta_time as f32);
                 }
                 if let Some(dk) = is.states.get(&KeyName::KeyD) && dk.current.is_down() {
-                    context.camera.move_right(&context.config, context.delta_time as f32);
+                    context.camera.orientation.move_right(&context.config, context.delta_time as f32);
                 }
             },
             Err(_) => {

@@ -7,7 +7,7 @@ use crate::graphics::geometry::primitive::point::Points3D;
 use crate::graphics::image::t2d::Texture2D;
 use crate::graphics::model::g2d::Graph2D;
 use crate::graphics::model::g3d::Graph3D;
-use crate::graphics::model::renderer_info::RendererInfo;
+use crate::graphics::subsystem::RendererInfo;
 use crate::graphics::subsystem::opengl::opengl_api::{gl_begin_lines, gl_begin_points, gl_begin_quads, gl_bind_texture, gl_blend_func, gl_clear, gl_clear_color, gl_color_3f, gl_disable, gl_enable, gl_end, gl_gen_textures, gl_get_string, gl_line_width, gl_load_identity, gl_matrix_mode, gl_ortho, gl_point_size, gl_pop_attrib, gl_pop_matrix, gl_push_attrib, gl_push_matrix, gl_rotate_f, gl_tex_coord_2f, gl_tex_env_f, gl_tex_image_2d, gl_tex_parameter_i, gl_tex_sub_image_2d, gl_translate_f, gl_vertex_2f, gl_vertex_3f, gl_viewport, glu_perspective};
 use crate::graphics::subsystem::{OpenGLPipeline, RenderingSubSystemHandle};
 use crate::logger::log;
@@ -185,7 +185,7 @@ impl<F: Float + Add<F> + Sub<F>> RenderingSubSystemHandle<F> for OpenGLHandle {
 
                 /* gather camera data */
                 let camera = &context.camera;
-                let position = camera.orientation.column_major_position();
+                let position = camera.orientation.position.column_major_position();
 
                 /* projection: reset matrix */
                 gl_matrix_mode(GL_PROJECTION);
@@ -201,8 +201,8 @@ impl<F: Float + Add<F> + Sub<F>> RenderingSubSystemHandle<F> for OpenGLHandle {
                 gl_enable(GL_DEPTH_TEST);
 
                 /* model/view: adjust camera, before drawing */
-                gl_rotate_f(-camera.pitch.to_f32().unwrap(), 1.0, 0.0, 0.0);
-                gl_rotate_f(-camera.yaw.to_f32().unwrap(), 0.0, 1.0, 0.0);
+                gl_rotate_f(-camera.orientation.pitch().to_f32().unwrap(), 1.0, 0.0, 0.0);
+                gl_rotate_f(-camera.orientation.yaw().to_f32().unwrap(), 0.0, 1.0, 0.0);
                 gl_translate_f(-position.x.to_f32().unwrap(), -position.y.to_f32().unwrap(), -position.z.to_f32().unwrap());
             }
             OpenGLPipeline::Shaders => {}
