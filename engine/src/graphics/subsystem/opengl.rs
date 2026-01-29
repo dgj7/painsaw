@@ -1,14 +1,13 @@
-use crate::config::{CVAR_FOV, DEFAULT_FOV};
+use crate::config::{EngineConfig, CVAR_FOV, DEFAULT_FOV};
 use crate::graphics::camera::Camera;
 use crate::graphics::geometry::primitive::line::Lines2D;
-use crate::graphics::geometry::primitive::line::Lines3D;
 use crate::graphics::geometry::primitive::point::Points2D;
-use crate::graphics::geometry::primitive::point::Points3D;
+use crate::graphics::geometry::primitive::PrimitiveType;
 use crate::graphics::image::t2d::Texture2D;
 use crate::graphics::storage::g2d::Graph2D;
 use crate::graphics::storage::g3d::Graph3D;
-use crate::graphics::subsystem::RendererInfo;
 use crate::graphics::subsystem::opengl::opengl_api::{gl_begin_lines, gl_begin_points, gl_begin_quads, gl_bind_texture, gl_blend_func, gl_clear, gl_clear_color, gl_color_3f, gl_disable, gl_enable, gl_end, gl_gen_textures, gl_get_string, gl_line_width, gl_load_identity, gl_matrix_mode, gl_ortho, gl_point_size, gl_pop_attrib, gl_pop_matrix, gl_push_attrib, gl_push_matrix, gl_rotate_f, gl_tex_coord_2f, gl_tex_env_f, gl_tex_image_2d, gl_tex_parameter_i, gl_tex_sub_image_2d, gl_translate_f, gl_vertex_2f, gl_vertex_3f, gl_viewport, glu_perspective};
+use crate::graphics::subsystem::RendererInfo;
 use crate::graphics::subsystem::{OpenGLPipeline, RenderingSubSystemHandle};
 use crate::logger::log;
 use crate::logger::log_level::LogLevel;
@@ -166,6 +165,10 @@ impl<F: Float + Add<F> + Sub<F>> RenderingSubSystemHandle<F> for OpenGLHandle {
         }
     }
 
+    fn render_2d(&self, _g2d: &mut Graph2D<F>, _delta_time: f64, _config: &EngineConfig<F>, _camera: &Camera<F>) {
+        // todo: implement this
+    }
+
     fn after_2d(&self) {
         match self.pipeline {
             OpenGLPipeline::FixedFunction => {
@@ -206,6 +209,70 @@ impl<F: Float + Add<F> + Sub<F>> RenderingSubSystemHandle<F> for OpenGLHandle {
                 gl_translate_f(-position.x.to_f32().unwrap(), -position.y.to_f32().unwrap(), -position.z.to_f32().unwrap());
             }
             OpenGLPipeline::Shaders => {}
+        }
+    }
+
+    fn render_3d(&self, g3d: &mut Graph3D<F>) {
+        match self.pipeline {
+            OpenGLPipeline::FixedFunction => {
+                for (_, model) in g3d.models.iter() {
+                    for primitive in model.primitives.iter() {
+                        /* gather some access variables */
+                        let vertices = &primitive.vertices;
+
+                        /* do rendering, based on primitive type */
+                        match primitive.ptype {
+                            PrimitiveType::Point {point_size} => {
+                                match self.pipeline {
+                                    OpenGLPipeline::FixedFunction => {
+                                        gl_push_matrix();
+                                        gl_push_attrib(GL_ALL_ATTRIB_BITS);
+
+                                        // todo: translate, rotate, scale
+
+                                        gl_color_3f(primitive.color.red, primitive.color.green, primitive.color.blue);
+                                        gl_point_size(point_size.to_f32().unwrap());
+
+                                        gl_begin_points();
+                                        for vert in vertices {
+                                            gl_vertex_3f(vert.x.to_f32().unwrap(), vert.y.to_f32().unwrap(), vert.z.to_f32().unwrap());
+                                        }
+                                        gl_end();
+
+                                        gl_pop_attrib();
+                                        gl_pop_matrix();
+                                    },
+                                    OpenGLPipeline::Shaders => {},
+                                }
+                            },
+                            PrimitiveType::Line {thickness} => {
+                                match self.pipeline {
+                                    OpenGLPipeline::FixedFunction => {
+                                        gl_push_matrix();
+                                        gl_push_attrib(GL_ALL_ATTRIB_BITS);
+
+                                        // todo: translate, rotate, scale
+
+                                        gl_color_3f(primitive.color.red, primitive.color.green, primitive.color.blue);
+                                        gl_line_width(thickness.to_f32().unwrap());
+
+                                        gl_begin_lines();
+                                        for vert in vertices {
+                                            gl_vertex_3f(vert.x.to_f32().unwrap(), vert.y.to_f32().unwrap(), vert.z.to_f32().unwrap());
+                                        }
+                                        gl_end();
+
+                                        gl_pop_attrib();
+                                        gl_pop_matrix();
+                                    },
+                                    OpenGLPipeline::Shaders => {},
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            OpenGLPipeline::Shaders => {},
         }
     }
 
@@ -325,55 +392,6 @@ impl<F: Float + Add<F> + Sub<F>> RenderingSubSystemHandle<F> for OpenGLHandle {
                 // todo: can these be removed?
                 gl_disable(GL_TEXTURE_2D);
                 gl_disable(GL_BLEND);
-
-                /* restore prior state */
-                gl_pop_attrib();
-                gl_pop_matrix();
-            }
-            OpenGLPipeline::Shaders => {}
-        }
-    }
-
-    fn render_3d_points(&self, points: &Points3D<F>) {
-        match self.pipeline {
-            OpenGLPipeline::FixedFunction => {
-                /* save prior state before making changes */
-                gl_push_matrix();
-                gl_push_attrib(GL_ALL_ATTRIB_BITS);
-
-                gl_color_3f(points.color.red, points.color.green, points.color.blue);
-                gl_point_size(points.thickness.to_f32().unwrap());
-
-                gl_begin_points();
-                for point in points.points.iter() {
-                    gl_vertex_3f(point.x.to_f32().unwrap(), point.y.to_f32().unwrap(), point.z.to_f32().unwrap());
-                }
-                gl_end();
-
-                /* restore prior state */
-                gl_pop_attrib();
-                gl_pop_matrix();
-            }
-            OpenGLPipeline::Shaders => {}
-        }
-    }
-
-    fn render_3d_lines(&self, lines: &Lines3D<F>) {
-        match self.pipeline {
-            OpenGLPipeline::FixedFunction => {
-                /* save prior state before making changes */
-                gl_push_matrix();
-                gl_push_attrib(GL_ALL_ATTRIB_BITS);
-
-                gl_color_3f(lines.color.red, lines.color.green, lines.color.blue);
-                gl_line_width(lines.thickness.to_f32().unwrap());
-
-                gl_begin_lines();
-                for line in &lines.lines {
-                    gl_vertex_3f(line.a.x.to_f32().unwrap(), line.a.y.to_f32().unwrap(), line.a.z.to_f32().unwrap());
-                    gl_vertex_3f(line.b.x.to_f32().unwrap(), line.b.y.to_f32().unwrap(), line.b.z.to_f32().unwrap());
-                }
-                gl_end();
 
                 /* restore prior state */
                 gl_pop_attrib();

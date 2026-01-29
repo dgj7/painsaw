@@ -9,17 +9,21 @@ pub mod quaternion;
 
 pub struct Orientation<F: Float> {
     pub position: Matrix4x4<F>,  // orientation; c1=right(x), c2=up(y), c3=forward(z/normal), c4=position
-    pub scale: F,
+    pub x_scale: F,
+    pub y_scale: F,
+    pub z_scale: F,
 }
 
 impl<F: Float> Orientation<F> {
-    pub fn new(position: Matrix4x4<F>, scale: F) -> Orientation<F> {
+    pub fn new(position: Matrix4x4<F>, x_scale: F, y_scale: F, z_scale: F) -> Orientation<F> {
         Orientation {
             position,
-            scale,
+            x_scale,
+            y_scale,
+            z_scale,
         }
     }
-    
+
     pub fn camera_default() -> Orientation<F> {
         Orientation {
             position: Matrix4x4 {
@@ -28,7 +32,9 @@ impl<F: Float> Orientation<F> {
                 c4r3: F::from(1.5).unwrap(),
                 ..Default::default()
             },
-            scale: F::from(1.0).unwrap(),
+            x_scale: F::from(1.0).unwrap(),
+            y_scale: F::from(1.0).unwrap(),
+            z_scale: F::from(1.0).unwrap(),
         }
     }
 }
@@ -96,5 +102,16 @@ impl<F: Float> Orientation<F> {
 
         /* update the orientation matrix */
         self.position.column_major_update_position(&updated);
+    }
+}
+
+impl<F: Float> Default for Orientation<F> {
+    fn default() -> Orientation<F> {
+        Orientation {
+            position: Matrix4x4::default(),
+            x_scale: F::one(),
+            y_scale: F::one(),
+            z_scale: F::one(),
+        }
     }
 }

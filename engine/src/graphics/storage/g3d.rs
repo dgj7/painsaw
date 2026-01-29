@@ -5,7 +5,7 @@ use std::ops::{Add, Sub};
 
 // todo: better organization; scene graph?
 pub struct Graph3D<F: Float + Add<F> + Sub<F>> {
-    pub models: BTreeMap<String, Model3D<F>>
+    pub models: BTreeMap<String, Model3D<F>>,
 }
 
 impl<F: Float + Add<F> + Sub<F>> Graph3D<F> {

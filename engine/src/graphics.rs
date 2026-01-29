@@ -95,6 +95,9 @@ impl<F: Float + Add<F> + Sub<F>> GraphicsIntermediary<F> {
                 .filter(|x| x.initialized)
                 .for_each(|x| self.subsystem.render_2d_textures(x));
         }
+        
+        /* do rendering */
+        self.subsystem.render_2d(g2d, delta_time, config, camera);
 
         /* conditional display */
         show_fps(g2d, delta_time, config);
@@ -109,17 +112,8 @@ impl<F: Float + Add<F> + Sub<F>> GraphicsIntermediary<F> {
         self.subsystem.prepare_3d(context);
     }
 
-    pub(crate) fn render_3d(&self, g3d: &Graph3D<F>) {
-        for (_, model) in g3d.models.iter() {
-            model
-                .lines
-                .iter()
-                .for_each(|x| self.subsystem.render_3d_lines(x));
-            model
-                .points
-                .iter()
-                .for_each(|x| self.subsystem.render_3d_points(x));
-        }
+    pub(crate) fn render_3d(&self, g3d: &mut Graph3D<F>) {
+        self.subsystem.render_3d(g3d);
     }
 
     pub(crate) fn after_3d(&self, context: &RendererContext<F>) {

@@ -1,15 +1,14 @@
 use engine::graphics::camera::Camera;
+use engine::graphics::color::Color;
 use engine::graphics::geometry::primitive::line::l2d::Line2D;
-use engine::graphics::geometry::primitive::line::l3d::Line3D;
 use engine::graphics::geometry::primitive::line::Lines2D;
-use engine::graphics::geometry::primitive::line::Lines3D;
+use engine::graphics::geometry::primitive::p3d::Primitive3DBuilder;
 use engine::graphics::geometry::primitive::point::p2d::Point2D;
 use engine::graphics::geometry::primitive::point::p3d::Point3D;
 use engine::graphics::geometry::primitive::point::Points2D;
-use engine::graphics::geometry::primitive::point::Points3D;
-use engine::graphics::color::Color;
+use engine::graphics::geometry::primitive::PrimitiveType;
 use engine::graphics::storage::m2d::Model2D;
-use engine::graphics::storage::m3d::Model3D;
+use engine::graphics::storage::m3d::Model3DBuilder;
 use engine::input::kn::KeyName;
 use engine::logger::log;
 use engine::logger::log_level::LogLevel;
@@ -19,9 +18,6 @@ use engine::window::wc::WorldController;
 static M2D_XY_PURPLE: &str = "1-2d-xy-purple";
 static M2D_X_HORIZ: &str = "2-2d-x-horizontal";
 static M2D_Y_VERT: &str = "2-2d-y-vertical";
-static M3D_X_ABSCISSA: &str = "4-3d-axes-abscissa";
-static M3D_Y_ORDINATE: &str = "4-3d-axes-ordinate";
-static M3D_Z_APPLICATE: &str = "4-3d-axes-applicate";
 
 pub(crate) struct Demo1WorldController {}
 
@@ -33,18 +29,46 @@ impl WorldController<f32> for Demo1WorldController {
         context.g2d.models.insert(M2D_Y_VERT.parse().unwrap(), create_2d_grid_y_lines(&context.camera));
 
         /* 3d: origin axes */
-        context.g3d.models.insert(M3D_X_ABSCISSA.parse().unwrap(), Model3D::new(
-            vec!(Points3D::new(vec!(Point3D::origin(), Point3D::new(0.5, 0.0, 0.0)), Color::WHITE, 5.0)),
-            vec!(Lines3D::new(vec!(Line3D::new(Point3D::origin(), Point3D::new(0.5, 0.0, 0.0))), Color::RED, 1.0)))
-        );
-        context.g3d.models.insert(M3D_Y_ORDINATE.parse().unwrap(), Model3D::new(
-            vec!(Points3D::new(vec!(Point3D::new(0.0, 0.5, 0.0)), Color::WHITE, 5.0)),
-            vec!(Lines3D::new(vec!(Line3D::new(Point3D::origin(), Point3D::new(0.0, 0.5, 0.0))), Color::GREEN, 1.0)))
-        );
-        context.g3d.models.insert(M3D_Z_APPLICATE.parse().unwrap(), Model3D::new(
-            vec!(Points3D::new(vec!(Point3D::new(0.0, 0.0, 0.5)), Color::WHITE, 5.0)),
-            vec!(Lines3D::new(vec!(Line3D::new(Point3D::origin(), Point3D::new(0.0, 0.0, 0.5))), Color::BLUE, 1.0)))
-        );
+        context.g3d.models.insert("4-3d-axes".to_string(), Model3DBuilder::new()
+            .with_primitive(Primitive3DBuilder::new()
+                .with_type(PrimitiveType::Point {point_size: 5.0})
+                .with_color(Color::WHITE)
+                .with_vertex(Point3D::new(0.0, 0.0, 0.0))
+                .build())
+            .with_primitive(Primitive3DBuilder::new()
+                .with_type(PrimitiveType::Line {thickness: 1.0})
+                .with_color(Color::RED)
+                .with_vertex(Point3D::origin())
+                .with_vertex(Point3D::new(0.5, 0.0, 0.0))
+                .build())
+            .with_primitive(Primitive3DBuilder::new()
+                .with_type(PrimitiveType::Point {point_size: 5.0})
+                .with_color(Color::WHITE)
+                .with_vertex(Point3D::new(0.5, 0.0, 0.0))
+                .build())
+            .with_primitive(Primitive3DBuilder::new()
+                .with_type(PrimitiveType::Line {thickness: 1.0})
+                .with_color(Color::GREEN)
+                .with_vertex(Point3D::origin())
+                .with_vertex(Point3D::new(0.0, 0.5, 0.0))
+                .build())
+            .with_primitive(Primitive3DBuilder::new()
+                .with_type(PrimitiveType::Point {point_size: 5.0})
+                .with_color(Color::WHITE)
+                .with_vertex(Point3D::new(0.0, 0.5, 0.0))
+                .build())
+            .with_primitive(Primitive3DBuilder::new()
+                .with_type(PrimitiveType::Line {thickness: 1.0})
+                .with_color(Color::BLUE)
+                .with_vertex(Point3D::origin())
+                .with_vertex(Point3D::new(0.0, 0.0, 0.5))
+                .build())
+            .with_primitive(Primitive3DBuilder::new()
+                .with_type(PrimitiveType::Point {point_size: 5.0})
+                .with_color(Color::WHITE)
+                .with_vertex(Point3D::new(0.0, 0.0, 0.5))
+                .build())
+            .build());
     }
 
     fn update_world_helper(&self, context: &mut RendererContext<f32>) {
