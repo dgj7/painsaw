@@ -1,20 +1,21 @@
 use crate::config::EngineConfig;
 use crate::graphics::camera::Camera;
-use color::Color;
-use subsystem::RendererInfo;
+use crate::graphics::geometry::primitive::p3d::Point3D;
+use crate::graphics::image::t2d::Texture2DBuilder;
+use crate::graphics::image::RawImage;
+use crate::graphics::storage::m2d::Model2DBuilder;
 use crate::graphics::subsystem::{grss_factory, GraphicsSubSystem, RenderingSubSystemHandle};
 use crate::logger::log;
 use crate::logger::log_level::LogLevel;
 use crate::window::context::RendererContext;
-use geometry::primitive::point::p2d::Point2D;
-use image::t2d::Texture2D;
+use color::Color;
 use image::text::{text_2d_image, TextConfig};
-use storage::g2d::Graph2D;
-use storage::g3d::Graph3D;
-use storage::m2d::Model2D;
 use num_traits::Float;
 use std::cmp;
 use std::ops::{Add, Sub};
+use storage::g2d::Graph2D;
+use storage::g3d::Graph3D;
+use subsystem::RendererInfo;
 
 pub mod camera;
 pub mod geometry;
@@ -80,24 +81,17 @@ impl<F: Float + Add<F> + Sub<F>> GraphicsIntermediary<F> {
         config: &EngineConfig<F>,
         camera: &Camera<F>,
     ) {
+        /* render primitives */
+        self.subsystem.render_2d(g2d);
+
+        /* apply textures  */
         for (_, model) in g2d.models.iter() {
-            model
-                .lines
-                .iter()
-                .for_each(|x| self.subsystem.render_2d_lines(x));
-            model
-                .points
-                .iter()
-                .for_each(|x| self.subsystem.render_2d_points(x));
             model
                 .textures
                 .iter()
                 .filter(|x| x.initialized)
                 .for_each(|x| self.subsystem.render_2d_textures(x));
         }
-        
-        /* do rendering */
-        self.subsystem.render_2d(g2d, delta_time, config, camera);
 
         /* conditional display */
         show_fps(g2d, delta_time, config);
@@ -133,7 +127,6 @@ fn show_fps<F: Float>(g2d: &mut Graph2D<F>, delta_time: f64, config: &EngineConf
 
     /* prepare to render text */
     let config = TextConfig {
-        top_left: Point2D { x: 100.0, y: 100.0 },
         foreground: Color::RED,
         ..Default::default()
     };
@@ -141,20 +134,14 @@ fn show_fps<F: Float>(g2d: &mut Graph2D<F>, delta_time: f64, config: &EngineConf
     /* add or update models */
     g2d.models
         .entry("99-builtin-fps".parse().unwrap())
-        .and_modify(|m| {
-            m.textures[0].replacement = Option::from(text_2d_image(config.clone(), || {
-                String::from(format!("FPS:{:4}", fps))
-            }))
-        })
-        .or_insert(Model2D::new(
-            vec![],
-            vec![],
-            vec![Texture2D::new(
-                text_2d_image(config.clone(), || String::from(format!("FPS:{:4}", fps))),
-                Point2D::new(F::from(10.0).unwrap(), F::from(100.0).unwrap()),
-                F::from(1.0).unwrap(),
-            )],
-        ));
+        .and_modify(|m| m.textures[0].replacement = Option::from(text_2d_image(config.clone(), || String::from(format!("FPS:{:4}", fps)))))
+        .or_insert(Model2DBuilder::new()
+                       .with_texture(Texture2DBuilder::new()
+                           .with_x(F::from(10.0).unwrap())
+                           .with_y(F::from(100.0).unwrap())
+                           .with_image(text_2d_image(config.clone(), || String::from(format!("FPS:{:4}", fps))))
+                           .build())
+                       .build());
 }
 
 fn show_cam_coords<F: Float>(
@@ -185,113 +172,89 @@ fn show_cam_coords<F: Float>(
 
     /* determine how the text should be displayed */
     let config = TextConfig {
-        top_left: Point2D { x: 20.0, y: 20.0 },
         foreground: Color::RED,
-        scale,
         ..Default::default()
     };
 
     /* update models */
     g2d.models
         .entry("6-2d-text-cam-pos".parse().unwrap())
-        .and_modify(|m| {
-            m.textures[0].replacement = Option::from(text_2d_image(config.clone(), || {
-                String::from(format!(
-                    "cam-pos: ({:+08.2},{:+08.2},{:+08.2})",
-                    position.x.to_f32().unwrap(),
-                    position.y.to_f32().unwrap(),
-                    position.z.to_f32().unwrap(),
-                ))
-            }))
-        })
-        .or_insert(Model2D::new(
-            vec![],
-            vec![],
-            vec![Texture2D::new(
-                text_2d_image(config.clone(), || {
-                    String::from(format!(
-                        "cam-pos: ({:+08.2},{:+08.2},{:+08.2})",
-                        position.x.to_f32().unwrap(),
-                        position.y.to_f32().unwrap(),
-                        position.z.to_f32().unwrap(),
-                    ))}),
-                Point2D::new(x, y_cam),
-                F::from(1.0).unwrap(),
-            )],));
+        .and_modify(|m| m.textures[0].replacement = create_text_cam_pos(config.clone(), &position))
+        .or_insert(Model2DBuilder::new()
+                       .with_texture(Texture2DBuilder::new()
+                           .with_x(x)
+                           .with_y(y_cam)
+                           .with_image(create_text_cam_pos(config.clone(), &position).unwrap())
+                           .build())
+                       .build());
     g2d.models
         .entry("6-2d-text-forward".parse().unwrap())
-        .and_modify(|m| {
-            m.textures[0].replacement = Option::from(text_2d_image(config.clone(), || {
-                String::from(format!(
-                    "forward: ({:+.2},{:+.2},{:+.2})",
-                    forward.x.to_f32().unwrap(),
-                    forward.y.to_f32().unwrap(),
-                    forward.z.to_f32().unwrap(),
-                ))}))
-        })
-        .or_insert(Model2D::new(
-            vec![],
-            vec![],
-            vec![Texture2D::new(
-                text_2d_image(config.clone(), || {
-                    String::from(format!(
-                        "forward: ({:+.2},{:+.2},{:+.2})",
-                        forward.x.to_f32().unwrap(),
-                        forward.y.to_f32().unwrap(),
-                        forward.z.to_f32().unwrap(),
-                    ))}),
-                Point2D::new(x, y_forward),
-                F::from(1.0).unwrap(),
-            )],
-        ));
+        .and_modify(|m| m.textures[0].replacement = create_text_forward(config.clone(), &forward))
+        .or_insert(Model2DBuilder::new()
+                       .with_texture(Texture2DBuilder::new()
+                           .with_x(x)
+                           .with_y(y_forward)
+                           .with_image(create_text_forward(config.clone(), &forward).unwrap())
+                           .build())
+                       .build());
     g2d.models
         .entry("6-2d-text-right".parse().unwrap())
-        .and_modify(|m| {
-            m.textures[0].replacement = Option::from(text_2d_image(config.clone(), || {
-                String::from(format!(
-                    "right:   ({:+.2},{:+.2},{:+.2})",
-                    right.x.to_f32().unwrap(),
-                    right.y.to_f32().unwrap(),
-                    right.z.to_f32().unwrap(),
-                ))}))
-        })
-        .or_insert(Model2D::new(
-            vec![],
-            vec![],
-            vec![Texture2D::new(
-                text_2d_image(config.clone(), || {
-                    String::from(format!(
-                        "right:   ({:+.2},{:+.2},{:+.2})",
-                        right.x.to_f32().unwrap(),
-                        right.y.to_f32().unwrap(),
-                        right.z.to_f32().unwrap(),
-                    ))}),
-                Point2D::new(x, y_right),
-                F::from(1.0).unwrap(),
-            )],
-        ));
+        .and_modify(|m| m.textures[0].replacement = create_text_right(config.clone(), &right))
+        .or_insert(Model2DBuilder::new()
+                       .with_texture(Texture2DBuilder::new()
+                           .with_x(x)
+                           .with_y(y_right)
+                           .with_image(create_text_right(config.clone(), &right).unwrap())
+                           .build())
+                       .build());
     g2d.models
         .entry("6-2d-text-up".parse().unwrap())
-        .and_modify(|m| {
-            m.textures[0].replacement = Option::from(text_2d_image(config.clone(), || {
-                String::from(format!("up:      ({:+.2},{:+.2},{:+.2})",
-                                     up.x.to_f32().unwrap(),
-                                     up.y.to_f32().unwrap(),
-                                     up.z.to_f32().unwrap(),
-                ))}))
-        })
-        .or_insert(Model2D::new(
-            vec![],
-            vec![],
-            vec![Texture2D::new(
-                text_2d_image(config.clone(), || {
-                    String::from(format!("up:      ({:+.2},{:+.2},{:+.2})",
-                                         up.x.to_f32().unwrap(),
-                                         up.y.to_f32().unwrap(),
-                                         up.z.to_f32().unwrap(),
-                    ))}),
-                Point2D::new(x, y_up),
-                F::from(1.0).unwrap(),
-            )],
-        ));
+        .and_modify(|m| m.textures[0].replacement = create_text_up(config.clone(), &up))
+        .or_insert(Model2DBuilder::new()
+                       .with_texture(Texture2DBuilder::new()
+                           .with_x(x)
+                           .with_y(y_up)
+                           .with_image(create_text_up(config.clone(), &up).unwrap())
+                           .build())
+                       .build());
+}
+
+fn create_text_cam_pos<F: Float>(config: TextConfig, position: &Point3D<F>) -> Option<RawImage> {
+    Option::from(text_2d_image(config.clone(), || {
+        String::from(format!(
+            "cam-pos: ({:+08.2},{:+08.2},{:+08.2})",
+            position.x.to_f32().unwrap(),
+            position.y.to_f32().unwrap(),
+            position.z.to_f32().unwrap(),
+        ))
+    }))
+}
+
+fn create_text_up<F: Float>(config: TextConfig, up: &Point3D<F>) -> Option<RawImage> {
+    Option::from(text_2d_image(config.clone(), || {
+        String::from(format!("up:      ({:+.2},{:+.2},{:+.2})",
+                             up.x.to_f32().unwrap(),
+                             up.y.to_f32().unwrap(),
+                             up.z.to_f32().unwrap(),
+        ))}))
+}
+
+fn create_text_right<F: Float>(config: TextConfig, right: &Point3D<F>) -> Option<RawImage> {
+    Option::from(text_2d_image(config.clone(), || {
+        String::from(format!(
+            "right:   ({:+.2},{:+.2},{:+.2})",
+            right.x.to_f32().unwrap(),
+            right.y.to_f32().unwrap(),
+            right.z.to_f32().unwrap(),
+        ))}))
+}
+
+fn create_text_forward<F: Float>(config: TextConfig, forward: &Point3D<F>) -> Option<RawImage> {
+    Option::from(text_2d_image(config.clone(), || {
+        String::from(format!(
+            "forward: ({:+.2},{:+.2},{:+.2})",
+            forward.x.to_f32().unwrap(),
+            forward.y.to_f32().unwrap(),
+            forward.z.to_f32().unwrap(),
+        ))}))
 }

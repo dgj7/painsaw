@@ -4,10 +4,7 @@
 //! for example, opengl or directx.
 //!
 
-use crate::config::EngineConfig;
 use crate::graphics::camera::Camera;
-use crate::graphics::geometry::primitive::line::Lines2D;
-use crate::graphics::geometry::primitive::point::Points2D;
 use crate::graphics::image::t2d::Texture2D;
 use crate::graphics::storage::g2d::Graph2D;
 use crate::graphics::storage::g3d::Graph3D;
@@ -49,15 +46,13 @@ pub trait RenderingSubSystemHandle<F: Float + Add<F> + Sub<F>> {
     fn before_scene(&self, camera: &Camera<F>);
 
     fn prepare_2d(&self, camera: &Camera<F>);
-    fn render_2d(&self, g2d: &mut Graph2D<F>, delta_time: f64, config: &EngineConfig<F>, camera: &Camera<F>);
+    fn render_2d(&self, g2d: &mut Graph2D<F>);
     fn after_2d(&self);
 
     fn prepare_3d(&self, context: &RendererContext<F>);
     fn render_3d(&self, g3d: &mut Graph3D<F>);
     fn after_3d(&self, context: &RendererContext<F>);
 
-    fn render_2d_points(&self, points: &Points2D<F>);
-    fn render_2d_lines(&self, lines: &Lines2D<F>);
     fn render_2d_textures(&self, textures: &Texture2D<F>);
 }
 

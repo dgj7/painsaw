@@ -1,13 +1,11 @@
 use engine::graphics::camera::Camera;
 use engine::graphics::color::Color;
-use engine::graphics::geometry::primitive::line::l2d::Line2D;
-use engine::graphics::geometry::primitive::line::Lines2D;
-use engine::graphics::geometry::primitive::p3d::Primitive3DBuilder;
-use engine::graphics::geometry::primitive::point::p2d::Point2D;
-use engine::graphics::geometry::primitive::point::p3d::Point3D;
-use engine::graphics::geometry::primitive::point::Points2D;
+use engine::graphics::geometry::primitive::p2d::Point2D;
+use engine::graphics::geometry::primitive::p3d::Point3D;
+use engine::graphics::geometry::primitive::prim2d::Primitive2DBuilder;
+use engine::graphics::geometry::primitive::prim3d::Primitive3DBuilder;
 use engine::graphics::geometry::primitive::PrimitiveType;
-use engine::graphics::storage::m2d::Model2D;
+use engine::graphics::storage::m2d::{Model2D, Model2DBuilder};
 use engine::graphics::storage::m3d::Model3DBuilder;
 use engine::input::kn::KeyName;
 use engine::logger::log;
@@ -117,53 +115,65 @@ impl Demo1WorldController {
 }
 
 fn create_2d_axes(camera: &Camera<f32>) -> Model2D<f32> {
-    /* define points */
-    let axes_points = Points2D::new(vec!(
-            Point2D::origin(),
-            Point2D::new(0.0, camera.height),
-            Point2D::new(camera.width, 0.0),
-        ), Color::GREEN,15.0);
-    let other_points = Points2D::new(vec!(
-            Point2D::new(20.0, 20.0),
-            Point2D::new(20.0, 50.0),
-            Point2D::new(20.0, 80.0),
-            Point2D::new(20.0, 110.0),
-            Point2D::new(20.0, 140.0),
-        ), Color::GREEN, 3.0);
-    let pointsvec = vec!(axes_points, other_points);
-
-    /* define lines */
-    let axes = vec!(Line2D::new(Point2D::origin(), Point2D::new(0.0, camera.height)), Line2D::new(Point2D::origin(), Point2D::new(camera.width, 0.0)));
-    let axeslines = vec!(Lines2D::new(axes, Color::from_rgb(0.498, 0.0, 1.0), 10.0));
-
-    /* done */
-    Model2D::new(pointsvec, axeslines, vec!())
+    Model2DBuilder::new()
+        .with_primitive(Primitive2DBuilder::new()
+            .with_type(PrimitiveType::Line {thickness: 10.0})
+            .with_color(Color::from_rgb(0.498, 0.0, 1.0))
+            .with_vertex(Point2D::origin())
+            .with_vertex(Point2D::new(0.0, camera.height))
+            .with_vertex(Point2D::origin())
+            .with_vertex(Point2D::new(camera.width, 0.0))
+            .build())
+        .with_primitive(Primitive2DBuilder::new()
+            .with_type(PrimitiveType::Point {point_size: 15.0})
+            .with_color(Color::GREEN)
+            .with_vertex(Point2D::origin())
+            .with_vertex(Point2D::new(0.0, camera.height))
+            .with_vertex(Point2D::new(camera.width, 0.0))
+            .build())
+        .build()
 }
 
 fn create_2d_grid_x_lines(camera: &Camera<f32>) -> Model2D<f32> {
-    /* define lines */
+    /* storage for vertices */
+    let mut vertices = vec!();
+
+    /* define line vertices */
     let hgap = 10;
     let hiters = ((camera.height + (hgap as f32))/(hgap as f32)) as u16;
-    let mut hlines: Vec<Line2D<f32>> = Vec::with_capacity((hiters + 10) as usize);
     for h in 0..hiters {
-        hlines.push(Line2D::new(Point2D::new(0.0, (h * hgap) as f32), Point2D::new(camera.width, (h * hgap) as f32)));
+        vertices.push(Point2D::new(0.0, (h * hgap) as f32));
+        vertices.push(Point2D::new(camera.width, (h * hgap) as f32));
     }
-    let hlinevec = vec!(Lines2D::new(hlines, Color::from_rgb(0.2, 0.2, 0.2), 1.0));
 
     /* done */
-    Model2D::new(vec!(), hlinevec, vec!())
+    Model2DBuilder::new()
+        .with_primitive(Primitive2DBuilder::new()
+            .with_type(PrimitiveType::Line {thickness: 1.0})
+            .with_color(Color::from_rgb(0.2, 0.2, 0.2))
+            .with_vertices(vertices)
+            .build())
+        .build()
 }
 
 fn create_2d_grid_y_lines(camera: &Camera<f32>) -> Model2D<f32> {
-    /* define lines */
+    /* storage for vertices */
+    let mut vertices = vec!();
+
+    /* define line vertices */
     let vgap = 10;
     let viters = ((camera.width + (vgap as f32))/(vgap as f32)) as u16;
-    let mut vlines: Vec<Line2D<f32>> = Vec::with_capacity((viters + 10) as usize);
     for v in 0..viters {
-        vlines.push(Line2D::new(Point2D::new((v * vgap) as f32, 0.0), Point2D::new((v * vgap) as f32, camera.height)));
+        vertices.push(Point2D::new((v * vgap) as f32, 0.0));
+        vertices.push(Point2D::new((v * vgap) as f32, camera.height));
     }
-    let vlinevec = vec!(Lines2D::new(vlines, Color::from_rgb(0.2, 0.2, 0.2), 1.0));
 
     /* done */
-    Model2D::new(vec!(), vlinevec, vec!())
+    Model2DBuilder::new()
+        .with_primitive(Primitive2DBuilder::new()
+            .with_type(PrimitiveType::Line {thickness: 1.0})
+            .with_color(Color::from_rgb(0.2, 0.2, 0.2))
+            .with_vertices(vertices)
+            .build())
+        .build()
 }

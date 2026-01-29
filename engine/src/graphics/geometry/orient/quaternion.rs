@@ -1,5 +1,5 @@
 use crate::graphics::geometry::orient::euler::EulerAngles;
-use crate::graphics::geometry::primitive::point::p3d::{magnitude, Point3D};
+use crate::graphics::geometry::primitive::p3d::{magnitude, Point3D};
 use crate::graphics::geometry::safe_a_cos;
 use num_traits::Float;
 

@@ -1,4 +1,4 @@
-use crate::graphics::geometry::primitive::p3d::Primitive3D;
+use crate::graphics::geometry::primitive::prim3d::Primitive3D;
 use num_traits::Float;
 use std::ops::{Add, Sub};
 

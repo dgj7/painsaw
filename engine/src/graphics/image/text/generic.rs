@@ -1,14 +1,13 @@
 use crate::graphics::image::text::TextConfig;
-use num_traits::Float;
+use crate::graphics::image::RawImage;
 use std::collections::HashMap;
 use std::sync::{LazyLock, Mutex};
-use crate::graphics::image::RawImage;
 
 static ALPHABET : LazyLock<Mutex<HashMap<char, Vec<u16>>>> = LazyLock::new(|| Mutex::new(define_alphabet()));
 static HEIGHT: usize = 15;
 static WIDTH: usize = 13;
 
-pub fn create_generic<F: Float>(config: &TextConfig<F>, message: String) -> RawImage {
+pub fn create_generic(config: &TextConfig, message: String) -> RawImage {
     /* make output for the appended letters */
     let mut rows: Vec<Vec<u16>> = Vec::with_capacity(HEIGHT);
     for _ in 0..HEIGHT {

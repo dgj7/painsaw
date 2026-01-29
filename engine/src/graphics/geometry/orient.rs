@@ -1,7 +1,7 @@
 use crate::graphics::geometry::orient::matrix::m4x4::Matrix4x4;
 use num_traits::Float;
 use crate::config::EngineConfig;
-use crate::graphics::geometry::primitive::point::p3d::Point3D;
+use crate::graphics::geometry::primitive::p3d::Point3D;
 
 pub mod euler;
 pub mod matrix;

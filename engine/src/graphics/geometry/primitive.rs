@@ -1,7 +1,8 @@
 use num_traits::Float;
 
-pub mod point;
-pub mod line;
+pub mod prim3d;
+pub mod prim2d;
+pub mod p2d;
 pub mod p3d;
 
 ///

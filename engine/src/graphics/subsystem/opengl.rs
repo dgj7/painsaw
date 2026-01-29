@@ -1,7 +1,5 @@
-use crate::config::{EngineConfig, CVAR_FOV, DEFAULT_FOV};
+use crate::config::{CVAR_FOV, DEFAULT_FOV};
 use crate::graphics::camera::Camera;
-use crate::graphics::geometry::primitive::line::Lines2D;
-use crate::graphics::geometry::primitive::point::Points2D;
 use crate::graphics::geometry::primitive::PrimitiveType;
 use crate::graphics::image::t2d::Texture2D;
 use crate::graphics::storage::g2d::Graph2D;
@@ -165,8 +163,54 @@ impl<F: Float + Add<F> + Sub<F>> RenderingSubSystemHandle<F> for OpenGLHandle {
         }
     }
 
-    fn render_2d(&self, _g2d: &mut Graph2D<F>, _delta_time: f64, _config: &EngineConfig<F>, _camera: &Camera<F>) {
-        // todo: implement this
+    fn render_2d(&self, g2d: &mut Graph2D<F>) {
+        match self.pipeline {
+            OpenGLPipeline::FixedFunction => {
+                for (_, model) in g2d.models.iter() {
+                    for primitive in model.primitives.iter() {
+                        /* gather some variables */
+                        let vertices = &primitive.vertices;
+
+                        match primitive.p_type {
+                            PrimitiveType::Point{point_size} => {
+                                /* save prior state before making changes */
+                                gl_push_matrix();
+                                gl_push_attrib(GL_ALL_ATTRIB_BITS);
+
+                                gl_color_3f(primitive.color.red, primitive.color.green, primitive.color.blue);
+                                gl_point_size(point_size.to_f32().unwrap());
+
+                                gl_begin_points();
+                                for point in vertices.iter() {
+                                    gl_vertex_2f(point.x.to_f32().unwrap(), point.y.to_f32().unwrap());
+                                }
+                                gl_end();
+
+                                gl_pop_attrib();
+                                gl_pop_matrix();
+                            },
+                            PrimitiveType::Line{thickness} => {
+                                gl_push_matrix();
+                                gl_push_attrib(GL_ALL_ATTRIB_BITS);
+
+                                gl_color_3f(primitive.color.red, primitive.color.green, primitive.color.blue);
+                                gl_line_width(thickness.to_f32().unwrap());
+
+                                gl_begin_lines();
+                                for vertex in vertices.iter() {
+                                    gl_vertex_2f(vertex.x.to_f32().unwrap(), vertex.y.to_f32().unwrap());
+                                }
+                                gl_end();
+
+                                gl_pop_attrib();
+                                gl_pop_matrix();
+                            }
+                        }
+                    }
+                }
+            },
+            OpenGLPipeline::Shaders => {},
+        }
     }
 
     fn after_2d(&self) {
@@ -294,55 +338,6 @@ impl<F: Float + Add<F> + Sub<F>> RenderingSubSystemHandle<F> for OpenGLHandle {
         }
     }
 
-    fn render_2d_points(&self, points: &Points2D<F>) {
-        match self.pipeline {
-            OpenGLPipeline::FixedFunction => {
-                /* save prior state before making changes */
-                gl_push_matrix();
-                gl_push_attrib(GL_ALL_ATTRIB_BITS);
-
-                gl_color_3f(points.color.red, points.color.green, points.color.blue);
-                gl_point_size(points.thickness.to_f32().unwrap());
-
-                gl_begin_points();
-                for point in points.points.iter() {
-                    gl_vertex_2f(point.x.to_f32().unwrap(), point.y.to_f32().unwrap());
-                }
-                gl_end();
-
-                /* restore prior state */
-                gl_pop_attrib();
-                gl_pop_matrix();
-            }
-            OpenGLPipeline::Shaders => {}
-        }
-    }
-
-    fn render_2d_lines(&self, lines: &Lines2D<F>) {
-        match self.pipeline {
-            OpenGLPipeline::FixedFunction => {
-                /* save prior state before making changes */
-                gl_push_matrix();
-                gl_push_attrib(GL_ALL_ATTRIB_BITS);
-
-                gl_color_3f(lines.color.red, lines.color.green, lines.color.blue);
-                gl_line_width(lines.thickness.to_f32().unwrap());
-
-                gl_begin_lines();
-                for line in lines.lines.iter() {
-                    gl_vertex_2f(line.x.x.to_f32().unwrap(), line.x.y.to_f32().unwrap());
-                    gl_vertex_2f(line.y.x.to_f32().unwrap(), line.y.y.to_f32().unwrap());
-                }
-                gl_end();
-
-                /* restore prior state */
-                gl_pop_attrib();
-                gl_pop_matrix();
-            }
-            OpenGLPipeline::Shaders => {}
-        }
-    }
-
     fn render_2d_textures(&self, texture: &Texture2D<F>) {
         match self.pipeline {
             OpenGLPipeline::FixedFunction => {
@@ -352,8 +347,8 @@ impl<F: Float + Add<F> + Sub<F>> RenderingSubSystemHandle<F> for OpenGLHandle {
 
                 /* gather variables */
                 let scale = texture.scale.to_f32().unwrap();
-                let x = texture.world_pos.x.to_f32().unwrap();
-                let y = texture.world_pos.y.to_f32().unwrap();
+                let x = texture.x.to_f32().unwrap();
+                let y = texture.y.to_f32().unwrap();
                 let width = texture.image.width as f32;
                 let height = texture.image.height as f32;
 
