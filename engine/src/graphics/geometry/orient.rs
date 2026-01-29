@@ -1,7 +1,7 @@
 use crate::graphics::geometry::orient::matrix::m4x4::Matrix4x4;
 use num_traits::Float;
 use crate::config::EngineConfig;
-use crate::graphics::geometry::primitive::p3d::Point3D;
+use crate::graphics::geometry::primitive::v3d::Vertex3D;
 
 pub mod euler;
 pub mod matrix;
@@ -58,8 +58,8 @@ impl<F: Float> Orientation<F> {
         let position = self.position.column_major_position();
 
         /* compute change (forward * speed * delta_time), then update position */
-        let change = Point3D::new_mult_scalar(&Point3D::new_mult_scalar(&forward, config.movement.forward_speed), delta_time);
-        let updated = Point3D::new_subtract(&position, &change);
+        let change = Vertex3D::new_mult_scalar(&Vertex3D::new_mult_scalar(&forward, config.movement.forward_speed), delta_time);
+        let updated = Vertex3D::new_subtract(&position, &change);
 
         /* update the orientation matrix */
         self.position.column_major_update_position(&updated);
@@ -71,8 +71,8 @@ impl<F: Float> Orientation<F> {
         let position = self.position.column_major_position();
 
         /* compute change (forward * speed * delta_time), then update position */
-        let change = Point3D::new_mult_scalar(&Point3D::new_mult_scalar(&forward, config.movement.forward_speed), delta_time);
-        let updated = Point3D::new_add(&position, &change);
+        let change = Vertex3D::new_mult_scalar(&Vertex3D::new_mult_scalar(&forward, config.movement.forward_speed), delta_time);
+        let updated = Vertex3D::new_add(&position, &change);
 
         /* update the orientation matrix */
         self.position.column_major_update_position(&updated);
@@ -84,8 +84,8 @@ impl<F: Float> Orientation<F> {
         let position = self.position.column_major_position();
 
         /* compute change (right * speed * delta_time), then update position */
-        let change = Point3D::new_mult_scalar(&Point3D::new_mult_scalar(&right, config.movement.forward_speed), delta_time);
-        let updated = Point3D::new_subtract(&position, &change);
+        let change = Vertex3D::new_mult_scalar(&Vertex3D::new_mult_scalar(&right, config.movement.forward_speed), delta_time);
+        let updated = Vertex3D::new_subtract(&position, &change);
 
         /* update the orientation matrix */
         self.position.column_major_update_position(&updated);
@@ -97,8 +97,8 @@ impl<F: Float> Orientation<F> {
         let position = self.position.column_major_position();
 
         /* compute change (right * speed * delta_time), then update position */
-        let change = Point3D::new_mult_scalar(&Point3D::new_mult_scalar(&right, config.movement.forward_speed), delta_time);
-        let updated = Point3D::new_add(&position, &change);
+        let change = Vertex3D::new_mult_scalar(&Vertex3D::new_mult_scalar(&right, config.movement.forward_speed), delta_time);
+        let updated = Vertex3D::new_add(&position, &change);
 
         /* update the orientation matrix */
         self.position.column_major_update_position(&updated);

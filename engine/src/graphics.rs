@@ -1,6 +1,6 @@
 use crate::config::EngineConfig;
 use crate::graphics::camera::Camera;
-use crate::graphics::geometry::primitive::p3d::Point3D;
+use crate::graphics::geometry::primitive::v3d::Vertex3D;
 use crate::graphics::image::t2d::Texture2DBuilder;
 use crate::graphics::image::RawImage;
 use crate::graphics::storage::m2d::Model2DBuilder;
@@ -219,7 +219,7 @@ fn show_cam_coords<F: Float>(
                        .build());
 }
 
-fn create_text_cam_pos<F: Float>(config: TextConfig, position: &Point3D<F>) -> Option<RawImage> {
+fn create_text_cam_pos<F: Float>(config: TextConfig, position: &Vertex3D<F>) -> Option<RawImage> {
     Option::from(text_2d_image(config.clone(), || {
         String::from(format!(
             "cam-pos: ({:+08.2},{:+08.2},{:+08.2})",
@@ -230,7 +230,7 @@ fn create_text_cam_pos<F: Float>(config: TextConfig, position: &Point3D<F>) -> O
     }))
 }
 
-fn create_text_up<F: Float>(config: TextConfig, up: &Point3D<F>) -> Option<RawImage> {
+fn create_text_up<F: Float>(config: TextConfig, up: &Vertex3D<F>) -> Option<RawImage> {
     Option::from(text_2d_image(config.clone(), || {
         String::from(format!("up:      ({:+.2},{:+.2},{:+.2})",
                              up.x.to_f32().unwrap(),
@@ -239,7 +239,7 @@ fn create_text_up<F: Float>(config: TextConfig, up: &Point3D<F>) -> Option<RawIm
         ))}))
 }
 
-fn create_text_right<F: Float>(config: TextConfig, right: &Point3D<F>) -> Option<RawImage> {
+fn create_text_right<F: Float>(config: TextConfig, right: &Vertex3D<F>) -> Option<RawImage> {
     Option::from(text_2d_image(config.clone(), || {
         String::from(format!(
             "right:   ({:+.2},{:+.2},{:+.2})",
@@ -249,7 +249,7 @@ fn create_text_right<F: Float>(config: TextConfig, right: &Point3D<F>) -> Option
         ))}))
 }
 
-fn create_text_forward<F: Float>(config: TextConfig, forward: &Point3D<F>) -> Option<RawImage> {
+fn create_text_forward<F: Float>(config: TextConfig, forward: &Vertex3D<F>) -> Option<RawImage> {
     Option::from(text_2d_image(config.clone(), || {
         String::from(format!(
             "forward: ({:+.2},{:+.2},{:+.2})",

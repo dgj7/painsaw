@@ -1,7 +1,7 @@
 use engine::graphics::camera::Camera;
 use engine::graphics::color::Color;
-use engine::graphics::geometry::primitive::p2d::Point2D;
-use engine::graphics::geometry::primitive::p3d::Point3D;
+use engine::graphics::geometry::primitive::v2d::Vertex2D;
+use engine::graphics::geometry::primitive::v3d::Vertex3D;
 use engine::graphics::geometry::primitive::prim2d::Primitive2DBuilder;
 use engine::graphics::geometry::primitive::prim3d::Primitive3DBuilder;
 use engine::graphics::geometry::primitive::PrimitiveType;
@@ -31,40 +31,40 @@ impl WorldController<f32> for Demo1WorldController {
             .with_primitive(Primitive3DBuilder::new()
                 .with_type(PrimitiveType::Point {point_size: 5.0})
                 .with_color(Color::WHITE)
-                .with_vertex(Point3D::new(0.0, 0.0, 0.0))
+                .with_vertex(Vertex3D::new(0.0, 0.0, 0.0))
                 .build())
             .with_primitive(Primitive3DBuilder::new()
                 .with_type(PrimitiveType::Line {thickness: 1.0})
                 .with_color(Color::RED)
-                .with_vertex(Point3D::origin())
-                .with_vertex(Point3D::new(0.5, 0.0, 0.0))
+                .with_vertex(Vertex3D::origin())
+                .with_vertex(Vertex3D::new(0.5, 0.0, 0.0))
                 .build())
             .with_primitive(Primitive3DBuilder::new()
                 .with_type(PrimitiveType::Point {point_size: 5.0})
                 .with_color(Color::WHITE)
-                .with_vertex(Point3D::new(0.5, 0.0, 0.0))
+                .with_vertex(Vertex3D::new(0.5, 0.0, 0.0))
                 .build())
             .with_primitive(Primitive3DBuilder::new()
                 .with_type(PrimitiveType::Line {thickness: 1.0})
                 .with_color(Color::GREEN)
-                .with_vertex(Point3D::origin())
-                .with_vertex(Point3D::new(0.0, 0.5, 0.0))
+                .with_vertex(Vertex3D::origin())
+                .with_vertex(Vertex3D::new(0.0, 0.5, 0.0))
                 .build())
             .with_primitive(Primitive3DBuilder::new()
                 .with_type(PrimitiveType::Point {point_size: 5.0})
                 .with_color(Color::WHITE)
-                .with_vertex(Point3D::new(0.0, 0.5, 0.0))
+                .with_vertex(Vertex3D::new(0.0, 0.5, 0.0))
                 .build())
             .with_primitive(Primitive3DBuilder::new()
                 .with_type(PrimitiveType::Line {thickness: 1.0})
                 .with_color(Color::BLUE)
-                .with_vertex(Point3D::origin())
-                .with_vertex(Point3D::new(0.0, 0.0, 0.5))
+                .with_vertex(Vertex3D::origin())
+                .with_vertex(Vertex3D::new(0.0, 0.0, 0.5))
                 .build())
             .with_primitive(Primitive3DBuilder::new()
                 .with_type(PrimitiveType::Point {point_size: 5.0})
                 .with_color(Color::WHITE)
-                .with_vertex(Point3D::new(0.0, 0.0, 0.5))
+                .with_vertex(Vertex3D::new(0.0, 0.0, 0.5))
                 .build())
             .build());
     }
@@ -119,17 +119,17 @@ fn create_2d_axes(camera: &Camera<f32>) -> Model2D<f32> {
         .with_primitive(Primitive2DBuilder::new()
             .with_type(PrimitiveType::Line {thickness: 10.0})
             .with_color(Color::from_rgb(0.498, 0.0, 1.0))
-            .with_vertex(Point2D::origin())
-            .with_vertex(Point2D::new(0.0, camera.height))
-            .with_vertex(Point2D::origin())
-            .with_vertex(Point2D::new(camera.width, 0.0))
+            .with_vertex(Vertex2D::origin())
+            .with_vertex(Vertex2D::new(0.0, camera.height))
+            .with_vertex(Vertex2D::origin())
+            .with_vertex(Vertex2D::new(camera.width, 0.0))
             .build())
         .with_primitive(Primitive2DBuilder::new()
             .with_type(PrimitiveType::Point {point_size: 15.0})
             .with_color(Color::GREEN)
-            .with_vertex(Point2D::origin())
-            .with_vertex(Point2D::new(0.0, camera.height))
-            .with_vertex(Point2D::new(camera.width, 0.0))
+            .with_vertex(Vertex2D::origin())
+            .with_vertex(Vertex2D::new(0.0, camera.height))
+            .with_vertex(Vertex2D::new(camera.width, 0.0))
             .build())
         .build()
 }
@@ -142,8 +142,8 @@ fn create_2d_grid_x_lines(camera: &Camera<f32>) -> Model2D<f32> {
     let hgap = 10;
     let hiters = ((camera.height + (hgap as f32))/(hgap as f32)) as u16;
     for h in 0..hiters {
-        vertices.push(Point2D::new(0.0, (h * hgap) as f32));
-        vertices.push(Point2D::new(camera.width, (h * hgap) as f32));
+        vertices.push(Vertex2D::new(0.0, (h * hgap) as f32));
+        vertices.push(Vertex2D::new(camera.width, (h * hgap) as f32));
     }
 
     /* done */
@@ -164,8 +164,8 @@ fn create_2d_grid_y_lines(camera: &Camera<f32>) -> Model2D<f32> {
     let vgap = 10;
     let viters = ((camera.width + (vgap as f32))/(vgap as f32)) as u16;
     for v in 0..viters {
-        vertices.push(Point2D::new((v * vgap) as f32, 0.0));
-        vertices.push(Point2D::new((v * vgap) as f32, camera.height));
+        vertices.push(Vertex2D::new((v * vgap) as f32, 0.0));
+        vertices.push(Vertex2D::new((v * vgap) as f32, camera.height));
     }
 
     /* done */

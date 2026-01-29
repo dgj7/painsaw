@@ -2,8 +2,8 @@ use num_traits::Float;
 
 pub mod prim3d;
 pub mod prim2d;
-pub mod p2d;
-pub mod p3d;
+pub mod v2d;
+pub mod v3d;
 
 ///
 /// simple shape types.

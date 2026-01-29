@@ -1,5 +1,5 @@
 use crate::graphics::geometry::orient::euler::EulerAngles;
-use crate::graphics::geometry::primitive::p3d::{magnitude, Point3D};
+use crate::graphics::geometry::primitive::v3d::{magnitude, Vertex3D};
 use crate::graphics::geometry::safe_a_cos;
 use num_traits::Float;
 
@@ -50,7 +50,7 @@ impl<F: Float> Quaternion<F> {
         self.z = theta_over_2.sin();
     }
 
-    pub fn rotate_about_axis(&mut self, axis: &Point3D<F>, theta: F) {
+    pub fn rotate_about_axis(&mut self, axis: &Vertex3D<F>, theta: F) {
         let mag_minus_1 = magnitude(&axis) - F::one();
         let fabs_mag = F::abs(mag_minus_1);
         assert!(fabs_mag < F::from(0.1).unwrap());
@@ -127,11 +127,11 @@ impl<F: Float> Quaternion<F> {
         F::from(theta_over_2 * F::from(2.0).unwrap()).unwrap()
     }
 
-    pub fn to_rotation_axis(&self) -> Point3D<F> {
+    pub fn to_rotation_axis(&self) -> Vertex3D<F> {
         let sin_theta_over_2_squared = F::from(1.0).unwrap() - (self.w * self.w);
 
         if sin_theta_over_2_squared <= F::from(0.0).unwrap() {
-            return Point3D {
+            return Vertex3D {
                 x: F::one(),
                 y: F::zero(),
                 z: F::zero(),
@@ -139,7 +139,7 @@ impl<F: Float> Quaternion<F> {
         }
 
         let one_over_sin_theta_over_2 = F::one() / sin_theta_over_2_squared.sqrt();
-        Point3D {
+        Vertex3D {
             x: self.x * one_over_sin_theta_over_2,
             y: self.y * one_over_sin_theta_over_2,
             z: self.z * one_over_sin_theta_over_2,

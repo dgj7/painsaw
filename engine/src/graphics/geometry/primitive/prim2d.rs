@@ -1,5 +1,5 @@
 use crate::graphics::color::Color;
-use crate::graphics::geometry::primitive::p2d::Point2D;
+use crate::graphics::geometry::primitive::v2d::Vertex2D;
 use crate::graphics::geometry::primitive::PrimitiveType;
 use crate::logger::log;
 use crate::logger::log_level::LogLevel;
@@ -7,18 +7,18 @@ use num_traits::Float;
 
 pub struct Primitive2D<F: Float> {
     pub p_type: PrimitiveType<F>,
-    pub vertices: Vec<Point2D<F>>,
+    pub vertices: Vec<Vertex2D<F>>,
     pub color: Color,
 }
 
 pub struct Primitive2DBuilder<F: Float> {
     the_p_type: Option<PrimitiveType<F>>,
-    the_vertices: Vec<Point2D<F>>,
+    the_vertices: Vec<Vertex2D<F>>,
     the_color: Option<Color>,
 }
 
 impl<F: Float> Primitive2D<F> {
-    pub fn new(p_type: PrimitiveType<F>, vertices: Vec<Point2D<F>>, color: Color) -> Primitive2D<F> {
+    pub fn new(p_type: PrimitiveType<F>, vertices: Vec<Vertex2D<F>>, color: Color) -> Primitive2D<F> {
         if vertices.len() == 0 {
             log(LogLevel::Warning, &|| String::from("0 vertices specified"));
         }
@@ -54,12 +54,12 @@ impl<F: Float> Primitive2DBuilder<F> {
         self
     }
 
-    pub fn with_vertex(mut self, vertex: Point2D<F>) -> Self {
+    pub fn with_vertex(mut self, vertex: Vertex2D<F>) -> Self {
         self.the_vertices.push(vertex);
         self
     }
 
-    pub fn with_vertices(mut self, vertices: Vec<Point2D<F>>) -> Self {
+    pub fn with_vertices(mut self, vertices: Vec<Vertex2D<F>>) -> Self {
         self.the_vertices.extend(vertices);
         self
     }
