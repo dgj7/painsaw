@@ -1,4 +1,4 @@
-use crate::graphics::subsystem::opengl::opengl_errors::check_errors_gl;
+use crate::graphics::subsystem::opengl::errors::check_errors_gl;
 use crate::logger::log;
 use crate::logger::log_level::LogLevel;
 use std::ffi::{c_char, CStr};

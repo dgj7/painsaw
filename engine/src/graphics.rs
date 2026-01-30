@@ -60,38 +60,12 @@ impl<F: Float + Add<F> + Sub<F>> GraphicsIntermediary<F> {
     }
 
     pub(crate) fn prepare_2d(&self, g2d: &mut Graph2D<F>, camera: &Camera<F>) {
-        /* prepare the screen for 2d */
-        self.subsystem.prepare_2d(camera);
-
-        /* initialize un-initialized (new) textures */
-        for (_, model) in &mut g2d.models {
-            for texture in &mut model.textures {
-                if !texture.initialized {
-                    self.subsystem.initialize_texture_2d(texture);
-                }
-                self.subsystem.update_texture_2d(texture);
-            }
-        }
+        self.subsystem.prepare_2d(camera, g2d);
     }
 
-    pub(crate) fn render_2d(
-        &mut self,
-        g2d: &mut Graph2D<F>,
-        delta_time: f64,
-        config: &EngineConfig<F>,
-        camera: &Camera<F>,
-    ) {
+    pub(crate) fn render_2d(&mut self, g2d: &mut Graph2D<F>, delta_time: f64, config: &EngineConfig<F>, camera: &Camera<F>) {
         /* render primitives */
         self.subsystem.render_2d(g2d);
-
-        /* apply textures  */
-        for (_, model) in g2d.models.iter() {
-            model
-                .textures
-                .iter()
-                .filter(|x| x.initialized)
-                .for_each(|x| self.subsystem.render_2d_textures(x));
-        }
 
         /* conditional display */
         show_fps(g2d, delta_time, config);
@@ -144,12 +118,7 @@ fn show_fps<F: Float>(g2d: &mut Graph2D<F>, delta_time: f64, config: &EngineConf
                        .build());
 }
 
-fn show_cam_coords<F: Float>(
-    g2d: &mut Graph2D<F>,
-    config: &EngineConfig<F>,
-    camera: &Camera<F>,
-    scale: f32,
-) {
+fn show_cam_coords<F: Float>(g2d: &mut Graph2D<F>, config: &EngineConfig<F>, camera: &Camera<F>, scale: f32) {
     /* nothing to do if not enabled */
     if !config.renderer.show_cam_coords {
         return;
