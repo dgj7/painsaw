@@ -7,6 +7,7 @@ use crate::logger::log_level::LogLevel;
 
 pub mod ffp2d;
 pub(crate) mod api;
+pub mod ffp3d;
 
 pub(crate) fn ffp_before_scene() {
     gl_clear_color(0.0, 0.0, 0.0, 1.0);
