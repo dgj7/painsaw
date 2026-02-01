@@ -35,3 +35,20 @@ impl Color {
 
     pub const TRANSPARENT: Color = Color::from_rgba(1.0, 1.0, 1.0, 0.0);
 }
+
+#[derive(Hash, Ord, PartialOrd, PartialEq, Eq, Clone, Copy, Debug)]
+pub struct ColorSelection {
+    fgr: u8, fgg: u8, fgb: u8, fga: u8,
+    bgr: u8, bgg: u8, bgb: u8, bga: u8,
+}
+
+impl ColorSelection {
+    pub(crate) fn new(foreground: Color, background: Color) -> ColorSelection {
+        let (fgr, fgg, fgb, fga) = foreground.to_u8();
+        let (bgr, bgg, bgb, bga) = background.to_u8();
+        ColorSelection {
+            fgr, fgg, fgb, fga,
+            bgr, bgg, bgb, bga,
+        }
+    }
+}

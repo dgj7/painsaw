@@ -1,7 +1,3 @@
-use engine::graphics::color::Color;
-use engine::graphics::image::t2d::Texture2DBuilder;
-use engine::graphics::image::text::{text_2d_image, TextConfig, Typeface};
-use engine::graphics::storage::m2d::Model2DBuilder;
 use crate::d1m2d::{create_2d_axes, create_2d_grid_x_lines, create_2d_grid_y_lines, create_2d_repeated_texts};
 use crate::d1m3d::create_3d_axes;
 use engine::input::kn::KeyName;

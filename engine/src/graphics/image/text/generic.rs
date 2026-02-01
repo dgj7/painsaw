@@ -1,4 +1,4 @@
-use crate::graphics::color::Color;
+use crate::graphics::color::{Color, ColorSelection};
 use crate::graphics::image::text::TextConfig;
 use crate::graphics::image::RawImage;
 use crate::logger::log;
@@ -14,22 +14,7 @@ static LETTERS : LazyLock<Vec<char>> = LazyLock::new(|| define_low().keys().clon
 static HEIGHT: usize = 15;
 static WIDTH: usize = 13;
 
-#[derive(Hash, Ord, PartialOrd, PartialEq, Eq, Clone, Copy, Debug)]
-struct ColorSelection {
-    fgr: u8, fgg: u8, fgb: u8, fga: u8,
-    bgr: u8, bgg: u8, bgb: u8, bga: u8,
-}
 
-impl ColorSelection {
-    fn new(foreground: Color, background: Color) -> ColorSelection {
-        let (fgr, fgg, fgb, fga) = foreground.to_u8();
-        let (bgr, bgg, bgb, bga) = background.to_u8();
-        ColorSelection {
-            fgr, fgg, fgb, fga,
-            bgr, bgg, bgb, bga,
-        }
-    }
-}
 
 pub fn create_generic(config: &TextConfig, message: String) -> RawImage {
     /* make output for the appended letters; prime rows vector with the correct number of sub-vectors */
