@@ -1,12 +1,5 @@
-use engine::graphics::camera::Camera;
-use engine::graphics::color::Color;
-use engine::graphics::geometry::primitive::v2d::Vertex2D;
-use engine::graphics::geometry::primitive::v3d::Vertex3D;
-use engine::graphics::geometry::primitive::prim2d::Primitive2DBuilder;
-use engine::graphics::geometry::primitive::prim3d::Primitive3DBuilder;
-use engine::graphics::geometry::primitive::PrimitiveType;
-use engine::graphics::storage::m2d::{Model2D, Model2DBuilder};
-use engine::graphics::storage::m3d::Model3DBuilder;
+use crate::d1m2d::{create_2d_axes, create_2d_grid_x_lines, create_2d_grid_y_lines};
+use crate::d1m3d::create_3d_axes;
 use engine::input::kn::KeyName;
 use engine::logger::log;
 use engine::logger::log_level::LogLevel;
@@ -27,46 +20,7 @@ impl WorldController<f32> for Demo1WorldController {
         context.g2d.models.insert(M2D_Y_VERT.parse().unwrap(), create_2d_grid_y_lines(&context.camera));
 
         /* 3d: origin axes */
-        context.g3d.models.insert("4-3d-axes".to_string(), Model3DBuilder::new()
-            .with_primitive(Primitive3DBuilder::new()
-                .with_type(PrimitiveType::Point {point_size: 5.0})
-                .with_color(Color::WHITE)
-                .with_vertex(Vertex3D::new(0.0, 0.0, 0.0))
-                .build())
-            .with_primitive(Primitive3DBuilder::new()
-                .with_type(PrimitiveType::Line {thickness: 1.0})
-                .with_color(Color::RED)
-                .with_vertex(Vertex3D::origin())
-                .with_vertex(Vertex3D::new(0.5, 0.0, 0.0))
-                .build())
-            .with_primitive(Primitive3DBuilder::new()
-                .with_type(PrimitiveType::Point {point_size: 5.0})
-                .with_color(Color::WHITE)
-                .with_vertex(Vertex3D::new(0.5, 0.0, 0.0))
-                .build())
-            .with_primitive(Primitive3DBuilder::new()
-                .with_type(PrimitiveType::Line {thickness: 1.0})
-                .with_color(Color::GREEN)
-                .with_vertex(Vertex3D::origin())
-                .with_vertex(Vertex3D::new(0.0, 0.5, 0.0))
-                .build())
-            .with_primitive(Primitive3DBuilder::new()
-                .with_type(PrimitiveType::Point {point_size: 5.0})
-                .with_color(Color::WHITE)
-                .with_vertex(Vertex3D::new(0.0, 0.5, 0.0))
-                .build())
-            .with_primitive(Primitive3DBuilder::new()
-                .with_type(PrimitiveType::Line {thickness: 1.0})
-                .with_color(Color::BLUE)
-                .with_vertex(Vertex3D::origin())
-                .with_vertex(Vertex3D::new(0.0, 0.0, 0.5))
-                .build())
-            .with_primitive(Primitive3DBuilder::new()
-                .with_type(PrimitiveType::Point {point_size: 5.0})
-                .with_color(Color::WHITE)
-                .with_vertex(Vertex3D::new(0.0, 0.0, 0.5))
-                .build())
-            .build());
+        context.g3d.attach("4-3d-axes", create_3d_axes());
     }
 
     fn update_world_helper(&self, context: &mut RendererContext<f32>) {
@@ -112,68 +66,4 @@ impl Demo1WorldController {
     pub(crate) fn new() -> Self {
         Self {}
     }
-}
-
-fn create_2d_axes(camera: &Camera<f32>) -> Model2D<f32> {
-    Model2DBuilder::new()
-        .with_primitive(Primitive2DBuilder::new()
-            .with_type(PrimitiveType::Line {thickness: 10.0})
-            .with_color(Color::from_rgb(0.498, 0.0, 1.0))
-            .with_vertex(Vertex2D::origin())
-            .with_vertex(Vertex2D::new(0.0, camera.height))
-            .with_vertex(Vertex2D::origin())
-            .with_vertex(Vertex2D::new(camera.width, 0.0))
-            .build())
-        .with_primitive(Primitive2DBuilder::new()
-            .with_type(PrimitiveType::Point {point_size: 15.0})
-            .with_color(Color::GREEN)
-            .with_vertex(Vertex2D::origin())
-            .with_vertex(Vertex2D::new(0.0, camera.height))
-            .with_vertex(Vertex2D::new(camera.width, 0.0))
-            .build())
-        .build()
-}
-
-fn create_2d_grid_x_lines(camera: &Camera<f32>) -> Model2D<f32> {
-    /* storage for vertices */
-    let mut vertices = vec!();
-
-    /* define line vertices */
-    let hgap = 10;
-    let hiters = ((camera.height + (hgap as f32))/(hgap as f32)) as u16;
-    for h in 0..hiters {
-        vertices.push(Vertex2D::new(0.0, (h * hgap) as f32));
-        vertices.push(Vertex2D::new(camera.width, (h * hgap) as f32));
-    }
-
-    /* done */
-    Model2DBuilder::new()
-        .with_primitive(Primitive2DBuilder::new()
-            .with_type(PrimitiveType::Line {thickness: 1.0})
-            .with_color(Color::from_rgb(0.2, 0.2, 0.2))
-            .with_vertices(vertices)
-            .build())
-        .build()
-}
-
-fn create_2d_grid_y_lines(camera: &Camera<f32>) -> Model2D<f32> {
-    /* storage for vertices */
-    let mut vertices = vec!();
-
-    /* define line vertices */
-    let vgap = 10;
-    let viters = ((camera.width + (vgap as f32))/(vgap as f32)) as u16;
-    for v in 0..viters {
-        vertices.push(Vertex2D::new((v * vgap) as f32, 0.0));
-        vertices.push(Vertex2D::new((v * vgap) as f32, camera.height));
-    }
-
-    /* done */
-    Model2DBuilder::new()
-        .with_primitive(Primitive2DBuilder::new()
-            .with_type(PrimitiveType::Line {thickness: 1.0})
-            .with_color(Color::from_rgb(0.2, 0.2, 0.2))
-            .with_vertices(vertices)
-            .build())
-        .build()
 }

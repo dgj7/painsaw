@@ -108,7 +108,7 @@ impl<F: Float + Add<F> + Sub<F>> RenderingSubSystemHandle<F> for OpenGLHandle {
     fn render_3d(&self, g3d: &mut Graph3D<F>) {
         match self.pipeline {
             OpenGLPipeline::FixedFunction => {
-                for (_, model) in g3d.models.iter() {
+                for (_, model) in g3d.iter() {
                     for primitive in model.primitives.iter() {
                         match primitive.ptype {
                             PrimitiveType::Point {point_size} => {

@@ -1,0 +1,48 @@
+use engine::graphics::color::Color;
+use engine::graphics::geometry::primitive::prim3d::Primitive3DBuilder;
+use engine::graphics::geometry::primitive::PrimitiveType;
+use engine::graphics::geometry::primitive::v3d::Vertex3D;
+use engine::graphics::storage::m3d::{Model3D, Model3DBuilder};
+
+pub(super) fn create_3d_axes() -> Model3D<f32> {
+    Model3DBuilder::new()
+        .with_primitive(Primitive3DBuilder::new()
+            .with_type(PrimitiveType::Point {point_size: 5.0})
+            .with_color(Color::WHITE)
+            .with_vertex(Vertex3D::new(0.0, 0.0, 0.0))
+            .build())
+        .with_primitive(Primitive3DBuilder::new()
+            .with_type(PrimitiveType::Line {thickness: 1.0})
+            .with_color(Color::RED)
+            .with_vertex(Vertex3D::origin())
+            .with_vertex(Vertex3D::new(0.5, 0.0, 0.0))
+            .build())
+        .with_primitive(Primitive3DBuilder::new()
+            .with_type(PrimitiveType::Point {point_size: 5.0})
+            .with_color(Color::WHITE)
+            .with_vertex(Vertex3D::new(0.5, 0.0, 0.0))
+            .build())
+        .with_primitive(Primitive3DBuilder::new()
+            .with_type(PrimitiveType::Line {thickness: 1.0})
+            .with_color(Color::GREEN)
+            .with_vertex(Vertex3D::origin())
+            .with_vertex(Vertex3D::new(0.0, 0.5, 0.0))
+            .build())
+        .with_primitive(Primitive3DBuilder::new()
+            .with_type(PrimitiveType::Point {point_size: 5.0})
+            .with_color(Color::WHITE)
+            .with_vertex(Vertex3D::new(0.0, 0.5, 0.0))
+            .build())
+        .with_primitive(Primitive3DBuilder::new()
+            .with_type(PrimitiveType::Line {thickness: 1.0})
+            .with_color(Color::BLUE)
+            .with_vertex(Vertex3D::origin())
+            .with_vertex(Vertex3D::new(0.0, 0.0, 0.5))
+            .build())
+        .with_primitive(Primitive3DBuilder::new()
+            .with_type(PrimitiveType::Point {point_size: 5.0})
+            .with_color(Color::WHITE)
+            .with_vertex(Vertex3D::new(0.0, 0.0, 0.5))
+            .build())
+        .build()
+}

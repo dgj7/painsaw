@@ -9,6 +9,8 @@ use engine::window::create_window;
 
 pub mod demo1_world_controller;
 mod config;
+mod d1m2d;
+mod d1m3d;
 
 fn main() {
     configure(LoggerConfig { level: LogLevel::Debug, target: LogTarget::StdOut });
