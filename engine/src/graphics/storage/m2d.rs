@@ -22,6 +22,16 @@ impl<F: Float + Add<F> + Sub<F>> Model2D<F> {
     }
 }
 
+impl<F: Float> Model2D<F> {
+    pub fn attach_primitive(&mut self, primitive: Primitive2D<F>) {
+        self.primitives.push(primitive);
+    }
+
+    pub fn attach_texture(&mut self, texture: Texture2D<F>) {
+        self.textures.push(texture);
+    }
+}
+
 impl<F: Float + Add<F> + Sub<F>> Model2DBuilder<F> {
     pub fn new() -> Model2DBuilder<F> {
         Model2DBuilder {

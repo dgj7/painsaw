@@ -1,4 +1,8 @@
-use crate::d1m2d::{create_2d_axes, create_2d_grid_x_lines, create_2d_grid_y_lines};
+use engine::graphics::color::Color;
+use engine::graphics::image::t2d::Texture2DBuilder;
+use engine::graphics::image::text::{text_2d_image, TextConfig, Typeface};
+use engine::graphics::storage::m2d::Model2DBuilder;
+use crate::d1m2d::{create_2d_axes, create_2d_grid_x_lines, create_2d_grid_y_lines, create_2d_repeated_texts};
 use crate::d1m3d::create_3d_axes;
 use engine::input::kn::KeyName;
 use engine::logger::log;
@@ -18,6 +22,8 @@ impl WorldController<f32> for Demo1WorldController {
         context.g2d.attach(M2D_XY_PURPLE, create_2d_axes(&context.camera));
         context.g2d.attach(M2D_X_HORIZ, create_2d_grid_x_lines(&context.camera));
         context.g2d.attach(M2D_Y_VERT, create_2d_grid_y_lines(&context.camera));
+
+        context.g2d.attach("99-repeated", create_2d_repeated_texts(16, 0.0, 600.0));
 
         /* 3d: origin axes */
         context.g3d.attach("4-3d-axes", create_3d_axes());

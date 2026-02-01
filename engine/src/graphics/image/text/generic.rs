@@ -1,48 +1,71 @@
+use crate::graphics::color::Color;
 use crate::graphics::image::text::TextConfig;
 use crate::graphics::image::RawImage;
+use crate::logger::log;
+use crate::logger::log_level::LogLevel;
+use std::clone::Clone;
 use std::collections::HashMap;
+use std::iter::Iterator;
 use std::sync::{LazyLock, Mutex};
 
-static ALPHABET : LazyLock<Mutex<HashMap<char, Vec<u16>>>> = LazyLock::new(|| Mutex::new(define_alphabet()));
+static ALPHABET : LazyLock<Mutex<HashMap<ColorSelection, HashMap<char, Vec<Vec<u8>>>>>> = LazyLock::new(|| Mutex::new(define_by_color()));
+static LETTERS : LazyLock<Vec<char>> = LazyLock::new(|| define_low().keys().cloned().collect());
+
 static HEIGHT: usize = 15;
 static WIDTH: usize = 13;
 
+#[derive(Hash, Ord, PartialOrd, PartialEq, Eq, Clone, Copy, Debug)]
+struct ColorSelection {
+    fgr: u8, fgg: u8, fgb: u8, fga: u8,
+    bgr: u8, bgg: u8, bgb: u8, bga: u8,
+}
+
+impl ColorSelection {
+    fn new(foreground: Color, background: Color) -> ColorSelection {
+        let (fgr, fgg, fgb, fga) = foreground.to_u8();
+        let (bgr, bgg, bgb, bga) = background.to_u8();
+        ColorSelection {
+            fgr, fgg, fgb, fga,
+            bgr, bgg, bgb, bga,
+        }
+    }
+}
+
 pub fn create_generic(config: &TextConfig, message: String) -> RawImage {
-    /* make output for the appended letters */
-    let mut rows: Vec<Vec<u16>> = Vec::with_capacity(HEIGHT);
+    /* make output for the appended letters; prime rows vector with the correct number of sub-vectors */
+    let mut rows: Vec<Vec<u8>> = Vec::with_capacity(HEIGHT);
     for _ in 0..HEIGHT {
         rows.push(vec!());
     }
 
-    /* get all the appended letters, as u16 */
+    /* find our alphabet, or create it */
+    let key = ColorSelection::new(config.foreground, config.background);
+    let mut guard = ALPHABET.lock().unwrap();
+    if !guard.contains_key(&key) {
+        log(LogLevel::Debug, &|| String::from(format!("dynamically created alphabet: [{:?}],[{:?}]", config.foreground, config.background)));
+        guard.insert(key, define_upscaled(config.foreground, config.background));
+    }
+    let alphabet = guard.get(&key).expect("todo: still can't find alphabet");
+
+    /* iterate over letters in the message */
     for letter in message.chars() {
-        let letter_data = find(letter);
-        for (idx, word) in letter_data.iter().enumerate() {
-            let row: &mut Vec<u16> = &mut rows[idx];
-            row.push(word.reverse_bits());
+        let char_data = alphabet.get(&letter).expect("todo: can't find char data");
+        for i in 0..HEIGHT {
+            let bytes = char_data.get(i).unwrap().clone();
+            rows[i].extend(bytes);
         }
     }
 
-    /* create scene for u8 */
-    let mut output = vec!();
+    /* the rows array should never be more than the number of rows needed for encoding the characters */
+    if rows.len() != HEIGHT {
+        panic!("rows.len() should be [{}], but it's [{}]", HEIGHT, rows.len());
+    }
 
-    /* iterate over u16 and convert to u8 */
+    /* copy rows into contiguous array */
+    let mut output: Vec<u8> = vec!();
     for row in rows {
-        for word in row {
-            for i in 0..WIDTH {
-                let bit = ((word >> i) & 1) != 0;
-
-                let expanded = if bit {
-                    config.foreground.to_u8()
-                } else {
-                    config.background.to_u8()
-                };
-
-                output.push(expanded.0);
-                output.push(expanded.1);
-                output.push(expanded.2);
-                output.push(expanded.3);
-            }
+        for byte in row {
+            output.push(byte);
         }
     }
 
@@ -50,16 +73,56 @@ pub fn create_generic(config: &TextConfig, message: String) -> RawImage {
     RawImage::new((message.len() * WIDTH) as u32, HEIGHT as u32, output)
 }
 
-fn find(letter: char) -> Vec<u16> {
-    let map = ALPHABET.lock().unwrap();
-    if map.contains_key(&letter) {
-        map.get(&letter).unwrap().to_vec()
-    } else {
-        map.get(&' ').unwrap().to_vec()
-    }
+fn define_by_color() -> HashMap<ColorSelection, HashMap<char, Vec<Vec<u8>>>> {
+    let mut output = HashMap::new();
+
+    output.insert(ColorSelection::new(Color::RED, Color::TRANSPARENT), define_upscaled(Color::RED, Color::TRANSPARENT));
+
+    output
 }
 
-fn define_alphabet() -> HashMap<char, Vec<u16>> {
+fn define_upscaled(foreground: Color, background: Color) -> HashMap<char, Vec<Vec<u8>>> {
+    let mut output = HashMap::new();
+    let low = define_low();
+
+    for letter in LETTERS.iter() {
+        let mut upscaled = vec!();
+        let otherwise = vec![0; HEIGHT];
+        let low_rows_u16 = low.get(letter).unwrap_or(&otherwise);
+        for word in low_rows_u16 {
+            let mut row = vec!();
+            for i in 0..WIDTH {
+                let bit = ((word.reverse_bits() >> i) & 1) != 0;
+
+                let expanded = if bit {
+                    foreground.to_u8()
+                } else {
+                    background.to_u8()
+                };
+
+                row.push(expanded.0);
+                row.push(expanded.1);
+                row.push(expanded.2);
+                row.push(expanded.3);
+            }
+
+            if row.len() != WIDTH * 4 {
+                panic!("row.len: [{}] != [{}]", row.len(), WIDTH * 4);
+            }
+            upscaled.push(row);
+        }
+
+        if upscaled.len() != HEIGHT {
+            panic!("upscaled.len: [{}] != [{}]", upscaled.len(), HEIGHT);
+        }
+        output.insert(*letter, upscaled);
+    }
+
+    log(LogLevel::Debug, &|| String::from(format!("created alphabet: [{:?}],[{:?}]", foreground, background)));
+    output
+}
+
+fn define_low() -> HashMap<char, Vec<u16>> {
     let mut data = HashMap::new();
 
     data.insert(' ', vec![
@@ -1679,4 +1742,274 @@ fn define_alphabet() -> HashMap<char, Vec<u16>> {
     ]);
 
     data
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::graphics::color::Color;
+    use crate::graphics::image::text::generic::{create_generic, HEIGHT, WIDTH};
+    use crate::graphics::image::text::{TextConfig, Typeface};
+
+    fn assert_eq_color(color: Color, bytes: Vec<u8>) {
+        assert_eq!(4, bytes.len());
+        let (a, b, c, d) = color.to_u8();
+        assert_eq!(a, bytes[0]);
+        assert_eq!(b, bytes[1]);
+        assert_eq!(c, bytes[2]);
+        assert_eq!(d, bytes[3]);
+    }
+
+    #[test]
+    fn one_letter() {
+        let config = TextConfig {
+            typeface: Typeface::Generic,
+            foreground: Color::RED,
+            background: Color::TRANSPARENT,
+        };
+        let mut image = create_generic(&config, "A".parse().unwrap());
+
+        assert_eq!(780, image.data.len());
+        assert_eq!(HEIGHT * WIDTH * 4, image.data.len());
+
+        /* assert first row (WIDTH*4)=52 bytes; all 0, so all TRANSPARENT (255,255,255,0) */
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+
+        /* assert second row; 0b00  00111000000  000 */
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::RED, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::RED, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::RED, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+
+        /* assert 3rd row; 0b00  00001000000  000 */
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::RED, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+
+        /* assert 4th row; 0b00  00010100000  000 */
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::RED, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::RED, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+
+        /* assert 5th row; 0b00  00010100000  000 */
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::RED, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::RED, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+
+        /* assert 6th row; 0b00  00100010000  000 */
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::RED, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::RED, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+
+        /* assert 7th row; 0b00  00100010000  000 */
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::RED, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::RED, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+
+        /* assert 8th row; 0b00  00111110000  000 */
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::RED, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::RED, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::RED, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::RED, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::RED, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+
+        /* assert 9th row; 0b00  01000001000  000 */
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::RED, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::RED, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+
+        /* assert 10th row; 0b00  01000001000  000 */
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::RED, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::RED, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+
+        /* assert 11th row; 0b00  11100011100  000 */
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::RED, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::RED, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::RED, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::RED, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::RED, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::RED, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+
+        /* assert 12th row; 0 */
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+
+        /* assert 13th row; 0 */
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+
+        /* assert 14th row; 0 */
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+
+        /* assert 15th row; 0 */
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+        assert_eq_color(Color::TRANSPARENT, Vec::from(image.data.drain(0..4).as_slice()));
+
+        /* data should now be empty */
+        assert_eq!(0, image.data.len());
+    }
+
+    #[test]
+    fn two_letters() {
+        let config = TextConfig {
+            typeface: Typeface::Generic,
+            foreground: Color::RED,
+            background: Color::TRANSPARENT,
+        };
+        let mut image = create_generic(&config, "AB".parse().unwrap());
+
+        assert_eq!(780*2, image.data.len());
+        assert_eq!(HEIGHT * WIDTH * 4 * 2, image.data.len());
+    }
 }
