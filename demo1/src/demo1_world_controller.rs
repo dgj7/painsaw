@@ -15,9 +15,9 @@ pub(crate) struct Demo1WorldController {}
 impl WorldController<f32> for Demo1WorldController {
     fn initialize_world_helper(&self, context: &mut RendererContext<f32>) {
         /* 2d grid: axes (in thicc purple), x, and y lines */
-        context.g2d.models.insert(M2D_XY_PURPLE.parse().unwrap(), create_2d_axes(&context.camera));
-        context.g2d.models.insert(M2D_X_HORIZ.parse().unwrap(), create_2d_grid_x_lines(&context.camera));
-        context.g2d.models.insert(M2D_Y_VERT.parse().unwrap(), create_2d_grid_y_lines(&context.camera));
+        context.g2d.attach(M2D_XY_PURPLE, create_2d_axes(&context.camera));
+        context.g2d.attach(M2D_X_HORIZ, create_2d_grid_x_lines(&context.camera));
+        context.g2d.attach(M2D_Y_VERT, create_2d_grid_y_lines(&context.camera));
 
         /* 3d: origin axes */
         context.g3d.attach("4-3d-axes", create_3d_axes());
@@ -31,11 +31,11 @@ impl WorldController<f32> for Demo1WorldController {
 
                 /* handle window resize for grid */
                 if is.screen_resized {
-                    context.g2d.models.entry(M2D_XY_PURPLE.parse().unwrap()).and_modify(|e| *e = create_2d_axes(&context.camera));
-                    context.g2d.models.entry(M2D_X_HORIZ.parse().unwrap()).and_modify(|e| *e = create_2d_grid_x_lines(&context.camera));
-                    context.g2d.models.entry(M2D_Y_VERT.parse().unwrap()).and_modify(|e| *e = create_2d_grid_y_lines(&context.camera));
+                    context.g2d.update(M2D_XY_PURPLE, |e| *e = create_2d_axes(&context.camera));
+                    context.g2d.update(M2D_X_HORIZ, |e| *e = create_2d_grid_x_lines(&context.camera));
+                    context.g2d.update(M2D_Y_VERT, |e| *e = create_2d_grid_y_lines(&context.camera));
 
-                    log(LogLevel::Debug, &|| String::from(format!("window size changed ({}x{}); 2d storage count is [{}]", ccd.width, ccd.height, context.g2d.models.len())));
+                    log(LogLevel::Debug, &|| String::from(format!("window size changed ({}x{}); 2d storage count is [{}]", ccd.width, ccd.height, context.g2d.count())));
                 }
 
                 /* camera controls */

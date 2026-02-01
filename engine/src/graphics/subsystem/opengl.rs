@@ -73,7 +73,7 @@ impl<F: Float + Add<F> + Sub<F>> RenderingSubSystemHandle<F> for OpenGLHandle {
     fn render_2d(&self, g2d: &mut Graph2D<F>) {
         match self.pipeline {
             OpenGLPipeline::FixedFunction => {
-                for (_, model) in g2d.models.iter() {
+                for (_, model) in g2d.iter() {
                     for primitive in model.primitives.iter() {
                         match primitive.p_type {
                             PrimitiveType::Point{point_size} => { ffp_render_2d_points(primitive, point_size)},

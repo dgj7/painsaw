@@ -36,7 +36,7 @@ pub(crate) fn ffp_2d_teardown() {
 pub(crate) fn ffp_2d_initialize_textures<F: Float>(g2d: &mut Graph2D<F>) {
     /* initialize textures */
     gl_enable(GL_TEXTURE_2D);
-    for (_, value) in g2d.models.iter_mut() {
+    for (_, value) in g2d.iter_mut() {
         for tex in &mut value.textures {
             ffp_2d_initialize_texture(tex);
         }
@@ -47,7 +47,7 @@ pub(crate) fn ffp_2d_initialize_textures<F: Float>(g2d: &mut Graph2D<F>) {
 }
 
 pub(crate) fn ffp_2d_update_textures<F: Float>(g2d: &mut Graph2D<F>) {
-    for (_, model) in &mut g2d.models {
+    for (_, model) in &mut g2d.iter_mut() {
         for texture in &mut model.textures {
             if !texture.initialized {
                 ffp_2d_initialize_texture(texture);
