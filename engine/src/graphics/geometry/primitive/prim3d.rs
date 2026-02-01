@@ -38,6 +38,7 @@ impl<F: Float> Primitive3D<F> {
                     log(LogLevel::Warning, &|| String::from(format!("lines configured with odd number of vertices: {}", vertices.len())))
                 }
             }
+            PrimitiveType::Quad {} => {}
         }
 
         /* done */

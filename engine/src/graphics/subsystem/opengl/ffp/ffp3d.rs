@@ -1,9 +1,9 @@
 use crate::config::{CVAR_FOV, DEFAULT_FOV};
 use crate::graphics::geometry::primitive::prim3d::Primitive3D;
-use crate::graphics::subsystem::opengl::ffp::api::{gl_begin_lines, gl_begin_points, gl_color_3f, gl_enable, gl_end, gl_line_width, gl_load_identity, gl_matrix_mode, gl_point_size, gl_pop_attrib, gl_pop_matrix, gl_push_attrib, gl_push_matrix, gl_rotate_f, gl_scale_f, gl_translate_f, gl_vertex_3f, glu_perspective};
+use crate::graphics::subsystem::opengl::ffp::api::{gl_begin_lines, gl_begin_points, gl_begin_quads, gl_color_3f, gl_enable, gl_end, gl_line_width, gl_load_identity, gl_matrix_mode, gl_point_size, gl_polygon_mode, gl_pop_attrib, gl_pop_matrix, gl_push_attrib, gl_push_matrix, gl_rotate_f, gl_scale_f, gl_translate_f, gl_vertex_3f, glu_perspective};
 use crate::window::context::RendererContext;
 use num_traits::Float;
-use windows::Win32::Graphics::OpenGL::{GL_ALL_ATTRIB_BITS, GL_DEPTH_TEST, GL_MODELVIEW, GL_PROJECTION};
+use windows::Win32::Graphics::OpenGL::{GL_ALL_ATTRIB_BITS, GL_DEPTH_TEST, GL_FRONT_AND_BACK, GL_LINE, GL_MODELVIEW, GL_PROJECTION};
 use crate::graphics::geometry::orient::Orientation;
 
 pub(crate) fn ffp_3d_setup<F: Float>(context: &RendererContext<F>) {
@@ -86,6 +86,26 @@ pub(crate) fn ffp_3d_lines<F: Float>(primitive: &Primitive3D<F>, thickness: F) {
     gl_line_width(thickness.to_f32().unwrap());
 
     gl_begin_lines();
+    for vert in &primitive.vertices {
+        gl_vertex_3f(vert.x.to_f32().unwrap(), vert.y.to_f32().unwrap(), vert.z.to_f32().unwrap());
+    }
+    gl_end();
+
+    gl_pop_attrib();
+    gl_pop_matrix();
+}
+
+pub(crate) fn ffp_3d_quads<F: Float>(primitive: &Primitive3D<F>) {
+    gl_push_matrix();
+    gl_push_attrib(GL_ALL_ATTRIB_BITS);
+
+    ffp_3d_translate(&primitive.orientation);
+    gl_polygon_mode(GL_FRONT_AND_BACK, GL_LINE);
+
+    gl_color_3f(primitive.color.red, primitive.color.green, primitive.color.blue);
+    //gl_line_width(thickness.to_f32().unwrap());
+
+    gl_begin_quads();
     for vert in &primitive.vertices {
         gl_vertex_3f(vert.x.to_f32().unwrap(), vert.y.to_f32().unwrap(), vert.z.to_f32().unwrap());
     }

@@ -24,6 +24,7 @@ use num_traits::Float;
 ///
 /// row-major (directx/unreal): each row represents 3 (basis) vectors and position.
 ///
+#[derive(Clone)]
 pub struct Matrix4x4<F: Float> {
     /* column1: x(right) */
     pub c1r1: F,

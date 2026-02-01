@@ -11,4 +11,5 @@ pub mod v3d;
 pub enum PrimitiveType<F: Float> {
     Point { point_size: F },
     Line { thickness: F },
+    Quad {},
 }

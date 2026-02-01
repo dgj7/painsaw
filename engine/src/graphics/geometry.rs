@@ -4,6 +4,7 @@ use num_traits::Float;
 pub mod dim;
 pub mod orient;
 pub mod primitive;
+pub mod build;
 
 pub(crate) static C_2_PI: f64 = PI * 2.0;
 pub(crate) static C_PI_OVER_2: f64 = PI / 2.0;
