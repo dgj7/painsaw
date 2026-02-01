@@ -26,7 +26,7 @@ pub fn create_engine_config() -> EngineConfig<f32> {
                 pipeline: OpenGLPipeline::FixedFunction,
             },
             show_fps: true,
-            show_cam_coords: false,
+            show_cam_coords: true,
         },
         InputConfig {
             behaviors: create_behaviors(),

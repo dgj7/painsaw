@@ -118,7 +118,7 @@ fn show_fps<F: Float>(g2d: &mut Graph2D<F>, delta_time: f64, config: &EngineConf
             .with_texture(
                 Texture2DBuilder::new()
                     .with_x(F::from(10.0).unwrap())
-                    .with_y(F::from(100.0).unwrap())
+                    .with_y(F::from(5.0).unwrap())
                     .with_image(text_2d_image(config.clone(), || {
                         String::from(format!("FPS:{:4}", fps))
                     }))
@@ -153,7 +153,7 @@ fn show_cam_coords<F: Float>(
     /* positioning variables */
     let height = 13.7 * scale;
     let x = F::from(10.0).unwrap();
-    let y = 5.0;
+    let y = 20.0;
     let y_cam = F::from(y).unwrap();
     let y_forward = F::from(y + height).unwrap();
     let y_right = F::from(y + height + height).unwrap();

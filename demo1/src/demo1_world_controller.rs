@@ -14,18 +14,14 @@ pub(crate) struct Demo1WorldController {}
 
 impl WorldController<f32> for Demo1WorldController {
     fn initialize_world_helper(&self, context: &mut RendererContext<f32>) {
-        /* 2d grid: axes (in thicc purple), x, and y lines */
+        /* 2d */
         context.g2d.attach(M2D_XY_PURPLE, create_2d_axes(&context.camera));
         context.g2d.attach(M2D_X_HORIZ, create_2d_grid_x_lines(&context.camera));
         context.g2d.attach(M2D_Y_VERT, create_2d_grid_y_lines(&context.camera));
-
-        /* 2d: lots of text */
         context.g2d.attach("99-repeated", create_2d_repeated_texts(16, 0.0, 710.0));
 
-        /* 3d: origin axes */
+        /* 3d */
         context.g3d.attach("4-3d-axes", create_3d_axes());
-
-        /* 3d: cuboid(s) */
         context.g3d.attach("6-3d-cuboid-1", create_3d_cuboid_1());
     }
 
