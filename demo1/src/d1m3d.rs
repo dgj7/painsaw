@@ -74,3 +74,28 @@ pub(super) fn create_3d_cuboid_1() -> Model3D<f32> {
             .expect("invalid quad"))
         .build()
 }
+
+pub(super) fn create_3d_cuboid_wall_2() -> Model3D<f32> {
+    let orientation = Orientation::new(Matrix4x4::from(
+        Vertex3D::origin(),
+        Vertex3D::origin(),
+        Vertex3D::origin(),
+        Vertex3D::new(-0.25, 0.5, -1.0)
+    ), 1.0, 1.0, 1.0);
+    Model3DBuilder::new()
+        .with_primitive(Primitive3DBuilder::new()
+            .with_type(PrimitiveType::Point {point_size: 5.0})
+            .with_orientation(orientation.clone())
+            .with_color(Color::WHITE)
+            .with_vertex(Vertex3D::origin())
+            .build())
+        .with_primitive(QuadBuilder::new()
+            .with_orientation(orientation)
+            .with_width(1.0)
+            .with_height(1.0)
+            .with_depth(0.25)
+            .with_color(Color::YELLOW)
+            .build()
+            .expect("invalid quad"))
+        .build()
+}

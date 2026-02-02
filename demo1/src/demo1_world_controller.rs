@@ -1,5 +1,5 @@
 use crate::d1m2d::{create_2d_axes, create_2d_grid_x_lines, create_2d_grid_y_lines, create_2d_repeated_texts};
-use crate::d1m3d::{create_3d_axes, create_3d_cuboid_1};
+use crate::d1m3d::{create_3d_axes, create_3d_cuboid_1, create_3d_cuboid_wall_2};
 use engine::input::kn::KeyName;
 use engine::logger::log;
 use engine::logger::log_level::LogLevel;
@@ -23,6 +23,7 @@ impl WorldController<f32> for Demo1WorldController {
         /* 3d */
         context.g3d.attach("4-3d-axes", create_3d_axes());
         context.g3d.attach("6-3d-cuboid-1", create_3d_cuboid_1());
+        context.g3d.attach("6-3d-cuboid-wall-2", create_3d_cuboid_wall_2());
     }
 
     fn update_world_helper(&self, context: &mut RendererContext<f32>) {
