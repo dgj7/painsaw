@@ -15,6 +15,7 @@ pub(crate) fn show_fps<F: Float>(g2d: &mut Graph2D<F>, timing: &EngineTiming, co
 
     /* calculate fps */
     let fps = timing.compute_fps();
+    let avg = timing.compute_avg_fps();
 
     /* prepare to render text */
     let config = TextConfig {
@@ -31,14 +32,14 @@ pub(crate) fn show_fps<F: Float>(g2d: &mut Graph2D<F>, timing: &EngineTiming, co
                     .with_x(F::from(10.0).unwrap())
                     .with_y(F::from(5.0).unwrap())
                     .with_image(text_2d_image(config.clone(), || {
-                        String::from(format!("FPS:{:4}", fps))
+                        String::from(format!("FPS:{:4} ({:4} avg)", fps, avg))
                     }))
                     .build(),
             )
             .build(),
         |m| {
             m.textures[0].replacement = Option::from(text_2d_image(config.clone(), || {
-                String::from(format!("FPS:{:4}", fps))
+                String::from(format!("FPS:{:4} ({:4} avg)", fps, avg))
             }))
         },
     );

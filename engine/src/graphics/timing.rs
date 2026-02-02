@@ -32,18 +32,15 @@ impl EngineTiming {
         self.frame_count += 1;
     }
     
-    pub fn compute_fps(&self) -> u16 {
-        let now = Instant::now();
-        let high_res_delta_time = now.duration_since(self.frame_start).as_secs_f64();
-        let fps_float = 1.0 / high_res_delta_time;
-        cmp::min(fps_float as u16, 9999)
+    pub fn compute_fps(&self) -> u32 {
+        let fps_float = 1.0 / self.delta_time;
+        cmp::min(fps_float as u32, 9999)
     }
     
-    pub fn compute_avg_fps(&self) -> u16 {
+    pub fn compute_avg_fps(&self) -> u32 {
         let now = Instant::now();
-        let high_res_delta_time = now.duration_since(self.frame_start).as_secs_f64();
-        let high_res_run_time = now.duration_since(self.engine_start).as_secs_f64() - high_res_delta_time;
+        let high_res_run_time = now.duration_since(self.engine_start).as_secs_f64();
         let fps_float = self.frame_count as f64 / high_res_run_time;
-        cmp::min(fps_float as u16, 9999)
+        cmp::min(fps_float as u32, 9999)
     }
 }
