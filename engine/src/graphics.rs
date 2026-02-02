@@ -1,21 +1,17 @@
 use crate::config::EngineConfig;
 use crate::graphics::camera::Camera;
-use crate::graphics::geometry::primitive::v3d::Vertex3D;
-use crate::graphics::image::RawImage;
-use crate::graphics::image::t2d::Texture2DBuilder;
-use crate::graphics::storage::m2d::Model2DBuilder;
-use crate::graphics::subsystem::{GraphicsSubSystem, RenderingSubSystemHandle, grss_factory};
+use crate::graphics::subsystem::{grss_factory, GraphicsSubSystem, RenderingSubSystemHandle};
 use crate::logger::log;
 use crate::logger::log_level::LogLevel;
 use crate::window::context::RendererContext;
-use color::Color;
-use image::text::{TextConfig, text_2d_image};
 use num_traits::Float;
-use std::cmp;
 use std::ops::{Add, Sub};
 use storage::g2d::Graph2D;
 use storage::g3d::Graph3D;
 use subsystem::RendererInfo;
+use crate::graphics::hud::coords::show_cam_coords;
+use crate::graphics::hud::fps::show_fps;
+use crate::graphics::timing::EngineTiming;
 
 pub mod camera;
 pub mod color;
@@ -23,6 +19,8 @@ pub mod geometry;
 pub mod image;
 pub mod storage;
 pub mod subsystem;
+pub(super) mod timing;
+pub(crate) mod hud;
 
 ///
 /// Graphics rendering intermediary.
@@ -66,7 +64,7 @@ impl<F: Float + Add<F> + Sub<F>> GraphicsIntermediary<F> {
     pub(crate) fn render_2d(
         &mut self,
         g2d: &mut Graph2D<F>,
-        delta_time: f64,
+        timing: &EngineTiming,
         config: &EngineConfig<F>,
         camera: &Camera<F>,
     ) {
@@ -74,7 +72,7 @@ impl<F: Float + Add<F> + Sub<F>> GraphicsIntermediary<F> {
         self.subsystem.render_2d(g2d);
 
         /* conditional display */
-        show_fps(g2d, delta_time, config);
+        show_fps(g2d, timing, config);
         show_cam_coords(g2d, config, camera, 1.0);
     }
 
@@ -93,173 +91,4 @@ impl<F: Float + Add<F> + Sub<F>> GraphicsIntermediary<F> {
     pub(crate) fn after_3d(&self, context: &RendererContext<F>) {
         self.subsystem.after_3d(context);
     }
-}
-
-fn show_fps<F: Float>(g2d: &mut Graph2D<F>, delta_time: f64, config: &EngineConfig<F>) {
-    /* nothing to do if not enabled */
-    if !config.renderer.show_fps {
-        return;
-    }
-
-    /* calculate fps */
-    let fps_float = 1.0 / delta_time;
-    let fps = cmp::min(fps_float as u16, 9999);
-
-    /* prepare to render text */
-    let config = TextConfig {
-        foreground: Color::RED,
-        ..Default::default()
-    };
-
-    /* add or update models */
-    g2d.attach_or_update(
-        "99-builtin-fps",
-        Model2DBuilder::new()
-            .with_texture(
-                Texture2DBuilder::new()
-                    .with_x(F::from(10.0).unwrap())
-                    .with_y(F::from(5.0).unwrap())
-                    .with_image(text_2d_image(config.clone(), || {
-                        String::from(format!("FPS:{:4}", fps))
-                    }))
-                    .build(),
-            )
-            .build(),
-        |m| {
-            m.textures[0].replacement = Option::from(text_2d_image(config.clone(), || {
-                String::from(format!("FPS:{:4}", fps))
-            }))
-        },
-    );
-}
-
-fn show_cam_coords<F: Float>(
-    g2d: &mut Graph2D<F>,
-    config: &EngineConfig<F>,
-    camera: &Camera<F>,
-    scale: f32,
-) {
-    /* nothing to do if not enabled */
-    if !config.renderer.show_cam_coords {
-        return;
-    }
-
-    /* get all the camera info */
-    let position = camera.orientation.position.column_major_position();
-    let forward = camera.orientation.position.column_major_z_forward();
-    let right = camera.orientation.position.column_major_x_right();
-    let up = camera.orientation.position.column_major_y_up();
-
-    /* positioning variables */
-    let height = 13.7 * scale;
-    let x = F::from(10.0).unwrap();
-    let y = 20.0;
-    let y_cam = F::from(y).unwrap();
-    let y_forward = F::from(y + height).unwrap();
-    let y_right = F::from(y + height + height).unwrap();
-    let y_up = F::from(y + height + height + height).unwrap();
-
-    /* determine how the text should be displayed */
-    let config = TextConfig {
-        foreground: Color::RED,
-        ..Default::default()
-    };
-
-    /* update models */
-    g2d.attach_or_update(
-        "6-2d-text-cam-pos",
-        Model2DBuilder::new()
-            .with_texture(
-                Texture2DBuilder::new()
-                    .with_x(x)
-                    .with_y(y_cam)
-                    .with_image(create_text_cam_pos(config.clone(), &position).unwrap())
-                    .build(),
-            )
-            .build(),
-        |m| m.textures[0].replacement = create_text_cam_pos(config.clone(), &position),
-    );
-    g2d.attach_or_update(
-        "6-2d-text-forward",
-        Model2DBuilder::new()
-            .with_texture(
-                Texture2DBuilder::new()
-                    .with_x(x)
-                    .with_y(y_forward)
-                    .with_image(create_text_forward(config.clone(), &forward).unwrap())
-                    .build(),
-            )
-            .build(),
-        |m| m.textures[0].replacement = create_text_forward(config.clone(), &forward),
-    );
-    g2d.attach_or_update(
-        "6-2d-text-right",
-        Model2DBuilder::new()
-            .with_texture(
-                Texture2DBuilder::new()
-                    .with_x(x)
-                    .with_y(y_right)
-                    .with_image(create_text_right(config.clone(), &right).unwrap())
-                    .build(),
-            )
-            .build(),
-        |m| m.textures[0].replacement = create_text_right(config.clone(), &right),
-    );
-    g2d.attach_or_update(
-        "6-2d-text-up",
-        Model2DBuilder::new()
-            .with_texture(
-                Texture2DBuilder::new()
-                    .with_x(x)
-                    .with_y(y_up)
-                    .with_image(create_text_up(config.clone(), &up).unwrap())
-                    .build(),
-            )
-            .build(),
-        |m| m.textures[0].replacement = create_text_up(config.clone(), &up),
-    );
-}
-
-fn create_text_cam_pos<F: Float>(config: TextConfig, position: &Vertex3D<F>) -> Option<RawImage> {
-    Option::from(text_2d_image(config.clone(), || {
-        String::from(format!(
-            "cam-pos: ({:+08.2},{:+08.2},{:+08.2})",
-            position.x.to_f32().unwrap(),
-            position.y.to_f32().unwrap(),
-            position.z.to_f32().unwrap(),
-        ))
-    }))
-}
-
-fn create_text_up<F: Float>(config: TextConfig, up: &Vertex3D<F>) -> Option<RawImage> {
-    Option::from(text_2d_image(config.clone(), || {
-        String::from(format!(
-            "up:      ({:+.2},{:+.2},{:+.2})",
-            up.x.to_f32().unwrap(),
-            up.y.to_f32().unwrap(),
-            up.z.to_f32().unwrap(),
-        ))
-    }))
-}
-
-fn create_text_right<F: Float>(config: TextConfig, right: &Vertex3D<F>) -> Option<RawImage> {
-    Option::from(text_2d_image(config.clone(), || {
-        String::from(format!(
-            "right:   ({:+.2},{:+.2},{:+.2})",
-            right.x.to_f32().unwrap(),
-            right.y.to_f32().unwrap(),
-            right.z.to_f32().unwrap(),
-        ))
-    }))
-}
-
-fn create_text_forward<F: Float>(config: TextConfig, forward: &Vertex3D<F>) -> Option<RawImage> {
-    Option::from(text_2d_image(config.clone(), || {
-        String::from(format!(
-            "forward: ({:+.2},{:+.2},{:+.2})",
-            forward.x.to_f32().unwrap(),
-            forward.y.to_f32().unwrap(),
-            forward.z.to_f32().unwrap(),
-        ))
-    }))
 }

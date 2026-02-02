@@ -2,6 +2,7 @@ use crate::config::EngineConfig;
 use crate::graphics::camera::Camera;
 use crate::graphics::storage::g2d::Graph2D;
 use crate::graphics::storage::g3d::Graph3D;
+use crate::graphics::timing::EngineTiming;
 use crate::graphics::GraphicsIntermediary;
 use crate::input::InputState;
 use crate::logger::log;
@@ -9,7 +10,6 @@ use crate::logger::log_level::LogLevel;
 use num_traits::Float;
 use std::ops::{Add, Sub};
 use std::sync::{Arc, Mutex};
-use std::time::Instant;
 
 pub struct RendererContext<F: Float + Add<F> + Sub<F>> {
     /* scene for game statistics */
@@ -17,8 +17,7 @@ pub struct RendererContext<F: Float + Add<F> + Sub<F>> {
     pub frame_count: u128,
     
     /* timing */
-    pub(crate) last_frame: Instant,
-    pub delta_time: f64,
+    pub timing: EngineTiming,
 
     /* scene for world state */
     pub g2d: Graph2D<F>,
@@ -41,8 +40,7 @@ impl<F: Float + Add<F> + Sub<F>> RendererContext<F> {
             first_frame_rendered: false,
             frame_count: 0,
             
-            last_frame: Instant::now(),
-            delta_time: 0.0,
+            timing: EngineTiming::new(),
             
             g2d: Graph2D::new(),
             g3d: Graph3D::new(),

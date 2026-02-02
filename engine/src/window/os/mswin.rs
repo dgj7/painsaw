@@ -64,12 +64,18 @@ impl<F: Float> Window<F> for MsWinWindow {
                 let _ = translate_message(&message);
                 dispatch_message(&message);
             } else {
+                /* timing */
+                context.timing.begin_frame();
+
                 /* update world info; graphics scene */
                 wc.update_world(&mut context);
                 wc.display_world_scene(&mut context);
 
                 /* swap buffers after it's all done */
                 swap_buffers(self.hdc);
+
+                /* timing */
+                context.timing.end_frame();
             }
         }
 
