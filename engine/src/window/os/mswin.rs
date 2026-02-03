@@ -63,21 +63,21 @@ impl<F: Float> Window<F> for MsWinWindow {
 
                 let _ = translate_message(&message);
                 dispatch_message(&message);
-            } else if context.timing.should_wait_to_render() {
-                /* purposely empty */
             } else {
-                /* timing */
-                context.timing.begin_frame();
+                if context.timing.is_ok_to_render() {
+                    /* timing */
+                    context.timing.begin_frame();
 
-                /* update world info; graphics scene */
-                wc.update_world(&mut context);
-                wc.display_world_scene(&mut context);
+                    /* update world info; graphics scene */
+                    wc.update_world(&mut context);
+                    wc.display_world_scene(&mut context);
 
-                /* swap buffers after it's all done */
-                swap_buffers(self.hdc);
+                    /* swap buffers after it's all done */
+                    swap_buffers(self.hdc);
 
-                /* timing */
-                context.timing.end_frame();
+                    /* timing */
+                    context.timing.end_frame();
+                }
             }
         }
 

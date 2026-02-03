@@ -48,8 +48,8 @@ impl EngineTiming {
         cmp::min(fps_float as u32, 9999)
     }
 
-    pub fn should_wait_to_render(&self) -> bool {
+    pub fn is_ok_to_render(&self) -> bool {
         let elapsed = Instant::now().duration_since(self.frame_start).as_secs_f64();
-        elapsed < self.wait_between_frames
+        elapsed >= self.wait_between_frames
     }
 }
