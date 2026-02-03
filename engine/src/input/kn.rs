@@ -4,12 +4,12 @@ use std::fmt::{Display, Formatter};
 #[derive(Eq, Hash, PartialEq)]
 pub enum KeyName {
     /* keyboard */
+    KeyA,
+    KeyD,
     KeyG,
     KeyM,
-    KeyW,
-    KeyA,
     KeyS,
-    KeyD,
+    KeyW,
 
     /* mouse */
     MouseLeft,
@@ -21,12 +21,12 @@ pub enum KeyName {
 impl Display for KeyName {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
+            KeyName::KeyA => write!(f, "{}", "KeyA"),
+            KeyName::KeyD => write!(f, "{}", "KeyD"),
             KeyName::KeyG => write!(f, "{}", "KeyG"),
             KeyName::KeyM => write!(f, "{}", "KeyM"),
-            KeyName::KeyW => write!(f, "{}", "KeyW"),
-            KeyName::KeyA => write!(f, "{}", "KeyA"),
             KeyName::KeyS => write!(f, "{}", "KeyS"),
-            KeyName::KeyD => write!(f, "{}", "KeyD"),
+            KeyName::KeyW => write!(f, "{}", "KeyW"),
             KeyName::MouseLeft => write!(f, "{}", "MouseLeft"),
             KeyName::MouseRight => write!(f, "{}", "MouseRight"),
             KeyName::MouseScroll => write!(f, "{}", "MouseScroll"),

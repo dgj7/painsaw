@@ -63,21 +63,19 @@ impl<F: Float> Window<F> for MsWinWindow {
 
                 let _ = translate_message(&message);
                 dispatch_message(&message);
-            } else {
-                if context.timing.is_ok_to_render() {
-                    /* timing */
-                    context.timing.begin_frame();
+            } else if context.timing.is_ok_to_render() {
+                /* timing */
+                context.timing.begin_frame();
 
-                    /* update world info; graphics scene */
-                    wc.update_world(&mut context);
-                    wc.display_world_scene(&mut context);
+                /* update world info; graphics scene */
+                wc.update_world(&mut context);
+                wc.display_world_scene(&mut context);
 
-                    /* swap buffers after it's all done */
-                    swap_buffers(self.hdc);
+                /* swap buffers after it's all done */
+                swap_buffers(self.hdc);
 
-                    /* timing */
-                    context.timing.end_frame();
-                }
+                /* timing */
+                context.timing.end_frame();
             }
         }
 
@@ -85,13 +83,12 @@ impl<F: Float> Window<F> for MsWinWindow {
 
         Ok(())
     }
-
-    fn get_input_state(&self) -> Arc<Mutex<InputState<f32>>> {
-        self.input.clone()
-    }
 }
 
 impl MsWinWindow {
+    ///
+    /// create a new instance.
+    ///
     pub fn new<F: Float>(request : &EngineConfig<F>) -> Result<Box<dyn Window<F>>, Box<dyn std::error::Error>> {
         /* make some variables */
         let wndclass = PCWSTR::from_raw(HSTRING::from(request.window.window_id.clone().unwrap_or(String::from("WindowConfig: set wndclass"))).as_ptr());
@@ -174,6 +171,9 @@ impl MsWinWindow {
     }
 }
 
+///
+/// required window procedure, for handling win32 event messages.
+///
 extern "system" fn wndproc(window: HWND, message: u32, wparam: WPARAM, lparam: LPARAM) -> LRESULT {
     match message {
         WM_CREATE => {// 0x0001: sent when createwindowex/createwindow is called; https://learn.microsoft.com/en-us/windows/win32/winmsg/wm-create
@@ -238,29 +238,32 @@ extern "system" fn wndproc(window: HWND, message: u32, wparam: WPARAM, lparam: L
     }
 }
 
+///
+/// handle input messages, such as key down/up or mouse movement.
+///
 fn handle_message_if_applicable(input: &Arc<Mutex<InputState<f32>>>, hwnd: HWND, message: u32, wparam: WPARAM, _lparam: LPARAM) -> bool {
     match message {
         WM_KEYDOWN => {
             match VIRTUAL_KEY(wparam.0 as u16) {
                 VK_ESCAPE => { post_quit_message(0);true }
+                VK_A => { input.lock().expect("todo: a: down").handle_change(KeyName::KeyA, KeyPosition::KeyDown { info: KeyInfo::unhandled() }); true }
+                VK_D => { input.lock().expect("todo: d: down").handle_change(KeyName::KeyD, KeyPosition::KeyDown { info: KeyInfo::unhandled() }); true }
                 VK_G => { input.lock().expect("todo: g: down").handle_change(KeyName::KeyG, KeyPosition::KeyDown { info: KeyInfo::unhandled() }); true }
                 VK_M => { input.lock().expect("todo: m: down").handle_change(KeyName::KeyM, KeyPosition::KeyDown { info: KeyInfo::unhandled() }); true }
-                VK_W => { input.lock().expect("todo: w: down").handle_change(KeyName::KeyW, KeyPosition::KeyDown { info: KeyInfo::unhandled() }); true }
-                VK_A => { input.lock().expect("todo: a: down").handle_change(KeyName::KeyA, KeyPosition::KeyDown { info: KeyInfo::unhandled() }); true }
                 VK_S => { input.lock().expect("todo: s: down").handle_change(KeyName::KeyS, KeyPosition::KeyDown { info: KeyInfo::unhandled() }); true }
-                VK_D => { input.lock().expect("todo: d: down").handle_change(KeyName::KeyD, KeyPosition::KeyDown { info: KeyInfo::unhandled() }); true }
+                VK_W => { input.lock().expect("todo: w: down").handle_change(KeyName::KeyW, KeyPosition::KeyDown { info: KeyInfo::unhandled() }); true }
                 // todo: add remaining keys down
                 _ => false
             }
         }
         WM_KEYUP => {
             match VIRTUAL_KEY(wparam.0 as u16) {
+                VK_A => { input.lock().expect("todo: a: up").handle_change(KeyName::KeyA, KeyPosition::KeyUp { info: KeyInfo::unhandled() }); true }
+                VK_D => { input.lock().expect("todo: d: up").handle_change(KeyName::KeyD, KeyPosition::KeyUp { info: KeyInfo::unhandled() }); true }
                 VK_G => { input.lock().expect("todo: g: up").handle_change(KeyName::KeyG, KeyPosition::KeyUp { info: KeyInfo::unhandled() }); true }
                 VK_M => { input.lock().expect("todo: m: up").handle_change(KeyName::KeyM, KeyPosition::KeyUp { info: KeyInfo::unhandled() }); true }
-                VK_W => { input.lock().expect("todo: w: up").handle_change(KeyName::KeyW, KeyPosition::KeyUp { info: KeyInfo::unhandled() }); true }
-                VK_A => { input.lock().expect("todo: a: up").handle_change(KeyName::KeyA, KeyPosition::KeyUp { info: KeyInfo::unhandled() }); true }
                 VK_S => { input.lock().expect("todo: s: up").handle_change(KeyName::KeyS, KeyPosition::KeyUp { info: KeyInfo::unhandled() }); true }
-                VK_D => { input.lock().expect("todo: d: up").handle_change(KeyName::KeyD, KeyPosition::KeyUp { info: KeyInfo::unhandled() }); true }
+                VK_W => { input.lock().expect("todo: w: up").handle_change(KeyName::KeyW, KeyPosition::KeyUp { info: KeyInfo::unhandled() }); true }
                 // todo: add remaining keys up
                 _ => false
             }
@@ -287,6 +290,10 @@ fn handle_message_if_applicable(input: &Arc<Mutex<InputState<f32>>>, hwnd: HWND,
     }
 }
 
+///
+/// cleanup opengl.
+///
+// todo: should this be removed?  perhaps to the renderer?  hard to say, needs research.
 fn opengl_cleanup(hwnd: HWND) {
     /* retrieve required handles */
     let hdc = get_dc(Option::from(hwnd));
