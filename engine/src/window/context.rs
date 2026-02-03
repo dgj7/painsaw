@@ -40,7 +40,7 @@ impl<F: Float + Add<F> + Sub<F>> RendererContext<F> {
             first_frame_rendered: false,
             frame_count: 0,
             
-            timing: EngineTiming::new(),
+            timing: EngineTiming::new(&config.renderer),
             
             g2d: Graph2D::new(),
             g3d: Graph3D::new(),

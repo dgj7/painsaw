@@ -27,6 +27,7 @@ pub fn create_engine_config() -> EngineConfig<f32> {
             },
             show_fps: true,
             show_cam_coords: true,
+            fps_cap: Some(999),
         },
         InputConfig {
             behaviors: create_behaviors(),

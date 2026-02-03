@@ -63,6 +63,8 @@ impl<F: Float> Window<F> for MsWinWindow {
 
                 let _ = translate_message(&message);
                 dispatch_message(&message);
+            } else if context.timing.should_wait_to_render() {
+                /* purposely empty */
             } else {
                 /* timing */
                 context.timing.begin_frame();
