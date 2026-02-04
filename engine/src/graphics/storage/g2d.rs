@@ -21,14 +21,15 @@ impl<F: Float> Graph2D<F> {
         self.models.insert(name.to_string(), model);
     }
 
-    pub fn attach_or_update<FN>(&mut self, name: &str, model: Model2D<F>, fx: FN)
+    pub fn attach_or_update<IF, MF>(&mut self, name: &str, insert: IF, modify: MF)
     where
-        FN: FnOnce(&mut Model2D<F>),
+        IF: Fn() -> Model2D<F>,
+        MF: FnOnce(&mut Model2D<F>),
     {
         self.models
             .entry(name.to_string())
-            .and_modify(fx)
-            .or_insert(model);
+            .and_modify(modify)
+            .or_insert(insert());
     }
     
     pub fn update<FN>(&mut self, name: &str, fx: FN)

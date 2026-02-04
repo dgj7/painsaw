@@ -42,10 +42,10 @@ pub(crate) fn show_cam_coords<F: Float>(
     let y_up = F::from(y + height + height + height).unwrap();
 
     /* update models */
-    g2d.attach_or_update("6-2d-text-cam-pos", create_pos_model(x, y_cam, TC.clone(), &position), |m| m.textures[0].replacement = create_pos_text(TC.clone(), &position));
-    g2d.attach_or_update("6-2d-text-forward", create_forward_model(x, y_forward, TC.clone(), &forward), |m| m.textures[0].replacement = create_forward_text(TC.clone(), &forward));
-    g2d.attach_or_update("6-2d-text-right", create_right_model(x, y_right, TC.clone(), &right), |m| m.textures[0].replacement = create_right_text(TC.clone(), &right));
-    g2d.attach_or_update("6-2d-text-up", create_up_model(x, y_up, TC.clone(), &up), |m| m.textures[0].replacement = create_up_text(TC.clone(), &up));
+    g2d.attach_or_update("6-2d-text-cam-pos", || create_pos_model(x, y_cam, TC.clone(), &position), |m| m.textures[0].replacement = create_pos_text(TC.clone(), &position));
+    g2d.attach_or_update("6-2d-text-forward", || create_forward_model(x, y_forward, TC.clone(), &forward), |m| m.textures[0].replacement = create_forward_text(TC.clone(), &forward));
+    g2d.attach_or_update("6-2d-text-right", || create_right_model(x, y_right, TC.clone(), &right), |m| m.textures[0].replacement = create_right_text(TC.clone(), &right));
+    g2d.attach_or_update("6-2d-text-up", || create_up_model(x, y_up, TC.clone(), &up), |m| m.textures[0].replacement = create_up_text(TC.clone(), &up));
 }
 
 fn create_pos_model<F: Float>(x: F, y_cam: F, config: TextConfig, position: &Vertex3D<F>) -> Model2D<F> {
