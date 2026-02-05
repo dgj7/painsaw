@@ -1,22 +1,22 @@
 use crate::graphics::geometry::dim::Dimension2D;
-use crate::input::kn::KeyName;
-use crate::input::kp::KeyPosition;
-use crate::input::ks::KeyState;
+use crate::input::r#in::InputName;
+use crate::input::ic::InputChange;
+use crate::input::is::InputState;
 use num_traits::Float;
 use std::collections::{HashMap, VecDeque};
 use std::ops::{Add, Sub};
 use std::sync::{Arc, Mutex};
 
-pub mod ks;
-pub mod ki;
-pub mod kp;
-pub mod kn;
+pub mod is;
+pub mod ii;
+pub mod ic;
+pub mod r#in;
 
 #[derive(Clone,Debug)]
-pub struct InputState<F: Float + Add<F> + Sub<F>> {
+pub struct UserInput<F: Float + Add<F> + Sub<F>> {
     /* keyboard */
-    pub changes: VecDeque<KeyName>,
-    pub states: HashMap<KeyName,KeyState>,
+    pub changes: VecDeque<InputName>,
+    pub states: HashMap<InputName, InputState>,
 
     /* screen */
     pub previous_client_dimensions: Dimension2D<F>,
@@ -26,9 +26,9 @@ pub struct InputState<F: Float + Add<F> + Sub<F>> {
     pub screen_resized: bool,
 }
 
-impl<F: Float + Add<F> + Sub<F>> InputState<F> {
-    pub fn new() -> Arc<Mutex<InputState<F>>> {
-        Arc::new(Mutex::new(InputState {
+impl<F: Float + Add<F> + Sub<F>> UserInput<F> {
+    pub fn new() -> Arc<Mutex<UserInput<F>>> {
+        Arc::new(Mutex::new(UserInput {
             /* keyboard */
             changes: VecDeque::new(),
             states: HashMap::new(),
@@ -42,12 +42,12 @@ impl<F: Float + Add<F> + Sub<F>> InputState<F> {
         }))
     }
 
-    pub fn handle_change(&mut self, name: KeyName, position: KeyPosition) {
+    pub fn handle_change(&mut self, name: InputName, position: InputChange) {
         self.changes.push_back(name.clone());
         self.states
             .entry(name)
             .and_modify(|e| e.update(position.clone()))
-            .or_insert(KeyState::new(position));
+            .or_insert(InputState::new(position));
     }
 
     pub fn update_client_dimensions(&mut self, current: Dimension2D<F>) {

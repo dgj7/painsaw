@@ -1,15 +1,15 @@
 use std::sync::{Arc, Mutex};
 use windows::Win32::Foundation::{HWND, LPARAM};
 use windows::Win32::UI::WindowsAndMessaging::{GetWindowLongPtrA, SetWindowLongPtrA, CREATESTRUCTA, GWLP_USERDATA};
-use crate::input::InputState;
+use crate::input::UserInput;
 
 ///
-/// InputState to raw pointer.
+/// UserInput to raw pointer.
 ///
 /// Wrap with Some(is) and pass to CreateWindowExA().  Call within window creation method.
 ///
-pub(crate) fn input_state_to_raw_pointer(is: &Arc<Mutex<InputState<f32>>>) -> *const core::ffi::c_void {
-    let rc = Arc::clone(is);
+pub(crate) fn input_state_to_raw_pointer(uin: &Arc<Mutex<UserInput<f32>>>) -> *const core::ffi::c_void {
+    let rc = Arc::clone(uin);
     Box::into_raw(Box::new(rc)) as *mut _
 }
 
@@ -29,12 +29,12 @@ pub(crate) fn create_and_write_pointer(hwnd: HWND, lparam: LPARAM) {
 ///
 /// Call within event-handling procedure.
 ///
-pub(crate) fn read_window_data(hwnd: HWND) -> Option<Arc<Mutex<InputState<f32>>>> {
+pub(crate) fn read_window_data(hwnd: HWND) -> Option<Arc<Mutex<UserInput<f32>>>> {
     let ptr = unsafe { GetWindowLongPtrA(hwnd, GWLP_USERDATA) };
     if ptr == 0 {
         return None;
     }
-    let x = unsafe { &*(ptr as *const Arc<Mutex<InputState<f32>>>) };
+    let x = unsafe { &*(ptr as *const Arc<Mutex<UserInput<f32>>>) };
     Option::from(x.clone())
 }
 

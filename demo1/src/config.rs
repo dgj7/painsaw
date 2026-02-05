@@ -3,8 +3,8 @@ use engine::config::input_config::InputConfig;
 use engine::config::renderer_config::RendererConfig;
 use engine::config::window_config::{WindowConfig, WindowDimensions};
 use engine::graphics::subsystem::{GraphicsSubSystem, OpenGLPipeline};
-use engine::input::kn::KeyName;
-use engine::input::ks::KeyState;
+use engine::input::r#in::InputName;
+use engine::input::is::InputState;
 use engine::logger::log;
 use engine::logger::log_level::LogLevel;
 use engine::window::context::RendererContext;
@@ -40,19 +40,19 @@ pub fn create_engine_config() -> EngineConfig<f32> {
     )
 }
 
-fn create_behaviors() -> HashMap<KeyName, fn(&mut RendererContext<f32>, &KeyState)> {
-    let mut behaviors: HashMap<KeyName, fn(&mut RendererContext<f32>, &KeyState)> = HashMap::new();
+fn create_behaviors() -> HashMap<InputName, fn(&mut RendererContext<f32>, &InputState)> {
+    let mut behaviors: HashMap<InputName, fn(&mut RendererContext<f32>, &InputState)> = HashMap::new();
 
-    behaviors.insert(KeyName::KeyG, handle_g);
+    behaviors.insert(InputName::KeyG, handle_g);
 
     behaviors
 }
 
-fn handle_g(_context: &mut RendererContext<f32>, state: &KeyState) {
-    logging_key_behavior(KeyName::KeyG, state);
+fn handle_g(_context: &mut RendererContext<f32>, state: &InputState) {
+    logging_key_behavior(InputName::KeyG, state);
 }
 
-fn logging_key_behavior(name: KeyName, state: &KeyState) {
+fn logging_key_behavior(name: InputName, state: &InputState) {
     let duration = state.previous_key_state_duration();
     log(LogLevel::Debug, &|| {
         String::from(format!(

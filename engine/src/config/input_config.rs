@@ -1,15 +1,15 @@
 use std::collections::HashMap;
 use num_traits::Float;
-use crate::input::kn::KeyName;
-use crate::input::ks::KeyState;
+use crate::input::r#in::InputName;
+use crate::input::is::InputState;
 use crate::window::context::RendererContext;
 
 pub struct InputConfig<F: Float> {
-    pub behaviors: HashMap<KeyName, fn(&mut RendererContext<F>, &KeyState)>,
+    pub behaviors: HashMap<InputName, fn(&mut RendererContext<F>, &InputState)>,
 }
 
 impl<F: Float> InputConfig<F> {
-    pub fn new(behaviors: HashMap<KeyName, fn(&mut RendererContext<F>, &KeyState)>) -> InputConfig<F> {
+    pub fn new(behaviors: HashMap<InputName, fn(&mut RendererContext<F>, &InputState)>) -> InputConfig<F> {
         InputConfig {
             behaviors,
         }

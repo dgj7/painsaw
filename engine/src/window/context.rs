@@ -4,7 +4,7 @@ use crate::graphics::storage::g2d::Graph2D;
 use crate::graphics::storage::g3d::Graph3D;
 use crate::graphics::timing::EngineTiming;
 use crate::graphics::GraphicsIntermediary;
-use crate::input::InputState;
+use crate::input::UserInput;
 use crate::logger::log;
 use crate::logger::log_level::LogLevel;
 use num_traits::Float;
@@ -28,12 +28,12 @@ pub struct RendererContext<F: Float + Add<F> + Sub<F>> {
     pub(crate) graphics: GraphicsIntermediary<F>,
 
     /* scene for input state */
-    pub input: Arc<Mutex<InputState<f32>>>,
+    pub input: Arc<Mutex<UserInput<f32>>>,
     pub config: EngineConfig<F>,
 }
 
 impl<F: Float + Add<F> + Sub<F>> RendererContext<F> {
-    pub(crate) fn new(input: &Arc<Mutex<InputState<f32>>>, config: EngineConfig<F>) -> RendererContext<F> {
+    pub(crate) fn new(input: &Arc<Mutex<UserInput<f32>>>, config: EngineConfig<F>) -> RendererContext<F> {
         let dim = &input.lock().unwrap().current_client_dimensions.clone();
         log(LogLevel::Info, &|| String::from(format!("initializing camera with width={},height={}", &dim.width, &dim.height)));
         RendererContext {

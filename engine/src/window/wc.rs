@@ -37,11 +37,11 @@ pub trait WorldController<F: Float + Add<F> + Sub<F>> {
     ///
     fn update_world(&self, context: &mut RendererContext<F>) {
         match context.input.clone().lock() {
-            Ok(mut is) => {
+            Ok(mut uin) => {
                 /* handle key changes */
-                while !is.changes.is_empty() {
-                    let change = is.changes.pop_front().unwrap();
-                    let state = is.states.get_mut(&change).unwrap();
+                while !uin.changes.is_empty() {
+                    let change = uin.changes.pop_front().unwrap();
+                    let state = uin.states.get_mut(&change).unwrap();
                     if !state.current.is_handled() {
                         match context.config.input.behaviors.get(&change) {
                             None => {}
@@ -52,8 +52,8 @@ pub trait WorldController<F: Float + Add<F> + Sub<F>> {
                 }
 
                 /* handle screen resize */
-                if is.screen_resized {
-                    context.camera.update_screen(&is.current_client_dimensions);
+                if uin.screen_resized {
+                    context.camera.update_screen(&uin.current_client_dimensions);
                     context.graphics.resize(context);
                 }
             }
@@ -63,8 +63,8 @@ pub trait WorldController<F: Float + Add<F> + Sub<F>> {
         self.update_world_helper(context);
 
         match context.input.lock() {
-            Ok(mut is) => {
-                is.screen_resized = false;
+            Ok(mut uin) => {
+                uin.screen_resized = false;
             }
             Err(_) => {panic!("todo: resetting screen_resized")}
         }

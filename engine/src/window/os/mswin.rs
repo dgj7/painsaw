@@ -3,10 +3,10 @@ use crate::config::EngineConfig;
 use crate::graphics::subsystem::opengl::opengl_mswin::{init_opengl, swap_buffers};
 use crate::graphics::subsystem::opengl::opengl_mswin_api::{get_dc, release_dc, wgl_delete_context, wgl_get_current_context, wgl_make_current};
 use crate::graphics::subsystem::GraphicsSubSystem;
-use crate::input::ki::KeyInfo;
-use crate::input::kn::KeyName;
-use crate::input::kp::KeyPosition;
-use crate::input::InputState;
+use crate::input::ii::InputInfo;
+use crate::input::r#in::InputName;
+use crate::input::ic::InputChange;
+use crate::input::UserInput;
 use crate::logger::log;
 use crate::logger::log_level::LogLevel;
 use crate::window::context::RendererContext;
@@ -28,7 +28,7 @@ pub mod mswin_data;
 mod mswin_errors;
 
 pub struct MsWinWindow {
-    pub input: Arc<Mutex<InputState<f32>>>,
+    pub input: Arc<Mutex<UserInput<f32>>>,
 
     pub hinstance: HINSTANCE,
     pub wndclassw: WNDCLASSW,
@@ -132,7 +132,7 @@ impl MsWinWindow {
         };
 
         /* create input state */
-        let input = InputState::new();
+        let input = UserInput::new();
         let input_pointer = input_state_to_raw_pointer(&input);
 
         /* create the window */
@@ -241,29 +241,29 @@ extern "system" fn wndproc(window: HWND, message: u32, wparam: WPARAM, lparam: L
 ///
 /// handle input messages, such as key down/up or mouse movement.
 ///
-fn handle_message_if_applicable(input: &Arc<Mutex<InputState<f32>>>, hwnd: HWND, message: u32, wparam: WPARAM, _lparam: LPARAM) -> bool {
+fn handle_message_if_applicable(input: &Arc<Mutex<UserInput<f32>>>, hwnd: HWND, message: u32, wparam: WPARAM, _lparam: LPARAM) -> bool {
     match message {
         WM_KEYDOWN => {
             match VIRTUAL_KEY(wparam.0 as u16) {
                 VK_ESCAPE => { post_quit_message(0);true }
-                VK_A => { input.lock().expect("todo: a: down").handle_change(KeyName::KeyA, KeyPosition::KeyDown { info: KeyInfo::unhandled() }); true }
-                VK_D => { input.lock().expect("todo: d: down").handle_change(KeyName::KeyD, KeyPosition::KeyDown { info: KeyInfo::unhandled() }); true }
-                VK_G => { input.lock().expect("todo: g: down").handle_change(KeyName::KeyG, KeyPosition::KeyDown { info: KeyInfo::unhandled() }); true }
-                VK_M => { input.lock().expect("todo: m: down").handle_change(KeyName::KeyM, KeyPosition::KeyDown { info: KeyInfo::unhandled() }); true }
-                VK_S => { input.lock().expect("todo: s: down").handle_change(KeyName::KeyS, KeyPosition::KeyDown { info: KeyInfo::unhandled() }); true }
-                VK_W => { input.lock().expect("todo: w: down").handle_change(KeyName::KeyW, KeyPosition::KeyDown { info: KeyInfo::unhandled() }); true }
+                VK_A => { input.lock().expect("todo: a: down").handle_change(InputName::KeyA, InputChange::Active { info: InputInfo::unhandled() }); true }
+                VK_D => { input.lock().expect("todo: d: down").handle_change(InputName::KeyD, InputChange::Active { info: InputInfo::unhandled() }); true }
+                VK_G => { input.lock().expect("todo: g: down").handle_change(InputName::KeyG, InputChange::Active { info: InputInfo::unhandled() }); true }
+                VK_M => { input.lock().expect("todo: m: down").handle_change(InputName::KeyM, InputChange::Active { info: InputInfo::unhandled() }); true }
+                VK_S => { input.lock().expect("todo: s: down").handle_change(InputName::KeyS, InputChange::Active { info: InputInfo::unhandled() }); true }
+                VK_W => { input.lock().expect("todo: w: down").handle_change(InputName::KeyW, InputChange::Active { info: InputInfo::unhandled() }); true }
                 // todo: add remaining keys down
                 _ => false
             }
         }
         WM_KEYUP => {
             match VIRTUAL_KEY(wparam.0 as u16) {
-                VK_A => { input.lock().expect("todo: a: up").handle_change(KeyName::KeyA, KeyPosition::KeyUp { info: KeyInfo::unhandled() }); true }
-                VK_D => { input.lock().expect("todo: d: up").handle_change(KeyName::KeyD, KeyPosition::KeyUp { info: KeyInfo::unhandled() }); true }
-                VK_G => { input.lock().expect("todo: g: up").handle_change(KeyName::KeyG, KeyPosition::KeyUp { info: KeyInfo::unhandled() }); true }
-                VK_M => { input.lock().expect("todo: m: up").handle_change(KeyName::KeyM, KeyPosition::KeyUp { info: KeyInfo::unhandled() }); true }
-                VK_S => { input.lock().expect("todo: s: up").handle_change(KeyName::KeyS, KeyPosition::KeyUp { info: KeyInfo::unhandled() }); true }
-                VK_W => { input.lock().expect("todo: w: up").handle_change(KeyName::KeyW, KeyPosition::KeyUp { info: KeyInfo::unhandled() }); true }
+                VK_A => { input.lock().expect("todo: a: up").handle_change(InputName::KeyA, InputChange::Inactive { info: InputInfo::unhandled() }); true }
+                VK_D => { input.lock().expect("todo: d: up").handle_change(InputName::KeyD, InputChange::Inactive { info: InputInfo::unhandled() }); true }
+                VK_G => { input.lock().expect("todo: g: up").handle_change(InputName::KeyG, InputChange::Inactive { info: InputInfo::unhandled() }); true }
+                VK_M => { input.lock().expect("todo: m: up").handle_change(InputName::KeyM, InputChange::Inactive { info: InputInfo::unhandled() }); true }
+                VK_S => { input.lock().expect("todo: s: up").handle_change(InputName::KeyS, InputChange::Inactive { info: InputInfo::unhandled() }); true }
+                VK_W => { input.lock().expect("todo: w: up").handle_change(InputName::KeyW, InputChange::Inactive { info: InputInfo::unhandled() }); true }
                 // todo: add remaining keys up
                 _ => false
             }
@@ -277,10 +277,10 @@ fn handle_message_if_applicable(input: &Arc<Mutex<InputState<f32>>>, hwnd: HWND,
             log(LogLevel::Trace, &|| String::from(format!("window: {:?}", window_dimensions)));
             log(LogLevel::Trace, &|| String::from(format!("client: {:?}", client_dimensions)));
             match input.lock() {
-                Ok(mut is) => {
-                    is.screen_resized = true;
-                    is.update_client_dimensions(client_dimensions);
-                    is.update_window_dimensions(window_dimensions);
+                Ok(mut uin) => {
+                    uin.screen_resized = true;
+                    uin.update_client_dimensions(client_dimensions);
+                    uin.update_window_dimensions(window_dimensions);
                 }
                 Err(_) => panic!("todo: wm_size")
             }

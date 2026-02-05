@@ -1,21 +1,21 @@
 use std::time::Instant;
 
 #[derive(Clone,Debug)]
-pub struct KeyInfo {
+pub struct InputInfo {
     pub when: Instant,
     pub handled: bool,
 }
 
-impl KeyInfo {
-    pub fn handled() -> KeyInfo {
-        KeyInfo {
+impl InputInfo {
+    pub fn handled() -> InputInfo {
+        InputInfo {
             when: Instant::now(),
             handled: true,
         }
     }
 
-    pub fn unhandled() -> KeyInfo {
-        KeyInfo {
+    pub fn unhandled() -> InputInfo {
+        InputInfo {
             when: Instant::now(),
             handled: false,
         }

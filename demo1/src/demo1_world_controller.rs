@@ -1,6 +1,6 @@
 use crate::d1m2d::{create_2d_axes, create_2d_grid_x_lines, create_2d_grid_y_lines, create_2d_repeated_texts};
 use crate::d1m3d::{create_3d_axes, create_3d_cuboid_1, create_3d_cuboid_wall_2};
-use engine::input::kn::KeyName;
+use engine::input::r#in::InputName;
 use engine::logger::log;
 use engine::logger::log_level::LogLevel;
 use engine::window::context::RendererContext;
@@ -28,12 +28,12 @@ impl WorldController<f32> for Demo1WorldController {
 
     fn update_world_helper(&self, context: &mut RendererContext<f32>) {
         match context.input.clone().lock() {
-            Ok(is) => {
+            Ok(uin) => {
                 /* gather some variables */
-                let ccd = is.current_client_dimensions.clone();
+                let ccd = uin.current_client_dimensions.clone();
 
                 /* handle window resize for grid */
-                if is.screen_resized {
+                if uin.screen_resized {
                     context.g2d.update(M2D_XY_PURPLE, |e| *e = create_2d_axes(&context.camera));
                     context.g2d.update(M2D_X_HORIZ, |e| *e = create_2d_grid_x_lines(&context.camera));
                     context.g2d.update(M2D_Y_VERT, |e| *e = create_2d_grid_y_lines(&context.camera));
@@ -42,19 +42,19 @@ impl WorldController<f32> for Demo1WorldController {
                 }
 
                 /* camera controls */
-                if let Some(wk) = is.states.get(&KeyName::KeyW) && wk.current.is_down() {
+                if let Some(wk) = uin.states.get(&InputName::KeyW) && wk.current.is_active() {
                     context.camera.orientation.move_forward(&context.config, &context.timing);
                 }
-                if let Some(sk) = is.states.get(&KeyName::KeyS) && sk.current.is_down() {
+                if let Some(sk) = uin.states.get(&InputName::KeyS) && sk.current.is_active() {
                     context.camera.orientation.move_backward(&context.config, &context.timing);
                 }
-                if let Some(ak) = is.states.get(&KeyName::KeyA) && ak.current.is_down() {
+                if let Some(ak) = uin.states.get(&InputName::KeyA) && ak.current.is_active() {
                     context.camera.orientation.move_left(&context.config, &context.timing);
                 }
-                if let Some(dk) = is.states.get(&KeyName::KeyD) && dk.current.is_down() {
+                if let Some(dk) = uin.states.get(&InputName::KeyD) && dk.current.is_active() {
                     context.camera.orientation.move_right(&context.config, &context.timing);
                 }
-            },
+            }
             Err(_) => {
                 panic!("todo: handle mutex lock failure")
             }
