@@ -6,6 +6,7 @@ use num_traits::Float;
 use std::collections::{HashMap, VecDeque};
 use std::ops::{Add, Sub};
 use std::sync::{Arc, Mutex};
+use crate::input::ii::InputInfo;
 
 pub mod is;
 pub mod ii;
@@ -24,6 +25,7 @@ pub struct UserInput<F: Float + Add<F> + Sub<F>> {
     pub previous_window_dimensions: Dimension2D<F>,
     pub current_window_dimensions: Dimension2D<F>,
     pub screen_resized: bool,
+    pub focus: InputState,
 }
 
 impl<F: Float + Add<F> + Sub<F>> UserInput<F> {
@@ -39,6 +41,7 @@ impl<F: Float + Add<F> + Sub<F>> UserInput<F> {
             previous_window_dimensions: Dimension2D::new(F::zero(), F::zero()),
             current_window_dimensions: Dimension2D::new(F::zero(), F::zero()),
             screen_resized: false,
+            focus: InputState::new(InputChange::Active {info: InputInfo::handled()}),
         }))
     }
 

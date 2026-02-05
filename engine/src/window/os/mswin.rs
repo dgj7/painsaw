@@ -20,7 +20,7 @@ use windows::Win32::Foundation::{HINSTANCE, HWND, LPARAM, LRESULT, WPARAM};
 use windows::Win32::Graphics::Gdi::HDC;
 use windows::Win32::Graphics::OpenGL::HGLRC;
 use windows::Win32::UI::Input::KeyboardAndMouse::{VIRTUAL_KEY, VK_A, VK_D, VK_ESCAPE, VK_G, VK_M, VK_S, VK_W};
-use windows::Win32::UI::WindowsAndMessaging::{CS_HREDRAW, CS_OWNDC, CS_VREDRAW, CW_USEDEFAULT, IDC_ARROW, MSG, PM_REMOVE, WINDOW_EX_STYLE, WM_CREATE, WM_DESTROY, WM_KEYDOWN, WM_KEYUP, WM_QUIT, WM_CLOSE, WM_SIZE, WNDCLASSW, WS_OVERLAPPEDWINDOW, WS_THICKFRAME, WS_VISIBLE};
+use windows::Win32::UI::WindowsAndMessaging::{CS_HREDRAW, CS_OWNDC, CS_VREDRAW, CW_USEDEFAULT, IDC_ARROW, MSG, PM_REMOVE, WINDOW_EX_STYLE, WM_CREATE, WM_DESTROY, WM_KEYDOWN, WM_KEYUP, WM_QUIT, WM_CLOSE, WM_SIZE, WNDCLASSW, WS_OVERLAPPEDWINDOW, WS_THICKFRAME, WS_VISIBLE, WM_SETFOCUS, WM_KILLFOCUS};
 use windows_core::{HSTRING, PCWSTR};
 
 pub mod mswin_winapi;
@@ -245,7 +245,7 @@ fn handle_message_if_applicable(input: &Arc<Mutex<UserInput<f32>>>, hwnd: HWND, 
     match message {
         WM_KEYDOWN => {
             match VIRTUAL_KEY(wparam.0 as u16) {
-                VK_ESCAPE => { post_quit_message(0);true }
+                VK_ESCAPE => { input.lock().expect("todo: esc: down").handle_change(InputName::KeyEscape, InputChange::Active { info: InputInfo::unhandled()});true }
                 VK_A => { input.lock().expect("todo: a: down").handle_change(InputName::KeyA, InputChange::Active { info: InputInfo::unhandled() }); true }
                 VK_D => { input.lock().expect("todo: d: down").handle_change(InputName::KeyD, InputChange::Active { info: InputInfo::unhandled() }); true }
                 VK_G => { input.lock().expect("todo: g: down").handle_change(InputName::KeyG, InputChange::Active { info: InputInfo::unhandled() }); true }
@@ -258,6 +258,7 @@ fn handle_message_if_applicable(input: &Arc<Mutex<UserInput<f32>>>, hwnd: HWND, 
         }
         WM_KEYUP => {
             match VIRTUAL_KEY(wparam.0 as u16) {
+                VK_ESCAPE => { input.lock().expect("todo: esc: up").handle_change(InputName::KeyEscape, InputChange::Inactive { info: InputInfo::unhandled() }); true }
                 VK_A => { input.lock().expect("todo: a: up").handle_change(InputName::KeyA, InputChange::Inactive { info: InputInfo::unhandled() }); true }
                 VK_D => { input.lock().expect("todo: d: up").handle_change(InputName::KeyD, InputChange::Inactive { info: InputInfo::unhandled() }); true }
                 VK_G => { input.lock().expect("todo: g: up").handle_change(InputName::KeyG, InputChange::Inactive { info: InputInfo::unhandled() }); true }
@@ -284,6 +285,14 @@ fn handle_message_if_applicable(input: &Arc<Mutex<UserInput<f32>>>, hwnd: HWND, 
                 }
                 Err(_) => panic!("todo: wm_size")
             }
+            true
+        }
+        WM_SETFOCUS => {
+            input.lock().expect("todo: set-focus").focus.update(InputChange::Active { info: InputInfo::unhandled() });
+            true
+        }
+        WM_KILLFOCUS => {
+            input.lock().expect("todo: kill-focus").focus.update(InputChange::Inactive { info: InputInfo::unhandled() });
             true
         }
         _ => false

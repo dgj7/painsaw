@@ -4,6 +4,7 @@ use std::fmt::{Display, Formatter};
 #[derive(Eq, Hash, PartialEq)]
 pub enum InputName {
     /* keyboard */
+    KeyEscape,
     KeyA,
     KeyD,
     KeyG,
@@ -21,6 +22,7 @@ pub enum InputName {
 impl Display for InputName {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
+            InputName::KeyEscape => write!(f, "esc"),
             InputName::KeyA => write!(f, "{}", "KeyA"),
             InputName::KeyD => write!(f, "{}", "KeyD"),
             InputName::KeyG => write!(f, "{}", "KeyG"),
