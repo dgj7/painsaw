@@ -10,6 +10,7 @@ use crate::logger::log_level::LogLevel;
 use crate::window::context::RendererContext;
 use num_traits::Float;
 use std::ops::{Add, Sub};
+use crate::input::r#in::InputName;
 
 ///
 /// Control various aspects of the world, as called by the windowing system.
@@ -55,6 +56,15 @@ pub trait WorldController<F: Float + Add<F> + Sub<F>> {
                 if uin.screen_resized {
                     context.camera.update_screen(&uin.current_client_dimensions);
                     context.graphics.resize(context);
+                }
+
+                /* handle mouse moves */
+                while !uin.mouse_moves.is_empty() {
+                    let change = uin.mouse_moves.pop_front().unwrap();
+                    match change {
+                        InputName::MouseMove { x, y } => {log(LogLevel::Debug, &|| String::from(format!("mousemove: x={},y={}", x, y)))}
+                        _ => {}
+                    }
                 }
             }
             Err(_) => {}

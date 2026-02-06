@@ -13,10 +13,10 @@ pub enum InputName {
     KeyW,
 
     /* mouse */
-    MouseLeft,
-    MouseRight,
+    MouseLeftButton,
+    MouseRightButton,
     MouseScroll,
-    MouseMove { x: i16, y: i16, dx: i16, dy: i16 },
+    MouseMove { x: i32, y: i32 },
 }
 
 impl Display for InputName {
@@ -29,8 +29,8 @@ impl Display for InputName {
             InputName::KeyM => write!(f, "{}", "KeyM"),
             InputName::KeyS => write!(f, "{}", "KeyS"),
             InputName::KeyW => write!(f, "{}", "KeyW"),
-            InputName::MouseLeft => write!(f, "{}", "MouseLeft"),
-            InputName::MouseRight => write!(f, "{}", "MouseRight"),
+            InputName::MouseLeftButton => write!(f, "{}", "MouseLeftButton"),
+            InputName::MouseRightButton => write!(f, "{}", "MouseRightButton"),
             InputName::MouseScroll => write!(f, "{}", "MouseScroll"),
             InputName::MouseMove { .. } => write!(f, "{}", "MouseMove"),
         }

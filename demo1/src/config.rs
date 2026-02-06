@@ -1,15 +1,15 @@
-use engine::config::EngineConfig;
 use engine::config::input_config::InputConfig;
+use engine::config::move_config::MoveConfig;
 use engine::config::renderer_config::RendererConfig;
 use engine::config::window_config::{WindowConfig, WindowDimensions};
+use engine::config::EngineConfig;
 use engine::graphics::subsystem::{GraphicsSubSystem, OpenGLPipeline};
-use engine::input::r#in::InputName;
 use engine::input::is::InputState;
+use engine::input::r#in::InputName;
 use engine::logger::log;
 use engine::logger::log_level::LogLevel;
 use engine::window::context::RendererContext;
 use std::collections::HashMap;
-use engine::config::move_config::MoveConfig;
 
 pub fn create_engine_config() -> EngineConfig<f32> {
     EngineConfig::new(

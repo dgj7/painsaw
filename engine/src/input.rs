@@ -19,6 +19,9 @@ pub struct UserInput<F: Float + Add<F> + Sub<F>> {
     pub changes: VecDeque<InputName>,
     pub states: HashMap<InputName, InputState>,
 
+    /* mouse */
+    pub mouse_moves: VecDeque<InputName>,
+
     /* screen */
     pub previous_client_dimensions: Dimension2D<F>,
     pub current_client_dimensions: Dimension2D<F>,
@@ -34,6 +37,9 @@ impl<F: Float + Add<F> + Sub<F>> UserInput<F> {
             /* keyboard */
             changes: VecDeque::new(),
             states: HashMap::new(),
+
+            /* mouse */
+            mouse_moves: VecDeque::new(),
 
             /* screen */
             previous_client_dimensions: Dimension2D::new(F::zero(), F::zero()),
@@ -51,6 +57,14 @@ impl<F: Float + Add<F> + Sub<F>> UserInput<F> {
             .entry(name)
             .and_modify(|e| e.update(position.clone()))
             .or_insert(InputState::new(position));
+    }
+
+    pub fn move_mouse(&mut self, name: InputName) {
+        if let InputName::MouseMove { .. } = name {
+            self.mouse_moves.push_back(name);
+        } else {
+            panic!("expected InputName::MouseMove but got {}", name);
+        }
     }
 
     pub fn update_client_dimensions(&mut self, current: Dimension2D<F>) {
