@@ -1,22 +1,21 @@
-use num_traits::Num;
 
 #[derive(Clone,Debug)]
-pub struct Dimension2D<F: Num> {
-    pub height: F,
-    pub width: F,
+pub struct Dimension2D {
+    pub height: f32,
+    pub width: f32,
 }
 
-impl<F: Num> Dimension2D<F> {
-    pub fn new(height: F, width: F) -> Dimension2D<F> {
+impl Dimension2D {
+    pub fn new(height: f32, width: f32) -> Dimension2D {
         Dimension2D { height, width }
     }
 
-    pub fn is_equal(&self, other: &Dimension2D<F>) -> bool {
+    pub fn is_equal(&self, other: &Dimension2D) -> bool {
         self.height == other.height
             && self.width == other.width
     }
 
     pub fn is_zero(&self) -> bool {
-        self.width == F::zero() && self.height == F::zero()
+        self.width == 0.0 && self.height == 0.0
     }
 }

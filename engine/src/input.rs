@@ -21,10 +21,10 @@ pub struct UserInput {
     pub mouse_moves: VecDeque<InputName>,
 
     /* screen */
-    pub previous_client_dimensions: Dimension2D<f32>,
-    pub current_client_dimensions: Dimension2D<f32>,
-    pub previous_window_dimensions: Dimension2D<f32>,
-    pub current_window_dimensions: Dimension2D<f32>,
+    pub previous_client_dimensions: Dimension2D,
+    pub current_client_dimensions: Dimension2D,
+    pub previous_window_dimensions: Dimension2D,
+    pub current_window_dimensions: Dimension2D,
     pub screen_resized: bool,
     pub focus: InputState,
 }
@@ -65,7 +65,7 @@ impl UserInput {
         }
     }
 
-    pub fn update_client_dimensions(&mut self, current: Dimension2D<f32>) {
+    pub fn update_client_dimensions(&mut self, current: Dimension2D) {
         /* copy existing current into previous */
         self.previous_client_dimensions.height = self.current_client_dimensions.height;
         self.previous_client_dimensions.width = self.current_client_dimensions.width;
@@ -75,7 +75,7 @@ impl UserInput {
         self.current_client_dimensions.width = current.width;
     }
 
-    pub fn update_window_dimensions(&mut self, current: Dimension2D<f32>) {
+    pub fn update_window_dimensions(&mut self, current: Dimension2D) {
         /* copy existing current into previous */
         self.previous_window_dimensions.height = self.current_window_dimensions.height;
         self.previous_window_dimensions.width = self.current_window_dimensions.width;

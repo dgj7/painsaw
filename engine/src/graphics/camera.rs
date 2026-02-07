@@ -14,7 +14,7 @@ pub struct Camera {
 }
 
 impl Camera {
-    pub fn new(screen: &Dimension2D<f32>) -> Camera {
+    pub fn new(screen: &Dimension2D) -> Camera {
         Camera {
             width: screen.width,
             height: screen.height,
@@ -28,7 +28,7 @@ impl Camera {
         self.width as f64 / self.height as f64
     }
 
-    pub fn update_screen(&mut self, screen: &Dimension2D<f32>) {
+    pub fn update_screen(&mut self, screen: &Dimension2D) {
         self.width = screen.width;
         self.height = screen.height;
         log(LogLevel::Info, &|| String::from(format!("updated screen: width={}, height={}", self.width as f64, self.height as f64)));

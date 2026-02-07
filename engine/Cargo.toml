@@ -1,12 +1,11 @@
 [package]
 name = "engine"
-version = "0.0.133"
+version = "0.0.134"
 edition = "2024"
 
 [dependencies]
 colored = "3.0.0"
 chrono = "0.4.42"
-num-traits = "0.2.19"
 
 # https://crates.io/crates/windows
 [target.'cfg(target_os="windows")'.dependencies]

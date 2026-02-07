@@ -70,7 +70,7 @@ pub(crate) fn default_window_proc(hwnd: Foundation::HWND, msg: u32, wparam: Foun
     unsafe { DefWindowProcW(hwnd, msg, wparam, lparam) }
 }
 
-pub(crate) fn get_client_rect(hwnd: Foundation::HWND) -> Dimension2D<f32> {
+pub(crate) fn get_client_rect(hwnd: Foundation::HWND) -> Dimension2D {
     let rect = &mut RECT { left: 0, top: 0, right: 0, bottom: 0, };
     let result = unsafe { GetClientRect(hwnd, rect) };
     match result {
@@ -80,7 +80,7 @@ pub(crate) fn get_client_rect(hwnd: Foundation::HWND) -> Dimension2D<f32> {
     Dimension2D::new((rect.bottom - rect.top) as f32, (rect.right - rect.left) as f32)
 }
 
-pub(crate) fn get_window_rect(hwnd: Foundation::HWND) -> Dimension2D<f32> {
+pub(crate) fn get_window_rect(hwnd: Foundation::HWND) -> Dimension2D {
     let rect = &mut RECT { left: 0, top: 0, right: 0, bottom: 0, };
     let result = unsafe { GetWindowRect(hwnd, rect) };
     match result {

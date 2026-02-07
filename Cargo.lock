@@ -76,12 +76,11 @@ dependencies = [
 
 [[package]]
 name = "engine"
-version = "0.0.133"
+version = "0.0.134"
 dependencies = [
  "chrono",
  "colored",
  "glcore-rs",
- "num-traits",
  "windows",
  "windows-core",
 ]
