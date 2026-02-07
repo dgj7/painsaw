@@ -7,11 +7,9 @@ use crate::graphics::GraphicsIntermediary;
 use crate::input::UserInput;
 use crate::logger::log;
 use crate::logger::log_level::LogLevel;
-use num_traits::Float;
-use std::ops::{Add, Sub};
 use std::sync::{Arc, Mutex};
 
-pub struct RendererContext<F: Float + Add<F> + Sub<F>> {
+pub struct RendererContext {
     /* scene for game statistics */
     pub first_frame_rendered: bool,
     pub frame_count: u128,
@@ -20,20 +18,20 @@ pub struct RendererContext<F: Float + Add<F> + Sub<F>> {
     pub timing: EngineTiming,
 
     /* scene for world state */
-    pub g2d: Graph2D<F>,
-    pub g3d: Graph3D<F>,
-    pub camera: Camera<F>,
+    pub g2d: Graph2D,
+    pub g3d: Graph3D,
+    pub camera: Camera,
     
     /* rendering subsystem */
-    pub(crate) graphics: GraphicsIntermediary<F>,
+    pub(crate) graphics: GraphicsIntermediary,
 
     /* scene for input state */
-    pub input: Arc<Mutex<UserInput<f32>>>,
-    pub config: EngineConfig<F>,
+    pub input: Arc<Mutex<UserInput>>,
+    pub config: EngineConfig,
 }
 
-impl<F: Float + Add<F> + Sub<F>> RendererContext<F> {
-    pub(crate) fn new(input: &Arc<Mutex<UserInput<f32>>>, config: EngineConfig<F>) -> RendererContext<F> {
+impl RendererContext {
+    pub(crate) fn new(input: &Arc<Mutex<UserInput>>, config: EngineConfig) -> RendererContext {
         let dim = &input.lock().unwrap().current_client_dimensions.clone();
         log(LogLevel::Info, &|| String::from(format!("initializing camera with width={},height={}", &dim.width, &dim.height)));
         RendererContext {

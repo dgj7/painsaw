@@ -11,7 +11,7 @@ use engine::logger::log_level::LogLevel;
 use engine::window::context::RendererContext;
 use std::collections::HashMap;
 
-pub fn create_engine_config() -> EngineConfig<f32> {
+pub fn create_engine_config() -> EngineConfig {
     EngineConfig::new(
         WindowConfig {
             dimensions: WindowDimensions::Dimensional {
@@ -40,15 +40,15 @@ pub fn create_engine_config() -> EngineConfig<f32> {
     )
 }
 
-fn create_behaviors() -> HashMap<InputName, fn(&mut RendererContext<f32>, &InputState)> {
-    let mut behaviors: HashMap<InputName, fn(&mut RendererContext<f32>, &InputState)> = HashMap::new();
+fn create_behaviors() -> HashMap<InputName, fn(&mut RendererContext, &InputState)> {
+    let mut behaviors: HashMap<InputName, fn(&mut RendererContext, &InputState)> = HashMap::new();
 
     behaviors.insert(InputName::KeyG, handle_g);
 
     behaviors
 }
 
-fn handle_g(_context: &mut RendererContext<f32>, state: &InputState) {
+fn handle_g(_context: &mut RendererContext, state: &InputState) {
     logging_key_behavior(InputName::KeyG, state);
 }
 

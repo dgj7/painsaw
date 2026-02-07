@@ -1,7 +1,6 @@
 use crate::graphics::geometry::orient::euler::EulerAngles;
 use crate::graphics::geometry::primitive::v3d::{magnitude, Vertex3D};
 use crate::graphics::geometry::safe_a_cos;
-use num_traits::Float;
 
 ///
 /// 4d number for storing rotations or orientations.
@@ -12,50 +11,50 @@ use num_traits::Float;
 /// doesn't suffer from gimbal lock.
 ///
 #[derive(Clone)]
-pub struct Quaternion<F: Float> {
-    pub w: F,
-    pub x: F,
-    pub y: F,
-    pub z: F,
+pub struct Quaternion {
+    pub w: f32,
+    pub x: f32,
+    pub y: f32,
+    pub z: f32,
 }
 
-impl<F: Float> Quaternion<F> {
-    pub fn rotate_about_x(&mut self, theta: F) {
-        let theta_over_2: F = theta * F::from(0.5).unwrap();
+impl Quaternion {
+    pub fn rotate_about_x(&mut self, theta: f32) {
+        let theta_over_2 = theta * 0.5;
 
         self.w = theta_over_2.cos();
 
         self.x = theta_over_2.sin();
-        self.y = F::zero();
-        self.z = F::zero();
+        self.y = 0.0;
+        self.z = 0.0;
     }
 
-    pub fn rotate_about_y(&mut self, theta: F) {
-        let theta_over_2: F = theta * F::from(0.5).unwrap();
+    pub fn rotate_about_y(&mut self, theta: f32) {
+        let theta_over_2 = theta * 0.5;
 
         self.w = theta_over_2.cos();
 
-        self.x = F::zero();
+        self.x = 0.0;
         self.y = theta_over_2.sin();
-        self.z = F::zero();
+        self.z = 0.0;
     }
 
-    pub fn rotate_about_z(&mut self, theta: F) {
-        let theta_over_2: F = theta * F::from(0.5).unwrap();
+    pub fn rotate_about_z(&mut self, theta: f32) {
+        let theta_over_2 = theta * 0.5;
 
         self.w = theta_over_2.cos();
 
-        self.x = F::zero();
-        self.y = F::zero();
+        self.x = 0.0;
+        self.y = 0.0;
         self.z = theta_over_2.sin();
     }
 
-    pub fn rotate_about_axis(&mut self, axis: &Vertex3D<F>, theta: F) {
-        let mag_minus_1 = magnitude(&axis) - F::one();
-        let fabs_mag = F::abs(mag_minus_1);
-        assert!(fabs_mag < F::from(0.1).unwrap());
+    pub fn rotate_about_axis(&mut self, axis: &Vertex3D, theta: f32) {
+        let mag_minus_1 = magnitude(&axis) - 1.0;
+        let fabs_mag = mag_minus_1.abs();
+        assert!(fabs_mag < 0.1);
 
-        let theta_over_2 = theta * F::from(0.5).unwrap();
+        let theta_over_2 = theta * 0.5;
         let sin_over_theta_2 = theta_over_2.sin();
 
         self.w = theta_over_2.cos();
@@ -71,15 +70,15 @@ impl<F: Float> Quaternion<F> {
     /// note that inertial space is 'transitional' space between object/storage
     /// space and world space (coordinates).
     ///
-    pub fn rotate_object_to_inertial(&mut self, orientation: &EulerAngles<F>) {
-        let sine_pitch = F::from(orientation.pitch * F::from(0.5).unwrap()).unwrap();
-        let cosine_pitch = F::from(orientation.pitch * F::from(0.5).unwrap()).unwrap();
+    pub fn rotate_object_to_inertial(&mut self, orientation: &EulerAngles) {
+        let sine_pitch = orientation.pitch * 0.5;
+        let cosine_pitch = orientation.pitch * 0.5;
 
-        let sine_bank = F::from(orientation.bank * F::from(0.5).unwrap()).unwrap();
-        let cosine_bank = F::from(orientation.bank * F::from(0.5).unwrap()).unwrap();
+        let sine_bank = orientation.bank * 0.5;
+        let cosine_bank = orientation.bank * 0.5;
 
-        let sine_heading = F::from(orientation.heading * F::from(0.5).unwrap()).unwrap();
-        let cosine_heading = F::from(orientation.heading * F::from(0.5).unwrap()).unwrap();
+        let sine_heading = orientation.heading * 0.5;
+        let cosine_heading = orientation.heading * 0.5;
 
         self.w =  cosine_heading * cosine_pitch * cosine_bank + sine_heading * sine_pitch * sine_bank;
         self.x =  cosine_heading * sine_pitch * cosine_bank + sine_heading * cosine_pitch * sine_bank;
@@ -87,15 +86,15 @@ impl<F: Float> Quaternion<F> {
         self.z = -sine_heading * sine_pitch * cosine_bank + cosine_heading * cosine_pitch * sine_bank;
     }
 
-    pub fn rotate_inertial_to_object(&mut self, orientation: &EulerAngles<F>) {
-        let sine_pitch = F::from(orientation.pitch * F::from(0.5).unwrap()).unwrap();
-        let cosine_pitch = F::from(orientation.pitch * F::from(0.5).unwrap()).unwrap();
+    pub fn rotate_inertial_to_object(&mut self, orientation: &EulerAngles) {
+        let sine_pitch = orientation.pitch * 0.5;
+        let cosine_pitch = orientation.pitch * 0.5;
 
-        let sine_bank = F::from(orientation.bank * F::from(0.5).unwrap()).unwrap();
-        let cosine_bank = F::from(orientation.bank * F::from(0.5).unwrap()).unwrap();
+        let sine_bank = orientation.bank * 0.5;
+        let cosine_bank = orientation.bank * 0.5;
 
-        let sine_heading = F::from(orientation.heading * F::from(0.5).unwrap()).unwrap();
-        let cosine_heading = F::from(orientation.heading * F::from(0.5).unwrap()).unwrap();
+        let sine_heading = orientation.heading * 0.5;
+        let cosine_heading = orientation.heading * 0.5;
 
         self.w =  cosine_heading * cosine_pitch * cosine_bank + sine_heading * sine_pitch * sine_bank;
         self.x = -cosine_heading * sine_pitch * cosine_bank - sine_heading * cosine_pitch * sine_bank;
@@ -103,7 +102,7 @@ impl<F: Float> Quaternion<F> {
         self.z =  sine_heading * sine_pitch * cosine_bank - cosine_heading * cosine_pitch * sine_bank;
     }
 
-    pub fn cross_product(&self, other: &Quaternion<F>) -> Quaternion<F> {
+    pub fn cross_product(&self, other: &Quaternion) -> Quaternion {
         Quaternion {
             w: self.w* other.w - self.x* other.x - self.y* other.y - self.z* other.z,
             x: self.w* other.x + self.x* other.w + self.z* other.y - self.y* other.z,
@@ -113,8 +112,8 @@ impl<F: Float> Quaternion<F> {
     }
 
     pub fn normalize(&mut self) {
-        let magnitude = F::from(self.w*self.w + self.x*self.x + self.y*self.y + self.z*self.z).unwrap().sqrt();
-        let one_over_mag = F::one() / magnitude;
+        let magnitude = (self.w*self.w + self.x*self.x + self.y*self.y + self.z*self.z).sqrt();
+        let one_over_mag = 1.0 / magnitude;
 
         self.w = self.w * one_over_mag;
         self.x = self.x * one_over_mag;
@@ -122,23 +121,23 @@ impl<F: Float> Quaternion<F> {
         self.z = self.z * one_over_mag;
     }
 
-    pub fn to_rotation_angle(&self) -> F {
+    pub fn to_rotation_angle(&self) -> f32 {
         let theta_over_2 = safe_a_cos(self.w);
-        F::from(theta_over_2 * F::from(2.0).unwrap()).unwrap()
+        theta_over_2 * 2.0
     }
 
-    pub fn to_rotation_axis(&self) -> Vertex3D<F> {
-        let sin_theta_over_2_squared = F::from(1.0).unwrap() - (self.w * self.w);
+    pub fn to_rotation_axis(&self) -> Vertex3D {
+        let sin_theta_over_2_squared = 1.0 - (self.w * self.w);
 
-        if sin_theta_over_2_squared <= F::from(0.0).unwrap() {
+        if sin_theta_over_2_squared <= 0.0 {
             return Vertex3D {
-                x: F::one(),
-                y: F::zero(),
-                z: F::zero(),
+                x: 1.0,
+                y: 0.0,
+                z: 0.0,
             };
         }
 
-        let one_over_sin_theta_over_2 = F::one() / sin_theta_over_2_squared.sqrt();
+        let one_over_sin_theta_over_2 = 1.0 / sin_theta_over_2_squared.sqrt();
         Vertex3D {
             x: self.x * one_over_sin_theta_over_2,
             y: self.y * one_over_sin_theta_over_2,
@@ -147,30 +146,30 @@ impl<F: Float> Quaternion<F> {
     }
 }
 
-impl<F: Float> Quaternion<F> {
-    pub fn identity() -> Quaternion<F> {
+impl Quaternion {
+    pub fn identity() -> Quaternion {
         Quaternion {
-            w: F::one(),
-            x: F::zero(),
-            y: F::zero(),
-            z: F::zero(),
+            w: 1.0,
+            x: 0.0,
+            y: 0.0,
+            z: 0.0,
         }
     }
 }
 
-pub fn dot_product<F: Float>(left: &Quaternion<F>, right: &Quaternion<F>) -> F {
+pub fn dot_product(left: &Quaternion, right: &Quaternion) -> f32 {
     left.w*right.w + left.x*right.x + left.y*right.y + left.z*right.z
 }
 
 ///
 /// spherical linear interpolation.
 ///
-pub fn slerp<F: Float>(q0: &Quaternion<F>, q1: &Quaternion<F>, t: F) -> Quaternion<F> {
-    if t <= F::zero() {
+pub fn slerp(q0: &Quaternion, q1: &Quaternion, t: f32) -> Quaternion {
+    if t <= 0.0 {
         return q0.clone();
     }
 
-    if t >= F::one() {
+    if t >= 1.0 {
         return q1.clone();
     }
 
@@ -179,7 +178,7 @@ pub fn slerp<F: Float>(q0: &Quaternion<F>, q1: &Quaternion<F>, t: F) -> Quaterni
     let mut q1x = q1.x;
     let mut q1y = q1.y;
     let mut q1z = q1.z;
-    if cos_omega < F::zero() {
+    if cos_omega < 0.0 {
         q1w = -q1w;
         q1x = -q1x;
         q1y = -q1y;
@@ -187,20 +186,20 @@ pub fn slerp<F: Float>(q0: &Quaternion<F>, q1: &Quaternion<F>, t: F) -> Quaterni
         cos_omega = -cos_omega;
     }
 
-    assert!(cos_omega < F::from(1.1).unwrap());
+    assert!(cos_omega < 1.1);
 
     let k0;
     let k1;
 
-    if cos_omega > F::from(0.9999).unwrap() {
-        k0 = F::one() - t;
+    if cos_omega > 0.9999 {
+        k0 = 1.0 - t;
         k1 = t;
     } else {
-        let sin_omega = F::from(F::one() - cos_omega*cos_omega).unwrap().sqrt();
+        let sin_omega = (1.0 - cos_omega*cos_omega).sqrt();
         let omega = sin_omega.atan2(cos_omega);
-        let one_over_sin_omega = F::one() / sin_omega;
-        k0 = F::from((F::one() - t) * omega).unwrap() * one_over_sin_omega;
-        k1 = F::from((t * omega) * one_over_sin_omega).unwrap();
+        let one_over_sin_omega = 1.0 / sin_omega;
+        k0 = (1.0 - t) * omega * one_over_sin_omega;
+        k1 = (t * omega) * one_over_sin_omega;
     }
 
     Quaternion {
@@ -214,7 +213,7 @@ pub fn slerp<F: Float>(q0: &Quaternion<F>, q1: &Quaternion<F>, t: F) -> Quaterni
 ///
 /// conjugate - produces quaternion with opposite rotation.
 ///
-pub fn conjugate<F: Float>(other: &Quaternion<F>) -> Quaternion<F> {
+pub fn conjugate(other: &Quaternion) -> Quaternion {
     Quaternion {
         w: other.w,
         x: -other.x,
@@ -226,8 +225,8 @@ pub fn conjugate<F: Float>(other: &Quaternion<F>) -> Quaternion<F> {
 ///
 /// quaternion exponentiation.
 ///
-pub fn pow<F: Float>(q: &Quaternion<F>, exponent: F) -> Quaternion<F> {
-    if F::abs(q.w) > F::from(0.9999).unwrap() {
+pub fn pow(q: &Quaternion, exponent: f32) -> Quaternion {
+    if q.w.abs() > 0.9999 {
         return q.clone();
     }
 

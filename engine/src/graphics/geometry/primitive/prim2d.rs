@@ -3,22 +3,21 @@ use crate::graphics::geometry::primitive::v2d::Vertex2D;
 use crate::graphics::geometry::primitive::PrimitiveType;
 use crate::logger::log;
 use crate::logger::log_level::LogLevel;
-use num_traits::Float;
 
-pub struct Primitive2D<F: Float> {
-    pub p_type: PrimitiveType<F>,
-    pub vertices: Vec<Vertex2D<F>>,
+pub struct Primitive2D {
+    pub p_type: PrimitiveType,
+    pub vertices: Vec<Vertex2D>,
     pub color: Color,
 }
 
-pub struct Primitive2DBuilder<F: Float> {
-    the_p_type: Option<PrimitiveType<F>>,
-    the_vertices: Vec<Vertex2D<F>>,
+pub struct Primitive2DBuilder {
+    the_p_type: Option<PrimitiveType>,
+    the_vertices: Vec<Vertex2D>,
     the_color: Option<Color>,
 }
 
-impl<F: Float> Primitive2D<F> {
-    pub fn new(p_type: PrimitiveType<F>, vertices: Vec<Vertex2D<F>>, color: Color) -> Primitive2D<F> {
+impl Primitive2D {
+    pub fn new(p_type: PrimitiveType, vertices: Vec<Vertex2D>, color: Color) -> Primitive2D {
         if vertices.len() == 0 {
             log(LogLevel::Warning, &|| String::from("0 vertices specified"));
         }
@@ -41,8 +40,8 @@ impl<F: Float> Primitive2D<F> {
     }
 }
 
-impl<F: Float> Primitive2DBuilder<F> {
-    pub fn new() -> Primitive2DBuilder<F> {
+impl Primitive2DBuilder {
+    pub fn new() -> Primitive2DBuilder {
         Primitive2DBuilder {
             the_p_type: None,
             the_vertices: vec!(),
@@ -50,17 +49,17 @@ impl<F: Float> Primitive2DBuilder<F> {
         }
     }
 
-    pub fn with_type(mut self, the_type: PrimitiveType<F>) -> Self {
+    pub fn with_type(mut self, the_type: PrimitiveType) -> Self {
         self.the_p_type = Some(the_type);
         self
     }
 
-    pub fn with_vertex(mut self, vertex: Vertex2D<F>) -> Self {
+    pub fn with_vertex(mut self, vertex: Vertex2D) -> Self {
         self.the_vertices.push(vertex);
         self
     }
 
-    pub fn with_vertices(mut self, vertices: Vec<Vertex2D<F>>) -> Self {
+    pub fn with_vertices(mut self, vertices: Vec<Vertex2D>) -> Self {
         self.the_vertices.extend(vertices);
         self
     }
@@ -70,9 +69,9 @@ impl<F: Float> Primitive2DBuilder<F> {
         self
     }
 
-    pub fn build(self) -> Primitive2D<F> {
+    pub fn build(self) -> Primitive2D {
         Primitive2D {
-            p_type: self.the_p_type.unwrap_or_else(|| PrimitiveType::Point {point_size: F::one()}),
+            p_type: self.the_p_type.unwrap_or_else(|| PrimitiveType::Point {point_size: 1.0}),
             vertices: self.the_vertices,
             color: self.the_color.unwrap_or_else(|| Color::WHITE),
         }

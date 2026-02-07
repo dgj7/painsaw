@@ -1,5 +1,4 @@
 use crate::graphics::geometry::orient::matrix::m4x4::Matrix4x4;
-use num_traits::Float;
 use crate::config::EngineConfig;
 use crate::graphics::geometry::primitive::v3d::Vertex3D;
 use crate::graphics::timing::EngineTiming;
@@ -9,22 +8,22 @@ pub mod matrix;
 pub mod quaternion;
 
 #[derive(Clone)]
-pub struct Orientation<F: Float> {
-    pub position: Matrix4x4<F>,  // orientation; c1=right(x), c2=up(y), c3=forward(z/normal), c4=position
-    pub x_scale: F,
-    pub y_scale: F,
-    pub z_scale: F,
+pub struct Orientation {
+    pub position: Matrix4x4,  // orientation; c1=right(x), c2=up(y), c3=forward(z/normal), c4=position
+    pub x_scale: f32,
+    pub y_scale: f32,
+    pub z_scale: f32,
 }
 
-pub struct OrientationBuilder<F: Float> {
-    the_position: Option<Matrix4x4<F>>,
-    the_x_scale: Option<F>,
-    the_y_scale: Option<F>,
-    the_z_scale: Option<F>,
+pub struct OrientationBuilder {
+    the_position: Option<Matrix4x4>,
+    the_x_scale: Option<f32>,
+    the_y_scale: Option<f32>,
+    the_z_scale: Option<f32>,
 }
 
-impl<F: Float> Orientation<F> {
-    pub fn new(position: Matrix4x4<F>, x_scale: F, y_scale: F, z_scale: F) -> Orientation<F> {
+impl Orientation {
+    pub fn new(position: Matrix4x4, x_scale: f32, y_scale: f32, z_scale: f32) -> Orientation {
         Orientation {
             position,
             x_scale,
@@ -33,80 +32,80 @@ impl<F: Float> Orientation<F> {
         }
     }
 
-    pub fn camera_default() -> Orientation<F> {
+    pub fn camera_default() -> Orientation {
         Orientation {
             position: Matrix4x4 {
-                c4r1: F::zero(),
-                c4r2: F::zero(),
-                c4r3: F::from(1.5).unwrap(),
+                c4r1: 0.0,
+                c4r2: 0.0,
+                c4r3: 1.5,
                 ..Default::default()
             },
-            x_scale: F::from(1.0).unwrap(),
-            y_scale: F::from(1.0).unwrap(),
-            z_scale: F::from(1.0).unwrap(),
+            x_scale: 1.0,
+            y_scale: 1.0,
+            z_scale: 1.0,
         }
     }
 }
 
-impl<F: Float> Orientation<F> {
-    pub fn pitch(&self) -> F {
+impl Orientation {
+    pub fn pitch(&self) -> f32 {
         // todo
-        F::zero()
+        0.0
     }
 
-    pub fn yaw(&self) -> F {
+    pub fn yaw(&self) -> f32 {
         // todo
-        F::zero()
+        0.0
     }
 }
 
-impl<F: Float> Orientation<F> {
-    pub fn move_forward(&mut self, config: &EngineConfig<F>, timing: &EngineTiming) {
+impl Orientation {
+    pub fn move_forward(&mut self, config: &EngineConfig, timing: &EngineTiming) {
         /* gather necessary variables */
         let forward = self.position.column_major_z_forward();
         let position = self.position.column_major_position();
 
         /* compute change (forward * speed * delta_time), then update position */
-        let change = Vertex3D::new_mult_scalar(&Vertex3D::new_mult_scalar(&forward, config.movement.forward_speed), F::from(timing.delta_time).unwrap());
+        let change = Vertex3D::new_mult_scalar(&Vertex3D::new_mult_scalar(&forward, config.movement.forward_speed), timing.delta_time as f32);
         let updated = Vertex3D::new_subtract(&position, &change);
 
         /* update the orientation matrix */
         self.position.column_major_update_position(&updated);
     }
 
-    pub fn move_backward(&mut self, config: &EngineConfig<F>, timing: &EngineTiming) {
+    pub fn move_backward(&mut self, config: &EngineConfig, timing: &EngineTiming) {
         /* gather necessary variables */
         let forward = self.position.column_major_z_forward();
         let position = self.position.column_major_position();
 
         /* compute change (forward * speed * delta_time), then update position */
-        let change = Vertex3D::new_mult_scalar(&Vertex3D::new_mult_scalar(&forward, config.movement.forward_speed), F::from(timing.delta_time).unwrap());
+        let change = Vertex3D::new_mult_scalar(&Vertex3D::new_mult_scalar(&forward, config.movement.forward_speed), timing.delta_time as f32);
         let updated = Vertex3D::new_add(&position, &change);
 
         /* update the orientation matrix */
         self.position.column_major_update_position(&updated);
     }
 
-    pub fn move_left(&mut self, config: &EngineConfig<F>, timing: &EngineTiming) {
+    pub fn move_left(&mut self, config: &EngineConfig, timing: &EngineTiming) {
         /* gather necessary variables */
         let right = self.position.column_major_x_right();
         let position = self.position.column_major_position();
 
         /* compute change (right * speed * delta_time), then update position */
-        let change = Vertex3D::new_mult_scalar(&Vertex3D::new_mult_scalar(&right, config.movement.forward_speed), F::from(timing.delta_time).unwrap());
+        let change = Vertex3D::new_mult_scalar(&Vertex3D::new_mult_scalar(&right, config.movement.forward_speed), timing.delta_time as f32);
         let updated = Vertex3D::new_subtract(&position, &change);
 
         /* update the orientation matrix */
         self.position.column_major_update_position(&updated);
     }
 
-    pub fn move_right(&mut self, config: &EngineConfig<F>, timing: &EngineTiming) {
+    pub fn move_right(&mut self, config: &EngineConfig, timing: &EngineTiming) {
         /* gather necessary variables */
         let right = self.position.column_major_x_right();
         let position = self.position.column_major_position();
 
         /* compute change (right * speed * delta_time), then update position */
-        let change = Vertex3D::new_mult_scalar(&Vertex3D::new_mult_scalar(&right, config.movement.forward_speed), F::from(timing.delta_time).unwrap());
+        let change = Vertex3D::new_mult_scalar(&Vertex3D::new_mult_scalar(&right, config.movement.forward_speed), timing.delta_time as f32);
         let updated = Vertex3D::new_add(&position, &change);
 
         /* update the orientation matrix */
@@ -114,19 +113,19 @@ impl<F: Float> Orientation<F> {
     }
 }
 
-impl<F: Float> Default for Orientation<F> {
-    fn default() -> Orientation<F> {
+impl Default for Orientation {
+    fn default() -> Orientation {
         Orientation {
             position: Matrix4x4::default(),
-            x_scale: F::one(),
-            y_scale: F::one(),
-            z_scale: F::one(),
+            x_scale: 1.0,
+            y_scale: 1.0,
+            z_scale: 1.0,
         }
     }
 }
 
-impl<F: Float> OrientationBuilder<F> {
-    pub fn new() -> OrientationBuilder<F> {
+impl OrientationBuilder {
+    pub fn new() -> OrientationBuilder {
         OrientationBuilder {
             the_position: None,
             the_x_scale: None,
@@ -135,32 +134,32 @@ impl<F: Float> OrientationBuilder<F> {
         }
     }
     
-    pub fn with_position(mut self, position: Matrix4x4<F>) -> OrientationBuilder<F> {
+    pub fn with_position(mut self, position: Matrix4x4) -> OrientationBuilder {
         self.the_position = Some(position);
         self
     }
     
-    pub fn with_x_scale(mut self, scale: F) -> OrientationBuilder<F> {
+    pub fn with_x_scale(mut self, scale: f32) -> OrientationBuilder {
         self.the_x_scale = Some(scale);
         self
     }
     
-    pub fn with_y_scale(mut self, scale: F) -> OrientationBuilder<F> {
+    pub fn with_y_scale(mut self, scale: f32) -> OrientationBuilder {
         self.the_y_scale = Some(scale);
         self
     }
     
-    pub fn with_z_scale(mut self, scale: F) -> OrientationBuilder<F> {
+    pub fn with_z_scale(mut self, scale: f32) -> OrientationBuilder {
         self.the_z_scale = Some(scale);
         self
     }
     
-    pub fn build(self) -> Orientation<F> {
+    pub fn build(self) -> Orientation {
         Orientation {
             position: self.the_position.unwrap_or_else(|| Matrix4x4::default()),
-            x_scale: self.the_x_scale.unwrap_or_else(|| F::one()),
-            y_scale: self.the_y_scale.unwrap_or_else(|| F::one()),
-            z_scale: self.the_z_scale.unwrap_or_else(|| F::one()),
+            x_scale: self.the_x_scale.unwrap_or_else(|| 1.0),
+            y_scale: self.the_y_scale.unwrap_or_else(|| 1.0),
+            z_scale: self.the_z_scale.unwrap_or_else(|| 1.0),
         }
     }
 }

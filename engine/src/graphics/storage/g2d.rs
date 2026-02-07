@@ -1,30 +1,28 @@
 use crate::graphics::storage::m2d::Model2D;
-use num_traits::Float;
 use std::collections::BTreeMap;
-use std::ops::{Add, Sub};
 
 // todo: better organization; quad tree?
-pub struct Graph2D<F: Float + Add<F> + Sub<F>> {
-    models: BTreeMap<String, Model2D<F>>
+pub struct Graph2D {
+    models: BTreeMap<String, Model2D>
 }
 
-impl<F: Float + Add<F> + Sub<F>> Graph2D<F> {
-    pub fn new() -> Graph2D<F> {
+impl Graph2D {
+    pub fn new() -> Graph2D {
         Graph2D {
             models: BTreeMap::new(),
         }
     }
 }
 
-impl<F: Float> Graph2D<F> {
-    pub fn attach(&mut self, name: &str, model: Model2D<F>) {
+impl Graph2D {
+    pub fn attach(&mut self, name: &str, model: Model2D) {
         self.models.insert(name.to_string(), model);
     }
 
     pub fn attach_or_update<IF, MF>(&mut self, name: &str, insert: IF, modify: MF)
     where
-        IF: Fn() -> Model2D<F>,
-        MF: FnOnce(&mut Model2D<F>),
+        IF: Fn() -> Model2D,
+        MF: FnOnce(&mut Model2D),
     {
         self.models
             .entry(name.to_string())
@@ -34,7 +32,7 @@ impl<F: Float> Graph2D<F> {
     
     pub fn update<FN>(&mut self, name: &str, fx: FN)
     where
-        FN: FnOnce(&mut Model2D<F>),
+        FN: FnOnce(&mut Model2D),
     {
         self.models
             .entry(name.to_string())
@@ -42,12 +40,12 @@ impl<F: Float> Graph2D<F> {
     }
 }
 
-impl<F: Float> Graph2D<F> {
-    pub fn iter(&self) -> impl Iterator<Item=(&String, &Model2D<F>)> {
+impl Graph2D {
+    pub fn iter(&self) -> impl Iterator<Item=(&String, &Model2D)> {
         self.models.iter()
     }
 
-    pub fn iter_mut(&mut self) -> impl Iterator<Item=(&String, &mut Model2D<F>)> {
+    pub fn iter_mut(&mut self) -> impl Iterator<Item=(&String, &mut Model2D)> {
         self.models.iter_mut()
     }
     

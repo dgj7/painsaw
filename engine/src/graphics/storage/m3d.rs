@@ -1,36 +1,34 @@
 use crate::graphics::geometry::primitive::prim3d::Primitive3D;
-use num_traits::Float;
-use std::ops::{Add, Sub};
 
-pub struct Model3D<F: Float + Add<F> + Sub<F>> {
-    pub primitives: Vec<Primitive3D<F>>,
+pub struct Model3D {
+    pub primitives: Vec<Primitive3D>,
 }
 
-pub struct Model3DBuilder<F: Float + Add<F> + Sub<F>> {
-    the_primitives: Vec<Primitive3D<F>>,
+pub struct Model3DBuilder {
+    the_primitives: Vec<Primitive3D>,
 }
 
-impl<F: Float + Add<F> + Sub<F>> Model3D<F> {
-    pub fn new(primitives: Vec<Primitive3D<F>>) -> Model3D<F> {
+impl Model3D {
+    pub fn new(primitives: Vec<Primitive3D>) -> Model3D {
         Model3D {
             primitives,
         }
     }
 }
 
-impl<F: Float + Add<F> + Sub<F>> Model3DBuilder<F> {
-    pub fn new() -> Model3DBuilder<F> {
+impl Model3DBuilder {
+    pub fn new() -> Model3DBuilder {
         Model3DBuilder {
             the_primitives: Vec::new(),
         }
     }
 
-    pub fn with_primitive(mut self, primitive: Primitive3D<F>) -> Self {
+    pub fn with_primitive(mut self, primitive: Primitive3D) -> Self {
         self.the_primitives.push(primitive);
         self
     }
 
-    pub fn build(self) -> Model3D<F> {
+    pub fn build(self) -> Model3D {
         Model3D {
             primitives: self.the_primitives,
         }

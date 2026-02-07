@@ -2,9 +2,7 @@ use crate::graphics::geometry::dim::Dimension2D;
 use crate::input::r#in::InputName;
 use crate::input::ic::InputChange;
 use crate::input::is::InputState;
-use num_traits::Float;
 use std::collections::{HashMap, VecDeque};
-use std::ops::{Add, Sub};
 use std::sync::{Arc, Mutex};
 use crate::input::ii::InputInfo;
 
@@ -14,7 +12,7 @@ pub mod ic;
 pub mod r#in;
 
 #[derive(Clone,Debug)]
-pub struct UserInput<F: Float + Add<F> + Sub<F>> {
+pub struct UserInput {
     /* keyboard */
     pub changes: VecDeque<InputName>,
     pub states: HashMap<InputName, InputState>,
@@ -23,16 +21,16 @@ pub struct UserInput<F: Float + Add<F> + Sub<F>> {
     pub mouse_moves: VecDeque<InputName>,
 
     /* screen */
-    pub previous_client_dimensions: Dimension2D<F>,
-    pub current_client_dimensions: Dimension2D<F>,
-    pub previous_window_dimensions: Dimension2D<F>,
-    pub current_window_dimensions: Dimension2D<F>,
+    pub previous_client_dimensions: Dimension2D<f32>,
+    pub current_client_dimensions: Dimension2D<f32>,
+    pub previous_window_dimensions: Dimension2D<f32>,
+    pub current_window_dimensions: Dimension2D<f32>,
     pub screen_resized: bool,
     pub focus: InputState,
 }
 
-impl<F: Float + Add<F> + Sub<F>> UserInput<F> {
-    pub fn new() -> Arc<Mutex<UserInput<F>>> {
+impl UserInput {
+    pub fn new() -> Arc<Mutex<UserInput>> {
         Arc::new(Mutex::new(UserInput {
             /* keyboard */
             changes: VecDeque::new(),
@@ -42,10 +40,10 @@ impl<F: Float + Add<F> + Sub<F>> UserInput<F> {
             mouse_moves: VecDeque::new(),
 
             /* screen */
-            previous_client_dimensions: Dimension2D::new(F::zero(), F::zero()),
-            current_client_dimensions: Dimension2D::new(F::zero(), F::zero()),
-            previous_window_dimensions: Dimension2D::new(F::zero(), F::zero()),
-            current_window_dimensions: Dimension2D::new(F::zero(), F::zero()),
+            previous_client_dimensions: Dimension2D::new(0.0, 0.0),
+            current_client_dimensions: Dimension2D::new(0.0, 0.0),
+            previous_window_dimensions: Dimension2D::new(0.0, 0.0),
+            current_window_dimensions: Dimension2D::new(0.0, 0.0),
             screen_resized: false,
             focus: InputState::new(InputChange::Active {info: InputInfo::handled()}),
         }))
@@ -67,7 +65,7 @@ impl<F: Float + Add<F> + Sub<F>> UserInput<F> {
         }
     }
 
-    pub fn update_client_dimensions(&mut self, current: Dimension2D<F>) {
+    pub fn update_client_dimensions(&mut self, current: Dimension2D<f32>) {
         /* copy existing current into previous */
         self.previous_client_dimensions.height = self.current_client_dimensions.height;
         self.previous_client_dimensions.width = self.current_client_dimensions.width;
@@ -77,7 +75,7 @@ impl<F: Float + Add<F> + Sub<F>> UserInput<F> {
         self.current_client_dimensions.width = current.width;
     }
 
-    pub fn update_window_dimensions(&mut self, current: Dimension2D<F>) {
+    pub fn update_window_dimensions(&mut self, current: Dimension2D<f32>) {
         /* copy existing current into previous */
         self.previous_window_dimensions.height = self.current_window_dimensions.height;
         self.previous_window_dimensions.width = self.current_window_dimensions.width;

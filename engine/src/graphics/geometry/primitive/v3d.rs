@@ -1,14 +1,12 @@
-use num_traits::Float;
-use std::ops::{Add, Div, Mul, Sub};
 
 #[derive(Clone)]
-pub struct Vertex3D<F: Float + Add<F> + Sub<F> + Mul<F> + Div<F>> {
-    pub x: F,
-    pub y: F,
-    pub z: F,
+pub struct Vertex3D {
+    pub x: f32,
+    pub y: f32,
+    pub z: f32,
 }
 
-impl<F: Float + Add<F> + Sub<F> + Mul<F> + Div<F>> Vertex3D<F> {
+impl Vertex3D {
 
     pub fn negate(&mut self) {
         self.x = -self.x;
@@ -16,64 +14,64 @@ impl<F: Float + Add<F> + Sub<F> + Mul<F> + Div<F>> Vertex3D<F> {
         self.z = -self.z;
     }
 
-    pub fn is_equal(&self, other: &Vertex3D<F>) -> bool {
+    pub fn is_equal(&self, other: &Vertex3D) -> bool {
         self.x == other.x && self.y == other.y && self.z == other.z
     }
 
     pub fn normalize(&mut self) {
         let magnitude_squared = self.x * self.x + self.y * self.y + self.z * self.z;
-        if magnitude_squared > F::zero() {
-            let one_div_mag = F::one() / magnitude_squared.sqrt();
+        if magnitude_squared > 0.0 {
+            let one_div_mag = 1.0 / magnitude_squared.sqrt();
             self.x = self.x * one_div_mag;
             self.y = self.y * one_div_mag;
             self.z = self.z * one_div_mag;
         }
     }
 
-    pub fn distance_to(&self, other: &Vertex3D<F>) -> F {
+    pub fn distance_to(&self, other: &Vertex3D) -> f32 {
         distance(self, other)
     }
 
-    pub fn add(&mut self, addend: &Vertex3D<F>) {
+    pub fn add(&mut self, addend: &Vertex3D) {
         self.x = self.x + addend.x;
         self.y = self.y + addend.y;
         self.z = self.z + addend.z;
 
     }
 
-    pub fn subtract(&mut self, subtrahend: &Vertex3D<F>) {
+    pub fn subtract(&mut self, subtrahend: &Vertex3D) {
         self.x = self.x - subtrahend.x;
         self.y = self.y - subtrahend.y;
         self.z = self.z - subtrahend.z;
     }
 
-    pub fn dot_product(&mut self, multiplier: &Vertex3D<F>) -> F {
+    pub fn dot_product(&mut self, multiplier: &Vertex3D) -> f32 {
         self.x * multiplier.x + self.y * multiplier.y + self.z * multiplier.z
     }
 }
 
-impl<F: Float + Add<F> + Sub<F> + Mul<F> + Div<F>> Vertex3D<F> {
-    pub fn new(x: F, y: F, z: F) -> Vertex3D<F> {
+impl Vertex3D {
+    pub fn new(x: f32, y: f32, z: f32) -> Vertex3D {
         Vertex3D { x, y, z }
     }
 
-    pub fn origin() -> Vertex3D<F> {
-        Vertex3D::new(F::zero(), F::zero(), F::zero())
+    pub fn origin() -> Vertex3D {
+        Vertex3D::new(0.0, 0.0, 0.0)
     }
 
-    pub fn create_x_unit() -> Vertex3D<F> {
-        Vertex3D::new(F::one(), F::zero(), F::zero())
+    pub fn create_x_unit() -> Vertex3D {
+        Vertex3D::new(1.0, 0.0, 0.0)
     }
 
-    pub fn create_y_unit() -> Vertex3D<F> {
-        Vertex3D::new(F::zero(), F::one(), F::zero())
+    pub fn create_y_unit() -> Vertex3D {
+        Vertex3D::new(0.0, 1.0, 0.0)
     }
 
-    pub fn create_z_unit() -> Vertex3D<F> {
-        Vertex3D::new(F::zero(), F::zero(), F::one())
+    pub fn create_z_unit() -> Vertex3D {
+        Vertex3D::new(0.0, 0.0, 1.0)
     }
 
-    pub fn new_add(left_addend: &Vertex3D<F>, right_addend: &Vertex3D<F>) -> Vertex3D<F> {
+    pub fn new_add(left_addend: &Vertex3D, right_addend: &Vertex3D) -> Vertex3D {
         Vertex3D {
             x: left_addend.x + right_addend.x,
             y: left_addend.y + right_addend.y,
@@ -81,7 +79,7 @@ impl<F: Float + Add<F> + Sub<F> + Mul<F> + Div<F>> Vertex3D<F> {
         }
     }
 
-    pub fn new_subtract(minuend: &Vertex3D<F>, subtrahend: &Vertex3D<F>) -> Vertex3D<F> {
+    pub fn new_subtract(minuend: &Vertex3D, subtrahend: &Vertex3D) -> Vertex3D {
         Vertex3D {
             x: minuend.x - subtrahend.x,
             y: minuend.y - subtrahend.y,
@@ -89,7 +87,7 @@ impl<F: Float + Add<F> + Sub<F> + Mul<F> + Div<F>> Vertex3D<F> {
         }
     }
 
-    pub fn new_mult_scalar(multiplicand: &Vertex3D<F>, multiplier: F) -> Vertex3D<F> {
+    pub fn new_mult_scalar(multiplicand: &Vertex3D, multiplier: f32) -> Vertex3D {
         Vertex3D {
             x: multiplicand.x * multiplier,
             y: multiplicand.y * multiplier,
@@ -97,7 +95,7 @@ impl<F: Float + Add<F> + Sub<F> + Mul<F> + Div<F>> Vertex3D<F> {
         }
     }
 
-    pub fn new_div_scalar(dividend: &Vertex3D<F>, divisor: F) -> Vertex3D<F> {
+    pub fn new_div_scalar(dividend: &Vertex3D, divisor: f32) -> Vertex3D {
         Vertex3D {
             x: dividend.x / divisor,
             y: dividend.y / divisor,
@@ -105,7 +103,7 @@ impl<F: Float + Add<F> + Sub<F> + Mul<F> + Div<F>> Vertex3D<F> {
         }
     }
 
-    pub fn new_cross_product(left: &Vertex3D<F>, right: &Vertex3D<F>) -> Vertex3D<F> {
+    pub fn new_cross_product(left: &Vertex3D, right: &Vertex3D) -> Vertex3D {
         Vertex3D {
             x: left.y * right.z - left.z * right.y,
             y: left.z * right.x - left.x * right.z,
@@ -114,18 +112,18 @@ impl<F: Float + Add<F> + Sub<F> + Mul<F> + Div<F>> Vertex3D<F> {
     }
 }
 
-pub fn magnitude<F: Float>(p: &Vertex3D<F>) -> F {
+pub fn magnitude(p: &Vertex3D) -> f32 {
     ((p.x*p.x) + (p.y*p.y) + (p.z*p.z)).sqrt()
 }
 
-pub fn distance_squared<F: Float>(left: &Vertex3D<F>, right: &Vertex3D<F>) -> F {
+pub fn distance_squared(left: &Vertex3D, right: &Vertex3D) -> f32 {
     let dx = left.x - right.x;
     let dy = left.y - right.y;
     let dz = left.z - right.z;
     dx * dx + dy * dy + dz * dz
 }
 
-pub fn distance<F: Float>(left: &Vertex3D<F>, right: &Vertex3D<F>) -> F {
+pub fn distance(left: &Vertex3D, right: &Vertex3D) -> f32 {
     distance_squared(left, right).sqrt()
 }
 

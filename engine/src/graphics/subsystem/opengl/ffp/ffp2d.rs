@@ -9,11 +9,10 @@ use crate::graphics::storage::g2d::Graph2D;
 use crate::graphics::subsystem::opengl::ffp::api::{gl_begin_lines, gl_begin_points, gl_begin_quads, gl_bind_texture, gl_blend_func, gl_color_3f, gl_disable, gl_enable, gl_end, gl_gen_textures, gl_line_width, gl_load_identity, gl_matrix_mode, gl_ortho, gl_point_size, gl_pop_attrib, gl_pop_matrix, gl_push_attrib, gl_push_matrix, gl_tex_coord_2f, gl_tex_env_f, gl_tex_image_2d, gl_tex_parameter_i, gl_tex_sub_image_2d, gl_vertex_2f};
 use crate::logger::log;
 use crate::logger::log_level::LogLevel;
-use num_traits::Float;
 use std::ffi::c_void;
 use windows::Win32::Graphics::OpenGL::{GL_ALL_ATTRIB_BITS, GL_BLEND, GL_MODELVIEW, GL_NEAREST, GL_ONE_MINUS_SRC_ALPHA, GL_PROJECTION, GL_REPLACE, GL_RGBA, GL_SRC_ALPHA, GL_TEXTURE_2D, GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_TEXTURE_MAG_FILTER, GL_TEXTURE_MIN_FILTER, GL_UNSIGNED_BYTE};
 
-pub(crate) fn ffp_2d_setup<F: Float>(camera: &Camera<F>) {
+pub(crate) fn ffp_2d_setup(camera: &Camera) {
     /* save prior state before 2d rendering */
     gl_push_matrix();
     gl_push_attrib(GL_ALL_ATTRIB_BITS);
@@ -21,7 +20,7 @@ pub(crate) fn ffp_2d_setup<F: Float>(camera: &Camera<F>) {
     /* projection: reset matrix; setup ortho for 2d drawing */
     gl_matrix_mode(GL_PROJECTION);
     gl_load_identity();
-    gl_ortho(0.0, camera.width.to_f64().unwrap(), camera.height.to_f64().unwrap(), 0.0, -99999.0, 99999.0);
+    gl_ortho(0.0, camera.width as f64, camera.height as f64, 0.0, -99999.0, 99999.0);
 
     /* storage/view: reset matrix; ready for 2d drawing */
     gl_matrix_mode(GL_MODELVIEW);
@@ -33,7 +32,7 @@ pub(crate) fn ffp_2d_teardown() {
     gl_pop_matrix();
 }
 
-pub(crate) fn ffp_2d_initialize_textures<F: Float>(g2d: &mut Graph2D<F>) {
+pub(crate) fn ffp_2d_initialize_textures(g2d: &mut Graph2D) {
     /* initialize textures */
     gl_enable(GL_TEXTURE_2D);
     for (_, value) in g2d.iter_mut() {
@@ -46,7 +45,7 @@ pub(crate) fn ffp_2d_initialize_textures<F: Float>(g2d: &mut Graph2D<F>) {
     log(LogLevel::Debug, &|| String::from("initialization complete"));
 }
 
-pub(crate) fn ffp_2d_update_textures<F: Float>(g2d: &mut Graph2D<F>) {
+pub(crate) fn ffp_2d_update_textures(g2d: &mut Graph2D) {
     for (_, model) in &mut g2d.iter_mut() {
         for texture in &mut model.textures {
             if !texture.initialized {
@@ -57,7 +56,7 @@ pub(crate) fn ffp_2d_update_textures<F: Float>(g2d: &mut Graph2D<F>) {
     }
 }
 
-fn ffp_2d_initialize_texture<F: Float>(texture: &mut Texture2D<F>) {
+fn ffp_2d_initialize_texture(texture: &mut Texture2D) {
     /* gen 1 texture; bind it */
     let texture_id_ptr: *mut u32 = (&mut texture.id) as *mut u32;
     gl_gen_textures(1, texture_id_ptr);
@@ -87,7 +86,7 @@ fn ffp_2d_initialize_texture<F: Float>(texture: &mut Texture2D<F>) {
     log(LogLevel::Info, &|| String::from(format!("created texture, id=[{}]", texture.id)));
 }
 
-fn ffp_2d_update_texture<F: Float>(texture: &mut Texture2D<F>) {
+fn ffp_2d_update_texture(texture: &mut Texture2D) {
     if texture.replacement.is_some() {
         let repl = texture.replacement.take().unwrap();
         gl_bind_texture(GL_TEXTURE_2D, texture.id);
@@ -106,16 +105,16 @@ fn ffp_2d_update_texture<F: Float>(texture: &mut Texture2D<F>) {
     }
 }
 
-pub(crate) fn ffp_render_2d_points<F: Float>(primitive: &Primitive2D<F>, point_size: F) {
+pub(crate) fn ffp_render_2d_points(primitive: &Primitive2D, point_size: f32) {
     gl_push_matrix();
     gl_push_attrib(GL_ALL_ATTRIB_BITS);
 
     gl_color_3f(primitive.color.red, primitive.color.green, primitive.color.blue);
-    gl_point_size(point_size.to_f32().unwrap());
+    gl_point_size(point_size);
 
     gl_begin_points();
     for point in primitive.vertices.iter() {
-        gl_vertex_2f(point.x.to_f32().unwrap(), point.y.to_f32().unwrap());
+        gl_vertex_2f(point.x, point.y);
     }
     gl_end();
 
@@ -123,16 +122,16 @@ pub(crate) fn ffp_render_2d_points<F: Float>(primitive: &Primitive2D<F>, point_s
     gl_pop_matrix();
 }
 
-pub(crate) fn ffp_render_2d_lines<F: Float>(primitive: &Primitive2D<F>, thickness: F) {
+pub(crate) fn ffp_render_2d_lines(primitive: &Primitive2D, thickness: f32) {
     gl_push_matrix();
     gl_push_attrib(GL_ALL_ATTRIB_BITS);
 
     gl_color_3f(primitive.color.red, primitive.color.green, primitive.color.blue);
-    gl_line_width(thickness.to_f32().unwrap());
+    gl_line_width(thickness);
 
     gl_begin_lines();
     for vertex in primitive.vertices.iter() {
-        gl_vertex_2f(vertex.x.to_f32().unwrap(), vertex.y.to_f32().unwrap());
+        gl_vertex_2f(vertex.x, vertex.y);
     }
     gl_end();
 
@@ -140,7 +139,7 @@ pub(crate) fn ffp_render_2d_lines<F: Float>(primitive: &Primitive2D<F>, thicknes
     gl_pop_matrix();
 }
 
-pub(crate) fn ffp_render_2d_quads<F: Float>(primitive: &Primitive2D<F>) {
+pub(crate) fn ffp_render_2d_quads(primitive: &Primitive2D) {
     gl_push_matrix();
     gl_push_attrib(GL_ALL_ATTRIB_BITS);
 
@@ -148,7 +147,7 @@ pub(crate) fn ffp_render_2d_quads<F: Float>(primitive: &Primitive2D<F>) {
 
     gl_begin_quads();
     for vertex in primitive.vertices.iter() {
-        gl_vertex_2f(vertex.x.to_f32().unwrap(), vertex.y.to_f32().unwrap());
+        gl_vertex_2f(vertex.x, vertex.y);
     }
     gl_end();
 
@@ -156,15 +155,15 @@ pub(crate) fn ffp_render_2d_quads<F: Float>(primitive: &Primitive2D<F>) {
     gl_pop_matrix();
 }
 
-pub(crate) fn ffp_render_2d_texture<F: Float>(texture: &Texture2D<F>) {
+pub(crate) fn ffp_render_2d_texture(texture: &Texture2D) {
     /* save prior state before making changes */
     gl_push_matrix();
     gl_push_attrib(GL_ALL_ATTRIB_BITS);
 
     /* gather variables */
-    let scale = texture.scale.to_f32().unwrap();
-    let x = texture.x.to_f32().unwrap();
-    let y = texture.y.to_f32().unwrap();
+    let scale = texture.scale;
+    let x = texture.x;
+    let y = texture.y;
     let width = texture.image.width as f32;
     let height = texture.image.height as f32;
 

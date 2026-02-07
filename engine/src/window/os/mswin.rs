@@ -14,7 +14,6 @@ use crate::window::os::mswin::mswin_data::{create_and_write_pointer, input_state
 use crate::window::os::mswin::mswin_winapi::{create_window_ex, default_window_proc, dispatch_message, get_client_rect, get_module_handle, get_window_rect, load_cursor, peek_message, post_quit_message, register_class, translate_message};
 use crate::window::os::Window;
 use crate::window::wc::WorldController;
-use num_traits::Float;
 use std::sync::{Arc, Mutex};
 use windows::Win32::Foundation::{HINSTANCE, HWND, LPARAM, LRESULT, WPARAM};
 use windows::Win32::Graphics::Gdi::HDC;
@@ -28,7 +27,7 @@ pub mod mswin_data;
 mod mswin_errors;
 
 pub struct MsWinWindow {
-    pub input: Arc<Mutex<UserInput<f32>>>,
+    pub input: Arc<Mutex<UserInput>>,
 
     pub hinstance: HINSTANCE,
     pub wndclassw: WNDCLASSW,
@@ -42,8 +41,8 @@ pub struct MsWinWindow {
     pub hrc: HGLRC,
 }
 
-impl<F: Float> Window<F> for MsWinWindow {
-    fn begin_event_handling(&mut self, wc: Box<dyn WorldController<F>>, config: EngineConfig<F>) -> Result<(), Box<dyn std::error::Error>>
+impl Window for MsWinWindow {
+    fn begin_event_handling(&mut self, wc: Box<dyn WorldController>, config: EngineConfig) -> Result<(), Box<dyn std::error::Error>>
     {
         log(LogLevel::Info, &|| "begin event handling".parse().unwrap());
         let mut message: MSG = MSG::default();
@@ -89,7 +88,7 @@ impl MsWinWindow {
     ///
     /// create a new instance.
     ///
-    pub fn new<F: Float>(request : &EngineConfig<F>) -> Result<Box<dyn Window<F>>, Box<dyn std::error::Error>> {
+    pub fn new(request : &EngineConfig) -> Result<Box<dyn Window>, Box<dyn std::error::Error>> {
         /* make some variables */
         let wndclass = PCWSTR::from_raw(HSTRING::from(request.window.window_id.clone().unwrap_or(String::from("WindowConfig: set wndclass"))).as_ptr());
         let title = PCWSTR::from_raw(HSTRING::from(request.window.title.clone().unwrap_or(String::from("WindowConfig: set title"))).as_ptr());
@@ -241,7 +240,7 @@ extern "system" fn wndproc(window: HWND, message: u32, wparam: WPARAM, lparam: L
 ///
 /// handle input messages, such as key down/up or mouse movement.
 ///
-fn handle_message_if_applicable(input: &Arc<Mutex<UserInput<f32>>>, hwnd: HWND, message: u32, wparam: WPARAM, lparam: LPARAM) -> bool {
+fn handle_message_if_applicable(input: &Arc<Mutex<UserInput>>, hwnd: HWND, message: u32, wparam: WPARAM, lparam: LPARAM) -> bool {
     match message {
         WM_KEYDOWN => {
             match VIRTUAL_KEY(wparam.0 as u16) {

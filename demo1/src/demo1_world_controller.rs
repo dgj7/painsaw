@@ -12,8 +12,8 @@ static M2D_Y_VERT: &str = "2-2d-y-vertical";
 
 pub(crate) struct Demo1WorldController {}
 
-impl WorldController<f32> for Demo1WorldController {
-    fn initialize_world_helper(&self, context: &mut RendererContext<f32>) {
+impl WorldController for Demo1WorldController {
+    fn initialize_world_helper(&self, context: &mut RendererContext) {
         /* 2d */
         context.g2d.attach(M2D_XY_PURPLE, create_2d_axes(&context.camera));
         context.g2d.attach(M2D_X_HORIZ, create_2d_grid_x_lines(&context.camera));
@@ -26,7 +26,7 @@ impl WorldController<f32> for Demo1WorldController {
         context.g3d.attach("6-3d-cuboid-wall-2", create_3d_cuboid_wall_2());
     }
 
-    fn update_world_helper(&self, context: &mut RendererContext<f32>) {
+    fn update_world_helper(&self, context: &mut RendererContext) {
         match context.input.clone().lock() {
             Ok(uin) => {
                 /* gather some variables */

@@ -7,7 +7,7 @@ use engine::graphics::image::t2d::Texture2DBuilder;
 use engine::graphics::image::text::{text_2d_image, TextConfig};
 use engine::graphics::storage::m2d::{Model2D, Model2DBuilder};
 
-pub(super) fn create_2d_axes(camera: &Camera<f32>) -> Model2D<f32> {
+pub(super) fn create_2d_axes(camera: &Camera) -> Model2D {
     Model2DBuilder::new()
         .with_primitive(Primitive2DBuilder::new()
             .with_type(PrimitiveType::Line {thickness: 10.0})
@@ -27,7 +27,7 @@ pub(super) fn create_2d_axes(camera: &Camera<f32>) -> Model2D<f32> {
         .build()
 }
 
-pub(super) fn create_2d_grid_x_lines(camera: &Camera<f32>) -> Model2D<f32> {
+pub(super) fn create_2d_grid_x_lines(camera: &Camera) -> Model2D {
     /* storage for vertices */
     let mut vertices = vec!();
 
@@ -49,7 +49,7 @@ pub(super) fn create_2d_grid_x_lines(camera: &Camera<f32>) -> Model2D<f32> {
         .build()
 }
 
-pub(super) fn create_2d_grid_y_lines(camera: &Camera<f32>) -> Model2D<f32> {
+pub(super) fn create_2d_grid_y_lines(camera: &Camera) -> Model2D {
     /* storage for vertices */
     let mut vertices = vec!();
 
@@ -71,7 +71,7 @@ pub(super) fn create_2d_grid_y_lines(camera: &Camera<f32>) -> Model2D<f32> {
         .build()
 }
 
-pub(super) fn create_2d_repeated_texts(count: u16, x: f32, y: f32) -> Model2D<f32> {
+pub(super) fn create_2d_repeated_texts(count: u16, x: f32, y: f32) -> Model2D {
     let mut textures = vec!();
 
     for i in 0..count {

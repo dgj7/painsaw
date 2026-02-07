@@ -10,8 +10,6 @@ use crate::graphics::subsystem::{OpenGLPipeline, RenderingSubSystemHandle};
 use crate::window::context::RendererContext;
 use ffp::api::gl_get_string;
 use ffp::ffp2d::{ffp_2d_setup, ffp_2d_teardown, ffp_render_2d_lines, ffp_render_2d_points, ffp_render_2d_texture};
-use num_traits::Float;
-use std::ops::{Add, Sub};
 use windows::Win32::Graphics::OpenGL::{GL_RENDERER, GL_VENDOR, GL_VERSION};
 
 pub(crate) mod opengl_mswin_api;
@@ -23,7 +21,7 @@ pub struct OpenGLHandle {
     pub(crate) pipeline: OpenGLPipeline,
 }
 
-impl<F: Float + Add<F> + Sub<F>> RenderingSubSystemHandle<F> for OpenGLHandle {
+impl RenderingSubSystemHandle for OpenGLHandle {
     fn identify(&self) -> Option<RendererInfo> {
         match self.pipeline {
             OpenGLPipeline::FixedFunction => {
@@ -39,28 +37,28 @@ impl<F: Float + Add<F> + Sub<F>> RenderingSubSystemHandle<F> for OpenGLHandle {
         }
     }
 
-    fn initialize(&self, g2d: &mut Graph2D<F>, _g3d: &mut Graph3D<F>) {
+    fn initialize(&self, g2d: &mut Graph2D, _g3d: &mut Graph3D) {
         match self.pipeline {
             OpenGLPipeline::FixedFunction => {ffp_2d_initialize_textures(g2d)}
             OpenGLPipeline::ProgrammableShader => {}
         }
     }
 
-    fn resize(&self, context: &RendererContext<F>) {
+    fn resize(&self, context: &RendererContext) {
         match self.pipeline {
             OpenGLPipeline::FixedFunction => {ffp_resize(&context.camera)}
             OpenGLPipeline::ProgrammableShader => {}
         }
     }
 
-    fn before_scene(&self, _camera: &Camera<F>) {
+    fn before_scene(&self, _camera: &Camera) {
         match self.pipeline {
             OpenGLPipeline::FixedFunction => {ffp_before_scene()}
             OpenGLPipeline::ProgrammableShader => {}
         }
     }
 
-    fn prepare_2d(&self, camera: &Camera<F>, g2d: &mut Graph2D<F>) {
+    fn prepare_2d(&self, camera: &Camera, g2d: &mut Graph2D) {
         match self.pipeline {
             OpenGLPipeline::FixedFunction => {
                 ffp_2d_setup(camera);
@@ -70,7 +68,7 @@ impl<F: Float + Add<F> + Sub<F>> RenderingSubSystemHandle<F> for OpenGLHandle {
         }
     }
 
-    fn render_2d(&self, g2d: &mut Graph2D<F>) {
+    fn render_2d(&self, g2d: &mut Graph2D) {
         match self.pipeline {
             OpenGLPipeline::FixedFunction => {
                 for (_, model) in g2d.iter() {
@@ -99,14 +97,14 @@ impl<F: Float + Add<F> + Sub<F>> RenderingSubSystemHandle<F> for OpenGLHandle {
         }
     }
 
-    fn prepare_3d(&self, context: &RendererContext<F>) {
+    fn prepare_3d(&self, context: &RendererContext) {
         match self.pipeline {
             OpenGLPipeline::FixedFunction => {ffp_3d_setup(context)},
             OpenGLPipeline::ProgrammableShader => {}
         }
     }
 
-    fn render_3d(&self, g3d: &mut Graph3D<F>) {
+    fn render_3d(&self, g3d: &mut Graph3D) {
         match self.pipeline {
             OpenGLPipeline::FixedFunction => {
                 for (_, model) in g3d.iter() {
@@ -138,7 +136,7 @@ impl<F: Float + Add<F> + Sub<F>> RenderingSubSystemHandle<F> for OpenGLHandle {
         }
     }
 
-    fn after_3d(&self, _context: &RendererContext<F>) {
+    fn after_3d(&self, _context: &RendererContext) {
         match self.pipeline {
             OpenGLPipeline::FixedFunction => {ffp_3d_teardown()},
             OpenGLPipeline::ProgrammableShader => {},

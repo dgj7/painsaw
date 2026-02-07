@@ -7,7 +7,7 @@ use engine::graphics::geometry::primitive::PrimitiveType;
 use engine::graphics::geometry::primitive::v3d::Vertex3D;
 use engine::graphics::storage::m3d::{Model3D, Model3DBuilder};
 
-pub(super) fn create_3d_axes() -> Model3D<f32> {
+pub(super) fn create_3d_axes() -> Model3D {
     Model3DBuilder::new()
         .with_primitive(Primitive3DBuilder::new()
             .with_type(PrimitiveType::Point {point_size: 5.0})
@@ -50,7 +50,7 @@ pub(super) fn create_3d_axes() -> Model3D<f32> {
         .build()
 }
 
-pub(super) fn create_3d_cuboid_1() -> Model3D<f32> {
+pub(super) fn create_3d_cuboid_1() -> Model3D {
     let orientation = Orientation::new(Matrix4x4::from(
         Vertex3D::origin(),
         Vertex3D::origin(),
@@ -75,7 +75,7 @@ pub(super) fn create_3d_cuboid_1() -> Model3D<f32> {
         .build()
 }
 
-pub(super) fn create_3d_cuboid_wall_2() -> Model3D<f32> {
+pub(super) fn create_3d_cuboid_wall_2() -> Model3D {
     let orientation = Orientation::new(Matrix4x4::from(
         Vertex3D::origin(),
         Vertex3D::origin(),

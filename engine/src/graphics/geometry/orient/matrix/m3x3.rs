@@ -1,4 +1,3 @@
-use num_traits::Float;
 
 ///
 /// store a 3x3 matrix, containing rotation and scaling of an object or camera.
@@ -20,22 +19,22 @@ use num_traits::Float;
 ///
 /// row-major (directx/unreal): each row represents 3 (basis) vectors.
 ///
-pub struct Matrix3x3<F: Float> {
+pub struct Matrix3x3 {
     /* column 1 */
-    pub c1r1: F,
-    pub c1r2: F,
-    pub c1r3: F,
+    pub c1r1: f32,
+    pub c1r2: f32,
+    pub c1r3: f32,
 
     /* column 2 */
-    pub c2r1: F,
-    pub c2r2: F,
-    pub c2r3: F,
+    pub c2r1: f32,
+    pub c2r2: f32,
+    pub c2r3: f32,
 
     /* column 3 */
-    pub c3r1: F,
-    pub c3r2: F,
-    pub c3r3: F,
+    pub c3r1: f32,
+    pub c3r2: f32,
+    pub c3r3: f32,
 }
 
 #[allow(dead_code)] // todo: remove this
-type RotationMatrix<F> = Matrix3x3<F>;
+type RotationMatrix = Matrix3x3;

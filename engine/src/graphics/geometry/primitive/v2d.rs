@@ -1,22 +1,20 @@
-use num_traits::Float;
-use std::ops::{Add, Sub};
 
 #[derive(Clone)]
-pub struct Vertex2D<F: Float + Sub<F> + Add<F>> {
-    pub x: F,
-    pub y: F,
+pub struct Vertex2D {
+    pub x: f32,
+    pub y: f32,
 }
 
-impl<F: Float> Vertex2D<F> {
-    pub fn new(x: F, y: F) -> Vertex2D<F> {
+impl Vertex2D {
+    pub fn new(x: f32, y: f32) -> Vertex2D {
         Vertex2D { x, y }
     }
 
-    pub fn origin() -> Vertex2D<F> {
-        Vertex2D { x: F::zero(), y: F::zero() }
+    pub fn origin() -> Vertex2D {
+        Vertex2D { x: 0.0, y: 0.0 }
     }
 
-    pub fn distance(&self, other: &Vertex2D<F>) -> F {
+    pub fn distance(&self, other: &Vertex2D) -> f32 {
         ((self.x-other.x).powi(2) + (self.y-other.y).powi(2)).sqrt()
     }
 }

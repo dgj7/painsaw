@@ -1,5 +1,4 @@
 use crate::graphics::geometry::primitive::v3d::Vertex3D;
-use num_traits::Float;
 
 ///
 /// store a 4x4 matrix, containing rotation, translation and scaling of an object or camera.
@@ -25,61 +24,61 @@ use num_traits::Float;
 /// row-major (directx/unreal): each row represents 3 (basis) vectors and position.
 ///
 #[derive(Clone)]
-pub struct Matrix4x4<F: Float> {
+pub struct Matrix4x4 {
     /* column1: x(right) */
-    pub c1r1: F,
-    pub c1r2: F,
-    pub c1r3: F,
-    pub c1r4: F,
+    pub c1r1: f32,
+    pub c1r2: f32,
+    pub c1r3: f32,
+    pub c1r4: f32,
 
     /* column2: y(up) */
-    pub c2r1: F,
-    pub c2r2: F,
-    pub c2r3: F,
-    pub c2r4: F,
+    pub c2r1: f32,
+    pub c2r2: f32,
+    pub c2r3: f32,
+    pub c2r4: f32,
 
     /* column3: z(forward) */
-    pub c3r1: F,
-    pub c3r2: F,
-    pub c3r3: F,
-    pub c3r4: F,
+    pub c3r1: f32,
+    pub c3r2: f32,
+    pub c3r3: f32,
+    pub c3r4: f32,
 
     /* column4: translation(position) */
-    pub c4r1: F,
-    pub c4r2: F,
-    pub c4r3: F,
-    pub c4r4: F,
+    pub c4r1: f32,
+    pub c4r2: f32,
+    pub c4r3: f32,
+    pub c4r4: f32,
 }
 
-impl<F: Float> Matrix4x4<F> {
-    pub fn from(x_right: Vertex3D<F>, y_up: Vertex3D<F>, z_forward: Vertex3D<F>, position: Vertex3D<F>) -> Matrix4x4<F> {
+impl Matrix4x4 {
+    pub fn from(x_right: Vertex3D, y_up: Vertex3D, z_forward: Vertex3D, position: Vertex3D) -> Matrix4x4 {
         Matrix4x4 {
             c1r1: x_right.x,
             c1r2: x_right.y,
             c1r3: x_right.z,
-            c1r4: F::from(0.0).unwrap(),
+            c1r4: 0.0,
 
             c2r1: y_up.x,
             c2r2: y_up.y,
             c2r3: y_up.z,
-            c2r4: F::from(0.0).unwrap(),
+            c2r4: 0.0,
 
 
             c3r1: z_forward.x,
             c3r2: z_forward.y,
             c3r3: z_forward.z,
-            c3r4: F::from(0.0).unwrap(),
+            c3r4: 0.0,
 
             c4r1: position.x,
             c4r2: position.y,
             c4r3: position.z,
-            c4r4: F::from(0.0).unwrap(),
+            c4r4: 0.0,// todo: i think this should be 1.0
         }
     }
 }
 
-impl<F: Float> Matrix4x4<F> {
-    pub fn column_major_x_right(&self) -> Vertex3D<F> {
+impl Matrix4x4 {
+    pub fn column_major_x_right(&self) -> Vertex3D {
         Vertex3D {
             x: self.c1r1,
             y: self.c1r2,
@@ -87,7 +86,7 @@ impl<F: Float> Matrix4x4<F> {
         }
     }
 
-    pub fn column_major_y_up(&self) -> Vertex3D<F> {
+    pub fn column_major_y_up(&self) -> Vertex3D {
         Vertex3D {
             x: self.c2r1,
             y: self.c2r2,
@@ -95,7 +94,7 @@ impl<F: Float> Matrix4x4<F> {
         }
     }
 
-    pub fn column_major_z_forward(&self) -> Vertex3D<F> {
+    pub fn column_major_z_forward(&self) -> Vertex3D {
         Vertex3D {
             x: self.c3r1,
             y: self.c3r2,
@@ -103,7 +102,7 @@ impl<F: Float> Matrix4x4<F> {
         }
     }
 
-    pub fn column_major_position(&self) -> Vertex3D<F> {
+    pub fn column_major_position(&self) -> Vertex3D {
         Vertex3D {
             x: self.c4r1,
             y: self.c4r2,
@@ -111,27 +110,27 @@ impl<F: Float> Matrix4x4<F> {
         }
     }
 
-    pub fn column_major_x_scale(&self) -> F {
+    pub fn column_major_x_scale(&self) -> f32 {
         scale(self.column_major_x_right())
     }
 
-    pub fn column_major_y_scale(&self) -> F {
+    pub fn column_major_y_scale(&self) -> f32 {
         scale(self.column_major_y_up())
     }
 
-    pub fn column_major_z_scale(&self) -> F {
+    pub fn column_major_z_scale(&self) -> f32 {
         scale(self.column_major_z_forward())
     }
 
-    pub fn column_major_update_position(&mut self, position: &Vertex3D<F>) {
+    pub fn column_major_update_position(&mut self, position: &Vertex3D) {
         self.c4r1 = position.x;
         self.c4r2 = position.y;
         self.c4r3 = position.z;
     }
 }
 
-impl<F: Float> Default for Matrix4x4<F> {
-    fn default() -> Matrix4x4<F> {
+impl Default for Matrix4x4 {
+    fn default() -> Matrix4x4 {
         Matrix4x4::from(Vertex3D::create_x_unit(), Vertex3D::create_y_unit(), Vertex3D::create_z_unit(), Vertex3D::origin())
     }
 }
@@ -141,6 +140,6 @@ impl<F: Float> Default for Matrix4x4<F> {
 ///
 /// presumes the axis is not normalized.
 ///
-fn scale<F: Float>(axis: Vertex3D<F>) -> F {
+fn scale(axis: Vertex3D) -> f32 {
     ((axis.x * axis.x) + (axis.y * axis.y) + (axis.z * axis.z)).sqrt()
 }

@@ -3,7 +3,6 @@
 //!
 
 use std::collections::BTreeMap;
-use num_traits::Float;
 use crate::config::input_config::InputConfig;
 use crate::config::move_config::MoveConfig;
 use crate::config::renderer_config::RendererConfig;
@@ -13,23 +12,24 @@ pub mod window_config;
 pub mod renderer_config;
 pub mod input_config;
 pub mod move_config;
-mod command_config;
+pub mod command_config;
+
 /* cvar keys */
 pub static CVAR_FOV: &str = "cvar-fov";
 
 /* cvar defaults */
 pub static DEFAULT_FOV: f64 = 45.0;
 
-pub struct EngineConfig<F: Float> {
+pub struct EngineConfig {
     pub window: WindowConfig,
     pub renderer: RendererConfig,
-    pub input: InputConfig<F>,
-    pub movement: MoveConfig<F>,
+    pub input: InputConfig,
+    pub movement: MoveConfig,
 
     cvars: BTreeMap<String, String>,
 }
 
-impl<F: Float> EngineConfig<F> {
+impl EngineConfig {
     pub fn get_cvar<FN, O>(&self, name: &str, f: FN) -> Option<O>
     where
         FN: Fn(&str) -> O,
@@ -39,8 +39,8 @@ impl<F: Float> EngineConfig<F> {
     }
 }
 
-impl<F: Float> EngineConfig<F> {
-    pub fn new(window: WindowConfig, renderer: RendererConfig, input: InputConfig<F>, movement: MoveConfig<F>) -> Self {
+impl EngineConfig {
+    pub fn new(window: WindowConfig, renderer: RendererConfig, input: InputConfig, movement: MoveConfig) -> Self {
         EngineConfig {
             window,
             renderer,
@@ -51,8 +51,8 @@ impl<F: Float> EngineConfig<F> {
     }
 }
 
-impl<F: Float> Default for EngineConfig<F> {
-    fn default() -> EngineConfig<F> {
+impl Default for EngineConfig {
+    fn default() -> EngineConfig {
         EngineConfig {
             window: WindowConfig::default(),
             renderer: RendererConfig::default(),

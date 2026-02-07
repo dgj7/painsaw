@@ -8,18 +8,16 @@
 use crate::logger::log;
 use crate::logger::log_level::LogLevel;
 use crate::window::context::RendererContext;
-use num_traits::Float;
-use std::ops::{Add, Sub};
 use crate::input::r#in::InputName;
 
 ///
 /// Control various aspects of the world, as called by the windowing system.
 ///
-pub trait WorldController<F: Float + Add<F> + Sub<F>> {
+pub trait WorldController {
     ///
     /// initialize the game world.
     ///
-    fn initialize_world(&self, context: &mut RendererContext<F>) {
+    fn initialize_world(&self, context: &mut RendererContext) {
         self.initialize_world_helper(context);
 
         let graphics = &mut context.graphics;
@@ -31,12 +29,12 @@ pub trait WorldController<F: Float + Add<F> + Sub<F>> {
     ///
     /// initialize game world - customizer for client.
     ///
-    fn initialize_world_helper(&self, context: &mut RendererContext<F>);
+    fn initialize_world_helper(&self, context: &mut RendererContext);
 
     ///
     /// update the game world state - fully controlled by client.
     ///
-    fn update_world(&self, context: &mut RendererContext<F>) {
+    fn update_world(&self, context: &mut RendererContext) {
         match context.input.clone().lock() {
             Ok(mut uin) => {
                 /* handle key changes */
@@ -80,7 +78,7 @@ pub trait WorldController<F: Float + Add<F> + Sub<F>> {
         }
     }
 
-    fn update_world_helper(&self, context: &mut RendererContext<F>);
+    fn update_world_helper(&self, context: &mut RendererContext);
 
     ///
     /// display the game world scene.
@@ -89,7 +87,7 @@ pub trait WorldController<F: Float + Add<F> + Sub<F>> {
     /// come from models supplied during initialization, along with changes to those models
     /// during the update world step.
     ///
-    fn display_world_scene(&self, context: &mut RendererContext<F>) {
+    fn display_world_scene(&self, context: &mut RendererContext) {
         /* prepare for drawing */
         context.graphics.before_scene(&context.camera);
 

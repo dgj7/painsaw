@@ -1,51 +1,50 @@
 use crate::graphics::geometry::orient::Orientation;
-use num_traits::Float;
 use crate::graphics::geometry::dim::Dimension2D;
 use crate::logger::log;
 use crate::logger::log_level::LogLevel;
 
-pub struct Camera<F: Float> {
-    pub orientation: Orientation<F>,
+pub struct Camera {
+    pub orientation: Orientation,
 
-    pub width: F,                   // window width
-    pub height: F,                  // window height
+    pub width: f32,                   // window width
+    pub height: f32,                  // window height
 
-    pub near: F,                    // 3d near clipping plane
-    pub far: F,                     // 3d far clipping plane
+    pub near: f32,                    // 3d near clipping plane
+    pub far: f32,                     // 3d far clipping plane
 }
 
-impl<F: Float> Camera<F> {
-    pub fn new(screen: &Dimension2D<f32>) -> Camera<F> {
+impl Camera {
+    pub fn new(screen: &Dimension2D<f32>) -> Camera {
         Camera {
-            width: F::from(screen.width).unwrap(),
-            height: F::from(screen.height).unwrap(),
+            width: screen.width,
+            height: screen.height,
             ..Default::default()
         }
     }
 }
 
-impl<F: Float> Camera<F> {
+impl Camera {
     pub fn aspect(&self) -> f64 {
-        (F::from(self.width).unwrap() / F::from(self.height).unwrap()).to_f64().unwrap()
+        self.width as f64 / self.height as f64
     }
 
     pub fn update_screen(&mut self, screen: &Dimension2D<f32>) {
-        self.width = F::from(screen.width).unwrap();
-        self.height = F::from(screen.height).unwrap();
-        log(LogLevel::Info, &|| String::from(format!("updated screen: width={}, height={}", self.width.to_f64().unwrap(), self.height.to_f64().unwrap())));
+        self.width = screen.width;
+        self.height = screen.height;
+        log(LogLevel::Info, &|| String::from(format!("updated screen: width={}, height={}", self.width as f64, self.height as f64)));
     }
 }
 
-impl<F: Float> Default for Camera<F> {
-    fn default() -> Camera<F> {
+impl Default for Camera {
+    fn default() -> Camera {
         Camera {
             orientation: Orientation::camera_default(),
 
-            width: F::from(800.0).unwrap(),
-            height: F::from(600.0).unwrap(),
+            width: 800.0,
+            height: 600.0,
 
-            near: F::from(0.01).unwrap(),
-            far: F::from(500.0).unwrap(),
+            near: 0.01,
+            far: 500.0,
         }
     }
 }

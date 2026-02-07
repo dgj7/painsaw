@@ -1,4 +1,3 @@
-use num_traits::Float;
 use crate::graphics::color::Color;
 use crate::graphics::geometry::orient::Orientation;
 use crate::graphics::geometry::primitive::v3d::Vertex3D;
@@ -9,22 +8,22 @@ use crate::logger::log_level::LogLevel;
 ///
 /// simple shapes that can be drawn by various low-level rendering apis.
 ///
-pub struct Primitive3D<F: Float> {
-    pub ptype: PrimitiveType<F>,
-    pub vertices: Vec<Vertex3D<F>>,
-    pub orientation: Orientation<F>,
+pub struct Primitive3D {
+    pub ptype: PrimitiveType,
+    pub vertices: Vec<Vertex3D>,
+    pub orientation: Orientation,
     pub color: Color,
 }
 
-pub struct Primitive3DBuilder<F: Float> {
-    the_type: Option<PrimitiveType<F>>,
-    the_vertices: Vec<Vertex3D<F>>,
-    the_orientation: Option<Orientation<F>>,
+pub struct Primitive3DBuilder {
+    the_type: Option<PrimitiveType>,
+    the_vertices: Vec<Vertex3D>,
+    the_orientation: Option<Orientation>,
     the_color: Option<Color>,
 }
 
-impl<F: Float> Primitive3D<F> {
-    pub fn new(ptype: PrimitiveType<F>, vertices: Vec<Vertex3D<F>>, orientation: Orientation<F>, color: Color) -> Primitive3D<F> {
+impl Primitive3D {
+    pub fn new(ptype: PrimitiveType, vertices: Vec<Vertex3D>, orientation: Orientation, color: Color) -> Primitive3D {
         /* warn for no vertices */
         if vertices.len() == 0 {
             log(LogLevel::Warning, &|| String::from("0 vertices specified"));
@@ -51,8 +50,8 @@ impl<F: Float> Primitive3D<F> {
     }
 }
 
-impl<F: Float> Primitive3DBuilder<F> {
-    pub fn new() -> Primitive3DBuilder<F> {
+impl Primitive3DBuilder {
+    pub fn new() -> Primitive3DBuilder {
         Primitive3DBuilder{
             the_type: None,
             the_vertices: vec!(),
@@ -61,17 +60,17 @@ impl<F: Float> Primitive3DBuilder<F> {
         }
     }
 
-    pub fn with_type(mut self, the_type: PrimitiveType<F>) -> Self {
+    pub fn with_type(mut self, the_type: PrimitiveType) -> Self {
         self.the_type = Some(the_type);
         self
     }
 
-    pub fn with_vertex(mut self, vertex: Vertex3D<F>) -> Self {
+    pub fn with_vertex(mut self, vertex: Vertex3D) -> Self {
         self.the_vertices.push(vertex);
         self
     }
 
-    pub fn with_orientation(mut self, orientation: Orientation<F>) -> Self {
+    pub fn with_orientation(mut self, orientation: Orientation) -> Self {
         self.the_orientation = Some(orientation);
         self
     }
@@ -81,9 +80,9 @@ impl<F: Float> Primitive3DBuilder<F> {
         self
     }
 
-    pub fn build(self) -> Primitive3D<F> {
+    pub fn build(self) -> Primitive3D {
         Primitive3D {
-            ptype: self.the_type.unwrap_or_else(|| PrimitiveType::Point {point_size: F::one()}),
+            ptype: self.the_type.unwrap_or_else(|| PrimitiveType::Point {point_size: 1.0}),
             vertices: self.the_vertices,
             orientation: self.the_orientation.unwrap_or_else(|| Orientation::default()),
             color: self.the_color.unwrap_or_else(|| Color::WHITE),

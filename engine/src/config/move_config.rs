@@ -1,20 +1,19 @@
-use num_traits::Float;
 
-pub struct MoveConfig<F: Float> {
-    pub forward_speed: F,
-    pub backward_speed: F,
-    pub strafe_speed: F,
-    pub up_speed: F,
+pub struct MoveConfig {
+    pub forward_speed: f32,
+    pub backward_speed: f32,
+    pub strafe_speed: f32,
+    pub up_speed: f32,
 }
 
 // todo: this will probably have to change; we need a config that is based on whatever game type is chosen
-impl<F: Float> Default for MoveConfig<F> {
-    fn default() -> MoveConfig<F> {
+impl Default for MoveConfig {
+    fn default() -> MoveConfig {
         MoveConfig {
-            forward_speed: F::from(5.0).unwrap(),
-            backward_speed: F::one(),
-            strafe_speed: F::one(),
-            up_speed: F::one(),
+            forward_speed: 5.0,
+            backward_speed: 1.0,
+            strafe_speed: 1.0,
+            up_speed: 1.0,
         }
     }
 }

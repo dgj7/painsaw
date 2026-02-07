@@ -1,26 +1,26 @@
 use std::f64::consts::PI;
-use num_traits::Float;
 
 pub mod dim;
 pub mod orient;
 pub mod primitive;
 pub mod build;
 
-pub(crate) static C_2_PI: f64 = PI * 2.0;
-pub(crate) static C_PI_OVER_2: f64 = PI / 2.0;
+pub (crate) static C_PI: f32 = PI as f32;
+pub(crate) static C_2_PI: f32 = C_PI * 2.0;
+pub(crate) static C_PI_OVER_2: f32 = C_PI / 2.0;
 #[allow(unused)]// todo: remove
-pub(crate) static C_1_OVER_PI: f64 = 1.0 / PI;
-pub(crate) static C_1_OVER_2PI: f64 = 1.0 / C_2_PI;
-pub(crate) static C_PI_OVER_180 : f64 = PI / 180.0;
-pub(crate) static C_180_OVER_PI: f64 = 180.0 / PI;
+pub(crate) static C_1_OVER_PI: f32 = 1.0 / C_PI;
+pub(crate) static C_1_OVER_2PI: f32 = 1.0 / C_2_PI;
+pub(crate) static C_PI_OVER_180 : f32 = C_PI / 180.0;
+pub(crate) static C_180_OVER_PI: f32 = 180.0 / C_PI;
 
 ///
 /// wrap an angle in the range -pi..pi.
 ///
-pub fn wrap_pi<F: Float>(mut theta: F) -> F {
-    theta = theta + F::from(PI).unwrap();
-    theta = theta - F::floor(theta * F::from(C_1_OVER_2PI).unwrap()) * F::from(C_2_PI).unwrap();
-    theta = theta - F::from(PI).unwrap();
+pub fn wrap_pi(mut theta: f32) -> f32 {
+    theta = theta + C_PI;
+    theta = theta - (theta * C_1_OVER_2PI).floor() * C_2_PI;
+    theta = theta - C_PI;
     theta
 }
 
@@ -29,19 +29,19 @@ pub fn wrap_pi<F: Float>(mut theta: F) -> F {
 ///
 /// returns value in the range 0...pi.
 ///
-pub fn safe_a_cos<F: Float>(x: F) -> F {
+pub fn safe_a_cos(x: f32) -> f32 {
     /* if smaller, wrap back around */
-    if x <= F::from(-1.0).unwrap() {
-        return F::from(PI).unwrap();
+    if x <= -1.0 {
+        return C_PI;
     }
 
     /* if larger, return 0 */
-    if x >= F::from(1.0).unwrap() {
-        return F::from(0.0).unwrap();
+    if x >= 1.0 {
+        return 0.0;
     }
 
     /* if safe value, return normal call */
-    F::acos(x)
+    x.acos()
 }
 
 ///
@@ -51,15 +51,15 @@ pub fn safe_a_cos<F: Float>(x: F) -> F {
 /// is the length of the radius of the circle.  a circle is about 2*pi (6.28) radians,
 /// making 1 radian roughly equal to 57.3 degrees.
 ///
-pub fn degrees_to_radians<F: Float>(degrees: F) -> F {
-    degrees * F::from(C_PI_OVER_180).unwrap()
+pub fn degrees_to_radians(degrees: f32) -> f32 {
+    degrees * C_PI_OVER_180
 }
 
 ///
 /// convert radians to degrees.
 ///
-pub fn radians_to_degrees<F: Float>(radians: F) -> F {
-    radians * F::from(C_180_OVER_PI).unwrap()
+pub fn radians_to_degrees(radians: f32) -> f32 {
+    radians * C_180_OVER_PI
 }
 
 ///
@@ -70,13 +70,13 @@ pub fn radians_to_degrees<F: Float>(radians: F) -> F {
 /// lower fov (narrow angle) makes objects bigger, by zooming in.
 /// higher fov (wider angle) makes objects smaller, by zooming out.
 ///
-pub fn fov_to_zoom<F: Float>(fov: F) -> F {
-    F::from(1.0).unwrap() / F::tan(fov * F::from(0.5).unwrap())
+pub fn fov_to_zoom(fov: f32) -> f32 {
+    1.0 / (fov * 0.5).tan()
 }
 
 ///
 /// zoom to fov (field of view) conversion.
 ///
-pub fn zoom_to_fov<F: Float>(zoom: F) -> F {
-    F::from(2.0).unwrap() * F::atan(F::from(1.0).unwrap() / zoom)
+pub fn zoom_to_fov(zoom: f32) -> f32 {
+    2.0 * (1.0 / zoom).atan()
 }
