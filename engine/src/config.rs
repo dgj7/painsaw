@@ -3,6 +3,7 @@
 //!
 
 use std::collections::BTreeMap;
+use crate::config::command_config::CommandConfig;
 use crate::config::input_config::InputConfig;
 use crate::config::move_config::MoveConfig;
 use crate::config::renderer_config::RendererConfig;
@@ -25,6 +26,7 @@ pub struct EngineConfig {
     pub renderer: RendererConfig,
     pub input: InputConfig,
     pub movement: MoveConfig,
+    pub command: CommandConfig,
 
     cvars: BTreeMap<String, String>,
 }
@@ -40,12 +42,13 @@ impl EngineConfig {
 }
 
 impl EngineConfig {
-    pub fn new(window: WindowConfig, renderer: RendererConfig, input: InputConfig, movement: MoveConfig) -> Self {
+    pub fn new(window: WindowConfig, renderer: RendererConfig, input: InputConfig, movement: MoveConfig, command: CommandConfig) -> Self {
         EngineConfig {
             window,
             renderer,
             input,
             movement,
+            command,
             cvars: create_initial_cvars(),
         }
     }
@@ -58,6 +61,7 @@ impl Default for EngineConfig {
             renderer: RendererConfig::default(),
             input: InputConfig::default(),
             movement: MoveConfig::default(),
+            command: CommandConfig::default(),
             cvars: create_initial_cvars(),
         }
     }

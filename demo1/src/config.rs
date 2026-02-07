@@ -10,6 +10,7 @@ use engine::logger::log;
 use engine::logger::log_level::LogLevel;
 use engine::window::context::RendererContext;
 use std::collections::HashMap;
+use engine::config::command_config::CommandConfig;
 
 pub fn create_engine_config() -> EngineConfig {
     EngineConfig::new(
@@ -36,6 +37,9 @@ pub fn create_engine_config() -> EngineConfig {
             forward_speed: 2.0,
             backward_speed: 2.0,
             ..Default::default()
+        },
+        CommandConfig {
+            commands: HashMap::new(),
         },
     )
 }

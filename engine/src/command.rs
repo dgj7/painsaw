@@ -1,3 +1,5 @@
+use crate::window::context::RendererContext;
+
 ///
 /// build-in command types for
 ///
@@ -10,14 +12,12 @@ pub trait Command {
     ///
     /// execute the command on the current context.
     ///
-    // todo: use rendering context here
-    fn execute(&self);
+    fn execute(&self, context: &mut RendererContext);
 
     ///
     /// undo the previous operation.
     ///
-    // todo: use rendering context here
-    fn undo(&self) {
+    fn undo(&self, _context: &mut RendererContext) {
         panic!("`undo` not supported!");
     }
 }
