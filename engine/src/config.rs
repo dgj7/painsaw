@@ -13,7 +13,7 @@ pub mod window_config;
 pub mod renderer_config;
 pub mod input_config;
 pub mod move_config;
-
+mod command_config;
 /* cvar keys */
 pub static CVAR_FOV: &str = "cvar-fov";
 

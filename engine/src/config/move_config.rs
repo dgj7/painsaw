@@ -7,6 +7,7 @@ pub struct MoveConfig<F: Float> {
     pub up_speed: F,
 }
 
+// todo: this will probably have to change; we need a config that is based on whatever game type is chosen
 impl<F: Float> Default for MoveConfig<F> {
     fn default() -> MoveConfig<F> {
         MoveConfig {
