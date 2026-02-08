@@ -1,25 +1,26 @@
 use crate::graphics::geometry::dim::Dimension2D;
-use crate::input::r#in::InputName;
+use crate::input::kin::KeyInputName;
 use crate::input::ic::InputChange;
 use crate::input::is::InputState;
 use std::collections::{HashMap, VecDeque};
 use std::sync::{Arc, Mutex};
 use crate::input::ii::InputInfo;
+use crate::input::min::MouseInputName;
 
 pub mod is;
 pub mod ii;
 pub mod ic;
-pub mod r#in;
-mod key;
+pub mod kin;
+pub mod min;
 
 #[derive(Clone,Debug)]
 pub struct UserInput {
     /* keyboard */
-    pub changes: VecDeque<InputName>,
-    pub states: HashMap<InputName, InputState>,
+    pub changes: VecDeque<KeyInputName>,
+    pub states: HashMap<KeyInputName, InputState>,
 
     /* mouse */
-    pub mouse_changes: VecDeque<InputName>,
+    pub mouse_changes: VecDeque<MouseInputName>,
 
     /* screen */
     pub previous_client_dimensions: Dimension2D,
@@ -50,7 +51,7 @@ impl UserInput {
         }))
     }
 
-    pub fn handle_change(&mut self, name: InputName, position: InputChange) {
+    pub fn handle_change(&mut self, name: KeyInputName, position: InputChange) {
         self.changes.push_back(name.clone());
         self.states
             .entry(name)
@@ -58,8 +59,8 @@ impl UserInput {
             .or_insert(InputState::new(position));
     }
 
-    pub fn move_mouse(&mut self, name: InputName) {
-        if let InputName::MouseMove { .. } = name {
+    pub fn move_mouse(&mut self, name: MouseInputName) {
+        if let MouseInputName::MouseMove { .. } = name {
             self.mouse_changes.push_back(name);
         } else {
             panic!("expected InputName::MouseMove but got {}", name);

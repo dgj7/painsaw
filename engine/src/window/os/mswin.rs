@@ -4,7 +4,7 @@ use crate::graphics::subsystem::opengl::opengl_mswin::{init_opengl, swap_buffers
 use crate::graphics::subsystem::opengl::opengl_mswin_api::{get_dc, release_dc, wgl_delete_context, wgl_get_current_context, wgl_make_current};
 use crate::graphics::subsystem::GraphicsSubSystem;
 use crate::input::ii::InputInfo;
-use crate::input::r#in::InputName;
+use crate::input::kin::KeyInputName;
 use crate::input::ic::InputChange;
 use crate::input::UserInput;
 use crate::logger::log;
@@ -21,6 +21,7 @@ use windows::Win32::Graphics::OpenGL::HGLRC;
 use windows::Win32::UI::Input::KeyboardAndMouse::{VIRTUAL_KEY, VK_A, VK_D, VK_ESCAPE, VK_G, VK_M, VK_S, VK_W};
 use windows::Win32::UI::WindowsAndMessaging::{CS_HREDRAW, CS_OWNDC, CS_VREDRAW, CW_USEDEFAULT, IDC_ARROW, MSG, PM_REMOVE, WINDOW_EX_STYLE, WM_CREATE, WM_DESTROY, WM_KEYDOWN, WM_KEYUP, WM_QUIT, WM_CLOSE, WM_SIZE, WNDCLASSW, WS_OVERLAPPEDWINDOW, WS_THICKFRAME, WS_VISIBLE, WM_SETFOCUS, WM_KILLFOCUS, WM_MOUSEMOVE};
 use windows_core::{HSTRING, PCWSTR};
+use crate::input::min::MouseInputName;
 
 pub mod mswin_winapi;
 pub mod mswin_data;
@@ -244,26 +245,26 @@ fn handle_message_if_applicable(input: &Arc<Mutex<UserInput>>, hwnd: HWND, messa
     match message {
         WM_KEYDOWN => {
             match VIRTUAL_KEY(wparam.0 as u16) {
-                VK_ESCAPE => { input.lock().expect("todo: esc: down").handle_change(InputName::KeyEscape, InputChange::Active { info: InputInfo::unhandled()});true }
-                VK_A => { input.lock().expect("todo: a: down").handle_change(InputName::KeyA, InputChange::Active { info: InputInfo::unhandled() }); true }
-                VK_D => { input.lock().expect("todo: d: down").handle_change(InputName::KeyD, InputChange::Active { info: InputInfo::unhandled() }); true }
-                VK_G => { input.lock().expect("todo: g: down").handle_change(InputName::KeyG, InputChange::Active { info: InputInfo::unhandled() }); true }
-                VK_M => { input.lock().expect("todo: m: down").handle_change(InputName::KeyM, InputChange::Active { info: InputInfo::unhandled() }); true }
-                VK_S => { input.lock().expect("todo: s: down").handle_change(InputName::KeyS, InputChange::Active { info: InputInfo::unhandled() }); true }
-                VK_W => { input.lock().expect("todo: w: down").handle_change(InputName::KeyW, InputChange::Active { info: InputInfo::unhandled() }); true }
+                VK_ESCAPE => { input.lock().expect("todo: esc: down").handle_change(KeyInputName::KeyEscape, InputChange::Active { info: InputInfo::unhandled()});true }
+                VK_A => { input.lock().expect("todo: a: down").handle_change(KeyInputName::KeyA, InputChange::Active { info: InputInfo::unhandled() }); true }
+                VK_D => { input.lock().expect("todo: d: down").handle_change(KeyInputName::KeyD, InputChange::Active { info: InputInfo::unhandled() }); true }
+                VK_G => { input.lock().expect("todo: g: down").handle_change(KeyInputName::KeyG, InputChange::Active { info: InputInfo::unhandled() }); true }
+                VK_M => { input.lock().expect("todo: m: down").handle_change(KeyInputName::KeyM, InputChange::Active { info: InputInfo::unhandled() }); true }
+                VK_S => { input.lock().expect("todo: s: down").handle_change(KeyInputName::KeyS, InputChange::Active { info: InputInfo::unhandled() }); true }
+                VK_W => { input.lock().expect("todo: w: down").handle_change(KeyInputName::KeyW, InputChange::Active { info: InputInfo::unhandled() }); true }
                 // todo: add remaining keys down
                 _ => false
             }
         }
         WM_KEYUP => {
             match VIRTUAL_KEY(wparam.0 as u16) {
-                VK_ESCAPE => { input.lock().expect("todo: esc: up").handle_change(InputName::KeyEscape, InputChange::Inactive { info: InputInfo::unhandled() }); true }
-                VK_A => { input.lock().expect("todo: a: up").handle_change(InputName::KeyA, InputChange::Inactive { info: InputInfo::unhandled() }); true }
-                VK_D => { input.lock().expect("todo: d: up").handle_change(InputName::KeyD, InputChange::Inactive { info: InputInfo::unhandled() }); true }
-                VK_G => { input.lock().expect("todo: g: up").handle_change(InputName::KeyG, InputChange::Inactive { info: InputInfo::unhandled() }); true }
-                VK_M => { input.lock().expect("todo: m: up").handle_change(InputName::KeyM, InputChange::Inactive { info: InputInfo::unhandled() }); true }
-                VK_S => { input.lock().expect("todo: s: up").handle_change(InputName::KeyS, InputChange::Inactive { info: InputInfo::unhandled() }); true }
-                VK_W => { input.lock().expect("todo: w: up").handle_change(InputName::KeyW, InputChange::Inactive { info: InputInfo::unhandled() }); true }
+                VK_ESCAPE => { input.lock().expect("todo: esc: up").handle_change(KeyInputName::KeyEscape, InputChange::Inactive { info: InputInfo::unhandled() }); true }
+                VK_A => { input.lock().expect("todo: a: up").handle_change(KeyInputName::KeyA, InputChange::Inactive { info: InputInfo::unhandled() }); true }
+                VK_D => { input.lock().expect("todo: d: up").handle_change(KeyInputName::KeyD, InputChange::Inactive { info: InputInfo::unhandled() }); true }
+                VK_G => { input.lock().expect("todo: g: up").handle_change(KeyInputName::KeyG, InputChange::Inactive { info: InputInfo::unhandled() }); true }
+                VK_M => { input.lock().expect("todo: m: up").handle_change(KeyInputName::KeyM, InputChange::Inactive { info: InputInfo::unhandled() }); true }
+                VK_S => { input.lock().expect("todo: s: up").handle_change(KeyInputName::KeyS, InputChange::Inactive { info: InputInfo::unhandled() }); true }
+                VK_W => { input.lock().expect("todo: w: up").handle_change(KeyInputName::KeyW, InputChange::Inactive { info: InputInfo::unhandled() }); true }
                 // todo: add remaining keys up
                 _ => false
             }
@@ -271,7 +272,7 @@ fn handle_message_if_applicable(input: &Arc<Mutex<UserInput>>, hwnd: HWND, messa
         WM_MOUSEMOVE => {
             let x = get_x_lparam(lparam);
             let y = get_y_lparam(lparam);
-            input.lock().expect("todo: wm_mousemove").move_mouse(InputName::MouseMove {x, y});
+            input.lock().expect("todo: wm_mousemove").move_mouse(MouseInputName::MouseMove {x, y});
             true
         }
         WM_SIZE => {
