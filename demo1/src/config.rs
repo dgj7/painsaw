@@ -1,4 +1,4 @@
-use crate::input::Inputs;
+use crate::key_inputs::KeyInputs;
 use engine::config::input_config::InputConfig;
 use engine::config::move_config::MoveConfig;
 use engine::config::renderer_config::RendererConfig;
@@ -6,6 +6,7 @@ use engine::config::window_config::{WindowConfig, WindowDimensions};
 use engine::config::EngineConfig;
 use engine::graphics::subsystem::{GraphicsSubSystem, OpenGLPipeline};
 use std::sync::Arc;
+use crate::mouse_inputs::MouseInputs;
 
 pub fn create_engine_config() -> EngineConfig {
     EngineConfig::new(
@@ -26,7 +27,8 @@ pub fn create_engine_config() -> EngineConfig {
             fps_cap: Some(60),
         },
         InputConfig {
-            behaviors: Arc::new(Inputs{}),
+            key_handler: Arc::new(KeyInputs {}),
+            mouse_handler: Arc::new(MouseInputs{}),
         },
         MoveConfig {
             forward_speed: 2.0,

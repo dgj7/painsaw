@@ -5,8 +5,8 @@
 //! subsystem in use (for ex: opengl, directx, etc).
 //!
 
-use crate::config::input_config::handle_input_change;
-use crate::input::r#in::InputName;
+use crate::config::input_config::kc::handle_key_change;
+use crate::config::input_config::mc::handle_mouse_change;
 use crate::logger::log;
 use crate::logger::log_level::LogLevel;
 use crate::window::context::RendererContext;
@@ -43,13 +43,13 @@ pub trait WorldController {
                     let change = uin.changes.pop_front().unwrap();
                     let state = uin.states.get_mut(&change).unwrap();
                     if !state.current.is_handled() {
-                        handle_input_change(context.config.input.behaviors.clone(), &change, state, context);
+                        handle_key_change(context.config.input.key_handler.clone(), &change, state, context);
                         state.current.set_handled();
                     }
                 }
 
                 /* check key states */
-                context.config.input.behaviors.clone().check_key_states(&uin.states, context);
+                context.config.input.key_handler.clone().check_key_states(&uin.states, context);
 
                 /* handle screen resize */
                 if uin.screen_resized {
@@ -57,13 +57,10 @@ pub trait WorldController {
                     context.graphics.resize(context);
                 }
 
-                /* handle mouse moves */
-                while !uin.mouse_moves.is_empty() {
-                    let change = uin.mouse_moves.pop_front().unwrap();
-                    match change {
-                        InputName::MouseMove { x, y } => {log(LogLevel::Debug, &|| String::from(format!("mousemove: x={},y={}", x, y)))}
-                        _ => {}
-                    }
+                /* handle mouse changes */
+                while !uin.mouse_changes.is_empty() {
+                    let change = uin.mouse_changes.pop_front().unwrap();
+                    handle_mouse_change(context.config.input.mouse_handler.clone(), &change, context);
                 }
             }
             Err(_) => {}

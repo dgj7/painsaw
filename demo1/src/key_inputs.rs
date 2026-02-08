@@ -6,9 +6,9 @@ use engine::logger::log_level::LogLevel;
 use engine::window::context::RendererContext;
 use std::collections::HashMap;
 
-pub(crate) struct Inputs {}
+pub(crate) struct KeyInputs {}
 
-impl KeyHandler for Inputs {
+impl KeyHandler for KeyInputs {
     fn check_key_states(&self, states: &HashMap<InputName, InputState>, context: &mut RendererContext) {
         /* camera controls */
         if let Some(wk) = states.get(&InputName::KeyW) && wk.current.is_active() {

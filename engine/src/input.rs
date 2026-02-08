@@ -10,6 +10,7 @@ pub mod is;
 pub mod ii;
 pub mod ic;
 pub mod r#in;
+mod key;
 
 #[derive(Clone,Debug)]
 pub struct UserInput {
@@ -18,7 +19,7 @@ pub struct UserInput {
     pub states: HashMap<InputName, InputState>,
 
     /* mouse */
-    pub mouse_moves: VecDeque<InputName>,
+    pub mouse_changes: VecDeque<InputName>,
 
     /* screen */
     pub previous_client_dimensions: Dimension2D,
@@ -37,7 +38,7 @@ impl UserInput {
             states: HashMap::new(),
 
             /* mouse */
-            mouse_moves: VecDeque::new(),
+            mouse_changes: VecDeque::new(),
 
             /* screen */
             previous_client_dimensions: Dimension2D::new(0.0, 0.0),
@@ -59,7 +60,7 @@ impl UserInput {
 
     pub fn move_mouse(&mut self, name: InputName) {
         if let InputName::MouseMove { .. } = name {
-            self.mouse_moves.push_back(name);
+            self.mouse_changes.push_back(name);
         } else {
             panic!("expected InputName::MouseMove but got {}", name);
         }
