@@ -1,3 +1,4 @@
+use std::f32::consts::PI;
 use engine::graphics::camera::Camera;
 use engine::graphics::color::Color;
 use engine::graphics::geometry::primitive::prim2d::Primitive2DBuilder;
@@ -83,4 +84,60 @@ pub(super) fn create_2d_repeated_texts(count: u16, x: f32, y: f32) -> Model2D {
     }
 
     Model2D::new(vec!(), textures)
+}
+
+pub(super) fn create_2d_crosshairs(camera: &Camera) -> Model2D {
+    /* centering values */
+    let center_x = camera.width / 2.0;
+    let center_y = camera.height / 2.0;
+
+    /* crosshair values */
+    let crosshair_len = 20.0;
+
+    /* circle values */
+    let mut circle_vertices = vec!();
+    let radius = crosshair_len + 5.0;
+    let count = 360;
+    for idx in 0..count {
+        let angle = (idx as f32 / count as f32) * 2.0 * PI;
+        let x = center_x + radius * angle.cos();
+        let y = center_y + radius * angle.sin();
+        circle_vertices.push(Vertex2D::new(x, y));
+    }
+
+    /* hash marks; 4 about circle */
+    let hmlen = 10.0;
+
+
+    /* create crosshair model */
+    Model2DBuilder::new()
+        /* draw white cross */
+        .with_primitive(Primitive2DBuilder::new()
+            .with_type(PrimitiveType::Line {thickness: 1.0})
+            .with_color(Color::WHITE)
+            .with_vertex(Vertex2D::new(center_x - crosshair_len / 2.0, center_y))
+            .with_vertex(Vertex2D::new(center_x + crosshair_len / 2.0, center_y))
+            .with_vertex(Vertex2D::new(center_x, center_y - crosshair_len / 2.0))
+            .with_vertex(Vertex2D::new(center_x, center_y + crosshair_len / 2.0))
+            .build())
+        /* draw circle */
+        .with_primitive(Primitive2DBuilder::new()
+            .with_type(PrimitiveType::LineStrip {thickness: 1.0})
+            .with_color(Color::WHITE)
+            .with_vertices(circle_vertices)
+            .build())
+        /* draw hash marks */
+        .with_primitive(Primitive2DBuilder::new()
+            .with_type(PrimitiveType::Line {thickness: 1.0})
+            .with_color(Color::WHITE)
+            .with_vertex(Vertex2D::new(center_x, center_y - radius - hmlen / 2.0))
+            .with_vertex(Vertex2D::new(center_x, center_y - radius + hmlen / 2.0))
+            .with_vertex(Vertex2D::new(center_x, center_y + radius - hmlen / 2.0))
+            .with_vertex(Vertex2D::new(center_x, center_y + radius + hmlen / 2.0))
+            .with_vertex(Vertex2D::new(center_x - radius - hmlen / 2.0, center_y))
+            .with_vertex(Vertex2D::new(center_x - radius + hmlen / 2.0, center_y))
+            .with_vertex(Vertex2D::new(center_x + radius - hmlen / 2.0, center_y))
+            .with_vertex(Vertex2D::new(center_x + radius + hmlen / 2.0, center_y))
+            .build())
+        .build()
 }

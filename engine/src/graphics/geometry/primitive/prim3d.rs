@@ -37,7 +37,8 @@ impl Primitive3D {
                     log(LogLevel::Warning, &|| String::from(format!("lines configured with odd number of vertices: {}", vertices.len())))
                 }
             }
-            PrimitiveType::Quad {} => {}
+            PrimitiveType::Quad {} => {},
+            PrimitiveType::LineStrip { .. } => {}
         }
 
         /* done */

@@ -1,4 +1,4 @@
-use crate::d1m2d::{create_2d_axes, create_2d_grid_x_lines, create_2d_grid_y_lines, create_2d_repeated_texts};
+use crate::d1m2d::{create_2d_axes, create_2d_crosshairs, create_2d_grid_x_lines, create_2d_grid_y_lines, create_2d_repeated_texts};
 use crate::d1m3d::{create_3d_axes, create_3d_cuboid_1, create_3d_cuboid_wall_2};
 use engine::logger::log;
 use engine::logger::log_level::LogLevel;
@@ -8,6 +8,7 @@ use engine::window::wc::WorldController;
 static M2D_XY_PURPLE: &str = "1-2d-xy-purple";
 static M2D_X_HORIZ: &str = "2-2d-x-horizontal";
 static M2D_Y_VERT: &str = "2-2d-y-vertical";
+static M2D_CROSSHAIRS : &str = "999-2d-crosshairs";
 
 pub(crate) struct Demo1WorldController {}
 
@@ -18,6 +19,7 @@ impl WorldController for Demo1WorldController {
         context.g2d.attach(M2D_X_HORIZ, create_2d_grid_x_lines(&context.camera));
         context.g2d.attach(M2D_Y_VERT, create_2d_grid_y_lines(&context.camera));
         context.g2d.attach("99-repeated", create_2d_repeated_texts(16, 0.0, 710.0));
+        context.g2d.attach(M2D_CROSSHAIRS, create_2d_crosshairs(&context.camera));
 
         /* 3d */
         context.g3d.attach("4-3d-axes", create_3d_axes());
@@ -36,6 +38,7 @@ impl WorldController for Demo1WorldController {
                     context.g2d.update(M2D_XY_PURPLE, |e| *e = create_2d_axes(&context.camera));
                     context.g2d.update(M2D_X_HORIZ, |e| *e = create_2d_grid_x_lines(&context.camera));
                     context.g2d.update(M2D_Y_VERT, |e| *e = create_2d_grid_y_lines(&context.camera));
+                    context.g2d.update(M2D_CROSSHAIRS, |e| *e = create_2d_crosshairs(&context.camera));
 
                     log(LogLevel::Debug, &|| String::from(format!("window size changed ({}x{}); 2d storage count is [{}]", ccd.width, ccd.height, context.g2d.count())));
                 }

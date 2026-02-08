@@ -20,14 +20,21 @@ pub(crate) fn gl_frustum(left: f64, right: f64, bottom: f64, top: f64, znear: f6
     check_errors_gl(&format!("glFrustum({},{},{},{},{},{})", left, right, bottom, top, znear, zfar));
 }
 
+pub(crate) fn gl_begin(mode: u32) {
+    unsafe { glBegin(mode) }
+}
+
+// todo: remove and replace with gl_begin
 pub(crate) fn gl_begin_lines() {
     unsafe { glBegin(GL_LINES); }
 }
 
+// todo: remove and replace with gl_begin
 pub(crate) fn gl_begin_points() {
     unsafe { glBegin(GL_POINTS); }
 }
 
+// todo: remove and replace with gl_begin
 pub(crate) fn gl_begin_quads() {
     unsafe { glBegin(GL_QUADS); }
 }

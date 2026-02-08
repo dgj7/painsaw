@@ -6,10 +6,11 @@ use crate::graphics::camera::Camera;
 use crate::graphics::geometry::primitive::prim2d::Primitive2D;
 use crate::graphics::image::t2d::Texture2D;
 use crate::graphics::storage::g2d::Graph2D;
-use crate::graphics::subsystem::opengl::ffp::api::{gl_begin_lines, gl_begin_points, gl_begin_quads, gl_bind_texture, gl_blend_func, gl_color_3f, gl_disable, gl_enable, gl_end, gl_gen_textures, gl_line_width, gl_load_identity, gl_matrix_mode, gl_ortho, gl_point_size, gl_pop_attrib, gl_pop_matrix, gl_push_attrib, gl_push_matrix, gl_tex_coord_2f, gl_tex_env_f, gl_tex_image_2d, gl_tex_parameter_i, gl_tex_sub_image_2d, gl_vertex_2f};
+use crate::graphics::subsystem::opengl::ffp::api::{gl_begin, gl_begin_lines, gl_begin_points, gl_begin_quads, gl_bind_texture, gl_blend_func, gl_color_3f, gl_disable, gl_enable, gl_end, gl_gen_textures, gl_line_width, gl_load_identity, gl_matrix_mode, gl_ortho, gl_point_size, gl_pop_attrib, gl_pop_matrix, gl_push_attrib, gl_push_matrix, gl_tex_coord_2f, gl_tex_env_f, gl_tex_image_2d, gl_tex_parameter_i, gl_tex_sub_image_2d, gl_vertex_2f};
 use crate::logger::log;
 use crate::logger::log_level::LogLevel;
 use std::ffi::c_void;
+use glcore::GL_LINE_STRIP;
 use windows::Win32::Graphics::OpenGL::{GL_ALL_ATTRIB_BITS, GL_BLEND, GL_MODELVIEW, GL_NEAREST, GL_ONE_MINUS_SRC_ALPHA, GL_PROJECTION, GL_REPLACE, GL_RGBA, GL_SRC_ALPHA, GL_TEXTURE_2D, GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_TEXTURE_MAG_FILTER, GL_TEXTURE_MIN_FILTER, GL_UNSIGNED_BYTE};
 
 pub(crate) fn ffp_2d_setup(camera: &Camera) {
@@ -130,6 +131,23 @@ pub(crate) fn ffp_render_2d_lines(primitive: &Primitive2D, thickness: f32) {
     gl_line_width(thickness);
 
     gl_begin_lines();
+    for vertex in primitive.vertices.iter() {
+        gl_vertex_2f(vertex.x, vertex.y);
+    }
+    gl_end();
+
+    gl_pop_attrib();
+    gl_pop_matrix();
+}
+
+pub(crate) fn ffp_render_2d_line_strip(primitive: &Primitive2D, thickness: f32) {
+    gl_push_matrix();
+    gl_push_attrib(GL_ALL_ATTRIB_BITS);
+
+    gl_color_3f(primitive.color.red, primitive.color.green, primitive.color.blue);
+    gl_line_width(thickness);
+
+    gl_begin(GL_LINE_STRIP);
     for vertex in primitive.vertices.iter() {
         gl_vertex_2f(vertex.x, vertex.y);
     }

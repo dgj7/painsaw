@@ -18,10 +18,12 @@ pub struct Primitive2DBuilder {
 
 impl Primitive2D {
     pub fn new(p_type: PrimitiveType, vertices: Vec<Vertex2D>, color: Color) -> Primitive2D {
+        /* warn if no vertices are supplied */
         if vertices.len() == 0 {
             log(LogLevel::Warning, &|| String::from("0 vertices specified"));
         }
 
+        /* log other warnings */
         match p_type {
             PrimitiveType::Point { point_size: _point_size } => {}
             PrimitiveType::Line { thickness: _thickness } => {
@@ -29,9 +31,11 @@ impl Primitive2D {
                     log(LogLevel::Warning, &|| String::from(format!("lines configured with odd number of vertices: {}", vertices.len())))
                 }
             }
-            PrimitiveType::Quad {} => {}
+            PrimitiveType::Quad {} => {},
+            PrimitiveType::LineStrip { .. } => {  }
         }
 
+        /* create the primitive */
         Primitive2D {
             p_type,
             vertices,
