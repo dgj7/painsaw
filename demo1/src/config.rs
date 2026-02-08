@@ -1,15 +1,11 @@
+use crate::input::Inputs;
 use engine::config::input_config::InputConfig;
 use engine::config::move_config::MoveConfig;
 use engine::config::renderer_config::RendererConfig;
 use engine::config::window_config::{WindowConfig, WindowDimensions};
 use engine::config::EngineConfig;
 use engine::graphics::subsystem::{GraphicsSubSystem, OpenGLPipeline};
-use engine::input::is::InputState;
-use engine::input::r#in::InputName;
-use engine::logger::log;
-use engine::logger::log_level::LogLevel;
-use engine::window::context::RendererContext;
-use std::collections::HashMap;
+use std::sync::Arc;
 
 pub fn create_engine_config() -> EngineConfig {
     EngineConfig::new(
@@ -30,7 +26,7 @@ pub fn create_engine_config() -> EngineConfig {
             fps_cap: Some(60),
         },
         InputConfig {
-            behaviors: create_behaviors(),
+            behaviors: Arc::new(Inputs{}),
         },
         MoveConfig {
             forward_speed: 2.0,
@@ -38,29 +34,4 @@ pub fn create_engine_config() -> EngineConfig {
             ..Default::default()
         },
     )
-}
-
-fn create_behaviors() -> HashMap<InputName, fn(&mut RendererContext, &InputState)> {
-    let mut behaviors: HashMap<InputName, fn(&mut RendererContext, &InputState)> = HashMap::new();
-
-    behaviors.insert(InputName::KeyG, handle_g);
-
-    behaviors
-}
-
-fn handle_g(_context: &mut RendererContext, state: &InputState) {
-    logging_key_behavior(InputName::KeyG, state);
-}
-
-fn logging_key_behavior(name: InputName, state: &InputState) {
-    let duration = state.previous_key_state_duration();
-    log(LogLevel::Debug, &|| {
-        String::from(format!(
-            "{}: {}    ({} for {}ms)",
-            name,
-            state.current,
-            state.previous,
-            duration.as_millis()
-        ))
-    });
 }

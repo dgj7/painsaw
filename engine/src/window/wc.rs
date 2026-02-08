@@ -5,10 +5,11 @@
 //! subsystem in use (for ex: opengl, directx, etc).
 //!
 
+use crate::config::input_config::handle_input_change;
+use crate::input::r#in::InputName;
 use crate::logger::log;
 use crate::logger::log_level::LogLevel;
 use crate::window::context::RendererContext;
-use crate::input::r#in::InputName;
 
 ///
 /// Control various aspects of the world, as called by the windowing system.
@@ -42,13 +43,13 @@ pub trait WorldController {
                     let change = uin.changes.pop_front().unwrap();
                     let state = uin.states.get_mut(&change).unwrap();
                     if !state.current.is_handled() {
-                        match context.config.input.behaviors.get(&change) {
-                            None => {}
-                            Some(behavior) => behavior(context, state)
-                        }
+                        handle_input_change(context.config.input.behaviors.clone(), &change, state, context);
                         state.current.set_handled();
                     }
                 }
+
+                /* check key states */
+                context.config.input.behaviors.clone().check_key_states(&uin.states, context);
 
                 /* handle screen resize */
                 if uin.screen_resized {
