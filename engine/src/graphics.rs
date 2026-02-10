@@ -59,13 +59,7 @@ impl GraphicsIntermediary {
         self.subsystem.prepare_2d(camera, g2d);
     }
 
-    pub(crate) fn render_2d(
-        &mut self,
-        g2d: &mut Graph2D,
-        timing: &EngineTiming,
-        config: &EngineConfig,
-        camera: &Camera,
-    ) {
+    pub(crate) fn render_2d(&mut self, g2d: &mut Graph2D, timing: &EngineTiming, config: &EngineConfig, camera: &Camera) {
         /* render primitives */
         self.subsystem.render_2d(g2d);
 

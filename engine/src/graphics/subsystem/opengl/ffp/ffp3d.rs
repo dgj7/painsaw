@@ -1,9 +1,9 @@
 use crate::config::{CVAR_FOV, DEFAULT_FOV};
+use crate::graphics::geometry::orient::Orientation;
 use crate::graphics::geometry::primitive::prim3d::Primitive3D;
 use crate::graphics::subsystem::opengl::ffp::api::{gl_begin_lines, gl_begin_points, gl_begin_quads, gl_color_3f, gl_enable, gl_end, gl_line_width, gl_load_identity, gl_matrix_mode, gl_point_size, gl_polygon_mode, gl_pop_attrib, gl_pop_matrix, gl_push_attrib, gl_push_matrix, gl_rotate_f, gl_scale_f, gl_translate_f, gl_vertex_3f, glu_perspective};
 use crate::window::context::RendererContext;
 use windows::Win32::Graphics::OpenGL::{GL_ALL_ATTRIB_BITS, GL_DEPTH_TEST, GL_FRONT_AND_BACK, GL_LINE, GL_MODELVIEW, GL_PROJECTION};
-use crate::graphics::geometry::orient::Orientation;
 
 pub(crate) fn ffp_3d_setup(context: &RendererContext) {
     /* save prior state before 3d rendering */
@@ -40,7 +40,6 @@ pub(crate) fn ffp_3d_teardown() {
 
     /* disable stuff we don't need anymore */
     //gl_disable(GL_DEPTH_TEST);
-
 
     gl_pop_attrib();
     gl_pop_matrix();

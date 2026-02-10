@@ -89,14 +89,14 @@ pub trait WorldController {
         /* prepare for drawing */
         context.graphics.before_scene(&context.camera);
 
-        /* draw 2d, if desired */
-        context.graphics.prepare_2d(&mut context.g2d, &context.camera);
-        context.graphics.render_2d(&mut context.g2d, &context.timing, &context.config, &context.camera);
-        context.graphics.after_2d();
-
         /* draw 3d, if desired */
         context.graphics.prepare_3d(&context);
         context.graphics.render_3d(&mut context.g3d);
         context.graphics.after_3d(&context);
+
+        /* draw 2d, if desired */
+        context.graphics.prepare_2d(&mut context.g2d, &context.camera);
+        context.graphics.render_2d(&mut context.g2d, &context.timing, &context.config, &context.camera);
+        context.graphics.after_2d();
     }
 }
