@@ -1,19 +1,19 @@
 use crate::graphics::geometry::dim::Dimension2D;
-use crate::input::kin::KeyInputName;
 use crate::input::ic::InputChange;
+use crate::input::ii::InputInfo;
 use crate::input::is::InputState;
+use crate::input::kin::KeyInputName;
+use crate::input::min::MouseInputName;
 use std::collections::{HashMap, VecDeque};
 use std::sync::{Arc, Mutex};
-use crate::input::ii::InputInfo;
-use crate::input::min::MouseInputName;
 
-pub mod is;
-pub mod ii;
 pub mod ic;
+pub mod ii;
+pub mod is;
 pub mod kin;
 pub mod min;
 
-#[derive(Clone,Debug)]
+#[derive(Clone, Debug)]
 pub struct UserInput {
     /* keyboard */
     pub changes: VecDeque<KeyInputName>,
@@ -47,7 +47,9 @@ impl UserInput {
             previous_window_dimensions: Dimension2D::new(0.0, 0.0),
             current_window_dimensions: Dimension2D::new(0.0, 0.0),
             screen_resized: false,
-            focus: InputState::new(InputChange::Active {info: InputInfo::handled()}),
+            focus: InputState::new(InputChange::Active {
+                info: InputInfo::handled(),
+            }),
         }))
     }
 

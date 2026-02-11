@@ -3,7 +3,7 @@ use std::collections::BTreeMap;
 
 // todo: better organization; quad tree?
 pub struct Graph2D {
-    models: BTreeMap<String, Model2D>
+    models: BTreeMap<String, Model2D>,
 }
 
 impl Graph2D {
@@ -29,26 +29,24 @@ impl Graph2D {
             .and_modify(modify)
             .or_insert(insert());
     }
-    
+
     pub fn update<FN>(&mut self, name: &str, fx: FN)
     where
         FN: FnOnce(&mut Model2D),
     {
-        self.models
-            .entry(name.to_string())
-            .and_modify(fx);
+        self.models.entry(name.to_string()).and_modify(fx);
     }
 }
 
 impl Graph2D {
-    pub fn iter(&self) -> impl Iterator<Item=(&String, &Model2D)> {
+    pub fn iter(&self) -> impl Iterator<Item = (&String, &Model2D)> {
         self.models.iter()
     }
 
-    pub fn iter_mut(&mut self) -> impl Iterator<Item=(&String, &mut Model2D)> {
+    pub fn iter_mut(&mut self) -> impl Iterator<Item = (&String, &mut Model2D)> {
         self.models.iter_mut()
     }
-    
+
     pub fn count(&self) -> usize {
         self.models.len()
     }

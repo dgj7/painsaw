@@ -1,8 +1,8 @@
-use crate::graphics::geometry::primitive::prim3d::Primitive3D;
 use crate::graphics::color::Color;
 use crate::graphics::geometry::orient::Orientation;
-use crate::graphics::geometry::primitive::PrimitiveType;
+use crate::graphics::geometry::primitive::prim3d::Primitive3D;
 use crate::graphics::geometry::primitive::v3d::Vertex3D;
+use crate::graphics::geometry::primitive::PrimitiveType;
 
 pub struct QuadBuilder {
     the_orientation: Option<Orientation>,
@@ -43,7 +43,7 @@ impl QuadBuilder {
         self.the_depth = Some(the_depth);
         self
     }
-    
+
     pub fn with_color(mut self, the_color: Color) -> QuadBuilder {
         self.the_color = Some(the_color);
         self
@@ -54,12 +54,14 @@ impl QuadBuilder {
             return None;
         }
 
-        let orientation = self.the_orientation.unwrap_or_else(|| Orientation::default());
+        let orientation = self
+            .the_orientation
+            .unwrap_or_else(|| Orientation::default());
         let color = self.the_color.unwrap_or_else(|| Color::WHITE);
         let width = self.the_width.unwrap();
         let height = self.the_height.unwrap();
         let depth = self.the_depth.unwrap();
-        let mut vertices: Vec<Vertex3D> = vec!();
+        let mut vertices: Vec<Vertex3D> = vec![];
 
         /* top face */
         vertices.push(Vertex3D::new(0.0, 0.0, 0.0));

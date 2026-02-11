@@ -51,6 +51,6 @@ pub trait RenderingSubSystemHandle {
 
 pub fn grss_factory(gss: GraphicsSubSystem) -> Box<dyn RenderingSubSystemHandle> {
     match gss {
-        GraphicsSubSystem::OpenGL { pipeline: pl } => Box::new(OpenGLHandle { pipeline: pl })
+        GraphicsSubSystem::OpenGL { pipeline: pl } => Box::new(OpenGLHandle { pipeline: pl }),
     }
 }

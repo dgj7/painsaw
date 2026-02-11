@@ -1,7 +1,9 @@
+use crate::input::UserInput;
 use std::sync::{Arc, Mutex};
 use windows::Win32::Foundation::{HWND, LPARAM};
-use windows::Win32::UI::WindowsAndMessaging::{GetWindowLongPtrA, SetWindowLongPtrA, CREATESTRUCTA, GWLP_USERDATA};
-use crate::input::UserInput;
+use windows::Win32::UI::WindowsAndMessaging::{
+    GetWindowLongPtrA, SetWindowLongPtrA, CREATESTRUCTA, GWLP_USERDATA,
+};
 
 ///
 /// UserInput to raw pointer.
@@ -37,5 +39,3 @@ pub(crate) fn read_window_data(hwnd: HWND) -> Option<Arc<Mutex<UserInput>>> {
     let x = unsafe { &*(ptr as *const Arc<Mutex<UserInput>>) };
     Option::from(x.clone())
 }
-
-

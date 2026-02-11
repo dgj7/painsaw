@@ -1,5 +1,5 @@
-use crate::logger::log_level::LogLevel;
 use crate::logger::log_caller;
+use crate::logger::log_level::LogLevel;
 use std::io::Error;
 use std::panic::Location;
 

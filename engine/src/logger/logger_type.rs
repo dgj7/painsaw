@@ -9,11 +9,10 @@ pub struct Logger {
 }
 
 impl Logger {
-    
     pub const fn new() -> Logger {
-        Logger { pairs: vec!() }
+        Logger { pairs: vec![] }
     }
-    
+
     pub fn configure(&mut self, config: LoggerConfig) {
         self.pairs.push(config);
     }

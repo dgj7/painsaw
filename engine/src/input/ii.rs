@@ -1,6 +1,6 @@
 use std::time::Instant;
 
-#[derive(Clone,Debug)]
+#[derive(Clone, Debug)]
 pub struct InputInfo {
     pub when: Instant,
     pub handled: bool,

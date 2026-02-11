@@ -8,7 +8,7 @@ pub struct Texture2D {
     pub x: f32,
     pub y: f32,
     pub scale: f32,
-    
+
     pub replacement: Option<RawImage>,
 }
 
@@ -29,7 +29,7 @@ impl Texture2D {
             x,
             y,
             scale,
-            
+
             replacement: None,
         }
     }

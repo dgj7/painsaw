@@ -1,6 +1,6 @@
+use crate::config::renderer_config::RendererConfig;
 use std::cmp;
 use std::time::Instant;
-use crate::config::renderer_config::RendererConfig;
 
 ///
 /// encapsulation of delta_time for use within the engine.
@@ -10,9 +10,9 @@ use crate::config::renderer_config::RendererConfig;
 pub struct EngineTiming {
     engine_start: Instant,
     frame_start: Instant,
-    
+
     frame_count: u128,
-    
+
     pub delta_time: f64,
 
     pub wait_between_frames: f64,
@@ -79,7 +79,9 @@ impl EngineTiming {
     /// this is an implementation of fps cap.
     ///
     pub fn is_ok_to_render(&self) -> bool {
-        let elapsed = Instant::now().duration_since(self.frame_start).as_secs_f64();
+        let elapsed = Instant::now()
+            .duration_since(self.frame_start)
+            .as_secs_f64();
         elapsed >= self.wait_between_frames
     }
 }

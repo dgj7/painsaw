@@ -11,7 +11,7 @@ impl RendererConfig {
     pub fn new(grss: GraphicsSubSystem) -> RendererConfig {
         RendererConfig {
             graphics: grss,
-            
+
             show_fps: false,
             show_cam_coords: false,
 
@@ -23,8 +23,10 @@ impl RendererConfig {
 impl Default for RendererConfig {
     fn default() -> RendererConfig {
         RendererConfig {
-            graphics: GraphicsSubSystem::OpenGL { pipeline: OpenGLPipeline::FixedFunction },
-            
+            graphics: GraphicsSubSystem::OpenGL {
+                pipeline: OpenGLPipeline::FixedFunction,
+            },
+
             show_fps: false,
             show_cam_coords: false,
 

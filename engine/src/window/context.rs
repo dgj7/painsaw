@@ -13,7 +13,7 @@ pub struct RendererContext {
     /* scene for game statistics */
     pub first_frame_rendered: bool,
     pub frame_count: u128,
-    
+
     /* timing */
     pub timing: EngineTiming,
 
@@ -21,7 +21,7 @@ pub struct RendererContext {
     pub g2d: Graph2D,
     pub g3d: Graph3D,
     pub camera: Camera,
-    
+
     /* rendering subsystem */
     pub(crate) graphics: GraphicsIntermediary,
 

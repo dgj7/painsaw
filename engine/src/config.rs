@@ -1,17 +1,17 @@
-//! 
+//!
 //! storage for engine configurations.
 //!
 
-use std::collections::BTreeMap;
 use crate::config::input_config::InputConfig;
 use crate::config::move_config::MoveConfig;
 use crate::config::renderer_config::RendererConfig;
 use crate::config::window_config::WindowConfig;
+use std::collections::BTreeMap;
 
-pub mod window_config;
-pub mod renderer_config;
 pub mod input_config;
 pub mod move_config;
+pub mod renderer_config;
+pub mod window_config;
 
 /* cvar keys */
 pub static CVAR_FOV: &str = "cvar-fov";

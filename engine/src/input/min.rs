@@ -1,6 +1,6 @@
 use std::fmt::{Display, Formatter};
 
-#[derive(Debug,Clone)]
+#[derive(Debug, Clone)]
 pub enum MouseInputName {
     MouseLeftButton,
     MouseRightButton,

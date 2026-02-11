@@ -1,2 +1,2 @@
-pub mod fps;
 pub mod coords;
+pub mod fps;

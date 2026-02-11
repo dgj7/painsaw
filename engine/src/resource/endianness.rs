@@ -1,4 +1,4 @@
-#[allow(dead_code)]// todo: remove this
+#[allow(dead_code)] // todo: remove this
 enum Endianness {
     ///
     /// the "little end" (least-significant byte) is stored first.

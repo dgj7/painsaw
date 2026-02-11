@@ -1,4 +1,3 @@
-
 #[derive(Clone)]
 pub struct Vertex2D {
     pub x: f32,
@@ -15,7 +14,7 @@ impl Vertex2D {
     }
 
     pub fn distance(&self, other: &Vertex2D) -> f32 {
-        ((self.x-other.x).powi(2) + (self.y-other.y).powi(2)).sqrt()
+        ((self.x - other.x).powi(2) + (self.y - other.y).powi(2)).sqrt()
     }
 }
 

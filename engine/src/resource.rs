@@ -4,8 +4,8 @@
 
 use std::error::Error;
 
-pub mod restype;
 pub mod endianness;
+pub mod restype;
 
 ///
 /// any resource that exists outside the engine.

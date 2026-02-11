@@ -1,4 +1,3 @@
-
 #[derive(Clone)]
 pub struct Vertex3D {
     pub x: f32,
@@ -7,7 +6,6 @@ pub struct Vertex3D {
 }
 
 impl Vertex3D {
-
     pub fn negate(&mut self) {
         self.x = -self.x;
         self.y = -self.y;
@@ -36,7 +34,6 @@ impl Vertex3D {
         self.x = self.x + addend.x;
         self.y = self.y + addend.y;
         self.z = self.z + addend.z;
-
     }
 
     pub fn subtract(&mut self, subtrahend: &Vertex3D) {
@@ -113,7 +110,7 @@ impl Vertex3D {
 }
 
 pub fn magnitude(p: &Vertex3D) -> f32 {
-    ((p.x*p.x) + (p.y*p.y) + (p.z*p.z)).sqrt()
+    ((p.x * p.x) + (p.y * p.y) + (p.z * p.z)).sqrt()
 }
 
 pub fn distance_squared(left: &Vertex3D, right: &Vertex3D) -> f32 {

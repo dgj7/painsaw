@@ -1,7 +1,6 @@
 use std::fmt::{Display, Formatter};
 
-#[derive(Debug,Clone)]
-#[derive(Eq, Hash, PartialEq)]
+#[derive(Debug, Clone, Eq, Hash, PartialEq)]
 pub enum KeyInputName {
     KeyEscape,
     KeyA,

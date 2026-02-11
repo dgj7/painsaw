@@ -8,7 +8,7 @@ pub struct Graph3D {
 
 impl Graph3D {
     pub fn new() -> Graph3D {
-        Graph3D { 
+        Graph3D {
             models: BTreeMap::new(),
         }
     }
@@ -19,7 +19,7 @@ impl Graph3D {
         self.models.insert(name.to_string(), model);
     }
 
-    pub fn iter(&self) -> impl Iterator<Item=(&String, &Model3D)> {
+    pub fn iter(&self) -> impl Iterator<Item = (&String, &Model3D)> {
         self.models.iter()
     }
 }

@@ -1,16 +1,16 @@
-use crate::graphics::geometry::orient::Orientation;
 use crate::graphics::geometry::dim::Dimension2D;
+use crate::graphics::geometry::orient::Orientation;
 use crate::logger::log;
 use crate::logger::log_level::LogLevel;
 
 pub struct Camera {
     pub orientation: Orientation,
 
-    pub width: f32,                   // window width
-    pub height: f32,                  // window height
+    pub width: f32,  // window width
+    pub height: f32, // window height
 
-    pub near: f32,                    // 3d near clipping plane
-    pub far: f32,                     // 3d far clipping plane
+    pub near: f32, // 3d near clipping plane
+    pub far: f32,  // 3d far clipping plane
 }
 
 impl Camera {

@@ -1,5 +1,5 @@
-use std::error::Error;
 use crate::resource::Resource;
+use std::error::Error;
 
 ///
 /// a resource that comes from memory.

@@ -1,5 +1,5 @@
-use crate::graphics::geometry::orient::matrix::m4x4::Matrix4x4;
 use crate::config::EngineConfig;
+use crate::graphics::geometry::orient::matrix::m4x4::Matrix4x4;
 use crate::graphics::geometry::primitive::v3d::Vertex3D;
 use crate::graphics::timing::EngineTiming;
 
@@ -9,7 +9,7 @@ pub mod quaternion;
 
 #[derive(Clone)]
 pub struct Orientation {
-    pub position: Matrix4x4,  // orientation; c1=right(x), c2=up(y), c3=forward(z/normal), c4=position
+    pub position: Matrix4x4, // orientation; c1=right(x), c2=up(y), c3=forward(z/normal), c4=position
     pub x_scale: f32,
     pub y_scale: f32,
     pub z_scale: f32,
@@ -133,27 +133,27 @@ impl OrientationBuilder {
             the_z_scale: None,
         }
     }
-    
+
     pub fn with_position(mut self, position: Matrix4x4) -> OrientationBuilder {
         self.the_position = Some(position);
         self
     }
-    
+
     pub fn with_x_scale(mut self, scale: f32) -> OrientationBuilder {
         self.the_x_scale = Some(scale);
         self
     }
-    
+
     pub fn with_y_scale(mut self, scale: f32) -> OrientationBuilder {
         self.the_y_scale = Some(scale);
         self
     }
-    
+
     pub fn with_z_scale(mut self, scale: f32) -> OrientationBuilder {
         self.the_z_scale = Some(scale);
         self
     }
-    
+
     pub fn build(self) -> Orientation {
         Orientation {
             position: self.the_position.unwrap_or_else(|| Matrix4x4::default()),

@@ -1,7 +1,7 @@
-use std::fmt::{Display, Formatter};
 use crate::input::ii::InputInfo;
+use std::fmt::{Display, Formatter};
 
-#[derive(Clone,Debug)]
+#[derive(Clone, Debug)]
 pub enum InputChange {
     Active { info: InputInfo },
     Inactive { info: InputInfo },

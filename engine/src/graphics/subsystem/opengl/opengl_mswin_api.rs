@@ -1,7 +1,10 @@
 use windows::Win32::Foundation;
 use windows::Win32::Foundation::HWND;
 use windows::Win32::Graphics::Gdi::{GetDC, ReleaseDC, HDC};
-use windows::Win32::Graphics::OpenGL::{wglCreateContext, wglDeleteContext, wglGetCurrentContext, wglMakeCurrent, ChoosePixelFormat, SetPixelFormat, HGLRC, PIXELFORMATDESCRIPTOR};
+use windows::Win32::Graphics::OpenGL::{
+    wglCreateContext, wglDeleteContext, wglGetCurrentContext, wglMakeCurrent, ChoosePixelFormat,
+    SetPixelFormat, HGLRC, PIXELFORMATDESCRIPTOR,
+};
 
 pub fn wgl_delete_context(hrc: HGLRC) -> windows_core::Result<()> {
     unsafe { wglDeleteContext(hrc) }

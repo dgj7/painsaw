@@ -1,4 +1,3 @@
-
 ///
 /// store a 3x3 matrix, containing rotation and scaling of an object or camera.
 /// a matrix could be interpreted as column-major or row-major.
