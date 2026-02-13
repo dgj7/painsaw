@@ -39,8 +39,8 @@ impl RenderingSubSystemHandle for OpenGLHandle {
 
     fn initialize(&self, g2d: &mut Graph2D, _g3d: &mut Graph3D) {
         match self.pipeline {
-            OpenGLPipeline::FixedFunction => {ffp_2d_initialize_textures(g2d)}
-            OpenGLPipeline::ProgrammableShader => {}
+            OpenGLPipeline::FixedFunction => {ffp_2d_initialize_textures(g2d)},
+            OpenGLPipeline::ProgrammableShader => {},
         }
     }
 

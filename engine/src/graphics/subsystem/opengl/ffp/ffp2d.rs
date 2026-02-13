@@ -6,7 +6,7 @@ use crate::graphics::camera::Camera;
 use crate::graphics::geometry::primitive::prim2d::Primitive2D;
 use crate::graphics::image::t2d::Texture2D;
 use crate::graphics::storage::g2d::Graph2D;
-use crate::graphics::subsystem::opengl::ffp::api::{gl_begin, gl_begin_lines, gl_begin_points, gl_begin_quads, gl_bind_texture, gl_blend_func, gl_color_3f, gl_disable, gl_enable, gl_end, gl_gen_textures, gl_line_width, gl_load_identity, gl_matrix_mode, gl_ortho, gl_point_size, gl_pop_attrib, gl_pop_matrix, gl_push_attrib, gl_push_matrix, gl_tex_coord_2f, gl_tex_env_f, gl_tex_image_2d, gl_tex_parameter_i, gl_tex_sub_image_2d, gl_vertex_2f};
+use crate::graphics::subsystem::opengl::ffp::api::{gl_begin, gl_begin_lines, gl_begin_points, gl_begin_quads, gl_bind_texture, gl_blend_func, gl_color_4f, gl_disable, gl_enable, gl_end, gl_gen_textures, gl_line_width, gl_load_identity, gl_matrix_mode, gl_ortho, gl_point_size, gl_pop_attrib, gl_pop_matrix, gl_push_attrib, gl_push_matrix, gl_tex_coord_2f, gl_tex_env_f, gl_tex_image_2d, gl_tex_parameter_i, gl_tex_sub_image_2d, gl_vertex_2f};
 use crate::logger::log;
 use crate::logger::log_level::LogLevel;
 use glcore::GL_LINE_STRIP;
@@ -26,11 +26,10 @@ pub(crate) fn ffp_2d_setup(camera: &Camera) {
     /* storage/view: reset matrix; ready for 2d drawing */
     gl_matrix_mode(GL_MODELVIEW);
     gl_load_identity();
-
-
 }
 
 pub(crate) fn ffp_2d_teardown() {
+    /* reset changes */
     gl_pop_attrib();
     gl_pop_matrix();
 }
@@ -112,7 +111,7 @@ pub(crate) fn ffp_render_2d_points(primitive: &Primitive2D, point_size: f32) {
     gl_push_matrix();
     gl_push_attrib(GL_ALL_ATTRIB_BITS);
 
-    gl_color_3f(primitive.color.red, primitive.color.green, primitive.color.blue);
+    gl_color_4f(primitive.color.red, primitive.color.green, primitive.color.blue, primitive.color.alpha);
     gl_point_size(point_size);
 
     gl_begin_points();
@@ -129,7 +128,7 @@ pub(crate) fn ffp_render_2d_lines(primitive: &Primitive2D, thickness: f32) {
     gl_push_matrix();
     gl_push_attrib(GL_ALL_ATTRIB_BITS);
 
-    gl_color_3f(primitive.color.red, primitive.color.green, primitive.color.blue);
+    gl_color_4f(primitive.color.red, primitive.color.green, primitive.color.blue, primitive.color.alpha);
     gl_line_width(thickness);
 
     gl_begin_lines();
@@ -146,7 +145,7 @@ pub(crate) fn ffp_render_2d_line_strip(primitive: &Primitive2D, thickness: f32) 
     gl_push_matrix();
     gl_push_attrib(GL_ALL_ATTRIB_BITS);
 
-    gl_color_3f(primitive.color.red, primitive.color.green, primitive.color.blue);
+    gl_color_4f(primitive.color.red, primitive.color.green, primitive.color.blue, primitive.color.alpha);
     gl_line_width(thickness);
 
     gl_begin(GL_LINE_STRIP);
@@ -163,7 +162,7 @@ pub(crate) fn ffp_render_2d_quads(primitive: &Primitive2D) {
     gl_push_matrix();
     gl_push_attrib(GL_ALL_ATTRIB_BITS);
 
-    gl_color_3f(primitive.color.red, primitive.color.green, primitive.color.blue);
+    gl_color_4f(primitive.color.red, primitive.color.green, primitive.color.blue, primitive.color.alpha);
 
     gl_begin_quads();
     for vertex in primitive.vertices.iter() {
@@ -219,7 +218,6 @@ pub(crate) fn ffp_render_2d_texture(texture: &Texture2D) {
     gl_end();
 
     /* turn off the stuff we enabled (specifically for texturing) */
-    // todo: can these be removed?
     gl_disable(GL_TEXTURE_2D);
     gl_disable(GL_BLEND);
 

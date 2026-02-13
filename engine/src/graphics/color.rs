@@ -1,3 +1,5 @@
+static ALPHA_TRANSPARENT: f32 = 0.0;
+static ALPHA_OPAQUE: f32 = 1.0;
 
 #[derive(Clone, Copy, PartialEq, PartialOrd, Debug)]
 pub struct Color {
@@ -15,7 +17,7 @@ impl Color {
     }
     
     pub const fn from_rgb(red: f32, green: f32, blue: f32) -> Color {
-        Self::from_rgba(red, green, blue, 1.0)
+        Self::from_rgba(red, green, blue, ALPHA_OPAQUE)
     }
     
     pub fn to_u8(&self) -> (u8, u8, u8, u8) {
@@ -35,7 +37,7 @@ impl Color {
     
     pub const YELLOW: Color = Color::from_rgb(1.0, 1.0, 0.0);
 
-    pub const TRANSPARENT: Color = Color::from_rgba(1.0, 1.0, 1.0, 0.0);
+    pub const TRANSPARENT: Color = Color::from_rgba(1.0, 1.0, 1.0, ALPHA_TRANSPARENT);
 }
 
 #[derive(Hash, Ord, PartialOrd, PartialEq, Eq, Clone, Copy, Debug)]
