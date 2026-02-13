@@ -25,7 +25,7 @@ pub(crate) fn ffp_3d_setup(context: &RendererContext) {
         .config
         .get_cvar(CVAR_FOV, |x| x.parse().unwrap())
         .unwrap_or(DEFAULT_FOV);
-    glu_perspective(fov, camera.aspect(), camera.near as f64, camera.far as f64);
+    glu_perspective(fov, camera.projection.to_aspect() as f64, camera.projection.near as f64, camera.projection.far as f64);
 
     /* storage/view: reset matrix; enable depth test; ready for 3d drawing */
     gl_matrix_mode(GL_MODELVIEW);

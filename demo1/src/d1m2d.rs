@@ -14,16 +14,16 @@ pub(super) fn create_2d_axes(camera: &Camera) -> Model2D {
             .with_type(PrimitiveType::Line {thickness: 10.0})
             .with_color(Color::from_rgba(0.498, 0.0, 1.0, 1.0))
             .with_vertex(Vertex2D::origin())
-            .with_vertex(Vertex2D::new(0.0, camera.height))
+            .with_vertex(Vertex2D::new(0.0, camera.projection.height))
             .with_vertex(Vertex2D::origin())
-            .with_vertex(Vertex2D::new(camera.width, 0.0))
+            .with_vertex(Vertex2D::new(camera.projection.width, 0.0))
             .build())
         .with_primitive(Primitive2DBuilder::new()
             .with_type(PrimitiveType::Point {point_size: 15.0})
             .with_color(Color::GREEN)
             .with_vertex(Vertex2D::origin())
-            .with_vertex(Vertex2D::new(0.0, camera.height))
-            .with_vertex(Vertex2D::new(camera.width, 0.0))
+            .with_vertex(Vertex2D::new(0.0, camera.projection.height))
+            .with_vertex(Vertex2D::new(camera.projection.width, 0.0))
             .build())
         .build()
 }
@@ -34,10 +34,10 @@ pub(super) fn create_2d_grid_x_lines(camera: &Camera) -> Model2D {
 
     /* define line vertices */
     let hgap = 10;
-    let hiters = ((camera.height + (hgap as f32))/(hgap as f32)) as u16;
+    let hiters = ((camera.projection.height + (hgap as f32))/(hgap as f32)) as u16;
     for h in 0..hiters {
         vertices.push(Vertex2D::new(0.0, (h * hgap) as f32));
-        vertices.push(Vertex2D::new(camera.width, (h * hgap) as f32));
+        vertices.push(Vertex2D::new(camera.projection.width, (h * hgap) as f32));
     }
 
     /* done */
@@ -56,10 +56,10 @@ pub(super) fn create_2d_grid_y_lines(camera: &Camera) -> Model2D {
 
     /* define line vertices */
     let vgap = 10;
-    let viters = ((camera.width + (vgap as f32))/(vgap as f32)) as u16;
+    let viters = ((camera.projection.width + (vgap as f32))/(vgap as f32)) as u16;
     for v in 0..viters {
         vertices.push(Vertex2D::new((v * vgap) as f32, 0.0));
-        vertices.push(Vertex2D::new((v * vgap) as f32, camera.height));
+        vertices.push(Vertex2D::new((v * vgap) as f32, camera.projection.height));
     }
 
     /* done */
@@ -93,8 +93,8 @@ pub(super) fn create_2d_repeated_texts(count: u16, x: f32, y: f32) -> Model2D {
 
 pub(super) fn create_2d_crosshairs(camera: &Camera) -> Model2D {
     /* centering values */
-    let center_x = camera.width / 2.0;
-    let center_y = camera.height / 2.0;
+    let center_x = camera.projection.width / 2.0;
+    let center_y = camera.projection.height / 2.0;
 
     /* crosshair values */
     let crosshair_len = 20.0;

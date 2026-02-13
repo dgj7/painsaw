@@ -4,6 +4,7 @@ pub mod build;
 pub mod dim;
 pub mod orient;
 pub mod primitive;
+pub mod projection;
 
 pub(crate) static C_PI: f32 = PI as f32;
 pub(crate) static C_2_PI: f32 = C_PI * 2.0;

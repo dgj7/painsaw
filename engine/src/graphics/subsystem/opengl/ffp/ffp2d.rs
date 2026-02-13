@@ -21,7 +21,7 @@ pub(crate) fn ffp_2d_setup(camera: &Camera) {
     /* projection: reset matrix; setup ortho for 2d drawing */
     gl_matrix_mode(GL_PROJECTION);
     gl_load_identity();
-    gl_ortho(0.0, camera.width as f64, camera.height as f64, 0.0, -99999.0, 99999.0);
+    gl_ortho(0.0, camera.projection.width as f64, camera.projection.height as f64, 0.0, -99999.0, 99999.0);
 
     /* storage/view: reset matrix; ready for 2d drawing */
     gl_matrix_mode(GL_MODELVIEW);
