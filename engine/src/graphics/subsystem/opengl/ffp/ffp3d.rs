@@ -1,4 +1,3 @@
-use crate::config::{CVAR_FOV, DEFAULT_FOV};
 use crate::graphics::geometry::orient::Orientation;
 use crate::graphics::geometry::primitive::prim3d::Primitive3D;
 use crate::graphics::subsystem::opengl::ffp::api::{gl_begin_lines, gl_begin_points, gl_begin_quads, gl_color_4f, gl_disable, gl_enable, gl_end, gl_line_width, gl_load_identity, gl_matrix_mode, gl_point_size, gl_polygon_mode, gl_pop_attrib, gl_pop_matrix, gl_push_attrib, gl_push_matrix, gl_rotate_f, gl_scale_f, gl_translate_f, gl_vertex_3f, glu_perspective};
@@ -21,11 +20,7 @@ pub(crate) fn ffp_3d_setup(context: &RendererContext) {
     gl_load_identity();
 
     /* adjust perspective (removes ortho) */
-    let fov: f64 = context
-        .config
-        .get_cvar(CVAR_FOV, |x| x.parse().unwrap())
-        .unwrap_or(DEFAULT_FOV);
-    glu_perspective(fov, camera.projection.to_aspect() as f64, camera.projection.near as f64, camera.projection.far as f64);
+    glu_perspective(camera.projection.fov as f64, camera.projection.to_aspect() as f64, camera.projection.near as f64, camera.projection.far as f64);
 
     /* storage/view: reset matrix; enable depth test; ready for 3d drawing */
     gl_matrix_mode(GL_MODELVIEW);
