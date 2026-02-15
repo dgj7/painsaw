@@ -1992,7 +1992,7 @@ mod tests {
             foreground: Color::RED,
             background: Color::TRANSPARENT,
         };
-        let mut image = create_generic(&config, "AB".parse().unwrap());
+        let image = create_generic(&config, "AB".parse().unwrap());
 
         assert_eq!(780*2, image.data.len());
         assert_eq!(HEIGHT * WIDTH * 4 * 2, image.data.len());

@@ -1,3 +1,8 @@
+pub(crate) mod invert;
+pub mod new;
+mod mult;
+mod eq;
+
 use crate::graphics::geometry::primitive::v3d::Vertex3D;
 
 ///
@@ -24,6 +29,7 @@ use crate::graphics::geometry::primitive::v3d::Vertex3D;
 /// row-major (directx/unreal): each row represents 3 (basis) vectors and position.
 ///
 #[derive(Clone)]
+#[derive(Debug)]
 pub struct Matrix4x4 {
     /* column1: x(right) */
     pub c1r1: f32,
@@ -48,33 +54,6 @@ pub struct Matrix4x4 {
     pub c4r2: f32,
     pub c4r3: f32,
     pub c4r4: f32,
-}
-
-impl Matrix4x4 {
-    pub fn from(x_right: Vertex3D, y_up: Vertex3D, z_forward: Vertex3D, position: Vertex3D) -> Matrix4x4 {
-        Matrix4x4 {
-            c1r1: x_right.x,
-            c1r2: x_right.y,
-            c1r3: x_right.z,
-            c1r4: 0.0,
-
-            c2r1: y_up.x,
-            c2r2: y_up.y,
-            c2r3: y_up.z,
-            c2r4: 0.0,
-
-
-            c3r1: z_forward.x,
-            c3r2: z_forward.y,
-            c3r3: z_forward.z,
-            c3r4: 0.0,
-
-            c4r1: position.x,
-            c4r2: position.y,
-            c4r3: position.z,
-            c4r4: 0.0,// todo: i think this should be 1.0
-        }
-    }
 }
 
 impl Matrix4x4 {
@@ -132,33 +111,6 @@ impl Matrix4x4 {
 impl Default for Matrix4x4 {
     fn default() -> Matrix4x4 {
         Matrix4x4::from(Vertex3D::create_x_unit(), Vertex3D::create_y_unit(), Vertex3D::create_z_unit(), Vertex3D::origin())
-    }
-}
-
-///
-/// multiply two matrices.
-///
-pub fn multiply(left: &Matrix4x4, right: &Matrix4x4) -> Matrix4x4 {
-    Matrix4x4 {
-        c1r1: left.c1r1* right.c1r1 + left.c2r1* right.c1r2 + left.c3r1* right.c1r3 + left.c4r1* right.c1r4,
-        c1r2: left.c1r2* right.c1r1 + left.c2r2* right.c1r2 + left.c3r2* right.c1r3 + left.c4r2* right.c1r4,
-        c1r3: left.c1r3* right.c1r1 + left.c2r3* right.c1r2 + left.c3r3* right.c1r3 + left.c4r3* right.c1r4,
-        c1r4: left.c1r4* right.c1r1 + left.c2r4* right.c1r2 + left.c3r4* right.c1r3 + left.c4r4* right.c1r4,
-
-        c2r1: left.c1r1* right.c2r1 + left.c2r1* right.c2r2 + left.c3r1* right.c2r3 + left.c4r1* right.c2r4,
-        c2r2: left.c1r2* right.c2r1 + left.c2r2* right.c2r2 + left.c3r2* right.c2r3 + left.c4r2* right.c2r4,
-        c2r3: left.c1r3* right.c2r1 + left.c2r3* right.c2r2 + left.c3r3* right.c2r3 + left.c4r3* right.c2r4,
-        c2r4: left.c1r4* right.c2r1 + left.c2r4* right.c2r2 + left.c3r4* right.c2r3 + left.c4r4* right.c2r4,
-
-        c3r1: left.c1r1* right.c3r1 + left.c2r1* right.c3r2 + left.c3r1* right.c3r3 + left.c4r1* right.c3r4,
-        c3r2: left.c1r2* right.c3r1 + left.c2r2* right.c3r2 + left.c3r2* right.c3r3 + left.c4r2* right.c3r4,
-        c3r3: left.c1r3* right.c3r1 + left.c2r3* right.c3r2 + left.c3r3* right.c3r3 + left.c4r3* right.c3r4,
-        c3r4: left.c1r4* right.c3r1 + left.c2r4* right.c3r2 + left.c3r4* right.c3r3 + left.c4r4* right.c3r4,
-
-        c4r1: left.c1r1* right.c4r1 + left.c2r1* right.c4r2 + left.c3r1* right.c4r3 + left.c4r1* right.c4r4,
-        c4r2: left.c1r2* right.c4r1 + left.c2r2* right.c4r2 + left.c3r2* right.c4r3 + left.c4r2* right.c4r4,
-        c4r3: left.c1r3* right.c4r1 + left.c2r3* right.c4r2 + left.c3r3* right.c4r3 + left.c4r3* right.c4r4,
-        c4r4: left.c1r4* right.c4r1 + left.c2r4* right.c4r2 + left.c3r4* right.c4r3 + left.c4r4* right.c4r4,
     }
 }
 
