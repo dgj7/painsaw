@@ -37,3 +37,41 @@ pub struct Matrix3x3 {
 
 #[allow(dead_code)] // todo: remove this
 type RotationMatrix = Matrix3x3;
+
+///
+/// multiply two matrices.
+///
+pub fn multiply(left: &Matrix3x3, right: &Matrix3x3) -> Matrix3x3 {
+    Matrix3x3 {
+        c1r1: left.c1r1* right.c1r1 + left.c2r1* right.c1r2 + left.c3r1* right.c1r3,
+        c1r2: left.c1r2* right.c1r1 + left.c2r2* right.c1r2 + left.c3r2* right.c1r3,
+        c1r3: left.c1r3* right.c1r1 + left.c2r3* right.c1r2 + left.c3r3* right.c1r3,
+
+        c2r1: left.c1r1* right.c2r1 + left.c2r1* right.c2r2 + left.c3r1* right.c2r3,
+        c2r2: left.c1r2* right.c2r1 + left.c2r2* right.c2r2 + left.c3r2* right.c2r3,
+        c2r3: left.c1r3* right.c2r1 + left.c2r3* right.c2r2 + left.c3r3* right.c2r3,
+
+        c3r1: left.c1r1* right.c3r1 + left.c2r1* right.c3r2 + left.c3r1* right.c3r3,
+        c3r2: left.c1r2* right.c3r1 + left.c2r2* right.c3r2 + left.c3r2* right.c3r3,
+        c3r3: left.c1r3* right.c3r1 + left.c2r3* right.c3r2 + left.c3r3* right.c3r3,
+    }
+}
+
+///
+/// multiply matrix by scalar.
+///
+pub fn multiply_scalar(matrix: &Matrix3x3, scalar: f32) -> Matrix3x3 {
+    Matrix3x3 {
+        c1r1: matrix.c1r1 * scalar,
+        c1r2: matrix.c1r2 * scalar,
+        c1r3: matrix.c1r3 * scalar,
+
+        c2r1: matrix.c2r1 * scalar,
+        c2r2: matrix.c2r2 * scalar,
+        c2r3: matrix.c2r3 * scalar,
+
+        c3r1: matrix.c3r1 * scalar,
+        c3r2: matrix.c3r2 * scalar,
+        c3r3: matrix.c3r3 * scalar,
+    }
+}

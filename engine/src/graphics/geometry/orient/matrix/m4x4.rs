@@ -136,6 +136,60 @@ impl Default for Matrix4x4 {
 }
 
 ///
+/// multiply two matrices.
+///
+pub fn multiply(left: &Matrix4x4, right: &Matrix4x4) -> Matrix4x4 {
+    Matrix4x4 {
+        c1r1: left.c1r1* right.c1r1 + left.c2r1* right.c1r2 + left.c3r1* right.c1r3 + left.c4r1* right.c1r4,
+        c1r2: left.c1r2* right.c1r1 + left.c2r2* right.c1r2 + left.c3r2* right.c1r3 + left.c4r2* right.c1r4,
+        c1r3: left.c1r3* right.c1r1 + left.c2r3* right.c1r2 + left.c3r3* right.c1r3 + left.c4r3* right.c1r4,
+        c1r4: left.c1r4* right.c1r1 + left.c2r4* right.c1r2 + left.c3r4* right.c1r3 + left.c4r4* right.c1r4,
+
+        c2r1: left.c1r1* right.c2r1 + left.c2r1* right.c2r2 + left.c3r1* right.c2r3 + left.c4r1* right.c2r4,
+        c2r2: left.c1r2* right.c2r1 + left.c2r2* right.c2r2 + left.c3r2* right.c2r3 + left.c4r2* right.c2r4,
+        c2r3: left.c1r3* right.c2r1 + left.c2r3* right.c2r2 + left.c3r3* right.c2r3 + left.c4r3* right.c2r4,
+        c2r4: left.c1r4* right.c2r1 + left.c2r4* right.c2r2 + left.c3r4* right.c2r3 + left.c4r4* right.c2r4,
+
+        c3r1: left.c1r1* right.c3r1 + left.c2r1* right.c3r2 + left.c3r1* right.c3r3 + left.c4r1* right.c3r4,
+        c3r2: left.c1r2* right.c3r1 + left.c2r2* right.c3r2 + left.c3r2* right.c3r3 + left.c4r2* right.c3r4,
+        c3r3: left.c1r3* right.c3r1 + left.c2r3* right.c3r2 + left.c3r3* right.c3r3 + left.c4r3* right.c3r4,
+        c3r4: left.c1r4* right.c3r1 + left.c2r4* right.c3r2 + left.c3r4* right.c3r3 + left.c4r4* right.c3r4,
+
+        c4r1: left.c1r1* right.c4r1 + left.c2r1* right.c4r2 + left.c3r1* right.c4r3 + left.c4r1* right.c4r4,
+        c4r2: left.c1r2* right.c4r1 + left.c2r2* right.c4r2 + left.c3r2* right.c4r3 + left.c4r2* right.c4r4,
+        c4r3: left.c1r3* right.c4r1 + left.c2r3* right.c4r2 + left.c3r3* right.c4r3 + left.c4r3* right.c4r4,
+        c4r4: left.c1r4* right.c4r1 + left.c2r4* right.c4r2 + left.c3r4* right.c4r3 + left.c4r4* right.c4r4,
+    }
+}
+
+///
+/// multiply matrix by scalar.
+///
+pub fn multiply_scalar(matrix: &Matrix4x4, scalar: f32) -> Matrix4x4 {
+    Matrix4x4 {
+        c1r1: matrix.c1r1 * scalar,
+        c1r2: matrix.c1r2 * scalar,
+        c1r3: matrix.c1r3 * scalar,
+        c1r4: matrix.c1r4 * scalar,
+
+        c2r1: matrix.c2r1 * scalar,
+        c2r2: matrix.c2r2 * scalar,
+        c2r3: matrix.c2r3 * scalar,
+        c2r4: matrix.c2r4 * scalar,
+
+        c3r1: matrix.c3r1 * scalar,
+        c3r2: matrix.c3r2 * scalar,
+        c3r3: matrix.c3r3 * scalar,
+        c3r4: matrix.c3r4 * scalar,
+
+        c4r1: matrix.c4r1 * scalar,
+        c4r2: matrix.c4r2 * scalar,
+        c4r3: matrix.c4r3 * scalar,
+        c4r4: matrix.c4r4 * scalar,
+    }
+}
+
+///
 /// calculate the scale for the given axis.
 ///
 /// presumes the axis is not normalized.
