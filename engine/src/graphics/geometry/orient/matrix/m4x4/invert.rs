@@ -1,52 +1,60 @@
 use crate::graphics::geometry::orient::matrix::m4x4::Matrix4x4;
 
 ///
-/// invert the given matrix, as long as it's invertible.
+/// invert the given matrix, as long as it's invertible (having determinant > 0).
 ///
 #[allow(dead_code)]// todo: remove this
 fn invert(m: &Matrix4x4) -> Option<Matrix4x4> {
-    /* calculate determinant */
-    let s0 = m.c1r1 * m.c2r2 - m.c2r1 * m.c1r2;
-    let s1 = m.c1r1 * m.c3r2 - m.c3r1 * m.c1r2;
-    let s2 = m.c1r1 * m.c4r2 - m.c4r1 * m.c1r2;
-    let s3 = m.c2r1 * m.c3r2 - m.c3r1 * m.c2r2;
-    let s4 = m.c2r1 * m.c4r2 - m.c4r1 * m.c2r2;
-    let s5 = m.c3r1 * m.c4r2 - m.c4r1 * m.c3r2;
-    let c5 = m.c3r3 * m.c4r4 - m.c4r3 * m.c3r4;
-    let c4 = m.c2r3 * m.c4r4 - m.c4r3 * m.c2r4;
-    let c3 = m.c2r3 * m.c3r4 - m.c3r3 * m.c2r4;
-    let c2 = m.c1r3 * m.c4r4 - m.c4r3 * m.c1r4;
-    let c1 = m.c1r3 * m.c3r4 - m.c3r3 * m.c1r4;
-    let c0 = m.c1r3 * m.c2r4 - m.c2r3 * m.c1r4;
-    let determinant = s0 * c5 - s1 * c4 + s2 * c3 + s3 * c2 - s4 * c1 + s5 * c0;
+    /* calculate cofactors */
+    let c11 = m.c2r2 * (m.c3r3 * m.c4r4 - m.c4r3 * m.c3r4) - m.c3r2 * (m.c2r3 * m.c4r4 - m.c4r3 * m.c2r4) + m.c4r2 * (m.c2r3 * m.c3r4 - m.c3r3 * m.c2r4);
+    let c12 = -(m.c1r2 * (m.c3r3 * m.c4r4 - m.c4r3 * m.c3r4) - m.c3r2 * (m.c1r3 * m.c4r4 - m.c4r3 * m.c1r4) + m.c4r2 * (m.c1r3 * m.c3r4 - m.c3r3 * m.c1r4));
+    let c13 = m.c1r2 * (m.c2r3 * m.c4r4 - m.c4r3 * m.c2r4) - m.c2r2 * (m.c1r3 * m.c4r4 - m.c4r3 * m.c1r4) + m.c4r2 * (m.c1r3 * m.c2r4 - m.c2r3 * m.c1r4);
+    let c14 = -(m.c1r2 * (m.c2r3 * m.c3r4 - m.c3r3 * m.c2r4) - m.c2r2 * (m.c1r3 * m.c3r4 - m.c3r3 * m.c1r4) + m.c3r2 * (m.c1r3 * m.c2r4 - m.c2r3 * m.c1r4));
+    let c21 = -(m.c2r1 * (m.c3r3 * m.c4r4 - m.c4r3 * m.c3r4) - m.c3r1 * (m.c2r3 * m.c4r4 - m.c4r3 * m.c2r4) + m.c4r1 * (m.c2r3 * m.c3r4 - m.c3r3 * m.c2r4));
+    let c22 = m.c1r1 * (m.c3r3 * m.c4r4 - m.c4r3 * m.c3r4) - m.c3r1 * (m.c1r3 * m.c4r4 - m.c4r3 * m.c1r4) + m.c4r1 * (m.c1r3 * m.c3r4 - m.c3r3 * m.c1r4);
+    let c23 = -(m.c1r1 * (m.c2r3 * m.c4r4 - m.c4r3 * m.c2r4) - m.c2r1 * (m.c1r3 * m.c4r4 - m.c4r3 * m.c1r4) + m.c4r1 * (m.c1r3 * m.c2r4 - m.c2r3 * m.c1r4));
+    let c24 = m.c1r1 * (m.c2r3 * m.c3r4 - m.c3r3 * m.c2r4) - m.c2r1 * (m.c1r3 * m.c3r4 - m.c3r3 * m.c1r4) + m.c3r1 * (m.c1r3 * m.c2r4 - m.c2r3 * m.c1r4);
+    let c31 = m.c2r1 * (m.c3r2 * m.c4r4 - m.c4r2 * m.c3r4) - m.c3r1 * (m.c2r2 * m.c4r4 - m.c4r2 * m.c2r4) + m.c4r1 * (m.c2r2 * m.c3r4 - m.c3r2 * m.c2r4);
+    let c32 = -(m.c1r1 * (m.c3r2 * m.c4r4 - m.c4r2 * m.c3r4) - m.c3r1 * (m.c1r2 * m.c4r4 - m.c4r2 * m.c1r4) + m.c4r1 * (m.c1r2 * m.c3r4 - m.c3r2 * m.c1r4));
+    let c33 = m.c1r1 * (m.c2r2 * m.c4r4 - m.c4r2 * m.c2r4) - m.c2r1 * (m.c1r2 * m.c4r4 - m.c4r2 * m.c1r4) + m.c4r1 * (m.c1r2 * m.c2r4 - m.c2r2 * m.c1r4);
+    let c34 = -(m.c1r1 * (m.c2r2 * m.c3r4 - m.c3r2 * m.c2r4) - m.c2r1 * (m.c1r2 * m.c3r4 - m.c3r2 * m.c1r4) + m.c3r1 * (m.c1r2 * m.c2r4 - m.c2r2 * m.c1r4));
+    let c41 = -(m.c2r1 * (m.c3r2 * m.c4r3 - m.c4r2 * m.c3r3) - m.c3r1 * (m.c2r2 * m.c4r3 - m.c4r2 * m.c2r3) + m.c4r1 * (m.c2r2 * m.c3r3 - m.c3r2 * m.c2r3));
+    let c42 = m.c1r1 * (m.c3r2 * m.c4r3 - m.c4r2 * m.c3r3) - m.c3r1 * (m.c1r2 * m.c4r3 - m.c4r2 * m.c1r3) + m.c4r1 * (m.c1r2 * m.c3r3 - m.c3r2 * m.c1r3);
+    let c43 = -(m.c1r1 * (m.c2r2 * m.c4r3 - m.c4r2 * m.c2r3) - m.c2r1 * (m.c1r2 * m.c4r3 - m.c4r2 * m.c1r3) + m.c4r1 * (m.c1r2 * m.c2r3 - m.c2r2 * m.c1r3));
+    let c44 = m.c1r1 * (m.c2r2 * m.c3r3 - m.c3r2 * m.c2r3) - m.c2r1 * (m.c1r2 * m.c3r3 - m.c3r2 * m.c1r3) + m.c3r1 * (m.c1r2 * m.c2r3 - m.c2r2 * m.c1r3);
 
-    /* if not invertible, return none */
-    if determinant == 0.0 {
+    /* calculate determinant; consists of the first column and its cofactors */
+    let determinant = m.c1r1 * c11 + m.c2r1 * c12 + m.c3r1 * c13 + m.c4r1 * c14;
+
+    /* if the deterrent is practically zero, return none */
+    if determinant.abs() < f32::EPSILON {
         return None;
     }
 
-    /* calculate inverted and return */
-    let id = 1.0 / determinant;
+    /* otherwise, get the inverse determinant */
+    let inv_det = 1.0 / determinant;
+
+    /* return a matrix, comprised of each cofactor multiplied by the inverse determinant */
     Some(Matrix4x4 {
-        c1r1: ( m.c2r2 * c5 - m.c3r2 * c4 + m.c4r2 * c3) * id,
-        c1r2: (-m.c1r2 * c5 + m.c3r2 * c2 - m.c4r2 * c1) * id,
-        c1r3: ( m.c1r2 * s4 - m.c2r2 * s2 + m.c4r2 * s0) * id,
-        c1r4: (-m.c1r2 * s5 + m.c3r2 * s2 - m.c4r2 * s1) * id,
+        c1r1: c11 * inv_det,
+        c1r2: c12 * inv_det,
+        c1r3: c13 * inv_det,
+        c1r4: c14 * inv_det,
 
-        c2r1: (-m.c2r1 * c5 + m.c3r1 * c4 - m.c4r1 * c3) * id,
-        c2r2: ( m.c1r1 * c5 - m.c3r1 * c2 + m.c4r1 * c1) * id,
-        c2r3: (-m.c1r1 * s4 + m.c2r1 * s2 - m.c4r1 * s0) * id,
-        c2r4: ( m.c1r1 * s5 - m.c3r1 * s2 + m.c4r1 * s1) * id,
+        c2r1: c21 * inv_det,
+        c2r2: c22 * inv_det,
+        c2r3: c23 * inv_det,
+        c2r4: c24 * inv_det,
 
-        c3r1: ( m.c2r4 * s5 - m.c3r4 * s4 + m.c4r4 * s3) * id,
-        c3r2: (-m.c1r4 * s5 + m.c3r4 * s2 - m.c4r4 * s1) * id,
-        c3r3: ( m.c1r1 * c5 - m.c2r1 * c2 + m.c4r1 * c0) * id,
-        c3r4: (-m.c1r1 * c4 + m.c3r1 * c2 - m.c4r1 * c1) * id,
+        c3r1: c31 * inv_det,
+        c3r2: c32 * inv_det,
+        c3r3: c33 * inv_det,
+        c3r4: c34 * inv_det,
 
-        c4r1: (-m.c2r3 * s5 + m.c3r3 * s4 - m.c4r3 * s3) * id,
-        c4r2: ( m.c1r3 * s5 - m.c3r3 * s2 + m.c4r3 * s1) * id,
-        c4r3: (-m.c1r1 * c3 + m.c2r1 * c2 - m.c4r1 * c0) * id,
-        c4r4: ( m.c1r1 * c2 - m.c2r1 * c1 + m.c3r1 * c0) * id,
+        c4r1: c41 * inv_det,
+        c4r2: c42 * inv_det,
+        c4r3: c43 * inv_det,
+        c4r4: c44 * inv_det,
     })
 }
 
@@ -57,15 +65,16 @@ mod tests {
     use crate::graphics::geometry::orient::matrix::m4x4::mult::multiply;
 
     fn is_near(left: f32, right: f32) -> bool {
-        (left - right).abs() <= 1e-6
+        (left - right).abs() <= f32::EPSILON
     }
 
+    ///
+    /// inverse of identity should be _very close_ to the identity.
+    ///
     #[test]
-    #[ignore]// todo: fix inverse(); this should pass
     fn test_inverse_identity() {
         let matrix = Matrix4x4::identity();
         let inverse = invert(&matrix).unwrap();
-        println!("{:?}", inverse);
 
         assert!(is_near(matrix.c1r1, inverse.c1r1));
         assert!(is_near(matrix.c1r2, inverse.c1r2));
@@ -85,11 +94,13 @@ mod tests {
         assert!(is_near(matrix.c4r1, inverse.c4r1));
         assert!(is_near(matrix.c4r2, inverse.c4r2));
         assert!(is_near(matrix.c4r3, inverse.c4r3));
-        assert!(is_near(matrix.c4r4, inverse.c4r4));// first failure here
+        assert!(is_near(matrix.c4r4, inverse.c4r4));
     }
 
+    ///
+    /// a matrix times its own inverse equals identity matrix
+    ///
     #[test]
-    #[ignore]// todo: fix inverse(); this should pass
     fn test_inverse_1() {
         let matrix = Matrix4x4 {
             c1r1: 1.0,
@@ -111,11 +122,10 @@ mod tests {
         };
         let inverse = invert(&matrix).expect("couldn't invert matrix");
 
-        /* expected: matrix * inverse = identity */
         let result = multiply(&matrix, &inverse);
         let expected = Matrix4x4::identity();
 
-        assert!(is_near(expected.c1r1, result.c1r1));// first failure here
+        assert!(is_near(expected.c1r1, result.c1r1));
         assert!(is_near(expected.c1r2, result.c1r2));
         assert!(is_near(expected.c1r3, result.c1r3));
         assert!(is_near(expected.c1r4, result.c1r4));
@@ -136,6 +146,9 @@ mod tests {
         assert!(is_near(expected.c4r4, result.c4r4));
     }
 
+    ///
+    /// test that a singular matrix won't be inverted
+    ///
     #[test]
     fn test_inverse_singular_1() {
         let matrix = Matrix4x4 {
