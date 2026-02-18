@@ -4,7 +4,7 @@ use engine::graphics::color::Color;
 use engine::geometry::primitive::prim2d::Primitive2DBuilder;
 use engine::geometry::primitive::PrimitiveType;
 use engine::geometry::primitive::v2d::Vertex2D;
-use engine::graphics::image::t2d::Texture2DBuilder;
+use engine::graphics::texture::t2d::Texture2DBuilder;
 use engine::support::text::{text_2d_image, TextConfig, Typeface};
 use engine::graphics::storage::m2d::{Model2D, Model2DBuilder};
 

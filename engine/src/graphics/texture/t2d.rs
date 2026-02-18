@@ -1,4 +1,4 @@
-use crate::graphics::image::RawImage;
+use crate::graphics::texture::RawImage;
 
 pub struct Texture2D {
     pub initialized: bool,
@@ -69,7 +69,7 @@ impl Texture2DBuilder {
         Texture2D {
             initialized: false,
             id: 0,
-            image: self.the_image.expect("can't create a texture without image data"),
+            image: self.the_image.expect("can't create a texture without texture data"),
             x: self.the_x.unwrap_or_else(|| 0.0),
             y: self.the_y.unwrap_or_else(|| 0.0),
             scale: self.the_scale.unwrap_or_else(|| 1.0),

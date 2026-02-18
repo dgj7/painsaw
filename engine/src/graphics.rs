@@ -13,7 +13,7 @@ use subsystem::RendererInfo;
 
 pub mod camera;
 pub mod color;
-pub mod image;
+pub mod texture;
 pub mod storage;
 pub mod subsystem;
 

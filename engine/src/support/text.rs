@@ -1,6 +1,6 @@
 use crate::graphics::color::Color;
 use crate::support::text::generic::create_generic;
-use crate::graphics::image::RawImage;
+use crate::graphics::texture::RawImage;
 
 pub mod generic;
 

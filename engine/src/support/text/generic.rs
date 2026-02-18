@@ -1,6 +1,6 @@
 use crate::graphics::color::{Color, ColorSelection};
 use crate::support::text::TextConfig;
-use crate::graphics::image::RawImage;
+use crate::graphics::texture::RawImage;
 use crate::support::logger::log;
 use crate::support::logger::log_level::LogLevel;
 use std::clone::Clone;

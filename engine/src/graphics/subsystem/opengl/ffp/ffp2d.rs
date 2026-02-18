@@ -4,7 +4,7 @@
 
 use crate::graphics::camera::Camera;
 use crate::geometry::primitive::prim2d::Primitive2D;
-use crate::graphics::image::t2d::Texture2D;
+use crate::graphics::texture::t2d::Texture2D;
 use crate::graphics::storage::g2d::Graph2D;
 use crate::graphics::subsystem::opengl::ffp::api::{gl_begin, gl_begin_lines, gl_begin_points, gl_begin_quads, gl_bind_texture, gl_blend_func, gl_color_4f, gl_disable, gl_enable, gl_end, gl_gen_textures, gl_line_width, gl_load_identity, gl_matrix_mode, gl_ortho, gl_point_size, gl_pop_attrib, gl_pop_matrix, gl_push_attrib, gl_push_matrix, gl_tex_coord_2f, gl_tex_env_f, gl_tex_image_2d, gl_tex_parameter_i, gl_tex_sub_image_2d, gl_vertex_2f};
 use crate::support::logger::log;
