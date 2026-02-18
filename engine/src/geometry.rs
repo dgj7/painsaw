@@ -5,6 +5,7 @@ pub mod dim;
 pub mod orient;
 pub mod primitive;
 pub mod projection;
+pub mod angle;
 
 pub(crate) static C_PI: f32 = PI as f32;
 pub(crate) static C_2_PI: f32 = C_PI * 2.0;
@@ -12,8 +13,6 @@ pub(crate) static C_PI_OVER_2: f32 = C_PI / 2.0;
 #[allow(unused)] // todo: remove
 pub(crate) static C_1_OVER_PI: f32 = 1.0 / C_PI;
 pub(crate) static C_1_OVER_2PI: f32 = 1.0 / C_2_PI;
-pub(crate) static C_PI_OVER_180: f32 = C_PI / 180.0;
-pub(crate) static C_180_OVER_PI: f32 = 180.0 / C_PI;
 
 ///
 /// wrap an angle in the range -pi..pi.
@@ -43,24 +42,6 @@ pub fn safe_a_cos(x: f32) -> f32 {
 
     /* if safe value, return normal call */
     x.acos()
-}
-
-///
-/// convert degrees to radians.
-///
-/// radians: unit of angular measurement.  angle superimposed on a circle where the arc
-/// is the length of the radius of the circle.  a circle is about 2*pi (6.28) radians,
-/// making 1 radian roughly equal to 57.3 degrees.
-///
-pub fn degrees_to_radians(degrees: f32) -> f32 {
-    degrees * C_PI_OVER_180
-}
-
-///
-/// convert radians to degrees.
-///
-pub fn radians_to_degrees(radians: f32) -> f32 {
-    radians * C_180_OVER_PI
 }
 
 ///

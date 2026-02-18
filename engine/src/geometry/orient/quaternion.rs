@@ -12,10 +12,13 @@ use crate::geometry::safe_a_cos;
 ///
 #[derive(Clone)]
 pub struct Quaternion {
-    pub w: f32,
+    /* the rotation axis */
     pub x: f32,
     pub y: f32,
     pub z: f32,
+
+    /* w.acos() is the rotation angle, divided by 2 (radians) */
+    pub w: f32,
 }
 
 impl Quaternion {
