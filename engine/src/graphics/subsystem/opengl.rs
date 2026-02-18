@@ -1,5 +1,5 @@
 use crate::graphics::camera::Camera;
-use crate::graphics::geometry::primitive::PrimitiveType;
+use crate::geometry::primitive::PrimitiveType;
 use crate::graphics::storage::g2d::Graph2D;
 use crate::graphics::storage::g3d::Graph3D;
 use crate::graphics::subsystem::opengl::ffp::ffp2d::{ffp_2d_initialize_textures, ffp_2d_update_textures, ffp_render_2d_line_strip, ffp_render_2d_quads};

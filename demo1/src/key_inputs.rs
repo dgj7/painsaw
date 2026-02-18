@@ -1,8 +1,8 @@
 use engine::config::input_config::KeyHandler;
 use engine::input::kin::KeyInputName;
 use engine::input::is::InputState;
-use engine::logger::log;
-use engine::logger::log_level::LogLevel;
+use engine::support::logger::log;
+use engine::support::logger::log_level::LogLevel;
 use engine::window::context::RendererContext;
 use std::collections::HashMap;
 

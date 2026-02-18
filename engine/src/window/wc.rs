@@ -7,8 +7,8 @@
 
 use crate::config::input_config::kc::handle_key_change;
 use crate::config::input_config::mc::handle_mouse_change;
-use crate::logger::log;
-use crate::logger::log_level::LogLevel;
+use crate::support::logger::log;
+use crate::support::logger::log_level::LogLevel;
 use crate::window::context::RendererContext;
 
 ///

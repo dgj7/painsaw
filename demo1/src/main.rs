@@ -2,9 +2,9 @@
 
 use crate::config::create_engine_config;
 use demo1_world_controller::Demo1WorldController;
-use engine::logger::log_level::LogLevel;
-use engine::logger::log_target::LogTarget;
-use engine::logger::{configure, log, LoggerConfig};
+use engine::support::logger::log_level::LogLevel;
+use engine::support::logger::log_target::LogTarget;
+use engine::support::logger::{configure, log, LoggerConfig};
 use engine::window::create_window;
 
 pub mod demo1_world_controller;

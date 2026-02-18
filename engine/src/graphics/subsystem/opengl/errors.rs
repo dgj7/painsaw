@@ -1,5 +1,5 @@
-use crate::logger::log_level::LogLevel;
-use crate::logger::log_caller;
+use crate::support::logger::log_level::LogLevel;
+use crate::support::logger::log_caller;
 use std::ffi::{c_uchar, CStr};
 use std::panic::Location;
 use windows::Win32::Graphics::OpenGL::{glGetError, gluErrorString, GL_NO_ERROR};

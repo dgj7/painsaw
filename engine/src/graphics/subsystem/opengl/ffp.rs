@@ -1,7 +1,7 @@
 use crate::graphics::camera::Camera;
 use crate::graphics::subsystem::opengl::ffp::api::{gl_clear, gl_clear_color, gl_viewport};
-use crate::logger::log;
-use crate::logger::log_level::LogLevel;
+use crate::support::logger::log;
+use crate::support::logger::log_level::LogLevel;
 use windows::Win32::Graphics::OpenGL::{GL_COLOR_BUFFER_BIT, GL_DEPTH_BUFFER_BIT};
 
 pub(crate) mod api;

@@ -1,11 +1,11 @@
 use crate::config::EngineConfig;
 use crate::graphics::camera::Camera;
-use crate::graphics::hud::coords::show_cam_coords;
-use crate::graphics::hud::fps::show_fps;
+use crate::support::hud::coords::show_cam_coords;
+use crate::support::hud::fps::show_fps;
 use crate::graphics::subsystem::{grss_factory, GraphicsSubSystem, RenderingSubSystemHandle};
-use crate::graphics::timing::EngineTiming;
-use crate::logger::log;
-use crate::logger::log_level::LogLevel;
+use crate::support::timing::EngineTiming;
+use crate::support::logger::log;
+use crate::support::logger::log_level::LogLevel;
 use crate::window::context::RendererContext;
 use storage::g2d::Graph2D;
 use storage::g3d::Graph3D;
@@ -13,12 +13,9 @@ use subsystem::RendererInfo;
 
 pub mod camera;
 pub mod color;
-pub mod geometry;
-pub(crate) mod hud;
 pub mod image;
 pub mod storage;
 pub mod subsystem;
-pub(super) mod timing;
 
 ///
 /// Graphics rendering intermediary.

@@ -1,10 +1,10 @@
 use engine::graphics::color::Color;
-use engine::graphics::geometry::build::quad::QuadBuilder;
-use engine::graphics::geometry::orient::matrix::m4x4::Matrix4x4;
-use engine::graphics::geometry::orient::Orientation;
-use engine::graphics::geometry::primitive::prim3d::Primitive3DBuilder;
-use engine::graphics::geometry::primitive::PrimitiveType;
-use engine::graphics::geometry::primitive::v3d::Vertex3D;
+use engine::geometry::build::quad::QuadBuilder;
+use engine::geometry::orient::matrix::m4x4::Matrix4x4;
+use engine::geometry::orient::Orientation;
+use engine::geometry::primitive::prim3d::Primitive3DBuilder;
+use engine::geometry::primitive::PrimitiveType;
+use engine::geometry::primitive::v3d::Vertex3D;
 use engine::graphics::storage::m3d::{Model3D, Model3DBuilder};
 
 pub(super) fn create_3d_axes() -> Model3D {

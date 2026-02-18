@@ -1,7 +1,7 @@
 use crate::d1m2d::{create_2d_axes, create_2d_crosshairs, create_2d_grid_x_lines, create_2d_grid_y_lines, create_2d_repeated_texts};
 use crate::d1m3d::{create_3d_axes, create_3d_cuboid_1, create_3d_cuboid_wall_2};
-use engine::logger::log;
-use engine::logger::log_level::LogLevel;
+use engine::support::logger::log;
+use engine::support::logger::log_level::LogLevel;
 use engine::window::context::RendererContext;
 use engine::window::wc::WorldController;
 

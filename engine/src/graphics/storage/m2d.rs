@@ -1,4 +1,4 @@
-use crate::graphics::geometry::primitive::prim2d::Primitive2D;
+use crate::geometry::primitive::prim2d::Primitive2D;
 use crate::graphics::image::t2d::Texture2D;
 
 pub struct Model2D {

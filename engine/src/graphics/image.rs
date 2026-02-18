@@ -3,7 +3,6 @@
 //!
 
 pub mod t2d;
-pub mod text;
 
 pub struct RawImage {
     pub width: u32,

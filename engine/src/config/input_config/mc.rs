@@ -1,8 +1,8 @@
 use crate::input::min::MouseInputName;
 use crate::window::context::RendererContext;
 use std::sync::Arc;
-use crate::logger::log;
-use crate::logger::log_level::LogLevel;
+use crate::support::logger::log;
+use crate::support::logger::log_level::LogLevel;
 
 ///
 /// handle mouse inputs.

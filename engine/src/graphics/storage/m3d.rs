@@ -1,4 +1,4 @@
-use crate::graphics::geometry::primitive::prim3d::Primitive3D;
+use crate::geometry::primitive::prim3d::Primitive3D;
 
 pub struct Model3D {
     pub primitives: Vec<Primitive3D>,

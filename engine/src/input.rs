@@ -1,4 +1,4 @@
-use crate::graphics::geometry::dim::Dimension2D;
+use crate::geometry::dim::Dimension2D;
 use crate::input::ic::InputChange;
 use crate::input::ii::InputInfo;
 use crate::input::is::InputState;

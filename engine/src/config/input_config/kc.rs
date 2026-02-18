@@ -2,8 +2,8 @@ use std::collections::HashMap;
 use std::sync::Arc;
 use crate::input::is::InputState;
 use crate::input::kin::KeyInputName;
-use crate::logger::log;
-use crate::logger::log_level::LogLevel;
+use crate::support::logger::log;
+use crate::support::logger::log_level::LogLevel;
 use crate::window::context::RendererContext;
 
 ///

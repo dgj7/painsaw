@@ -1,11 +1,11 @@
 use std::f32::consts::PI;
 use engine::graphics::camera::Camera;
 use engine::graphics::color::Color;
-use engine::graphics::geometry::primitive::prim2d::Primitive2DBuilder;
-use engine::graphics::geometry::primitive::PrimitiveType;
-use engine::graphics::geometry::primitive::v2d::Vertex2D;
+use engine::geometry::primitive::prim2d::Primitive2DBuilder;
+use engine::geometry::primitive::PrimitiveType;
+use engine::geometry::primitive::v2d::Vertex2D;
 use engine::graphics::image::t2d::Texture2DBuilder;
-use engine::graphics::image::text::{text_2d_image, TextConfig, Typeface};
+use engine::support::text::{text_2d_image, TextConfig, Typeface};
 use engine::graphics::storage::m2d::{Model2D, Model2DBuilder};
 
 pub(super) fn create_2d_axes(camera: &Camera) -> Model2D {

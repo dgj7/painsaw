@@ -1,8 +1,8 @@
 use crate::graphics::subsystem::opengl::opengl_mswin_api::{
     choose_pixel_format, get_dc, set_pixel_format, wgl_create_context, wgl_make_current,
 };
-use crate::logger::log;
-use crate::logger::log_level::LogLevel;
+use crate::support::logger::log;
+use crate::support::logger::log_level::LogLevel;
 use windows::Win32::Foundation::HWND;
 use windows::Win32::Graphics::Gdi::HDC;
 use windows::Win32::Graphics::OpenGL::{

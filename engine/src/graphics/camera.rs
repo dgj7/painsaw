@@ -1,6 +1,6 @@
-use crate::graphics::geometry::dim::Dimension2D;
-use crate::graphics::geometry::orient::Orientation;
-use crate::graphics::geometry::projection::Projection;
+use crate::geometry::dim::Dimension2D;
+use crate::geometry::orient::Orientation;
+use crate::geometry::projection::Projection;
 
 pub struct Camera {
     pub orientation: Orientation,

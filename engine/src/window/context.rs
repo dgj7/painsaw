@@ -2,11 +2,11 @@ use crate::config::EngineConfig;
 use crate::graphics::camera::Camera;
 use crate::graphics::storage::g2d::Graph2D;
 use crate::graphics::storage::g3d::Graph3D;
-use crate::graphics::timing::EngineTiming;
+use crate::support::timing::EngineTiming;
 use crate::graphics::GraphicsIntermediary;
 use crate::input::UserInput;
-use crate::logger::log;
-use crate::logger::log_level::LogLevel;
+use crate::support::logger::log;
+use crate::support::logger::log_level::LogLevel;
 use std::sync::{Arc, Mutex};
 
 pub struct RendererContext {
