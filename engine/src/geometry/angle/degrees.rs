@@ -2,16 +2,16 @@ use crate::geometry::angle::radians::Radians;
 use std::f32::consts::PI;
 
 pub struct Degrees {
-    pub value: f32,
+    pub degrees: f32,
 }
 
 impl Degrees {
     pub fn new(value: f32) -> Degrees {
-        Degrees { value }
+        Degrees { degrees: value }
     }
-    
+
     pub fn to_radians(&self) -> Radians {
-        Radians { value: degrees_to_radians(self.value) }
+        Radians { radians: degrees_to_radians(self.degrees) }
     }
 }
 

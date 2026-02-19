@@ -7,16 +7,16 @@ use std::f32::consts::PI;
 /// making 1 radian roughly equal to 57.3 degrees.
 ///
 pub struct Radians {
-    pub value: f32,
+    pub radians: f32,
 }
 
 impl Radians {
     pub fn new(value: f32) -> Radians {
-        Radians { value }
+        Radians { radians: value }
     }
     
     pub fn to_degrees(&self) -> Degrees {
-        Degrees { value: radians_to_degrees(self.value) }
+        Degrees { degrees: radians_to_degrees(self.radians) }
     }
 }
 
