@@ -1,4 +1,4 @@
-use crate::graphics::texture::RawImage;
+use crate::support::image::RawImage;
 
 pub struct Texture2D {
     pub initialized: bool,

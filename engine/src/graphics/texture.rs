@@ -1,21 +1,5 @@
 //!
-//! "raw" texture format; uploaded to the graphics chip.
+//! 2d and 3d textures.
 //!
 
 pub mod t2d;
-
-pub struct RawImage {
-    pub width: u32,
-    pub height: u32,
-    pub data: Vec<u8>,
-}
-
-impl RawImage {
-    pub fn new(width: u32, height: u32, data: Vec<u8>) -> RawImage {
-        RawImage {
-            width,
-            height,
-            data,
-        }
-    }
-}

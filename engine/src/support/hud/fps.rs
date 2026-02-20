@@ -2,9 +2,9 @@ use crate::config::EngineConfig;
 use crate::graphics::color::Color;
 use crate::graphics::texture::t2d::Texture2DBuilder;
 use crate::support::text::{text_2d_image, TextConfig, Typeface};
-use crate::graphics::texture::RawImage;
 use crate::graphics::storage::g2d::Graph2D;
 use crate::graphics::storage::m2d::{Model2D, Model2DBuilder};
+use crate::support::image::RawImage;
 use crate::support::timing::EngineTiming;
 
 static TC: TextConfig = TextConfig {

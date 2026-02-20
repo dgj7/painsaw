@@ -1,12 +1,12 @@
 use crate::graphics::color::{Color, ColorSelection};
 use crate::support::text::TextConfig;
-use crate::graphics::texture::RawImage;
 use crate::support::logger::log;
 use crate::support::logger::log_level::LogLevel;
 use std::clone::Clone;
 use std::collections::HashMap;
 use std::iter::Iterator;
 use std::sync::{LazyLock, Mutex};
+use crate::support::image::RawImage;
 
 static ALPHABET : LazyLock<Mutex<HashMap<ColorSelection, HashMap<char, Vec<Vec<u8>>>>>> = LazyLock::new(|| Mutex::new(define_by_color()));
 static LETTERS : LazyLock<Vec<char>> = LazyLock::new(|| define_low().keys().cloned().collect());
