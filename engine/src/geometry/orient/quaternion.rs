@@ -1,4 +1,3 @@
-use crate::geometry::orient::euler::EulerAngles;
 use crate::geometry::primitive::v3d::{magnitude, Vertex3D};
 use crate::geometry::safe_a_cos;
 
@@ -13,12 +12,12 @@ use crate::geometry::safe_a_cos;
 #[derive(Clone)]
 pub struct Quaternion {
     /* the rotation axis */
-    pub x: f32,
-    pub y: f32,
-    pub z: f32,
+    x: f32,
+    y: f32,
+    z: f32,
 
     /* w.acos() is the rotation angle, divided by 2 (radians) */
-    pub w: f32,
+    w: f32,
 }
 
 impl Quaternion {
@@ -65,44 +64,6 @@ impl Quaternion {
         self.x = axis.x * sin_over_theta_2;
         self.y = axis.y * sin_over_theta_2;
         self.z = axis.z * sin_over_theta_2;
-    }
-
-    ///
-    /// rotate from object space to inertial space.
-    ///
-    /// note that inertial space is 'transitional' space between object/storage
-    /// space and world space (coordinates).
-    ///
-    pub fn rotate_object_to_inertial(&mut self, orientation: &EulerAngles) {
-        let sine_pitch = orientation.pitch * 0.5;
-        let cosine_pitch = orientation.pitch * 0.5;
-
-        let sine_bank = orientation.bank * 0.5;
-        let cosine_bank = orientation.bank * 0.5;
-
-        let sine_heading = orientation.heading * 0.5;
-        let cosine_heading = orientation.heading * 0.5;
-
-        self.w =  cosine_heading * cosine_pitch * cosine_bank + sine_heading * sine_pitch * sine_bank;
-        self.x =  cosine_heading * sine_pitch * cosine_bank + sine_heading * cosine_pitch * sine_bank;
-        self.y = -cosine_heading * sine_pitch * sine_bank + sine_heading * cosine_pitch * cosine_bank;
-        self.z = -sine_heading * sine_pitch * cosine_bank + cosine_heading * cosine_pitch * sine_bank;
-    }
-
-    pub fn rotate_inertial_to_object(&mut self, orientation: &EulerAngles) {
-        let sine_pitch = orientation.pitch * 0.5;
-        let cosine_pitch = orientation.pitch * 0.5;
-
-        let sine_bank = orientation.bank * 0.5;
-        let cosine_bank = orientation.bank * 0.5;
-
-        let sine_heading = orientation.heading * 0.5;
-        let cosine_heading = orientation.heading * 0.5;
-
-        self.w =  cosine_heading * cosine_pitch * cosine_bank + sine_heading * sine_pitch * sine_bank;
-        self.x = -cosine_heading * sine_pitch * cosine_bank - sine_heading * cosine_pitch * sine_bank;
-        self.y =  cosine_heading * sine_pitch * sine_bank - sine_heading * cosine_bank * cosine_pitch;
-        self.z =  sine_heading * sine_pitch * cosine_bank - cosine_heading * cosine_pitch * sine_bank;
     }
 
     pub fn cross_product(&self, other: &Quaternion) -> Quaternion {
@@ -152,10 +113,11 @@ impl Quaternion {
 impl Quaternion {
     pub fn identity() -> Quaternion {
         Quaternion {
-            w: 1.0,
             x: 0.0,
             y: 0.0,
             z: 0.0,
+
+            w: 1.0,
         }
     }
 }

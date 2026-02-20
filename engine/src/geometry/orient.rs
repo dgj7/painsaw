@@ -3,7 +3,6 @@ use crate::geometry::orient::matrix::m4x4::Matrix4x4;
 use crate::geometry::primitive::v3d::Vertex3D;
 use crate::support::timing::EngineTiming;
 
-pub mod euler;
 pub mod matrix;
 pub mod quaternion;
 
