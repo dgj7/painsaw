@@ -13,3 +13,8 @@ impl RawImage {
         }
     }
 }
+
+#[allow(unused)]
+pub(crate) trait ToRawImage {
+    fn to_raw_image(&self) -> RawImage;
+}
