@@ -1,3 +1,7 @@
+pub mod bitmap;
+pub mod targa;
+pub mod tiff;
+
 pub struct RawImage {
     pub width: u32,
     pub height: u32,
