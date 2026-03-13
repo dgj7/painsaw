@@ -3,7 +3,7 @@ members = [
     # core engine that runs the other applications
     "engine",
 
-    # applications built with the engine
-    "demo1",
+    # demos: test or show engine tech
+    "d1",
 ]
 resolver="1"

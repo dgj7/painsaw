@@ -1,12 +1,12 @@
-name: demo1
+name: d1
 
 on:
   push:
     paths:
-    - demo1/**
+    - d1/**
   pull_request:
     paths:
-    - demo1/**
+    - d1/**
 
 env:
   CARGO_TERM_COLOR: always
@@ -24,7 +24,7 @@ jobs:
           override: true
       - name: Build
         run: cargo build --verbose
-        working-directory: ./demo1
+        working-directory: ./d1
       - name: Test
         run: cargo test --verbose
-        working-directory: ./demo1
+        working-directory: ./d1
