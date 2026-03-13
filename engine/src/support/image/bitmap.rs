@@ -70,7 +70,7 @@ fn parse_32_bit(width: u32, height: u32, reader: &mut BufReader<File>) -> Vec<u8
             let src_idx = (x * 4) as usize;
             let dest_idx: usize = (dest_start + (x * 4)) as usize;
 
-            /* write pixel colors */
+            /* write pixel colors; note the encoded BGRA color scheme being corrected */
             pixels[dest_idx] = row[src_idx + 2];        // r
             pixels[dest_idx + 1] = row[src_idx + 1];    // g
             pixels[dest_idx + 2] = row[src_idx];        // b
