@@ -4,6 +4,7 @@ members = [
     "engine",
 
     # demos: test or show engine tech
-    "d1",
+    "d1", # demo: initial engine implementation
+    "d2", # demo: 2d textures
 ]
 resolver="1"
