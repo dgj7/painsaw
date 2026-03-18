@@ -44,7 +44,8 @@ pub fn load_bitmap<P: AsRef<Path>>(path : P) -> std::io::Result<RawImage> {
         let pixels = parse_32_bit(width, height, &mut reader);
         Ok(RawImage::new(width, height, pixels))
     } else if bpp == 24 {
-        todo!("not yet implemented: 24-bit bitmap load/parse")
+        let pixels = parse_24_bit(width, height, &mut reader);
+        Ok(RawImage::new(width, height, pixels))
     } else {
         Err(Error::new(Unsupported, format!("bitmap: unsupported bit encoding: {}", bpp)))
     }
@@ -58,7 +59,7 @@ fn parse_32_bit(width: u32, height: u32, reader: &mut BufReader<File>) -> Vec<u8
     for y in 0..height {
         /* read the row data */
         let mut row = vec![0u8; (row_size * 4) as usize];
-        reader.read_exact(&mut row).expect("todo: row read error");
+        reader.read_exact(&mut row).expect("todo: 32-bit: row read error");
 
         /* calculate indices */
         let target_y = if height > 0 { height - 1 - y } else { y };
@@ -79,5 +80,30 @@ fn parse_32_bit(width: u32, height: u32, reader: &mut BufReader<File>) -> Vec<u8
     }
 
     /* done */
+    pixels
+}
+
+fn parse_24_bit(width: u32, height: u32, reader: &mut BufReader<File>) -> Vec<u8> {
+    let row_size = (width * 3 + 3) & !3;
+    let mut pixels = vec![0u8; (row_size * 4) as usize];
+
+    for y in 0..height {
+        let mut row = vec![0u8; (row_size * 3) as usize];
+        reader.read_exact(&mut row).expect("todo: 24-bit: row read error");
+
+        let target_y = if height > 0 { height - 1 - y } else { y };
+        let dest_start = target_y * width * 4;
+
+        for x in 0..width {
+            let src_idx = (x * 4) as usize;
+            let dest_idx: usize = (dest_start + (x * 4)) as usize;
+
+            pixels[dest_idx] = row[src_idx + 2];        // r
+            pixels[dest_idx + 1] = row[src_idx + 1];    // g
+            pixels[dest_idx + 2] = row[src_idx];        // b
+            pixels[dest_idx + 3] = 1;                   // a
+        }
+    }
+
     pixels
 }
