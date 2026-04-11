@@ -50,23 +50,24 @@ pub fn load_bitmap_from_buf_read<R: BufRead + Seek>(mut reader: R) -> std::io::R
     let height = u32::from_le_bytes(dib[8..12].try_into().unwrap());
     let planes = u16::from_le_bytes(dib[12..14].try_into().unwrap());
     let bpp = u16::from_le_bytes(dib[14..16].try_into().unwrap());
-    log(LogLevel::Debug, &||format!("DIB: {} bytes, {} plane(s)", dib_sz, planes));
+    log(LogLevel::Debug, &||format!("BMP DIB: dib_sz={}, width={}, height={}, planes={}, bpp={}", dib_sz, width, height, planes, bpp));
 
     /* prepare read pixel data */
     reader.seek(SeekFrom::Start(offset as u64))?;
-    let mut pixels = vec!();
-    reader.read_to_end(&mut pixels).expect("TODO: panic message");
-    log(LogLevel::Debug, &||format!("pixel bytes: {}", pixels.len()));
+    let mut bytes = vec!();
+    reader.read_to_end(&mut bytes).expect("TODO: panic message");
 
     /* determine if there's a color table */
-    let color_table_bytes = file_sz - (14 + dib_sz + (pixels.len() as u32));
-    log(LogLevel::Debug, &||format!("Color table bytes: {}", color_table_bytes));
+    let color_table_bytes = file_sz - (14 + dib_sz + (bytes.len() as u32));
+    log(LogLevel::Debug, &||format!("BMP: color table bytes: {}", color_table_bytes));
 
     /* read the pixel data */
     if bpp == 32 {
+        log(LogLevel::Debug, &||format!("BMP: bytes={}, pixels(bytes/4)={}, width*height={}", bytes.len(), bytes.len() as f32 / 4f32, width * height));
         let pixels = parse_32_bit(width, height, &mut reader);
         Ok(RawImage::new(width, height, pixels))
     } else if bpp == 24 {
+        log(LogLevel::Debug, &||format!("BMP: bytes={}, pixels(bytes/3)={}, width*height={}", bytes.len(), bytes.len() as f32 / 3f32, width * height));
         let pixels = parse_24_bit(width, height, &mut reader);
         Ok(RawImage::new(width, height, pixels))
     } else {
