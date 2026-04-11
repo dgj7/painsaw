@@ -1,18 +1,19 @@
-use engine::support::image::bitmap::{load_bitmap_from_bytes};
+use crate::d2m2d::create_2d_bmp_24b;
 use engine::window::context::RendererContext;
 use engine::window::wc::WorldController;
 
-const B24_BMP: &[u8] = include_bytes!("../assets/24b.bmp");
+static M2D_BMP_24B: &str = "bmp-24b";
 
 pub(crate) struct Demo2WorldController {}
 
 impl WorldController for Demo2WorldController {
-    fn initialize_world_helper(&self, _context: &mut RendererContext) {
-        load_bitmap_from_bytes(B24_BMP).expect("failed to load ../assets/24b.bmp");
+    fn initialize_world_helper(&self, context: &mut RendererContext) {
+        context.g2d.attach(M2D_BMP_24B, create_2d_bmp_24b());
     }
 
-    fn update_world_helper(&self, _context: &mut RendererContext) {
-        // todo
+    fn update_world_helper(&self, context: &mut RendererContext) {
+        context.first_frame_rendered = true;
+        context.frame_count += 1;
     }
 }
 

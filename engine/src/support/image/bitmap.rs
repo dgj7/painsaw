@@ -1,10 +1,10 @@
-use std::fs::File;
-use std::io::{BufRead, BufReader, Cursor, Error, Seek, SeekFrom};
-use std::io::ErrorKind::{InvalidData, Unsupported};
-use std::path::Path;
 use crate::support::image::RawImage;
 use crate::support::logger::log;
 use crate::support::logger::log_level::LogLevel;
+use std::fs::File;
+use std::io::ErrorKind::{InvalidData, Unsupported};
+use std::io::{BufRead, BufReader, Cursor, Error, Seek, SeekFrom};
+use std::path::Path;
 
 ///
 /// windows bitmap file format (win32: BITMAPFILEHEADER).
@@ -80,7 +80,7 @@ fn parse_24_bit(width: u32, height: u32, bytes: Vec<u8>) -> Vec<u8> {
             pixels.push(chunk[2]);      // BGR: red
             pixels.push(chunk[1]);      // BGR: green
             pixels.push(chunk[0]);      // BGR: blue
-            pixels.push(1);             // we're inventing our own alpha channel; could also be programmable
+            pixels.push(255);           // we're inventing our own alpha channel; could also be programmable
         } else {
             log(LogLevel::Warning, &|| format!("{} bytes remain: {:?}", chunk.len(), chunk));
         }
