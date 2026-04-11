@@ -1,8 +1,10 @@
 use std::fs::File;
-use std::io::{BufReader, Error, Read, Seek, SeekFrom};
+use std::io::{BufRead, BufReader, Cursor, Error, Seek, SeekFrom};
 use std::io::ErrorKind::{InvalidData, Unsupported};
 use std::path::Path;
 use crate::support::image::RawImage;
+use crate::support::logger::log;
+use crate::support::logger::log_level::LogLevel;
 
 ///
 /// windows bitmap file format (win32: BITMAPFILEHEADER).
@@ -10,20 +12,31 @@ use crate::support::image::RawImage;
 /// bitmaps are 24-bit (no alpha channel), with colors BGR.
 ///
 #[allow(dead_code)]// todo: remove this eventually
-pub fn load_bitmap<P: AsRef<Path>>(path : P) -> std::io::Result<RawImage> {
-    /* open the file for reading */
+pub fn load_bitmap_from_path<P: AsRef<Path>>(path : P) -> std::io::Result<RawImage> {
     let file = File::open(path)?;
     let mut reader = BufReader::new(file);
+    load_bitmap_from_buf_read(&mut reader)
+}
 
+pub fn load_bitmap_from_bytes(bytes: &[u8]) -> std::io::Result<RawImage> {
+    let cursor = Cursor::new(bytes);
+    load_bitmap_from_buf_read(cursor)
+}
+
+pub fn load_bitmap_from_buf_read<R: BufRead + Seek>(mut reader: R) -> std::io::Result<RawImage> {
     /* extract header data */
     let mut header = [0u8;14];
     reader.read_exact(&mut header)?;
 
     /* extract header data */
-    let offset = u32::from_le_bytes(header[10..22].try_into().unwrap());
+    let magic: [u8;2] = header[0..2].try_into().unwrap();
+    let file_sz = u32::from_le_bytes(header[2..6].try_into().unwrap());
+    let reserved = u32::from_le_bytes(header[6..10].try_into().unwrap());
+    let offset = u32::from_le_bytes(header[10..14].try_into().unwrap());
+    log(LogLevel::Debug, &||format!("BMP Header: magic={:?}, file_sz={}, reserved={}, offset={}", magic, file_sz, reserved, offset));
 
     /* first 2 bytes should be BM; otherwise, not a bitmap */
-    if &header[0..2] != b"BM" {
+    if magic != *b"BM" {
         return Err(Error::new(InvalidData, "not a bitmap!"));
     }
 
@@ -32,12 +45,22 @@ pub fn load_bitmap<P: AsRef<Path>>(path : P) -> std::io::Result<RawImage> {
     reader.read_exact(&mut dib)?;
 
     /* extract image details */
+    let dib_sz = u32::from_le_bytes(dib[0..4].try_into().unwrap());
     let width =  u32::from_le_bytes(dib[4..8].try_into().unwrap());
     let height = u32::from_le_bytes(dib[8..12].try_into().unwrap());
+    let planes = u16::from_le_bytes(dib[12..14].try_into().unwrap());
     let bpp = u16::from_le_bytes(dib[14..16].try_into().unwrap());
+    log(LogLevel::Debug, &||format!("DIB: {} bytes, {} plane(s)", dib_sz, planes));
 
     /* prepare read pixel data */
     reader.seek(SeekFrom::Start(offset as u64))?;
+    let mut pixels = vec!();
+    reader.read_to_end(&mut pixels).expect("TODO: panic message");
+    log(LogLevel::Debug, &||format!("pixel bytes: {}", pixels.len()));
+
+    /* determine if there's a color table */
+    let color_table_bytes = file_sz - (14 + dib_sz + (pixels.len() as u32));
+    log(LogLevel::Debug, &||format!("Color table bytes: {}", color_table_bytes));
 
     /* read the pixel data */
     if bpp == 32 {
@@ -51,7 +74,9 @@ pub fn load_bitmap<P: AsRef<Path>>(path : P) -> std::io::Result<RawImage> {
     }
 }
 
-fn parse_32_bit(width: u32, height: u32, reader: &mut BufReader<File>) -> Vec<u8> {
+fn parse_32_bit<R: BufRead>(width: u32, height: u32, reader: &mut R) -> Vec<u8> {
+    log(LogLevel::Debug, &|| "parsing bmp as 32-bit...".to_string());
+
     let row_size = ((24*width+31)/32)*4;
     let mut pixels = vec![0u8; (width * height * 4) as usize];
 
@@ -83,7 +108,9 @@ fn parse_32_bit(width: u32, height: u32, reader: &mut BufReader<File>) -> Vec<u8
     pixels
 }
 
-fn parse_24_bit(width: u32, height: u32, reader: &mut BufReader<File>) -> Vec<u8> {
+fn parse_24_bit<R: BufRead>(width: u32, height: u32, reader: &mut R) -> Vec<u8> {
+    log(LogLevel::Debug, &|| "parsing bmp as 24-bit...".to_string());
+
     let row_size = (width * 3 + 3) & !3;
     let mut pixels = vec![0u8; (row_size * 4) as usize];
 

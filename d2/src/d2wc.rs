@@ -1,3 +1,4 @@
+use engine::support::image::bitmap::{load_bitmap_from_bytes};
 use engine::window::context::RendererContext;
 use engine::window::wc::WorldController;
 
@@ -7,7 +8,7 @@ pub(crate) struct Demo2WorldController {}
 
 impl WorldController for Demo2WorldController {
     fn initialize_world_helper(&self, _context: &mut RendererContext) {
-        // todo
+        load_bitmap_from_bytes(B24_BMP).expect("failed to load ../assets/24b.bmp");
     }
 
     fn update_world_helper(&self, _context: &mut RendererContext) {
