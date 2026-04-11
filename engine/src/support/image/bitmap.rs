@@ -50,7 +50,7 @@ pub fn load_bitmap_from_buf_read<R: BufRead + Seek>(mut reader: R) -> std::io::R
     let height = u32::from_le_bytes(dib[8..12].try_into().unwrap());
     let planes = u16::from_le_bytes(dib[12..14].try_into().unwrap());
     let bpp = u16::from_le_bytes(dib[14..16].try_into().unwrap());
-    log(LogLevel::Debug, &||format!("BMP DIB: dib_sz={}, width={}, height={}, planes={}, bpp={}", dib_sz, width, height, planes, bpp));
+    log(LogLevel::Debug, &||format!("BMP: DIB: dib_sz={}, width={}, height={}, planes={}, bpp={}", dib_sz, width, height, planes, bpp));
 
     /* prepare read pixel data */
     reader.seek(SeekFrom::Start(offset as u64))?;
@@ -62,74 +62,27 @@ pub fn load_bitmap_from_buf_read<R: BufRead + Seek>(mut reader: R) -> std::io::R
     log(LogLevel::Debug, &||format!("BMP: color table bytes: {}", color_table_bytes));
 
     /* read the pixel data */
-    if bpp == 32 {
-        log(LogLevel::Debug, &||format!("BMP: bytes={}, pixels(bytes/4)={}, width*height={}", bytes.len(), bytes.len() as f32 / 4f32, width * height));
-        let pixels = parse_32_bit(width, height, &mut reader);
-        Ok(RawImage::new(width, height, pixels))
-    } else if bpp == 24 {
-        log(LogLevel::Debug, &||format!("BMP: bytes={}, pixels(bytes/3)={}, width*height={}", bytes.len(), bytes.len() as f32 / 3f32, width * height));
-        let pixels = parse_24_bit(width, height, &mut reader);
+    if bpp == 24 {
+        log(LogLevel::Debug, &||format!("BMP: 24b: bytes={}, pixels(bytes/3)={}, width*height={}", bytes.len(), bytes.len() as f32 / 3f32, width * height));
+        let pixels = parse_24_bit(width, height, bytes);
+        log(LogLevel::Debug, &|| "BMP: 24b: success".to_string());
         Ok(RawImage::new(width, height, pixels))
     } else {
-        Err(Error::new(Unsupported, format!("bitmap: unsupported bit encoding: {}", bpp)))
+        Err(Error::new(Unsupported, format!("BMP: unsupported bit encoding: {}", bpp)))
     }
 }
 
-fn parse_32_bit<R: BufRead>(width: u32, height: u32, reader: &mut R) -> Vec<u8> {
-    log(LogLevel::Debug, &|| "parsing bmp as 32-bit...".to_string());
+fn parse_24_bit(width: u32, height: u32, bytes: Vec<u8>) -> Vec<u8> {
+    let mut pixels = Vec::with_capacity((width * height * 4) as usize);
 
-    let row_size = ((24*width+31)/32)*4;
-    let mut pixels = vec![0u8; (width * height * 4) as usize];
-
-    /* iterate over rows */
-    for y in 0..height {
-        /* read the row data */
-        let mut row = vec![0u8; (row_size * 4) as usize];
-        reader.read_exact(&mut row).expect("todo: 32-bit: row read error");
-
-        /* calculate indices */
-        let target_y = if height > 0 { height - 1 - y } else { y };
-        let dest_start = target_y * width * 4;
-
-        /* iterate over columns */
-        for x in 0..width {
-            /* calculate indices */
-            let src_idx = (x * 4) as usize;
-            let dest_idx: usize = (dest_start + (x * 4)) as usize;
-
-            /* write pixel colors; note the encoded BGRA color scheme being corrected */
-            pixels[dest_idx] = row[src_idx + 2];        // r
-            pixels[dest_idx + 1] = row[src_idx + 1];    // g
-            pixels[dest_idx + 2] = row[src_idx];        // b
-            pixels[dest_idx + 3] = 1;                   // a
-        }
-    }
-
-    /* done */
-    pixels
-}
-
-fn parse_24_bit<R: BufRead>(width: u32, height: u32, reader: &mut R) -> Vec<u8> {
-    log(LogLevel::Debug, &|| "parsing bmp as 24-bit...".to_string());
-
-    let row_size = (width * 3 + 3) & !3;
-    let mut pixels = vec![0u8; (row_size * 4) as usize];
-
-    for y in 0..height {
-        let mut row = vec![0u8; (row_size * 3) as usize];
-        reader.read_exact(&mut row).expect("todo: 24-bit: row read error");
-
-        let target_y = if height > 0 { height - 1 - y } else { y };
-        let dest_start = target_y * width * 4;
-
-        for x in 0..width {
-            let src_idx = (x * 4) as usize;
-            let dest_idx: usize = (dest_start + (x * 4)) as usize;
-
-            pixels[dest_idx] = row[src_idx + 2];        // r
-            pixels[dest_idx + 1] = row[src_idx + 1];    // g
-            pixels[dest_idx + 2] = row[src_idx];        // b
-            pixels[dest_idx + 3] = 1;                   // a
+    for chunk in bytes.chunks(3) {
+        if chunk.len() == 3 {
+            pixels.push(chunk[2]);      // BGR: red
+            pixels.push(chunk[1]);      // BGR: green
+            pixels.push(chunk[0]);      // BGR: blue
+            pixels.push(1);             // we're inventing our own alpha channel; could also be programmable
+        } else {
+            log(LogLevel::Warning, &|| format!("{} bytes remain: {:?}", chunk.len(), chunk));
         }
     }
 
