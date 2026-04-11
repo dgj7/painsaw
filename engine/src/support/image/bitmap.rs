@@ -55,7 +55,8 @@ pub fn load_bitmap_from_buf_read<R: BufRead + Seek>(mut reader: R) -> std::io::R
     /* prepare read pixel data */
     reader.seek(SeekFrom::Start(offset as u64))?;
     let mut bytes = vec!();
-    reader.read_to_end(&mut bytes).expect("TODO: panic message");
+    reader.read_to_end(&mut bytes).expect("BMP: failed to read image data into byte array");
+    //log(LogLevel::Debug, &||format!("BMP: actual image bytes={}", bytes.len()));
 
     /* determine if there's a color table */
     let color_table_bytes = file_sz - (14 + dib_sz + (bytes.len() as u32));
@@ -74,15 +75,16 @@ pub fn load_bitmap_from_buf_read<R: BufRead + Seek>(mut reader: R) -> std::io::R
 
 fn parse_24_bit(width: u32, height: u32, bytes: Vec<u8>) -> Vec<u8> {
     let mut pixels = Vec::with_capacity((width * height * 4) as usize);
+    let row_len = bytes.len() / height as usize;
 
-    for chunk in bytes.chunks(3) {
-        if chunk.len() == 3 {
-            pixels.push(chunk[2]);      // BGR: red
-            pixels.push(chunk[1]);      // BGR: green
-            pixels.push(chunk[0]);      // BGR: blue
-            pixels.push(255);           // we're inventing our own alpha channel; could also be programmable
-        } else {
-            log(LogLevel::Warning, &|| format!("{} bytes remain: {:?}", chunk.len(), chunk));
+    for row in bytes.rchunks(row_len) {
+        for pixel in row.chunks(3) {
+            if pixel.len() == 3 {
+                pixels.push(pixel[2]);      // BGR: red
+                pixels.push(pixel[1]);      // BGR: green
+                pixels.push(pixel[0]);      // BGR: blue
+                pixels.push(255);           // we're inventing our own alpha channel; could also be programmable
+            }
         }
     }
 
