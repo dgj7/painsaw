@@ -1,13 +1,13 @@
 #![cfg_attr(all(not(debug_assertions), target_os = "windows"), windows_subsystem = "windows")]// if windows, and release build, don't display console window
 
 use crate::config::create_engine_config;
-use demo1_world_controller::Demo1WorldController;
+use d1wc::Demo1WorldController;
 use engine::support::logger::log_level::LogLevel;
 use engine::support::logger::log_target::LogTarget;
 use engine::support::logger::{configure, log, LoggerConfig};
 use engine::window::create_window;
 
-pub mod demo1_world_controller;
+pub mod d1wc;
 mod config;
 mod d1m2d;
 mod d1m3d;
