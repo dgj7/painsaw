@@ -18,6 +18,12 @@ pub(super) fn create_2d_bmp_24b() -> Model2D {
     Model2DBuilder::new()
         .with_texture(Texture2D::new(bmp_24b, bmp_24b_x_zero, bmp_24b_y_zero, 1.0))
         .with_primitive(Primitive2DBuilder::new()
+            .with_type(PrimitiveType::Point { point_size: 6.0 })
+            .with_color(Color::BLUE)
+            .with_vertex(Vertex2D::new(bmp_24b_x_zero + bmp_24b_width, bmp_24b_y_zero + bmp_24b_height))
+            .build())
+        /*
+        .with_primitive(Primitive2DBuilder::new()
             .with_type(PrimitiveType::LineStrip { thickness: 1.0 })
             .with_color(Color::BLUE)
             .with_vertex(Vertex2D::new(bmp_24b_x_zero, bmp_24b_y_zero))
@@ -26,5 +32,6 @@ pub(super) fn create_2d_bmp_24b() -> Model2D {
             .with_vertex(Vertex2D::new(bmp_24b_x_zero, bmp_24b_y_zero + bmp_24b_height))
             .with_vertex(Vertex2D::new(bmp_24b_x_zero, bmp_24b_y_zero))
             .build())
+        */
         .build()
 }
