@@ -1,6 +1,7 @@
 use crate::support::image::{Image, RawImage};
 use std::io::{BufRead, Error, Seek, SeekFrom};
 use std::io::ErrorKind::Unsupported;
+use crate::support::binary::byte_to_bits_as_u8;
 use crate::support::logger::log;
 use crate::support::logger::log_level::LogLevel;
 
@@ -32,6 +33,11 @@ impl Image for Targa {
         let pixel_depth = header[16];
         let image_desc = header[17];
         log(LogLevel::Debug, &||format!("TGA: id_len={}, color_map_type={}, image_type={}, color_map_spec={:?}, x_origin={}, y_origin={}, width={}, height={}, pixel_depth={}, image_desc={}", id_len, color_map_type, image_type, color_map_spec, x_origin, y_origin, width, height, pixel_depth, image_desc));
+        let img_desc_alpha_channel_depth = byte_to_bits_as_u8(image_desc, 0, 4);                    // 0=no alpha, 8=32-bit/8-bit alpha, 1=16-bit/1-bit alpha
+        let img_desc_left_to_right = byte_to_bits_as_u8(image_desc, 4, 1);                          // 0=left-to-right, 1=right-to-left
+        let img_desc_top_to_bottom = byte_to_bits_as_u8(image_desc, 5, 1);                          // 0=bottom-to-top, 1=top-to-bottom
+        let img_desc_reserved = byte_to_bits_as_u8(image_desc, 6, 2);
+        log(LogLevel::Debug, &|| format!("TGA: image_desc: alpha_channel_depth={}, left_to_right={}, top_to_bottom={}, reserved={}", img_desc_alpha_channel_depth, img_desc_left_to_right, img_desc_top_to_bottom, img_desc_reserved));
 
         /* color map type:  */
         if color_map_type > 0 {
@@ -46,6 +52,7 @@ impl Image for Targa {
         /* calculate where image data starts */
         let start = 18 + id_len;
         let data_size = file_size - start as u64;
+        log(LogLevel::Debug, &||format!("TGA: data_size={}", data_size));
 
         /* load the image data, stored in bgr/bgra */
         let mut data = Vec::with_capacity(data_size as usize);
@@ -68,10 +75,10 @@ fn parse_32_bit(width: u16, height: u16, bytes: Vec<u8>) -> Vec<u8> {
     for row in bytes.rchunks(row_len) {
         for pixel in row.chunks(4) {
             if pixel.len() == 4 {
-                pixels.push(pixel[2]);      // BGRA: red
-                pixels.push(pixel[1]);      // BGRA: green
-                pixels.push(pixel[0]);      // BGRA: blue
-                pixels.push(pixel[3]);      // BGRA: alpha
+                pixels.push(pixel[3]);      // BGRA: red
+                pixels.push(pixel[2]);      // BGRA: green
+                pixels.push(pixel[1]);      // BGRA: blue
+                pixels.push(255);      // BGRA: alpha
             }
         }
     }

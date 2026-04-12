@@ -8,3 +8,4 @@ pub mod text;
 pub(crate) mod hud;
 pub(crate) mod timing;
 pub mod image;
+pub(crate) mod binary;
