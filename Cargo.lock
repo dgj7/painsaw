@@ -76,14 +76,14 @@ dependencies = [
 
 [[package]]
 name = "d2"
-version = "0.0.6"
+version = "0.0.7"
 dependencies = [
  "engine",
 ]
 
 [[package]]
 name = "engine"
-version = "0.0.161"
+version = "0.0.162"
 dependencies = [
  "chrono",
  "colored",

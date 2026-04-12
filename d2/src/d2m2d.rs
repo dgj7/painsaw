@@ -4,14 +4,15 @@ use engine::geometry::primitive::PrimitiveType;
 use engine::graphics::color::Color;
 use engine::graphics::storage::m2d::{Model2D, Model2DBuilder};
 use engine::graphics::texture::t2d::Texture2D;
-use engine::support::image::bitmap::load_bitmap_from_bytes;
+use engine::support::image::bitmap::Bitmap;
+use engine::support::image::Image;
 
 const B24_BMP: &[u8] = include_bytes!("../assets/24b.bmp");
 
 pub(super) fn create_2d_bmp_24b() -> Model2D {
     let bmp_24b_x_zero = 15.0;
     let bmp_24b_y_zero = 50.0;
-    let bmp_24b = load_bitmap_from_bytes(B24_BMP).expect("failed to load ../assets/24b.bmp");
+    let bmp_24b = Bitmap::load_from_bytes(B24_BMP).expect("failed to load ../assets/24b.bmp");
     let bmp_24b_width = bmp_24b.width as f32;
     let bmp_24b_height = bmp_24b.height as f32;
 
