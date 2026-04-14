@@ -22,7 +22,7 @@ impl Image for Bitmap {
         let file_sz = u32::from_le_bytes(header[2..6].try_into().unwrap());
         let reserved = u32::from_le_bytes(header[6..10].try_into().unwrap());
         let offset = u32::from_le_bytes(header[10..14].try_into().unwrap());
-        log(LogLevel::Debug, &||format!("BMP Header: magic={:?}, file_sz={}, reserved={}, offset={}", magic, file_sz, reserved, offset));
+        log(LogLevel::Debug, &||format!("BMP: Header: magic={:?}, file_sz={}, reserved={}, offset={}", magic, file_sz, reserved, offset));
 
         /* first 2 bytes should be BM; otherwise, not a bitmap */
         if magic != *b"BM" {
