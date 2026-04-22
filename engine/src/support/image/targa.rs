@@ -83,7 +83,7 @@ impl Image for Targa {
         /* load the image data, stored in bgr/bgra */
         let curr_stream_pos = reader.stream_position()?;
         log(LogLevel::Debug, &|| format!("TGA: current file pointer position: {}", curr_stream_pos));
-        let mut data = Vec::with_capacity(data_size as usize);
+        let mut data = vec![0u8; data_size as usize];
         reader.read_exact(&mut data)?;
 
         /* parse the image data based on characteristics of the image */
@@ -98,9 +98,11 @@ impl Image for Targa {
 
 fn parse_32_bit(width: u16, height: u16, bytes: Vec<u8>, left_to_right: bool, top_to_bottom: bool) -> Vec<u8> {
     let mut pixels = Vec::with_capacity((width * height * 4) as usize);
+    let chunk_sz = 4;
+    let row_sz = bytes.len() / height as usize;
 
     if top_to_bottom {
-        for _pixel in bytes.chunks(4) {
+        for _pixel in bytes.chunks(chunk_sz) {
             if left_to_right {
                 todo!("TGA: top-to-bottom: implement left-to-right")
             } else {
@@ -108,19 +110,20 @@ fn parse_32_bit(width: u16, height: u16, bytes: Vec<u8>, left_to_right: bool, to
             }
         }
     } else {
-        for pixel in bytes.rchunks(4) {
-            if pixel.len() == 4 {
-                if left_to_right {
-                    /* order is BGRA (2103) */
-                    pixels.push(pixel[2]);      // BGRA: red
-                    pixels.push(pixel[1]);      // BGRA: green
-                    pixels.push(pixel[0]);      // BGRA: blue
-                    pixels.push(pixel[3]);
+        for row in bytes.rchunks(row_sz) {
+            for pixel in row.chunks(chunk_sz) {
+                if pixel.len() == chunk_sz {
+                    if left_to_right {
+                        pixels.push(pixel[2]);      // BGRA: red
+                        pixels.push(pixel[1]);      // BGRA: green
+                        pixels.push(pixel[0]);      // BGRA: blue
+                        pixels.push(pixel[3]);
+                    } else {
+                        todo!("TGA: bottom-to-top: implement right-to-left")
+                    }
                 } else {
-                    todo!("TGA: bottom-to-top: implement right-to-left")
+                    log(LogLevel::Warning, &|| format!("TGA: bottom-to-top: chunk_length={}", pixel.len()));
                 }
-            } else {
-                log(LogLevel::Warning, &|| format!("TGA: bottom-to-top: chunk_length={}", pixel.len()));
             }
         }
     }
