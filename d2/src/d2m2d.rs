@@ -39,9 +39,10 @@ pub(super) fn create_2d_tga() -> Model2D {
         .with_texture(Texture2D::new(tga, tga_x_zero, tga_y_zero, 1.0))
         .with_primitive(Primitive2DBuilder::new()
             .with_type(PrimitiveType::Point { point_size: 12.0 })
-            .with_color(Color::BLUE)
+            .with_color(Color::RED)
             .with_vertex(Vertex2D::new(tga_x_zero + tga_width, tga_y_zero + tga_height))
             .build())
+        /*
         .with_primitive(Primitive2DBuilder::new()
             .with_type(PrimitiveType::Line {thickness: 5.0})
             .with_color(Color::RED)
@@ -52,7 +53,9 @@ pub(super) fn create_2d_tga() -> Model2D {
             .with_type(PrimitiveType::Line {thickness: 5.0})
             .with_color(Color::RED)
             .with_vertex(Vertex2D::new(tga_x_zero + tga_width, tga_y_zero))
-            .with_vertex(Vertex2D::new(tga_x_zero + tga_width, tga_y_zero + tga_height))
+            .with_vertex(Vertex
+            2D::new(tga_x_zero + tga_width, tga_y_zero + tga_height))
             .build())
+         */
         .build()
 }
