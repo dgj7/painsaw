@@ -8,13 +8,13 @@ use engine::support::image::bitmap::Bitmap;
 use engine::support::image::Image;
 use engine::support::image::targa::Targa;
 
-const B24_BMP: &[u8] = include_bytes!("../assets/img1_24b.bmp");
+const B24_BMP: &[u8] = include_bytes!("../assets/24b.bmp");
 const TGA: &[u8] = include_bytes!("../assets/32b_b2t_l2r_footer.tga");
 
 pub(super) fn create_2d_bmp_24b() -> Model2D {
     let bmp_24b_x_zero = 15.0;
     let bmp_24b_y_zero = 50.0;
-    let bmp_24b = Bitmap::load_from_bytes(B24_BMP).expect("failed to load ../assets/img1_24b.bmp");
+    let bmp_24b = Bitmap::load_from_bytes(B24_BMP).expect("failed to load ../assets/24b.bmp");
     let bmp_24b_width = bmp_24b.width as f32;
     let bmp_24b_height = bmp_24b.height as f32;
 
