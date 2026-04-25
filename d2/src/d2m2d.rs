@@ -9,7 +9,7 @@ use engine::support::image::Image;
 use engine::support::image::targa::Targa;
 
 const B24_BMP: &[u8] = include_bytes!("../assets/24b.bmp");
-const TGA: &[u8] = include_bytes!("../assets/32b_b2t_l2r_footer.tga");
+const TGA_32B_B2T_L2R: &[u8] = include_bytes!("../assets/tga/32b_b2t_l2r_footer.tga");
 
 pub(super) fn create_2d_bmp_24b() -> Model2D {
     let bmp_24b_x_zero = 15.0;
@@ -28,10 +28,10 @@ pub(super) fn create_2d_bmp_24b() -> Model2D {
         .build()
 }
 
-pub(super) fn create_2d_tga() -> Model2D {
+pub(super) fn create_2d_tga_32b_b2t_l2r() -> Model2D {
     let tga_x_zero = 200.0;
     let tga_y_zero = 50.0;
-    let tga = Targa::load_from_bytes(TGA).expect("failed to load ../assets/32b_b2t_l2r_footer.tga");
+    let tga = Targa::load_from_bytes(TGA_32B_B2T_L2R).expect("failed to load ../assets/tga/32b_b2t_l2r_footer.tga");
     let tga_width = tga.width as f32;
     let tga_height = tga.height as f32;
 
@@ -53,8 +53,7 @@ pub(super) fn create_2d_tga() -> Model2D {
             .with_type(PrimitiveType::Line {thickness: 5.0})
             .with_color(Color::RED)
             .with_vertex(Vertex2D::new(tga_x_zero + tga_width, tga_y_zero))
-            .with_vertex(Vertex
-            2D::new(tga_x_zero + tga_width, tga_y_zero + tga_height))
+            .with_vertex(Vertex2D::new(tga_x_zero + tga_width, tga_y_zero + tga_height))
             .build())
          */
         .build()

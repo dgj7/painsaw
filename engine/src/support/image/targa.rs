@@ -17,6 +17,8 @@ struct TargaFooter {
     marker: [u8;16],
     reserved: u8,
     terminator: u8,
+    dev_sz: u32,
+    ext_sz: u32,
 }
 
 ///
@@ -24,6 +26,8 @@ struct TargaFooter {
 ///
 impl Image for Targa {
     fn load_from_buf_read<R: BufRead + Seek>(mut reader: R) -> std::io::Result<RawImage> {
+        log(LogLevel::Debug, &|| "TGA: begin".to_string());
+
         /* determine the file size; reset the stream to start */
         let file_size = reader.seek(SeekFrom::End(0))?;
         log(LogLevel::Debug, &||format!("TGA: file_size={}", file_size));
@@ -34,12 +38,8 @@ impl Image for Targa {
         if maybe_footer.is_some() {
             footer_bytes_consumed = FOOTER_IDX;
             let footer = maybe_footer.unwrap();
-            if footer.developer_offset > 0 {
-                todo!("TGA: Footer: handle developer offset")
-            }
-            if footer.extension_offset > 0 {
-                todo!("TGA: Footer: handle extension offset")
-            }
+            footer_bytes_consumed += footer.dev_sz as usize;
+            footer_bytes_consumed += footer.ext_sz as usize;
         }
         reader.seek(SeekFrom::Start(0))?;
 
@@ -97,7 +97,7 @@ impl Image for Targa {
 }
 
 fn parse_32_bit(width: u16, height: u16, bytes: Vec<u8>, left_to_right: bool, top_to_bottom: bool) -> Vec<u8> {
-    let mut pixels = Vec::with_capacity((width * height * 4) as usize);
+    let mut pixels = Vec::with_capacity(width as usize * height as usize * 4);
     let chunk_sz = 4;
     let row_sz = bytes.len() / height as usize;
 
@@ -111,19 +111,19 @@ fn parse_32_bit(width: u16, height: u16, bytes: Vec<u8>, left_to_right: bool, to
         }
     } else {
         for row in bytes.rchunks(row_sz) {
-            for pixel in row.chunks(chunk_sz) {
-                if pixel.len() == chunk_sz {
-                    if left_to_right {
+            if left_to_right {
+                for pixel in row.chunks(chunk_sz) {
+                    if pixel.len() == chunk_sz {
                         pixels.push(pixel[2]);      // BGRA: red
                         pixels.push(pixel[1]);      // BGRA: green
                         pixels.push(pixel[0]);      // BGRA: blue
                         pixels.push(pixel[3]);
                     } else {
-                        todo!("TGA: bottom-to-top: implement right-to-left")
+                        log(LogLevel::Warning, &|| format!("TGA: bottom-to-top: chunk_length={}", pixel.len()));
                     }
-                } else {
-                    log(LogLevel::Warning, &|| format!("TGA: bottom-to-top: chunk_length={}", pixel.len()));
                 }
+            } else {
+                todo!("TGA: bottom-to-top: implement right-to-left")
             }
         }
     }
@@ -134,6 +134,9 @@ fn parse_32_bit(width: u16, height: u16, bytes: Vec<u8>, left_to_right: bool, to
 fn load_footer<R: BufRead + Seek>(mut reader: R) -> Option<TargaFooter> {
     /* load footer bytes */
     reader.seek(SeekFrom::End(-26)).expect("TODO: panic message");
+    let footer_begin = reader.stream_position().unwrap();
+    log(LogLevel::Debug, &|| format!("footer begins at {}", footer_begin));
+
     let mut footer = [0u8; FOOTER_IDX];
     reader.read_exact(&mut footer).expect("TODO: panic message");
 
@@ -151,6 +154,23 @@ fn load_footer<R: BufRead + Seek>(mut reader: R) -> Option<TargaFooter> {
         /* print something so it's obvious we've found a footer */
         log(LogLevel::Debug, &|| format!("TGA: Footer: extension_offset={}, developer_offset={}, marker={:?}, reserved={}, terminator={}", extension_offset, developer_offset, str::from_utf8(&marker), reserved, terminator));
 
+        /* load up the developer and extension data, if present */
+        let ext_sz: u32 = if extension_offset != 0 {
+            if developer_offset != 0 {
+                footer_begin as u32 - developer_offset.abs_diff(extension_offset)
+            } else {
+                footer_begin as u32 - extension_offset
+            }
+        } else { 0 };
+        let dev_sz: u32 = if developer_offset != 0 {
+            if extension_offset != 0 {
+                footer_begin as u32 - extension_offset.abs_diff(developer_offset)
+            } else {
+                footer_begin as u32 - developer_offset
+            }
+        } else { 0 };
+        log(LogLevel::Debug, &|| format!("ext_sz={}, dev_sz={}", ext_sz, dev_sz));
+
         /* done */
         return Some(TargaFooter {
             extension_offset,
@@ -158,6 +178,8 @@ fn load_footer<R: BufRead + Seek>(mut reader: R) -> Option<TargaFooter> {
             marker,
             reserved,
             terminator,
+            dev_sz,
+            ext_sz,
         })
     }
 
