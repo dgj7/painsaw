@@ -9,7 +9,7 @@ use engine::support::image::Image;
 use engine::support::image::targa::Targa;
 
 const B24_BMP: &[u8] = include_bytes!("../assets/img1_24b.bmp");
-const TGA: &[u8] = include_bytes!("../assets/img1_32b.tga");
+const TGA: &[u8] = include_bytes!("../assets/32b_b2t_l2r_footer.tga");
 
 pub(super) fn create_2d_bmp_24b() -> Model2D {
     let bmp_24b_x_zero = 15.0;
@@ -31,7 +31,7 @@ pub(super) fn create_2d_bmp_24b() -> Model2D {
 pub(super) fn create_2d_tga() -> Model2D {
     let tga_x_zero = 200.0;
     let tga_y_zero = 50.0;
-    let tga = Targa::load_from_bytes(TGA).expect("failed to load ../assets/img1_32b.tga");
+    let tga = Targa::load_from_bytes(TGA).expect("failed to load ../assets/32b_b2t_l2r_footer.tga");
     let tga_width = tga.width as f32;
     let tga_height = tga.height as f32;
 
