@@ -4,3 +4,4 @@ pub mod input;
 pub mod window;
 pub mod support;
 pub mod geometry;
+pub mod game;
