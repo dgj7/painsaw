@@ -25,7 +25,7 @@ pub struct UserInput {
     pub mouse_changes: VecDeque<MouseInputName>,
 
     /* commands */
-    pub command_queue: VecDeque<Command>,
+    pub command_queue: VecDeque<Command>,// todo: currently unused
 
     /* screen */
     pub previous_client_dimensions: Dimension2D,

@@ -16,6 +16,7 @@ pub mod color;
 pub mod texture;
 pub mod storage;
 pub mod subsystem;
+pub mod scenegraph;
 
 ///
 /// Graphics rendering intermediary.
