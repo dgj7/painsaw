@@ -7,6 +7,7 @@ use crate::graphics::scenegraph::node::SceneNode;
 ///
 /// nodes are not directly attached, they are referenced by unique identifiers.
 ///
+#[allow(unused)]// todo: remove
 pub struct SceneGraph {
     nodes: HashMap<NodeId, SceneNode>,
     root: NodeId,

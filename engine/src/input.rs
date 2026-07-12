@@ -6,14 +6,12 @@ use crate::input::kin::KeyInputName;
 use crate::input::min::MouseInputName;
 use std::collections::{HashMap, VecDeque};
 use std::sync::{Arc, Mutex};
-use crate::input::command::Command;
 
 pub mod ic;
 pub mod ii;
 pub mod is;
 pub mod kin;
 pub mod min;
-pub mod command;
 
 #[derive(Clone, Debug)]
 pub struct UserInput {
@@ -23,9 +21,6 @@ pub struct UserInput {
 
     /* mouse */
     pub mouse_changes: VecDeque<MouseInputName>,
-
-    /* commands */
-    pub command_queue: VecDeque<Command>,// todo: currently unused
 
     /* screen */
     pub previous_client_dimensions: Dimension2D,
@@ -45,9 +40,6 @@ impl UserInput {
 
             /* mouse */
             mouse_changes: VecDeque::new(),
-
-            /* commands */
-            command_queue: VecDeque::new(),
 
             /* screen */
             previous_client_dimensions: Dimension2D::new(0.0, 0.0),
