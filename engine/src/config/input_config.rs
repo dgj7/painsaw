@@ -1,9 +1,9 @@
-pub mod kc;
-pub mod mc;
+pub mod kh;
+pub mod mh;
 
-pub use crate::config::input_config::kc::{DefaultKeyHandler, KeyHandler};
+pub use crate::config::input_config::kh::{DefaultKeyHandler, KeyHandler};
 use std::sync::Arc;
-use crate::config::input_config::mc::{DefaultMouseHandler, MouseHandler};
+use crate::config::input_config::mh::{DefaultMouseHandler, MouseHandler};
 
 pub struct InputConfig {
     pub key_handler: Arc<dyn KeyHandler>,

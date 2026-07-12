@@ -5,8 +5,8 @@
 //! subsystem in use (for ex: opengl, directx, etc).
 //!
 
-use crate::config::input_config::kc::handle_key_change;
-use crate::config::input_config::mc::handle_mouse_change;
+use crate::config::input_config::kh::handle_key_change;
+use crate::config::input_config::mh::handle_mouse_change;
 use crate::support::logger::log;
 use crate::support::logger::log_level::LogLevel;
 use crate::window::context::RendererContext;

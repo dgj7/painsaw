@@ -8,6 +8,6 @@ use crate::graphics::scenegraph::node::SceneNode;
 /// nodes are not directly attached, they are referenced by unique identifiers.
 ///
 pub struct SceneGraph {
-    nodes: HashMap<NodeId, SceneNode>,
-    root: NodeId,
+    pub nodes: HashMap<NodeId, SceneNode>,
+    pub root: NodeId,
 }

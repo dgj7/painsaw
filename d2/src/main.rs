@@ -3,7 +3,6 @@
 mod config;
 mod d2wc;
 mod d2ki;
-mod d2mi;
 mod d2m2d;
 
 use engine::support::logger::{configure, log, LoggerConfig};

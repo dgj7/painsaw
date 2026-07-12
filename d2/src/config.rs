@@ -5,8 +5,8 @@ use engine::config::window_config::{WindowConfig, WindowDimensions};
 use engine::config::EngineConfig;
 use engine::graphics::subsystem::{GraphicsSubSystem, OpenGLPipeline};
 use std::sync::Arc;
+use engine::config::input_config::mh::DefaultMouseHandler;
 use crate::d2ki::KeyInputs;
-use crate::d2mi::MouseInputs;
 
 pub fn create_engine_config() -> EngineConfig {
     EngineConfig::new(
@@ -28,7 +28,7 @@ pub fn create_engine_config() -> EngineConfig {
         },
         InputConfig {
             key_handler: Arc::new(KeyInputs {}),
-            mouse_handler: Arc::new(MouseInputs{}),
+            mouse_handler: Arc::new(DefaultMouseHandler{}),
         },
         MoveConfig {
             forward_speed: 2.0,

@@ -12,7 +12,6 @@ mod config;
 mod d1m2d;
 mod d1m3d;
 mod key_inputs;
-mod mouse_inputs;
 
 fn main() {
     configure(LoggerConfig { level: LogLevel::Debug, target: LogTarget::StdOut });
