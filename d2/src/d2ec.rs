@@ -5,8 +5,8 @@ use engine::config::window_config::{WindowConfig, WindowDimensions};
 use engine::config::EngineConfig;
 use engine::graphics::subsystem::{GraphicsSubSystem, OpenGLPipeline};
 use std::sync::Arc;
-use crate::d2ki::KeyInputs;
-use crate::d2mi::MouseInputs;
+use crate::d2kh::KeyInputs;
+use crate::d2mh::MouseInputs;
 
 pub fn create_engine_config() -> EngineConfig {
     EngineConfig::new(

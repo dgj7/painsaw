@@ -1,16 +1,16 @@
 #![cfg_attr(all(not(debug_assertions), target_os = "windows"), windows_subsystem = "windows")]// if windows, and release build, don't display console window
 
-mod config;
+mod d2ec;
 mod d2wc;
-mod d2ki;
-mod d2mi;
+mod d2kh;
+mod d2mh;
 mod d2m2d;
 
 use engine::support::logger::{configure, log, LoggerConfig};
 use engine::support::logger::log_level::LogLevel;
 use engine::support::logger::log_target::LogTarget;
 use engine::window::create_window;
-use crate::config::create_engine_config;
+use crate::d2ec::create_engine_config;
 use crate::d2wc::Demo2WorldController;
 
 fn main() {
