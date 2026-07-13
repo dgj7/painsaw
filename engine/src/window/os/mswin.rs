@@ -19,7 +19,7 @@ use windows::Win32::Foundation::{HINSTANCE, HWND, LPARAM, LRESULT, WPARAM};
 use windows::Win32::Graphics::Gdi::HDC;
 use windows::Win32::Graphics::OpenGL::HGLRC;
 use windows::Win32::UI::Input::KeyboardAndMouse::{VIRTUAL_KEY, VK_A, VK_D, VK_ESCAPE, VK_G, VK_M, VK_S, VK_W};
-use windows::Win32::UI::WindowsAndMessaging::{CS_HREDRAW, CS_OWNDC, CS_VREDRAW, CW_USEDEFAULT, IDC_ARROW, MSG, PM_REMOVE, WINDOW_EX_STYLE, WM_CREATE, WM_DESTROY, WM_KEYDOWN, WM_KEYUP, WM_QUIT, WM_CLOSE, WM_SIZE, WNDCLASSW, WS_OVERLAPPEDWINDOW, WS_THICKFRAME, WS_VISIBLE, WM_SETFOCUS, WM_KILLFOCUS, WM_MOUSEMOVE};
+use windows::Win32::UI::WindowsAndMessaging::{CS_HREDRAW, CS_OWNDC, CS_VREDRAW, CW_USEDEFAULT, IDC_ARROW, MSG, PM_REMOVE, WINDOW_EX_STYLE, WM_CREATE, WM_DESTROY, WM_KEYDOWN, WM_KEYUP, WM_QUIT, WM_CLOSE, WM_SIZE, WNDCLASSW, WS_OVERLAPPEDWINDOW, WS_THICKFRAME, WS_VISIBLE, WM_SETFOCUS, WM_KILLFOCUS, WM_MOUSEMOVE, WM_LBUTTONDOWN, WM_RBUTTONDOWN, WM_LBUTTONUP, WM_RBUTTONUP};
 use windows_core::{HSTRING, PCWSTR};
 use crate::input::min::MouseInputName;
 
@@ -273,6 +273,30 @@ fn handle_message_if_applicable(input: &Arc<Mutex<UserInput>>, hwnd: HWND, messa
             let x = get_x_lparam(lparam);
             let y = get_y_lparam(lparam);
             input.lock().expect("todo: wm_mousemove").record_mouse_change(MouseInputName::MouseMove {x, y}, InputChange::Active { info: InputInfo::unhandled()});
+            true
+        }
+        WM_LBUTTONDOWN => {
+            let x = get_x_lparam(lparam);
+            let y = get_y_lparam(lparam);
+            input.lock().expect("todo: wm_mousemove").record_mouse_change(MouseInputName::MouseLeftButton {x, y}, InputChange::Active { info: InputInfo::unhandled()});
+            true
+        }
+        WM_LBUTTONUP => {
+            let x = get_x_lparam(lparam);
+            let y = get_y_lparam(lparam);
+            input.lock().expect("todo: wm_mousemove").record_mouse_change(MouseInputName::MouseLeftButton {x, y}, InputChange::Inactive { info: InputInfo::unhandled()});
+            true
+        }
+        WM_RBUTTONDOWN => {
+            let x = get_x_lparam(lparam);
+            let y = get_y_lparam(lparam);
+            input.lock().expect("todo: wm_mousemove").record_mouse_change(MouseInputName::MouseRightButton {x, y}, InputChange::Active { info: InputInfo::unhandled()});
+            true
+        }
+        WM_RBUTTONUP => {
+            let x = get_x_lparam(lparam);
+            let y = get_y_lparam(lparam);
+            input.lock().expect("todo: wm_mousemove").record_mouse_change(MouseInputName::MouseRightButton {x, y}, InputChange::Inactive { info: InputInfo::unhandled()});
             true
         }
         WM_SIZE => {
