@@ -21,6 +21,7 @@ pub struct UserInput {
 
     /* mouse */
     pub mouse_changes: VecDeque<MouseInputName>,
+    pub mouse_states: HashMap<MouseInputName, InputState>,
 
     /* screen */
     pub previous_client_dimensions: Dimension2D,
@@ -40,6 +41,7 @@ impl UserInput {
 
             /* mouse */
             mouse_changes: VecDeque::new(),
+            mouse_states:  HashMap::new(),
 
             /* screen */
             previous_client_dimensions: Dimension2D::new(0.0, 0.0),
@@ -53,7 +55,7 @@ impl UserInput {
         }))
     }
 
-    pub fn handle_change(&mut self, name: KeyInputName, position: InputChange) {
+    pub fn record_keyboard_change(&mut self, name: KeyInputName, position: InputChange) {
         self.key_changes.push_back(name.clone());
         self.key_states
             .entry(name)
@@ -61,12 +63,12 @@ impl UserInput {
             .or_insert(InputState::new(position));
     }
 
-    pub fn move_mouse(&mut self, name: MouseInputName) {
-        if let MouseInputName::MouseMove { .. } = name {
-            self.mouse_changes.push_back(name);
-        } else {
-            panic!("expected InputName::MouseMove but got {}", name);
-        }
+    pub fn record_mouse_change(&mut self, name: MouseInputName, position: InputChange) {
+        self.mouse_changes.push_back(name.clone());
+        self.mouse_states
+            .entry(name)
+            .and_modify(|e| e.update(position.clone()))
+            .or_insert(InputState::new(position));
     }
 
     pub fn update_client_dimensions(&mut self, current: Dimension2D) {
