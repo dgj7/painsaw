@@ -1,6 +1,6 @@
 #![cfg_attr(all(not(debug_assertions), target_os = "windows"), windows_subsystem = "windows")]// if windows, and release build, don't display console window
 
-use crate::config::create_engine_config;
+use crate::d1ec::create_engine_config;
 use d1wc::Demo1WorldController;
 use engine::support::logger::log_level::LogLevel;
 use engine::support::logger::log_target::LogTarget;
@@ -8,11 +8,11 @@ use engine::support::logger::{configure, log, LoggerConfig};
 use engine::window::create_window;
 
 pub mod d1wc;
-mod config;
+mod d1ec;
 mod d1m2d;
 mod d1m3d;
-mod key_inputs;
-mod mouse_inputs;
+mod d1kh;
+mod d1mh;
 
 fn main() {
     configure(LoggerConfig { level: LogLevel::Debug, target: LogTarget::StdOut });

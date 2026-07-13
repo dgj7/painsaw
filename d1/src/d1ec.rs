@@ -1,4 +1,4 @@
-use crate::key_inputs::KeyInputs;
+use crate::d1kh::KeyInputs;
 use engine::config::input_config::InputConfig;
 use engine::config::move_config::MoveConfig;
 use engine::config::renderer_config::RendererConfig;
@@ -6,7 +6,7 @@ use engine::config::window_config::{WindowConfig, WindowDimensions};
 use engine::config::EngineConfig;
 use engine::graphics::subsystem::{GraphicsSubSystem, OpenGLPipeline};
 use std::sync::Arc;
-use crate::mouse_inputs::MouseInputs;
+use crate::d1mh::MouseInputs;
 
 pub fn create_engine_config() -> EngineConfig {
     EngineConfig::new(
