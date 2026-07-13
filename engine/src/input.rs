@@ -16,8 +16,8 @@ pub mod min;
 #[derive(Clone, Debug)]
 pub struct UserInput {
     /* keyboard */
-    pub changes: VecDeque<KeyInputName>,
-    pub states: HashMap<KeyInputName, InputState>,
+    pub key_changes: VecDeque<KeyInputName>,
+    pub key_states: HashMap<KeyInputName, InputState>,
 
     /* mouse */
     pub mouse_changes: VecDeque<MouseInputName>,
@@ -35,8 +35,8 @@ impl UserInput {
     pub fn new() -> Arc<Mutex<UserInput>> {
         Arc::new(Mutex::new(UserInput {
             /* keyboard */
-            changes: VecDeque::new(),
-            states: HashMap::new(),
+            key_changes: VecDeque::new(),
+            key_states: HashMap::new(),
 
             /* mouse */
             mouse_changes: VecDeque::new(),
@@ -54,8 +54,8 @@ impl UserInput {
     }
 
     pub fn handle_change(&mut self, name: KeyInputName, position: InputChange) {
-        self.changes.push_back(name.clone());
-        self.states
+        self.key_changes.push_back(name.clone());
+        self.key_states
             .entry(name)
             .and_modify(|e| e.update(position.clone()))
             .or_insert(InputState::new(position));

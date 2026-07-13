@@ -39,9 +39,9 @@ pub trait WorldController {
         match context.input.clone().lock() {
             Ok(mut uin) => {
                 /* handle key changes */
-                while !uin.changes.is_empty() {
-                    let change = uin.changes.pop_front().unwrap();
-                    let state = uin.states.get_mut(&change).unwrap();
+                while !uin.key_changes.is_empty() {
+                    let change = uin.key_changes.pop_front().unwrap();
+                    let state = uin.key_states.get_mut(&change).unwrap();
                     if !state.current.is_handled() {
                         handle_key_change(context.config.input.key_handler.clone(), &change, state, context);
                         state.current.set_handled();
@@ -49,7 +49,7 @@ pub trait WorldController {
                 }
 
                 /* check key states */
-                context.config.input.key_handler.clone().check_key_states(&uin.states, context);
+                context.config.input.key_handler.clone().check_key_states(&uin.key_states, context);
 
                 /* handle screen resize */
                 if uin.screen_resized {
