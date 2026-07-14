@@ -1,15 +1,15 @@
 use crate::geometry::dim::Dimension2D;
-use crate::input::ic::InputChange;
+use crate::input::kc::KeyChange;
 use crate::input::ii::InputInfo;
-use crate::input::is::InputState;
+use crate::input::ks::KeyState;
 use crate::input::kin::KeyInputName;
 use crate::input::min::MouseInputName;
 use std::collections::{HashMap, VecDeque};
 use std::sync::{Arc, Mutex};
 
-pub mod ic;
+pub mod kc;
 pub mod ii;
-pub mod is;
+pub mod ks;
 pub mod kin;
 pub mod min;
 
@@ -17,11 +17,11 @@ pub mod min;
 pub struct UserInput {
     /* keyboard */
     pub key_changes: VecDeque<KeyInputName>,
-    pub key_states: HashMap<KeyInputName, InputState>,
+    pub key_states: HashMap<KeyInputName, KeyState>,
 
     /* mouse */
     pub mouse_changes: VecDeque<MouseInputName>,
-    pub mouse_states: HashMap<MouseInputName, InputState>,
+    pub mouse_states: HashMap<MouseInputName, KeyState>,
 
     /* screen */
     pub previous_client_dimensions: Dimension2D,
@@ -29,7 +29,7 @@ pub struct UserInput {
     pub previous_window_dimensions: Dimension2D,
     pub current_window_dimensions: Dimension2D,
     pub screen_resized: bool,
-    pub focus: InputState,
+    pub focus: KeyState,
 }
 
 impl UserInput {
@@ -49,26 +49,26 @@ impl UserInput {
             previous_window_dimensions: Dimension2D::new(0.0, 0.0),
             current_window_dimensions: Dimension2D::new(0.0, 0.0),
             screen_resized: false,
-            focus: InputState::new(InputChange::Active {
+            focus: KeyState::new(KeyChange::Active {
                 info: InputInfo::handled(),
             }),
         }))
     }
 
-    pub fn record_keyboard_change(&mut self, name: KeyInputName, position: InputChange) {
+    pub fn record_keyboard_change(&mut self, name: KeyInputName, position: KeyChange) {
         self.key_changes.push_back(name.clone());
         self.key_states
             .entry(name)
             .and_modify(|e| e.update(position.clone()))
-            .or_insert(InputState::new(position));
+            .or_insert(KeyState::new(position));
     }
 
-    pub fn record_mouse_change(&mut self, name: MouseInputName, position: InputChange) {
+    pub fn record_mouse_change(&mut self, name: MouseInputName, position: KeyChange) {
         self.mouse_changes.push_back(name.clone());
         self.mouse_states
             .entry(name)
             .and_modify(|e| e.update(position.clone()))
-            .or_insert(InputState::new(position));
+            .or_insert(KeyState::new(position));
     }
 
     pub fn update_client_dimensions(&mut self, current: Dimension2D) {

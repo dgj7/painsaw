@@ -1,22 +1,22 @@
 use crate::input::ii::InputInfo;
-use crate::input::ic::InputChange;
+use crate::input::kc::KeyChange;
 use std::time::Duration;
 
 #[derive(Clone,Debug)]
-pub struct InputState {
-    pub previous: InputChange,
-    pub current: InputChange,
+pub struct KeyState {
+    pub previous: KeyChange,
+    pub current: KeyChange,
 }
 
-impl InputState {
-    pub fn new(position: InputChange) -> InputState {
-        InputState {
-            previous: InputChange::Inactive { info: InputInfo::handled() },
+impl KeyState {
+    pub fn new(position: KeyChange) -> KeyState {
+        KeyState {
+            previous: KeyChange::Inactive { info: InputInfo::handled() },
             current: position,
         }
     }
 
-    pub fn update(&mut self, change: InputChange) {
+    pub fn update(&mut self, change: KeyChange) {
         if (self.current.is_inactive() && change.is_inactive()) || (self.current.is_active() && change.is_active()) {
             return;
         } else {

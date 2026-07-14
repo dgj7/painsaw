@@ -1,6 +1,6 @@
 use engine::config::input_config::KeyHandler;
 use engine::input::kin::KeyInputName;
-use engine::input::is::InputState;
+use engine::input::ks::KeyState;
 use engine::support::logger::log;
 use engine::support::logger::log_level::LogLevel;
 use engine::window::context::RendererContext;
@@ -40,7 +40,7 @@ fn handle_command(command: &Command, orientation: &mut Orientation, ec: &EngineC
 }
 
 impl KeyHandler for KeyInputs {
-    fn check_key_states(&self, states: &HashMap<KeyInputName, InputState>, context: &mut RendererContext) {
+    fn check_key_states(&self, states: &HashMap<KeyInputName, KeyState>, context: &mut RendererContext) {
         states.into_iter()
             .filter(|(_, input_state)| input_state.current.is_active())
             .for_each(|(key_name, _)| {
@@ -52,7 +52,7 @@ impl KeyHandler for KeyInputs {
             });
     }
 
-    fn handle_g_key_change(&self, name: &KeyInputName, state: &mut InputState, _context: &mut RendererContext) {
+    fn handle_g_key_change(&self, name: &KeyInputName, state: &mut KeyState, _context: &mut RendererContext) {
         let duration = state.previous_key_state_duration();
         log(LogLevel::Debug, &|| {
             String::from(format!(
