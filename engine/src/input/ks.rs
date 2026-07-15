@@ -1,4 +1,4 @@
-use crate::input::ii::InputInfo;
+use crate::input::kii::KeyInputInfo;
 use crate::input::kc::KeyChange;
 use std::time::Duration;
 
@@ -11,7 +11,7 @@ pub struct KeyState {
 impl KeyState {
     pub fn new(position: KeyChange) -> KeyState {
         KeyState {
-            previous: KeyChange::Inactive { info: InputInfo::handled() },
+            previous: KeyChange::Inactive { info: KeyInputInfo::handled() },
             current: position,
         }
     }

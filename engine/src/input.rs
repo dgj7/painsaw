@@ -1,6 +1,6 @@
 use crate::geometry::dim::Dimension2D;
 use crate::input::kc::KeyChange;
-use crate::input::ii::InputInfo;
+use crate::input::kii::KeyInputInfo;
 use crate::input::ks::KeyState;
 use crate::input::kin::KeyInputName;
 use crate::input::min::MouseInputName;
@@ -8,10 +8,13 @@ use std::collections::{HashMap, VecDeque};
 use std::sync::{Arc, Mutex};
 
 pub mod kc;
-pub mod ii;
+pub mod kii;
 pub mod ks;
 pub mod kin;
 pub mod min;
+pub mod ms;
+pub mod mc;
+pub mod mii;
 
 #[derive(Clone, Debug)]
 pub struct UserInput {
@@ -50,7 +53,7 @@ impl UserInput {
             current_window_dimensions: Dimension2D::new(0.0, 0.0),
             screen_resized: false,
             focus: KeyState::new(KeyChange::Active {
-                info: InputInfo::handled(),
+                info: KeyInputInfo::handled(),
             }),
         }))
     }

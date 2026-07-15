@@ -1,10 +1,10 @@
-use crate::input::ii::InputInfo;
+use crate::input::kii::KeyInputInfo;
 use std::fmt::{Display, Formatter};
 
 #[derive(Clone, Debug)]
 pub enum KeyChange {
-    Active { info: InputInfo },
-    Inactive { info: InputInfo },
+    Active { info: KeyInputInfo },
+    Inactive { info: KeyInputInfo },
 }
 
 impl KeyChange {
@@ -36,7 +36,7 @@ impl KeyChange {
         }
     }
 
-    pub fn clone_key_info(&self) -> InputInfo {
+    pub fn clone_key_info(&self) -> KeyInputInfo {
         match self {
             KeyChange::Active { info } => info.clone(),
             KeyChange::Inactive { info } => info.clone(),
