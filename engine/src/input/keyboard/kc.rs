@@ -1,4 +1,4 @@
-use crate::input::kii::KeyInputInfo;
+use crate::input::keyboard::kii::KeyInputInfo;
 use std::fmt::{Display, Formatter};
 
 #[derive(Clone, Debug)]

@@ -1,6 +1,6 @@
 use engine::config::input_config::KeyHandler;
-use engine::input::ks::KeyState;
-use engine::input::kin::KeyInputName;
+use engine::input::keyboard::ks::KeyState;
+use engine::input::keyboard::kin::KeyInputName;
 use engine::window::context::RendererContext;
 use std::collections::HashMap;
 

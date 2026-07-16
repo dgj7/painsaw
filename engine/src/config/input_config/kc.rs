@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 use std::sync::Arc;
-use crate::input::ks::KeyState;
-use crate::input::kin::KeyInputName;
+use crate::input::keyboard::ks::KeyState;
+use crate::input::keyboard::kin::KeyInputName;
 use crate::support::logger::log;
 use crate::support::logger::log_level::LogLevel;
 use crate::window::context::RendererContext;

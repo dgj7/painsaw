@@ -1,5 +1,5 @@
-use crate::input::kii::KeyInputInfo;
-use crate::input::kc::KeyChange;
+use crate::input::keyboard::kii::KeyInputInfo;
+use crate::input::keyboard::kc::KeyChange;
 use std::time::Duration;
 
 #[derive(Clone,Debug)]

@@ -1,4 +1,4 @@
-use crate::input::min::MouseInputName;
+use crate::input::mouse::min::MouseInputName;
 use crate::window::context::RendererContext;
 use std::sync::Arc;
 use crate::support::logger::log;

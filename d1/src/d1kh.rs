@@ -1,6 +1,6 @@
 use engine::config::input_config::KeyHandler;
-use engine::input::kin::KeyInputName;
-use engine::input::ks::KeyState;
+use engine::input::keyboard::kin::KeyInputName;
+use engine::input::keyboard::ks::KeyState;
 use engine::support::logger::log;
 use engine::support::logger::log_level::LogLevel;
 use engine::window::context::RendererContext;
@@ -8,7 +8,7 @@ use std::collections::HashMap;
 use std::sync::{LazyLock, Mutex};
 use engine::config::EngineConfig;
 use engine::geometry::orient::Orientation;
-use engine::input::kin::KeyInputName::{KeyA, KeyD, KeyS, KeyW};
+use engine::input::keyboard::kin::KeyInputName::{KeyA, KeyD, KeyS, KeyW};
 use engine::support::timing::EngineTiming;
 use crate::d1kh::Command::{CameraMoveBackward, CameraMoveForward, CameraStrafeLeft, CameraStrafeRight};
 

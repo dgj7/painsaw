@@ -1,20 +1,17 @@
 use crate::geometry::dim::Dimension2D;
-use crate::input::kc::KeyChange;
-use crate::input::kii::KeyInputInfo;
-use crate::input::ks::KeyState;
-use crate::input::kin::KeyInputName;
-use crate::input::min::MouseInputName;
+use keyboard::kc::KeyChange;
+use keyboard::kii::KeyInputInfo;
+use keyboard::ks::KeyState;
+use keyboard::kin::KeyInputName;
+use mouse::min::MouseInputName;
 use std::collections::{HashMap, VecDeque};
 use std::sync::{Arc, Mutex};
 
-pub mod kc;
-pub mod kii;
-pub mod ks;
-pub mod kin;
-pub mod min;
 pub mod ms;
 pub mod mc;
 pub mod mii;
+pub mod keyboard;
+pub mod mouse;
 
 #[derive(Clone, Debug)]
 pub struct UserInput {
