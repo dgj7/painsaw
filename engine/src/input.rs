@@ -6,10 +6,9 @@ use keyboard::kin::KeyInputName;
 use mouse::min::MouseInputName;
 use std::collections::{HashMap, VecDeque};
 use std::sync::{Arc, Mutex};
+use crate::input::mouse::mfs::MouseFunctionStatus;
+use crate::input::mouse::ms::MouseState;
 
-pub mod ms;
-pub mod mc;
-pub mod mii;
 pub mod keyboard;
 pub mod mouse;
 
@@ -21,7 +20,7 @@ pub struct UserInput {
 
     /* mouse */
     pub mouse_changes: VecDeque<MouseInputName>,
-    pub mouse_states: HashMap<MouseInputName, KeyState>,
+    pub mouse_states: HashMap<MouseInputName, MouseState>,
 
     /* screen */
     pub previous_client_dimensions: Dimension2D,
@@ -63,12 +62,12 @@ impl UserInput {
             .or_insert(KeyState::new(position));
     }
 
-    pub fn record_mouse_change(&mut self, name: MouseInputName, position: KeyChange) {
+    pub fn record_mouse_change(&mut self, name: MouseInputName, x: i32, y: i32, status: &MouseFunctionStatus) {
         self.mouse_changes.push_back(name.clone());
         self.mouse_states
             .entry(name)
-            .and_modify(|e| e.update(position.clone()))
-            .or_insert(KeyState::new(position));
+            .and_modify(|e| e.update(x, y, status))
+            .or_insert(MouseState::new(x, y, status.clone()));
     }
 
     pub fn update_client_dimensions(&mut self, current: Dimension2D) {
