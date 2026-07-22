@@ -1,4 +1,4 @@
-use crate::window::os::mswin::mswin_errors::check_errors_mswin;
+use crate::window::os::mswin::errors::check_errors_mswin;
 use windows::Win32::Foundation;
 use windows::Win32::Foundation::{LRESULT, RECT};
 use windows::Win32::System::LibraryLoader::GetModuleHandleW;

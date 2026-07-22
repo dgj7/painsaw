@@ -12,10 +12,9 @@ use ffp::api::gl_get_string;
 use ffp::ffp2d::{ffp_2d_setup, ffp_2d_teardown, ffp_render_2d_lines, ffp_render_2d_points, ffp_render_2d_texture};
 use windows::Win32::Graphics::OpenGL::{GL_RENDERER, GL_VENDOR, GL_VERSION};
 
-pub(crate) mod opengl_mswin_api;
-pub(crate) mod opengl_mswin;
 mod errors;
 pub mod ffp;
+pub mod msw;
 
 pub struct OpenGLHandle {
     pub(crate) pipeline: OpenGLPipeline,
