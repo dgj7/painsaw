@@ -1,4 +1,3 @@
-use crate::geometry::dim::Dimension2D;
 use crate::window::os::mswin::errors::check_errors_mswin;
 use windows::Win32::Foundation;
 use windows::Win32::Foundation::{LRESULT, POINT, RECT};
@@ -70,16 +69,6 @@ pub(crate) fn post_quit_message(nexitcode: i32) {
 
 pub(crate) fn default_window_proc(hwnd: Foundation::HWND, msg: u32, wparam: Foundation::WPARAM, lparam: Foundation::LPARAM) -> LRESULT {
     unsafe { DefWindowProcW(hwnd, msg, wparam, lparam) }
-}
-
-pub(crate) fn get_client_rect_dim2d(hwnd: Foundation::HWND) -> Dimension2D {
-    let rect = get_client_rect(hwnd);
-    Dimension2D::new((rect.bottom - rect.top) as f32, (rect.right - rect.left) as f32)
-}
-
-pub(crate) fn get_window_rect_dim2d(hwnd: Foundation::HWND) -> Dimension2D {
-    let rect = get_client_rect(hwnd);
-    Dimension2D::new((rect.bottom - rect.top) as f32, (rect.right - rect.left) as f32)
 }
 
 pub(crate) fn get_client_rect(hwnd: Foundation::HWND) -> RECT {
