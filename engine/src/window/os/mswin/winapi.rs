@@ -1,9 +1,11 @@
+use crate::geometry::dim::Dimension2D;
 use crate::window::os::mswin::errors::check_errors_mswin;
 use windows::Win32::Foundation;
-use windows::Win32::Foundation::{LRESULT, RECT};
+use windows::Win32::Foundation::{LRESULT, POINT, RECT};
+use windows::Win32::Graphics::Gdi::PtInRect;
 use windows::Win32::System::LibraryLoader::GetModuleHandleW;
-use windows::Win32::UI::WindowsAndMessaging::{CreateWindowExW, DefWindowProcW, DispatchMessageW, GetClientRect, GetWindowRect, LoadCursorW, PeekMessageW, PostQuitMessage, RegisterClassW, TranslateMessage, HCURSOR, HMENU, MSG, PEEK_MESSAGE_REMOVE_TYPE, WINDOW_EX_STYLE, WINDOW_STYLE, WNDCLASSW};
-use crate::geometry::dim::Dimension2D;
+use windows::Win32::UI::Input::{RegisterRawInputDevices, RAWINPUTDEVICE};
+use windows::Win32::UI::WindowsAndMessaging::{CreateWindowExW, DefWindowProcW, DispatchMessageW, GetClientRect, GetCursorPos, GetWindowRect, LoadCursorW, PeekMessageW, PostQuitMessage, RegisterClassW, TranslateMessage, HCURSOR, HMENU, MSG, PEEK_MESSAGE_REMOVE_TYPE, WINDOW_EX_STYLE, WINDOW_STYLE, WNDCLASSW};
 
 pub(crate) fn peek_message(lpmsg: *mut MSG, hwnd: Option<Foundation::HWND>, wmsgfiltermin: u32, wmsgfiltermax: u32, wremovemsg: PEEK_MESSAGE_REMOVE_TYPE) -> bool {
     unsafe { bool::from(PeekMessageW(lpmsg, hwnd, wmsgfiltermin, wmsgfiltermax, wremovemsg)) }
@@ -70,22 +72,55 @@ pub(crate) fn default_window_proc(hwnd: Foundation::HWND, msg: u32, wparam: Foun
     unsafe { DefWindowProcW(hwnd, msg, wparam, lparam) }
 }
 
-pub(crate) fn get_client_rect(hwnd: Foundation::HWND) -> Dimension2D {
-    let rect = &mut RECT { left: 0, top: 0, right: 0, bottom: 0, };
-    let result = unsafe { GetClientRect(hwnd, rect) };
+pub(crate) fn get_client_rect_dim2d(hwnd: Foundation::HWND) -> Dimension2D {
+    let rect = get_client_rect(hwnd);
+    Dimension2D::new((rect.bottom - rect.top) as f32, (rect.right - rect.left) as f32)
+}
+
+pub(crate) fn get_window_rect_dim2d(hwnd: Foundation::HWND) -> Dimension2D {
+    let rect = get_client_rect(hwnd);
+    Dimension2D::new((rect.bottom - rect.top) as f32, (rect.right - rect.left) as f32)
+}
+
+pub(crate) fn get_client_rect(hwnd: Foundation::HWND) -> RECT {
+    let mut rect = RECT { left: 0, top: 0, right: 0, bottom: 0, };
+    let result = unsafe { GetClientRect(hwnd, &mut rect) };
     match result {
         Ok(_) => {}
         Err(_) => {check_errors_mswin("GetClientRect")}
     }
-    Dimension2D::new((rect.bottom - rect.top) as f32, (rect.right - rect.left) as f32)
+    rect
 }
 
-pub(crate) fn get_window_rect(hwnd: Foundation::HWND) -> Dimension2D {
-    let rect = &mut RECT { left: 0, top: 0, right: 0, bottom: 0, };
-    let result = unsafe { GetWindowRect(hwnd, rect) };
+#[allow(unused)]
+pub(crate) fn get_window_rect(hwnd: Foundation::HWND) -> RECT {
+    let mut rect = RECT { left: 0, top: 0, right: 0, bottom: 0, };
+    let result = unsafe { GetWindowRect(hwnd, &mut rect) };
     match result {
         Ok(_) => {}
         Err(_) => {check_errors_mswin("GetWindowRect")}
     }
-    Dimension2D::new((rect.bottom - rect.top) as f32, (rect.right - rect.left) as f32)
+    rect
+}
+
+pub(crate) fn get_cursor_pos() -> POINT {
+    let mut pt = POINT { x: 0, y: 0 };
+    let result = unsafe { GetCursorPos(&mut pt) };
+    match result {
+        Ok(_) => {}
+        Err(_) => {check_errors_mswin("GetCursorPos")}
+    }
+    pt
+}
+
+pub(crate) fn pt_in_rect(rect: &RECT, pt: &POINT) -> bool {
+    unsafe { bool::from(PtInRect(rect, *pt)) }
+}
+
+pub(crate) fn register_raw_input_devices(rid: &[RAWINPUTDEVICE]) {
+    let result = unsafe { RegisterRawInputDevices(rid, std::mem::size_of::<RAWINPUTDEVICE>() as u32) };
+    match result {
+        Ok(_) => {}
+        Err(_) => {check_errors_mswin("RegisterRawInputDevices")}
+    }
 }

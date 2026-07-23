@@ -1,7 +1,3 @@
-use std::sync::{Arc, Mutex};
-use windows::Win32::Foundation::{HWND, LPARAM, LRESULT, WPARAM};
-use windows::Win32::UI::Input::KeyboardAndMouse::{VIRTUAL_KEY, VK_A, VK_D, VK_ESCAPE, VK_G, VK_M, VK_S, VK_W};
-use windows::Win32::UI::WindowsAndMessaging::{WM_CLOSE, WM_CREATE, WM_DESTROY, WM_KEYDOWN, WM_KEYUP, WM_KILLFOCUS, WM_LBUTTONDOWN, WM_LBUTTONUP, WM_MOUSEMOVE, WM_QUIT, WM_RBUTTONDOWN, WM_RBUTTONUP, WM_SETFOCUS, WM_SIZE};
 use crate::input::keyboard::kc::KeyChange;
 use crate::input::keyboard::kii::KeyInputInfo;
 use crate::input::keyboard::kin::KeyInputName;
@@ -11,7 +7,13 @@ use crate::input::UserInput;
 use crate::support::logger::log;
 use crate::support::logger::log_level::LogLevel;
 use crate::window::os::mswin::userdata::{create_and_write_pointer, read_window_data};
-use crate::window::os::mswin::winapi::{default_window_proc, get_client_rect, get_window_rect, post_quit_message};
+use crate::window::os::mswin::util::is_mouse_over_window;
+use crate::window::os::mswin::winapi::{default_window_proc, get_client_rect_dim2d, get_window_rect_dim2d, post_quit_message};
+use std::sync::{Arc, Mutex};
+use windows::Win32::Foundation::{HWND, LPARAM, LRESULT, WPARAM};
+use windows::Win32::UI::Input::KeyboardAndMouse::{VIRTUAL_KEY, VK_A, VK_D, VK_ESCAPE, VK_G, VK_M, VK_S, VK_W};
+use windows::Win32::UI::Input::{GetRawInputData, HRAWINPUT, RAWINPUT, RAWINPUTHEADER, RID_INPUT, RIM_TYPEMOUSE};
+use windows::Win32::UI::WindowsAndMessaging::{WM_CLOSE, WM_CREATE, WM_DESTROY, WM_INPUT, WM_KEYDOWN, WM_KEYUP, WM_KILLFOCUS, WM_LBUTTONDOWN, WM_LBUTTONUP, WM_QUIT, WM_RBUTTONDOWN, WM_RBUTTONUP, WM_SETFOCUS, WM_SIZE};
 
 ///
 /// required window procedure, for handling win32 event messages.
@@ -81,6 +83,12 @@ pub(crate) extern "system" fn wndproc(window: HWND, message: u32, wparam: WPARAM
 }
 
 ///
+/// make it more obvious if a window message was handled.
+///
+static HANDLED: bool = true;
+static NOT_HANDLED: bool = false;
+
+///
 /// handle input messages, such as key down/up or mouse movement.
 ///
 fn handle_message_if_applicable(input: &Arc<Mutex<UserInput>>, hwnd: HWND, message: u32, wparam: WPARAM, lparam: LPARAM) -> bool {
@@ -111,11 +119,13 @@ fn handle_message_if_applicable(input: &Arc<Mutex<UserInput>>, hwnd: HWND, messa
                 _ => false
             }
         }
-        WM_MOUSEMOVE => {
-            let x = get_x_lparam(lparam);
-            let y = get_y_lparam(lparam);
-            input.lock().expect("todo: wm_mousemove").record_mouse_change(MouseInputName::MouseMove {x, y}, x, y, &MouseFunctionStatus::Active);
-            true
+        WM_INPUT => {
+            // see also: WM_MOUSEMOVE: lower precision mouse detection; can use get_x_lparam() and get_y_lparam() like other mouse functions do
+            if let Some((x,y)) = gather_raw_mouse(hwnd, lparam) {
+                input.lock().expect("todo: wm_input").record_mouse_change(MouseInputName::MouseMove {x, y}, x, y, &MouseFunctionStatus::Active);
+                return HANDLED
+            }
+            NOT_HANDLED
         }
         WM_LBUTTONDOWN => {
             let x = get_x_lparam(lparam);
@@ -145,8 +155,8 @@ fn handle_message_if_applicable(input: &Arc<Mutex<UserInput>>, hwnd: HWND, messa
             // see also: WM_SIZING: while the user is actively resizing the window
             // see also: WM_ENTERSIZEMOVE: resizing started
             // see also: WM_EXITSIZEMOVE: resizing ended
-            let window_dimensions = get_window_rect(hwnd);
-            let client_dimensions = get_client_rect(hwnd);
+            let window_dimensions = get_window_rect_dim2d(hwnd);
+            let client_dimensions = get_client_rect_dim2d(hwnd);
             log(LogLevel::Trace, &|| String::from(format!("window: {:?}", window_dimensions)));
             log(LogLevel::Trace, &|| String::from(format!("client: {:?}", client_dimensions)));
             match input.lock() {
@@ -184,4 +194,38 @@ fn get_x_lparam(lparam: LPARAM) -> i32 {
 ///
 fn get_y_lparam(lparam: LPARAM) -> i32 {
     ((lparam.0 >> 16) & 0xffff) as i16 as i32
+}
+
+///
+/// gather the mouse position as high-precision data.
+///
+// todo: move GetRawInputData to winapi.rs
+fn gather_raw_mouse(hwnd: HWND, lparam: LPARAM) -> Option<(i32, i32)> {
+    /* sc if not over our window */
+    if !is_mouse_over_window(hwnd) {
+        return None;
+    }
+
+    /* get sizeof RAWINPUT struct */
+    let mut ds = 0;
+    unsafe { GetRawInputData(HRAWINPUT(lparam.0 as *mut std::ffi::c_void), RID_INPUT, None, &mut ds, size_of::<RAWINPUTHEADER>() as u32,) };
+
+    /* allocate buffer; retrieve data */
+    let mut buffer = vec![0u8; ds as usize];
+    let rs = unsafe { GetRawInputData(HRAWINPUT(lparam.0 as *mut std::ffi::c_void), RID_INPUT, Some(buffer.as_mut_ptr() as *mut std::ffi::c_void), &mut ds, size_of::<RAWINPUTHEADER>() as u32) };
+
+    /* if data was received, return */
+    if rs > 0 {
+        let ri = unsafe { &*(buffer.as_ptr() as *const RAWINPUT) };
+        if ri.header.dwType == RIM_TYPEMOUSE.0 {
+            let md = unsafe { &ri.data.mouse };
+            let dx = md.lLastX;
+            let dy = md.lLastY;
+            Some((dx, dy))
+        } else {
+            None
+        }
+    } else {
+        None
+    }
 }

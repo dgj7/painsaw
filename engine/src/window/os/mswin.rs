@@ -8,13 +8,14 @@ use crate::support::logger::log_level::LogLevel;
 use crate::window::context::RendererContext;
 use crate::window::os::mswin::events::wndproc;
 use crate::window::os::mswin::userdata::input_state_to_raw_pointer;
-use crate::window::os::mswin::winapi::{create_window_ex, dispatch_message, get_module_handle, load_cursor, peek_message, register_class, translate_message};
+use crate::window::os::mswin::winapi::{create_window_ex, dispatch_message, get_module_handle, load_cursor, peek_message, register_class, register_raw_input_devices, translate_message};
 use crate::window::os::Window;
 use crate::window::wc::WorldController;
 use std::sync::{Arc, Mutex};
 use windows::Win32::Foundation::{HINSTANCE, HWND};
 use windows::Win32::Graphics::Gdi::HDC;
 use windows::Win32::Graphics::OpenGL::HGLRC;
+use windows::Win32::UI::Input::{RAWINPUTDEVICE, RAWINPUTDEVICE_FLAGS};
 use windows::Win32::UI::WindowsAndMessaging::{CS_HREDRAW, CS_OWNDC, CS_VREDRAW, CW_USEDEFAULT, IDC_ARROW, MSG, PM_REMOVE, WINDOW_EX_STYLE, WM_QUIT, WNDCLASSW, WS_OVERLAPPEDWINDOW, WS_THICKFRAME, WS_VISIBLE};
 use windows_core::{HSTRING, PCWSTR};
 
@@ -22,6 +23,7 @@ pub mod winapi;
 pub mod userdata;
 pub mod errors;
 pub mod events;
+mod util;
 
 pub struct MsWinWindow {
     pub input: Arc<Mutex<UserInput>>,
@@ -146,6 +148,9 @@ impl MsWinWindow {
             Some(input_pointer),
         ).expect("CreateWindowEx* failed");
 
+        /* register raw input for mouse movement detection */
+        init_raw(&hwnd);
+
         /* init opengl */
         let (hdc, hrc) = init_opengl(hwnd);
 
@@ -164,4 +169,19 @@ impl MsWinWindow {
             hrc,
         }))
     }
+}
+
+fn init_raw(hwnd: &HWND) {
+    /* create array of RIDs */
+    let rid = [
+        /* create RID for mouse */
+        RAWINPUTDEVICE {
+            usUsagePage: 0x01,                          // generic desktop
+            usUsage: 0x02,                              // mouse=0x02, keyboard=0x06
+            dwFlags: RAWINPUTDEVICE_FLAGS(0),           // RIDEV_INPUTSINK: recv input evne when in background (not in focus)
+            hwndTarget: *hwnd,
+        }
+    ];
+
+    register_raw_input_devices(&rid);
 }
