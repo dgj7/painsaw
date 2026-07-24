@@ -23,7 +23,7 @@ pub mod winapi;
 pub mod userdata;
 pub mod errors;
 pub mod events;
-mod util;
+pub mod util;
 
 pub struct MsWinWindow {
     pub input: Arc<Mutex<UserInput>>,
@@ -171,6 +171,11 @@ impl MsWinWindow {
     }
 }
 
+///
+/// initialize WM_INPUT raw input device.  in this case, we're using it for mouse movement.
+/// 
+/// normal keyboard input tracking for win32 works well enough, so that won't be configured here.
+/// 
 fn init_raw(hwnd: &HWND) {
     /* create array of RIDs */
     let rid = [
@@ -178,7 +183,7 @@ fn init_raw(hwnd: &HWND) {
         RAWINPUTDEVICE {
             usUsagePage: 0x01,                          // generic desktop
             usUsage: 0x02,                              // mouse=0x02, keyboard=0x06
-            dwFlags: RAWINPUTDEVICE_FLAGS(0),           // RIDEV_INPUTSINK: recv input evne when in background (not in focus)
+            dwFlags: RAWINPUTDEVICE_FLAGS(0),           // RIDEV_INPUTSINK: recv input even when in background (not in focus)
             hwndTarget: *hwnd,
         }
     ];

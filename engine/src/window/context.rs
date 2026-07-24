@@ -9,6 +9,12 @@ use crate::support::logger::log;
 use crate::support::logger::log_level::LogLevel;
 use std::sync::{Arc, Mutex};
 
+///
+/// core context object used by the engine.
+///
+/// this data is passed through functions and ultimately to the end user, for access
+/// to various engine configurations and states.
+///
 pub struct RendererContext {
     /* scene for game statistics */
     pub first_frame_rendered: bool,
