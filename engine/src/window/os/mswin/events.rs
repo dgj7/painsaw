@@ -8,11 +8,11 @@ use crate::support::logger::log;
 use crate::support::logger::log_level::LogLevel;
 use crate::window::os::mswin::userdata::{create_and_write_pointer, read_window_data};
 use crate::window::os::mswin::util::{get_client_rect_dim2d, get_window_rect_dim2d, is_mouse_over_window};
-use crate::window::os::mswin::winapi::{default_window_proc, get_client_rect, get_cursor_pos, post_quit_message};
+use crate::window::os::mswin::winapi::{default_window_proc, get_cursor_pos, get_raw_input_data, post_quit_message};
 use std::sync::{Arc, Mutex};
 use windows::Win32::Foundation::{HWND, LPARAM, LRESULT, WPARAM};
 use windows::Win32::UI::Input::KeyboardAndMouse::{VIRTUAL_KEY, VK_A, VK_D, VK_ESCAPE, VK_G, VK_M, VK_S, VK_W};
-use windows::Win32::UI::Input::{GetRawInputData, HRAWINPUT, RAWINPUT, RAWINPUTHEADER, RID_INPUT, RIM_TYPEMOUSE};
+use windows::Win32::UI::Input::{HRAWINPUT, RAWINPUT, RAWINPUTHEADER, RID_INPUT, RIM_TYPEMOUSE};
 use windows::Win32::UI::WindowsAndMessaging::{WM_CLOSE, WM_CREATE, WM_DESTROY, WM_INPUT, WM_KEYDOWN, WM_KEYUP, WM_KILLFOCUS, WM_LBUTTONDOWN, WM_LBUTTONUP, WM_QUIT, WM_RBUTTONDOWN, WM_RBUTTONUP, WM_SETFOCUS, WM_SIZE};
 
 ///
@@ -202,7 +202,6 @@ fn get_y_lparam(lparam: LPARAM) -> i32 {
 /// here we're hijacking the high refresh rate, but calling GetCursorPos() regardless
 /// because dx/dy isn't what we're looking for.
 ///
-// todo: move GetRawInputData to winapi.rs
 fn gather_raw_mouse(hwnd: HWND, lparam: LPARAM) -> Option<(i32, i32)> {
     /* sc if not over our window */
     if !is_mouse_over_window(hwnd) {
@@ -211,11 +210,11 @@ fn gather_raw_mouse(hwnd: HWND, lparam: LPARAM) -> Option<(i32, i32)> {
 
     /* get sizeof RAWINPUT struct */
     let mut ds = 0;
-    unsafe { GetRawInputData(HRAWINPUT(lparam.0 as *mut std::ffi::c_void), RID_INPUT, None, &mut ds, size_of::<RAWINPUTHEADER>() as u32,) };
+    get_raw_input_data(HRAWINPUT(lparam.0 as *mut std::ffi::c_void), RID_INPUT, None, &mut ds, size_of::<RAWINPUTHEADER>() as u32,);
 
     /* allocate buffer; retrieve data */
     let mut buffer = vec![0u8; ds as usize];
-    let rs = unsafe { GetRawInputData(HRAWINPUT(lparam.0 as *mut std::ffi::c_void), RID_INPUT, Some(buffer.as_mut_ptr() as *mut std::ffi::c_void), &mut ds, size_of::<RAWINPUTHEADER>() as u32) };
+    let rs = get_raw_input_data(HRAWINPUT(lparam.0 as *mut std::ffi::c_void), RID_INPUT, Some(buffer.as_mut_ptr() as *mut std::ffi::c_void), &mut ds, size_of::<RAWINPUTHEADER>() as u32);
 
     /* if data was received, return */
     if rs > 0 {

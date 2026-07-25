@@ -3,7 +3,7 @@ use windows::Win32::Foundation;
 use windows::Win32::Foundation::{LRESULT, POINT, RECT};
 use windows::Win32::Graphics::Gdi::PtInRect;
 use windows::Win32::System::LibraryLoader::GetModuleHandleW;
-use windows::Win32::UI::Input::{RegisterRawInputDevices, RAWINPUTDEVICE};
+use windows::Win32::UI::Input::{GetRawInputData, RegisterRawInputDevices, HRAWINPUT, RAWINPUTDEVICE, RAW_INPUT_DATA_COMMAND_FLAGS};
 use windows::Win32::UI::WindowsAndMessaging::{CreateWindowExW, DefWindowProcW, DispatchMessageW, GetClientRect, GetCursorPos, GetWindowRect, LoadCursorW, PeekMessageW, PostQuitMessage, RegisterClassW, TranslateMessage, HCURSOR, HMENU, MSG, PEEK_MESSAGE_REMOVE_TYPE, WINDOW_EX_STYLE, WINDOW_STYLE, WNDCLASSW};
 
 ///
@@ -154,4 +154,15 @@ pub(crate) fn register_raw_input_devices(rid: &[RAWINPUTDEVICE]) {
         Ok(_) => {}
         Err(_) => {check_errors_mswin("RegisterRawInputDevices")}
     }
+}
+
+///
+/// GetRawInputData()
+///
+pub(crate) fn get_raw_input_data(hrawinput: HRAWINPUT, uicommand: RAW_INPUT_DATA_COMMAND_FLAGS, pdata: Option<*mut core::ffi::c_void>, pcbsize: *mut u32, cbsizeheader: u32) -> u32 {
+    let result = unsafe { GetRawInputData(hrawinput, uicommand, pdata, pcbsize, cbsizeheader) };
+    if result == u32::MAX {
+        check_errors_mswin("GetRawInputData");
+    }
+    result
 }
