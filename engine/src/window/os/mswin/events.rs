@@ -8,7 +8,7 @@ use crate::support::logger::log;
 use crate::support::logger::log_level::LogLevel;
 use crate::window::os::mswin::userdata::{create_and_write_pointer, read_window_data};
 use crate::window::os::mswin::util::{get_client_rect_dim2d, get_window_rect_dim2d, is_mouse_over_window};
-use crate::window::os::mswin::winapi::{default_window_proc, post_quit_message};
+use crate::window::os::mswin::winapi::{default_window_proc, get_client_rect, get_cursor_pos, post_quit_message};
 use std::sync::{Arc, Mutex};
 use windows::Win32::Foundation::{HWND, LPARAM, LRESULT, WPARAM};
 use windows::Win32::UI::Input::KeyboardAndMouse::{VIRTUAL_KEY, VK_A, VK_D, VK_ESCAPE, VK_G, VK_M, VK_S, VK_W};
@@ -199,6 +199,9 @@ fn get_y_lparam(lparam: LPARAM) -> i32 {
 ///
 /// gather the mouse position as high-precision data.
 ///
+/// here we're hijacking the high refresh rate, but calling GetCursorPos() regardless
+/// because dx/dy isn't what we're looking for.
+///
 // todo: move GetRawInputData to winapi.rs
 fn gather_raw_mouse(hwnd: HWND, lparam: LPARAM) -> Option<(i32, i32)> {
     /* sc if not over our window */
@@ -218,10 +221,14 @@ fn gather_raw_mouse(hwnd: HWND, lparam: LPARAM) -> Option<(i32, i32)> {
     if rs > 0 {
         let ri = unsafe { &*(buffer.as_ptr() as *const RAWINPUT) };
         if ri.header.dwType == RIM_TYPEMOUSE.0 {
-            let md = unsafe { &ri.data.mouse };
-            let dx = md.lLastX;
-            let dy = md.lLastY;
-            Some((dx, dy))
+            //let md = unsafe { &ri.data.mouse };
+            //let dx = md.lLastX;
+            //let dy = md.lLastY;
+            //Some((dx, dy))
+            let pos = get_cursor_pos();
+            let xp = pos.x;
+            let yp = pos.y;
+            Some((xp, yp))
         } else {
             None
         }
