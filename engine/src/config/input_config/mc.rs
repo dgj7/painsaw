@@ -9,10 +9,10 @@ use crate::support::logger::log_level::LogLevel;
 ///
 pub fn handle_mouse_change(handler: Arc<dyn MouseHandler>, name: &MouseInputName, context: &mut RendererContext) {
     match name {
-        MouseInputName::MouseLeftButton { x, y } => handler.handle_left_click(*x, *y, context),
-        MouseInputName::MouseRightButton { x, y } => handler.handle_right_click(*x, *y, context),
+        MouseInputName::MouseLeftButton => handler.handle_left_click(context),
+        MouseInputName::MouseRightButton => handler.handle_right_click(context),
         MouseInputName::MouseScroll => {}
-        MouseInputName::MouseMove { x, y } => handler.handle_mouse_move(*x, *y, context),
+        MouseInputName::MouseMove => handler.handle_mouse_move(context),
     }
 }
 
@@ -24,16 +24,16 @@ pub trait MouseHandler {
     ///
     /// handle mouse move.
     ///
-    fn handle_mouse_move(&self, x: i32, y: i32, context: &mut RendererContext) {
-        log(LogLevel::Trace, &|| String::from(format!("MouseMove ({},{}); frame {}", x, y, context.frame_count)));
+    fn handle_mouse_move(&self, context: &mut RendererContext) {
+        log(LogLevel::Trace, &|| String::from(format!("MouseMove; frame {}", context.frame_count)));
     }
 
-    fn handle_left_click(&self, x: i32, y: i32, context: &mut RendererContext) {
-        log(LogLevel::Trace, &|| String::from(format!("LeftClick ({},{}); frame {}", x, y, context.frame_count)));
+    fn handle_left_click(&self, context: &mut RendererContext) {
+        log(LogLevel::Trace, &|| String::from(format!("LeftClick; frame {}", context.frame_count)));
     }
 
-    fn handle_right_click(&self, x: i32, y: i32, context: &mut RendererContext) {
-        log(LogLevel::Trace, &|| String::from(format!("RightClick ({},{}); frame {}", x, y, context.frame_count)));
+    fn handle_right_click(&self, context: &mut RendererContext) {
+        log(LogLevel::Trace, &|| String::from(format!("RightClick; frame {}", context.frame_count)));
     }
 }
 

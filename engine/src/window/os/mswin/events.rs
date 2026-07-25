@@ -122,33 +122,33 @@ fn handle_message_if_applicable(input: &Arc<Mutex<UserInput>>, hwnd: HWND, messa
         WM_INPUT => {
             // see also: WM_MOUSEMOVE: lower precision mouse detection; can use get_x_lparam() and get_y_lparam() like other mouse functions do
             if let Some((x,y)) = gather_raw_mouse(hwnd, lparam) {
-                input.lock().expect("todo: wm_input").record_mouse_change(MouseInputName::MouseMove {x, y}, x, y, &MouseFunctionStatus::Active);
+                input.lock().expect("todo: wm_input").record_mouse_change(MouseInputName::MouseMove, x, y, &MouseFunctionStatus::Active);
                 return HANDLED
             }
             NOT_HANDLED
         }
-        WM_LBUTTONDOWN => {
+        WM_LBUTTONDOWN => {// todo: can we source these from wm_input instead?
             let x = get_x_lparam(lparam);
             let y = get_y_lparam(lparam);
-            input.lock().expect("todo: wm_mousemove").record_mouse_change(MouseInputName::MouseLeftButton {x, y}, x, y, &MouseFunctionStatus::Active);
+            input.lock().expect("todo: wm_mousemove").record_mouse_change(MouseInputName::MouseLeftButton, x, y, &MouseFunctionStatus::Active);
             HANDLED
         }
         WM_LBUTTONUP => {
             let x = get_x_lparam(lparam);
             let y = get_y_lparam(lparam);
-            input.lock().expect("todo: wm_mousemove").record_mouse_change(MouseInputName::MouseLeftButton {x, y}, x, y, &MouseFunctionStatus::Inactive);
+            input.lock().expect("todo: wm_mousemove").record_mouse_change(MouseInputName::MouseLeftButton, x, y, &MouseFunctionStatus::Inactive);
             HANDLED
         }
         WM_RBUTTONDOWN => {
             let x = get_x_lparam(lparam);
             let y = get_y_lparam(lparam);
-            input.lock().expect("todo: wm_mousemove").record_mouse_change(MouseInputName::MouseRightButton {x, y}, x, y, &MouseFunctionStatus::Active);
+            input.lock().expect("todo: wm_mousemove").record_mouse_change(MouseInputName::MouseRightButton, x, y, &MouseFunctionStatus::Active);
             HANDLED
         }
         WM_RBUTTONUP => {
             let x = get_x_lparam(lparam);
             let y = get_y_lparam(lparam);
-            input.lock().expect("todo: wm_mousemove").record_mouse_change(MouseInputName::MouseRightButton {x, y}, x, y, &MouseFunctionStatus::Inactive);
+            input.lock().expect("todo: wm_mousemove").record_mouse_change(MouseInputName::MouseRightButton, x, y, &MouseFunctionStatus::Inactive);
             HANDLED
         }
         WM_SIZE => {
