@@ -8,7 +8,7 @@ use crate::support::logger::log;
 use crate::support::logger::log_level::LogLevel;
 use crate::window::os::mswin::userdata::{create_and_write_pointer, read_window_data};
 use crate::window::os::mswin::util::{get_client_rect_dim2d, get_window_rect_dim2d, is_mouse_over_window};
-use crate::window::os::mswin::winapi::{default_window_proc, get_cursor_pos, get_raw_input_data, post_quit_message};
+use crate::window::os::mswin::winapi::{default_window_proc, get_cursor_pos, get_raw_input_data, post_quit_message, screen_to_client};
 use std::sync::{Arc, Mutex};
 use windows::Win32::Foundation::{HWND, LPARAM, LRESULT, WPARAM};
 use windows::Win32::UI::Input::KeyboardAndMouse::{VIRTUAL_KEY, VK_A, VK_D, VK_ESCAPE, VK_G, VK_M, VK_S, VK_W};
@@ -224,7 +224,8 @@ fn gather_raw_mouse(hwnd: HWND, lparam: LPARAM) -> Option<(i32, i32)> {
             //let dx = md.lLastX;
             //let dy = md.lLastY;
             //Some((dx, dy))
-            let pos = get_cursor_pos();
+            let mut pos = get_cursor_pos();
+            screen_to_client(hwnd, &mut pos);
             let xp = pos.x;
             let yp = pos.y;
             Some((xp, yp))

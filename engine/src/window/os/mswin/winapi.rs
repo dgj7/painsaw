@@ -1,7 +1,7 @@
 use crate::window::os::mswin::errors::check_errors_mswin;
 use windows::Win32::Foundation;
-use windows::Win32::Foundation::{LRESULT, POINT, RECT};
-use windows::Win32::Graphics::Gdi::PtInRect;
+use windows::Win32::Foundation::{HWND, LRESULT, POINT, RECT};
+use windows::Win32::Graphics::Gdi::{PtInRect, ScreenToClient};
 use windows::Win32::System::LibraryLoader::GetModuleHandleW;
 use windows::Win32::UI::Input::{GetRawInputData, RegisterRawInputDevices, HRAWINPUT, RAWINPUTDEVICE, RAW_INPUT_DATA_COMMAND_FLAGS};
 use windows::Win32::UI::WindowsAndMessaging::{CreateWindowExW, DefWindowProcW, DispatchMessageW, GetClientRect, GetCursorPos, GetWindowRect, LoadCursorW, PeekMessageW, PostQuitMessage, RegisterClassW, TranslateMessage, HCURSOR, HMENU, MSG, PEEK_MESSAGE_REMOVE_TYPE, WINDOW_EX_STYLE, WINDOW_STYLE, WNDCLASSW};
@@ -136,6 +136,16 @@ pub(crate) fn get_cursor_pos() -> POINT {
         Err(_) => {check_errors_mswin("GetCursorPos")}
     }
     pt
+}
+
+///
+/// ScreenToClient()
+/// 
+pub(crate) fn screen_to_client(hwnd: HWND, mp: &mut POINT) {
+    let result = unsafe { ScreenToClient(hwnd, mp) };
+    if !bool::from(result) {
+        check_errors_mswin("ScreenToClient")
+    }
 }
 
 ///

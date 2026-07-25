@@ -1,12 +1,13 @@
 use crate::geometry::dim::Dimension2D;
-use crate::window::os::mswin::winapi::{get_client_rect, get_cursor_pos, pt_in_rect};
+use crate::window::os::mswin::winapi::{get_client_rect, get_cursor_pos, pt_in_rect, screen_to_client};
 use windows::Win32::Foundation::HWND;
 
 ///
 /// Determine if the mouse is hovering over the window.
 ///
 pub fn is_mouse_over_window(hwnd: HWND) -> bool {
-    let pos = get_cursor_pos();
+    let mut pos = get_cursor_pos();
+    screen_to_client(hwnd, &mut pos);
     let rect = get_client_rect(hwnd);
     pt_in_rect(&rect, &pos)
 }
