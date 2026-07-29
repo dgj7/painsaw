@@ -56,7 +56,7 @@ pub(super) fn create_3d_cuboid_1() -> Model3D {
         Vertex3D::origin(),
         Vertex3D::origin(),
         Vertex3D::new(0.75, 0.5, -1.0),
-    ), 1.0, 1.0, 1.0);
+    ), 1.0, 1.0, 1.0, 0.0, 0.0);
     Model3DBuilder::new()
         .with_primitive(Primitive3DBuilder::new()
             .with_type(PrimitiveType::Point{point_size: 5.0})
@@ -81,7 +81,7 @@ pub(super) fn create_3d_cuboid_wall_2() -> Model3D {
         Vertex3D::origin(),
         Vertex3D::origin(),
         Vertex3D::new(-0.25, 0.5, -1.0)
-    ), 1.0, 1.0, 1.0);
+    ), 1.0, 1.0, 1.0, 0.0, 0.0);
     Model3DBuilder::new()
         .with_primitive(Primitive3DBuilder::new()
             .with_type(PrimitiveType::Point {point_size: 5.0})

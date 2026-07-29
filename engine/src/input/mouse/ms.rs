@@ -11,6 +11,9 @@ pub struct MouseState {
 }
 
 impl MouseState {
+    ///
+    /// create a new mouse state.
+    ///
     pub fn new(x: i32, y: i32, status: MouseFunctionStatus) -> MouseState {
         MouseState {
             previous: MouseChange::handled(0, 0),

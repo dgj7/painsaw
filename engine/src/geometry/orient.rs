@@ -1,6 +1,7 @@
 use crate::config::EngineConfig;
 use crate::geometry::orient::matrix::m4x4::Matrix4x4;
 use crate::geometry::primitive::v3d::Vertex3D;
+use crate::input::mouse::ms::MouseState;
 use crate::support::timing::EngineTiming;
 
 pub mod matrix;
@@ -12,6 +13,8 @@ pub struct Orientation {
     pub x_scale: f32,
     pub y_scale: f32,
     pub z_scale: f32,
+    pub pitch: f32,
+    pub yaw: f32,
 }
 
 pub struct OrientationBuilder {
@@ -19,15 +22,19 @@ pub struct OrientationBuilder {
     the_x_scale: Option<f32>,
     the_y_scale: Option<f32>,
     the_z_scale: Option<f32>,
+    the_pitch: Option<f32>,
+    the_yaw: Option<f32>,
 }
 
 impl Orientation {
-    pub fn new(position: Matrix4x4, x_scale: f32, y_scale: f32, z_scale: f32) -> Orientation {
+    pub fn new(position: Matrix4x4, x_scale: f32, y_scale: f32, z_scale: f32, pitch: f32,  yaw: f32) -> Orientation {
         Orientation {
             position,
             x_scale,
             y_scale,
             z_scale,
+            pitch,
+            yaw,
         }
     }
 
@@ -42,19 +49,9 @@ impl Orientation {
             x_scale: 1.0,
             y_scale: 1.0,
             z_scale: 1.0,
+            pitch: 0.0,
+            yaw: 0.0,
         }
-    }
-}
-
-impl Orientation {
-    pub fn pitch(&self) -> f32 {
-        // todo
-        0.0
-    }
-
-    pub fn yaw(&self) -> f32 {
-        // todo
-        0.0
     }
 }
 
@@ -110,6 +107,17 @@ impl Orientation {
         /* update the orientation matrix */
         self.position.column_major_update_position(&updated);
     }
+
+    pub fn look(&mut self, change: &MouseState, config: &EngineConfig, _timing: &EngineTiming) {
+        let dx = (change.previous.x - change.current.x) as f32;
+        let dy = (change.previous.y - change.current.y) as f32;
+
+        self.yaw = self.yaw + (dx * config.input.mouse_sensitivity);
+        self.pitch = self.pitch + (dy * config.input.mouse_sensitivity);
+
+        if self.pitch > 89.0 { self.pitch = 89.0; }
+        if self.pitch < -89.0 { self.pitch = -89.0; }
+    }
 }
 
 impl Default for Orientation {
@@ -119,6 +127,8 @@ impl Default for Orientation {
             x_scale: 1.0,
             y_scale: 1.0,
             z_scale: 1.0,
+            pitch: 0.0,
+            yaw: 0.0,
         }
     }
 }
@@ -130,6 +140,8 @@ impl OrientationBuilder {
             the_x_scale: None,
             the_y_scale: None,
             the_z_scale: None,
+            the_pitch: None,
+            the_yaw: None,
         }
     }
 
@@ -159,6 +171,8 @@ impl OrientationBuilder {
             x_scale: self.the_x_scale.unwrap_or_else(|| 1.0),
             y_scale: self.the_y_scale.unwrap_or_else(|| 1.0),
             z_scale: self.the_z_scale.unwrap_or_else(|| 1.0),
+            pitch: self.the_pitch.unwrap_or_else(|| 0.0),
+            yaw: self.the_yaw.unwrap_or_else(|| 0.0),
         }
     }
 }

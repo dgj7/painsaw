@@ -28,8 +28,8 @@ pub(crate) fn ffp_3d_setup(context: &RendererContext) {
     gl_enable(GL_DEPTH_TEST);
 
     /* storage/view: adjust camera, before drawing */
-    gl_rotate_f(-camera.orientation.pitch(), 1.0, 0.0, 0.0);
-    gl_rotate_f(-camera.orientation.yaw(), 0.0, 1.0, 0.0);
+    gl_rotate_f(-camera.orientation.pitch, 1.0, 0.0, 0.0);
+    gl_rotate_f(-camera.orientation.yaw, 0.0, 1.0, 0.0);
     gl_translate_f(-position.x, -position.y, -position.z);
 }
 
@@ -42,11 +42,9 @@ pub(crate) fn ffp_3d_teardown() {
 
 fn ffp_3d_translate(orientation: &Orientation) {
     let position = orientation.position.column_major_position();
-    let yaw = orientation.yaw();
-    let pitch = orientation.pitch();
     gl_translate_f(position.x, position.y, position.z);
-    gl_rotate_f(pitch, 1.0, 0.0, 0.0);
-    gl_rotate_f(yaw, 0.0, 1.0, 0.0);
+    gl_rotate_f(orientation.pitch, 1.0, 0.0, 0.0);
+    gl_rotate_f(orientation.yaw, 0.0, 1.0, 0.0);
     gl_scale_f(orientation.x_scale, orientation.y_scale, orientation.z_scale);
 }
 

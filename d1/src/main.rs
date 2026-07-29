@@ -13,6 +13,7 @@ mod d1m2d;
 mod d1m3d;
 mod d1kh;
 mod d1mh;
+mod d1cmd;
 
 fn main() {
     configure(LoggerConfig { level: LogLevel::Debug, target: LogTarget::StdOut });
