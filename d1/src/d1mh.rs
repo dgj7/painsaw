@@ -5,7 +5,7 @@ use engine::window::context::RendererContext;
 pub(crate) struct MouseInputs {}
 
 impl MouseHandler for MouseInputs {
-    fn handle_mouse_move(&self, _state: &MouseState, _context: &mut RendererContext) {
-        //log(LogLevel::Debug, &|| String::from(format!("mouse-move: ({},{})", x, y)));
+    fn handle_mouse_move(&self, state: &MouseState, context: &mut RendererContext) {
+        context.camera.orientation.look(state, &context.config, &context.timing);
     }
 }
