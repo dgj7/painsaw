@@ -29,7 +29,7 @@ pub fn create_engine_config() -> EngineConfig {
         InputConfig {
             key_handler: Arc::new(KeyInputs {}),
             mouse_handler: Arc::new(MouseInputs{}),
-            mouse_sensitivity: 0.1,
+            mouse_sensitivity: 0.05,
         },
         MoveConfig {
             forward_speed: 2.0,

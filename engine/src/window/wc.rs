@@ -62,7 +62,7 @@ pub trait WorldController {
                     let change = uin.mouse_changes.pop_front().unwrap();
                     let state = uin.mouse_states.get_mut(&change).unwrap();
                     if !state.current.handled {
-                        handle_mouse_change(context.config.input.mouse_handler.clone(), &change, &state, context);
+                        handle_mouse_change(context.config.input.mouse_handler.clone(), &change, state, context);
                         state.current.handled = true;
                     }
                 }

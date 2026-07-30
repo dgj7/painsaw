@@ -4,7 +4,8 @@ use windows::Win32::Foundation::{HWND, LRESULT, POINT, RECT};
 use windows::Win32::Graphics::Gdi::{PtInRect, ScreenToClient};
 use windows::Win32::System::LibraryLoader::GetModuleHandleW;
 use windows::Win32::UI::Input::{GetRawInputData, RegisterRawInputDevices, HRAWINPUT, RAWINPUTDEVICE, RAW_INPUT_DATA_COMMAND_FLAGS};
-use windows::Win32::UI::WindowsAndMessaging::{CreateWindowExW, DefWindowProcW, DispatchMessageW, GetClientRect, GetCursorPos, GetWindowRect, LoadCursorW, PeekMessageW, PostQuitMessage, RegisterClassW, TranslateMessage, HCURSOR, HMENU, MSG, PEEK_MESSAGE_REMOVE_TYPE, WINDOW_EX_STYLE, WINDOW_STYLE, WNDCLASSW};
+use windows::Win32::UI::Input::KeyboardAndMouse::GetActiveWindow;
+use windows::Win32::UI::WindowsAndMessaging::{CreateWindowExW, DefWindowProcW, DispatchMessageW, GetClientRect, GetCursorPos, GetWindowRect, LoadCursorW, PeekMessageW, PostQuitMessage, RegisterClassW, SetCursorPos, TranslateMessage, HCURSOR, HMENU, MSG, PEEK_MESSAGE_REMOVE_TYPE, WINDOW_EX_STYLE, WINDOW_STYLE, WNDCLASSW};
 
 ///
 /// PeekMessageW()
@@ -175,4 +176,22 @@ pub(crate) fn get_raw_input_data(hrawinput: HRAWINPUT, uicommand: RAW_INPUT_DATA
         check_errors_mswin("GetRawInputData");
     }
     result
+}
+
+///
+/// GetActiveWindow()
+///
+pub(crate) fn get_active_window() -> HWND {
+    unsafe { GetActiveWindow() }
+}
+
+///
+/// SetCursorPos()
+///
+pub(crate) fn set_cursor_pos(x: i32, y: i32) {
+    let result = unsafe { SetCursorPos(x, y) };
+    match result {
+        Ok(_) => {}
+        Err(_) => {check_errors_mswin("SetCursorPos")}
+    }
 }

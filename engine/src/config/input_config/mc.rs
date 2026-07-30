@@ -8,7 +8,7 @@ use crate::support::logger::log_level::LogLevel;
 ///
 /// handle mouse inputs.
 ///
-pub fn handle_mouse_change(handler: Arc<dyn MouseHandler>, name: &MouseInputName, state: &MouseState, context: &mut RendererContext) {
+pub fn handle_mouse_change(handler: Arc<dyn MouseHandler>, name: &MouseInputName, state: &mut MouseState, context: &mut RendererContext) {
     match name {
         MouseInputName::MouseLeftButton => handler.handle_left_click(state, context),
         MouseInputName::MouseRightButton => handler.handle_right_click(state, context),
@@ -25,7 +25,7 @@ pub trait MouseHandler {
     ///
     /// handle mouse move.
     ///
-    fn handle_mouse_move(&self, _state: &MouseState, context: &mut RendererContext) {
+    fn handle_mouse_move(&self, _state: &mut MouseState, context: &mut RendererContext) {
         log(LogLevel::Trace, &|| String::from(format!("MouseMove; frame {}", context.frame_count)));
     }
 
