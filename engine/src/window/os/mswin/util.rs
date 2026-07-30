@@ -21,11 +21,21 @@ pub fn find_hwnd() -> HWND {
     get_active_window()
 }
 
-
-pub fn center_mouse() {
+///
+/// find the center of the screen.
+///
+pub fn find_center() -> (i32, i32) {
     let rect = get_client_rect(find_hwnd());
     let cx = (rect.left + rect.right) / 2;
     let cy = (rect.top + rect.bottom) / 2;
+    (cx, cy)
+}
+
+///
+/// move the cursor to the center of the screen.
+///
+pub fn center_mouse() {
+    let (cx, cy) = find_center();
     set_cursor_pos(cx, cy)
 }
 
