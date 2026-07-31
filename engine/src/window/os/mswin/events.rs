@@ -156,17 +156,17 @@ fn handle_message_if_applicable(input: &Arc<Mutex<UserInput>>, hwnd: HWND, messa
             // see also: WM_SIZING: while the user is actively resizing the window
             // see also: WM_ENTERSIZEMOVE: resizing started
             // see also: WM_EXITSIZEMOVE: resizing ended
-            handle_screen_change(input, hwnd, |mut uin| uin.screen_resized = true)
+            handle_screen_change(input, hwnd, |mut uin| uin.screen.screen_resized = true)
         }
         WM_MOVE | WM_MOVING => {
             handle_screen_change(input, hwnd, |_| {})
         }
         WM_SETFOCUS => {
-            input.lock().expect("todo: set-focus").focus.update(KeyChange::Active { info: KeyInputInfo::unhandled() });
+            input.lock().expect("todo: set-focus").screen.focus.update(KeyChange::Active { info: KeyInputInfo::unhandled() });
             HANDLED
         }
         WM_KILLFOCUS => {
-            input.lock().expect("todo: kill-focus").focus.update(KeyChange::Inactive { info: KeyInputInfo::unhandled() });
+            input.lock().expect("todo: kill-focus").screen.focus.update(KeyChange::Inactive { info: KeyInputInfo::unhandled() });
             HANDLED
         }
         // todo: add mouse scroll
@@ -249,11 +249,11 @@ fn handle_screen_change<F>(input: &Arc<Mutex<UserInput>>, hwnd: HWND, other_chan
     /* update input state */
     match input.lock() {
         Ok(mut uin) => {
-            uin.update_client_dimensions(client_dimensions);
-            uin.update_window_dimensions(window_dimensions);
-            uin.update_client_rectangle(Rectangle2D::new(client_rect));
-            uin.update_window_rectangle(Rectangle2D::new(window_rect));
-            uin.update_screen_center();
+            uin.screen.update_client_dimensions(client_dimensions);
+            uin.screen.update_window_dimensions(window_dimensions);
+            uin.screen.update_client_rectangle(Rectangle2D::new(client_rect));
+            uin.screen.update_window_rectangle(Rectangle2D::new(window_rect));
+            uin.screen.update_screen_center();
             other_change(uin);
         }
         Err(_) => panic!("todo: handle_screen_change()")

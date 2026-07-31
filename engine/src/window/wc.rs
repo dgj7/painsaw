@@ -52,8 +52,8 @@ pub trait WorldController {
                 context.config.input.key_handler.clone().check_key_states(&uin.key_states, context);
 
                 /* handle screen resize */
-                if uin.screen_resized {
-                    context.camera.update_screen(&uin.current_client_dimensions);
+                if uin.screen.screen_resized {
+                    context.camera.update_screen(&uin.screen.current_client_dimensions);
                     context.graphics.resize(context);
                 }
 
@@ -74,7 +74,7 @@ pub trait WorldController {
 
         match context.input.lock() {
             Ok(mut uin) => {
-                uin.screen_resized = false;
+                uin.screen.screen_resized = false;
             }
             Err(_) => {panic!("todo: resetting screen_resized")}
         }

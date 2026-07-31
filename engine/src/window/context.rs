@@ -38,7 +38,7 @@ pub struct RendererContext {
 
 impl RendererContext {
     pub(crate) fn new(input: &Arc<Mutex<UserInput>>, config: EngineConfig) -> RendererContext {
-        let dim = &input.lock().unwrap().current_client_dimensions.clone();
+        let dim = &input.lock().unwrap().screen.current_client_dimensions.clone();
         log(LogLevel::Info, &|| String::from(format!("initializing camera with width={},height={}", &dim.width, &dim.height)));
         RendererContext {
             first_frame_rendered: false,

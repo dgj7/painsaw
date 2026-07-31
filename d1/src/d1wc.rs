@@ -31,10 +31,10 @@ impl WorldController for Demo1WorldController {
         match context.input.clone().lock() {
             Ok(uin) => {
                 /* gather some variables */
-                let ccd = uin.current_client_dimensions.clone();
+                let ccd = uin.screen.current_client_dimensions.clone();
 
                 /* handle window resize for grid */
-                if uin.screen_resized {
+                if uin.screen.screen_resized {
                     context.g2d.update(M2D_XY_PURPLE, |e| *e = create_2d_axes(&context.camera));
                     context.g2d.update(M2D_X_HORIZ, |e| *e = create_2d_grid_x_lines(&context.camera));
                     context.g2d.update(M2D_Y_VERT, |e| *e = create_2d_grid_y_lines(&context.camera));
