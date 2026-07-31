@@ -10,7 +10,7 @@ use std::sync::{Arc, Mutex};
 
 pub mod keyboard;
 pub mod mouse;
-mod screen;
+pub mod screen;
 
 #[derive(Clone, Debug)]
 pub struct UserInput {
