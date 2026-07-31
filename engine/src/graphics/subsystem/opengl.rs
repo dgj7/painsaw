@@ -7,7 +7,7 @@ use crate::graphics::subsystem::opengl::ffp::ffp3d::{ffp_3d_lines, ffp_3d_points
 use crate::graphics::subsystem::opengl::ffp::{ffp_before_scene, ffp_resize};
 use crate::graphics::subsystem::RendererInfo;
 use crate::graphics::subsystem::{OpenGLPipeline, RenderingSubSystemHandle};
-use crate::window::context::RendererContext;
+use crate::PainsawContext;
 use ffp::api::gl_get_string;
 use ffp::ffp2d::{ffp_2d_setup, ffp_2d_teardown, ffp_render_2d_lines, ffp_render_2d_points, ffp_render_2d_texture};
 use windows::Win32::Graphics::OpenGL::{GL_RENDERER, GL_VENDOR, GL_VERSION};
@@ -43,7 +43,7 @@ impl RenderingSubSystemHandle for OpenGLHandle {
         }
     }
 
-    fn resize(&self, context: &RendererContext) {
+    fn resize(&self, context: &PainsawContext) {
         match self.pipeline {
             OpenGLPipeline::FixedFunction => {ffp_resize(&context.camera)}
             OpenGLPipeline::ProgrammableShader => {}
@@ -97,7 +97,7 @@ impl RenderingSubSystemHandle for OpenGLHandle {
         }
     }
 
-    fn prepare_3d(&self, context: &RendererContext) {
+    fn prepare_3d(&self, context: &PainsawContext) {
         match self.pipeline {
             OpenGLPipeline::FixedFunction => {ffp_3d_setup(context)},
             OpenGLPipeline::ProgrammableShader => {}
@@ -137,7 +137,7 @@ impl RenderingSubSystemHandle for OpenGLHandle {
         }
     }
 
-    fn after_3d(&self, _context: &RendererContext) {
+    fn after_3d(&self, _context: &PainsawContext) {
         match self.pipeline {
             OpenGLPipeline::FixedFunction => {ffp_3d_teardown()},
             OpenGLPipeline::ProgrammableShader => {},

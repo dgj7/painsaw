@@ -6,7 +6,7 @@ use engine::input::keyboard::kin::KeyInputName::{KeyA, KeyD, KeyS, KeyW};
 use engine::input::keyboard::ks::KeyState;
 use engine::support::logger::log;
 use engine::support::logger::log_level::LogLevel;
-use engine::window::context::RendererContext;
+use engine::PainsawContext;
 use std::collections::HashMap;
 use std::sync::{LazyLock, Mutex};
 
@@ -22,7 +22,7 @@ static KEYS: LazyLock<Mutex<HashMap<KeyInputName, Command>>> = LazyLock::new(|| 
 pub(crate) struct KeyInputs {}
 
 impl KeyHandler for KeyInputs {
-    fn check_key_states(&self, states: &HashMap<KeyInputName, KeyState>, context: &mut RendererContext) {
+    fn check_key_states(&self, states: &HashMap<KeyInputName, KeyState>, context: &mut PainsawContext) {
         states.into_iter()
             .filter(|(_, input_state)| input_state.current.is_active())
             .for_each(|(key_name, _)| {
@@ -34,7 +34,7 @@ impl KeyHandler for KeyInputs {
             });
     }
 
-    fn handle_g_key_change(&self, name: &KeyInputName, state: &mut KeyState, _context: &mut RendererContext) {
+    fn handle_g_key_change(&self, name: &KeyInputName, state: &mut KeyState, _context: &mut PainsawContext) {
         let duration = state.previous_key_state_duration();
         log(LogLevel::Debug, &|| {
             String::from(format!(

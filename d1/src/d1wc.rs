@@ -2,8 +2,8 @@ use crate::d1m2d::{create_2d_axes, create_2d_crosshairs, create_2d_grid_x_lines,
 use crate::d1m3d::{create_3d_axes, create_3d_cuboid_1, create_3d_cuboid_wall_2};
 use engine::support::logger::log;
 use engine::support::logger::log_level::LogLevel;
-use engine::window::context::RendererContext;
-use engine::window::wc::WorldController;
+use engine::PainsawContext;
+use engine::WorldController;
 
 static M2D_XY_PURPLE: &str = "1-2d-xy-purple";
 static M2D_X_HORIZ: &str = "2-2d-x-horizontal";
@@ -13,7 +13,7 @@ static M2D_CROSSHAIRS : &str = "999-2d-crosshairs";
 pub(crate) struct Demo1WorldController {}
 
 impl WorldController for Demo1WorldController {
-    fn initialize_world_helper(&self, context: &mut RendererContext) {
+    fn initialize_world_helper(&self, context: &mut PainsawContext) {
         /* 2d */
         context.g2d.attach(M2D_XY_PURPLE, create_2d_axes(&context.camera));
         context.g2d.attach(M2D_X_HORIZ, create_2d_grid_x_lines(&context.camera));
@@ -27,7 +27,7 @@ impl WorldController for Demo1WorldController {
         context.g3d.attach("6-3d-cuboid-wall-2", create_3d_cuboid_wall_2());
     }
 
-    fn update_world_helper(&self, context: &mut RendererContext) {
+    fn update_world_helper(&self, context: &mut PainsawContext) {
         match context.input.clone().lock() {
             Ok(uin) => {
                 /* gather some variables */

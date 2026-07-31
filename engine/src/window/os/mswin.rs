@@ -5,12 +5,12 @@ use crate::graphics::subsystem::GraphicsSubSystem;
 use crate::input::UserInput;
 use crate::support::logger::log;
 use crate::support::logger::log_level::LogLevel;
-use crate::window::context::RendererContext;
+use crate::PainsawContext;
 use crate::window::os::mswin::events::wndproc;
 use crate::window::os::mswin::userdata::input_state_to_raw_pointer;
 use crate::window::os::mswin::winapi::{create_window_ex, dispatch_message, get_module_handle, load_cursor, peek_message, register_class, register_raw_input_devices, translate_message};
-use crate::window::os::Window;
-use crate::window::wc::WorldController;
+use crate::window::Window;
+use crate::WorldController;
 use std::sync::{Arc, Mutex};
 use windows::Win32::Foundation::{HINSTANCE, HWND};
 use windows::Win32::Graphics::Gdi::HDC;
@@ -44,7 +44,7 @@ impl Window for MsWinWindow {
     fn begin_event_handling(&mut self, wc: Box<dyn WorldController>, config: EngineConfig) -> Result<(), Box<dyn std::error::Error>> {
         log(LogLevel::Info, &|| "begin event handling".parse().unwrap());
         let mut message: MSG = MSG::default();
-        let mut context = RendererContext::new(&self.input, config);
+        let mut context = PainsawContext::new(&self.input, config);
 
         /* initialize client renderer, if necessary */
         wc.initialize_world(&mut context);

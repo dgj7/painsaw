@@ -7,7 +7,7 @@ use crate::graphics::subsystem::{grss_factory, GraphicsSubSystem, RenderingSubSy
 use crate::support::timing::EngineTiming;
 use crate::support::logger::log;
 use crate::support::logger::log_level::LogLevel;
-use crate::window::context::RendererContext;
+use crate::PainsawContext;
 use storage::g2d::Graph2D;
 use storage::g3d::Graph3D;
 use subsystem::RendererInfo;
@@ -50,7 +50,7 @@ impl GraphicsIntermediary {
         log(LogLevel::Debug, &|| String::from("initialization complete"));
     }
 
-    pub(crate) fn resize(&self, context: &RendererContext) {
+    pub(crate) fn resize(&self, context: &PainsawContext) {
         self.subsystem.resize(context);
     }
 
@@ -84,7 +84,7 @@ impl GraphicsIntermediary {
         self.subsystem.after_2d();
     }
 
-    pub(crate) fn prepare_3d(&self, context: &RendererContext) {
+    pub(crate) fn prepare_3d(&self, context: &PainsawContext) {
         self.subsystem.prepare_3d(context);
     }
 
@@ -92,7 +92,7 @@ impl GraphicsIntermediary {
         self.subsystem.render_3d(g3d);
     }
 
-    pub(crate) fn after_3d(&self, context: &RendererContext) {
+    pub(crate) fn after_3d(&self, context: &PainsawContext) {
         self.subsystem.after_3d(context);
     }
 }
