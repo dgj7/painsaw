@@ -1,8 +1,6 @@
-use std::time::Instant;
 use crate::input::mouse::mc::MouseChange;
 use crate::input::mouse::mfs::MouseFunctionStatus;
-use crate::support::logger::log;
-use crate::support::logger::log_level::LogLevel;
+use std::time::Instant;
 
 #[derive(Clone, Debug)]
 pub struct MouseState {
@@ -34,13 +32,11 @@ impl MouseState {
         if self.current.handled {
             self.previous = self.current.clone();
             self.current = MouseChange::unhandled(x, y, status.clone());
-            log(LogLevel::Info, &|| String::from(format!("new: x={}, y={}, status={:?}", x, y, status)));
         } else {
             self.current.x = x;
             self.current.y = y;
             self.current.status = status.clone();
             self.current.when = Instant::now();
-            log(LogLevel::Info, &|| String::from(format!("update: x={}, y={}, status={:?}", x, y, status)));
         }
     }
 }

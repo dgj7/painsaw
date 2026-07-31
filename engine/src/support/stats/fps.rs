@@ -1,17 +1,11 @@
 use crate::config::EngineConfig;
-use crate::graphics::color::Color;
-use crate::graphics::texture::t2d::Texture2DBuilder;
-use crate::support::text::{text_2d_image, TextConfig, Typeface};
 use crate::graphics::storage::g2d::Graph2D;
 use crate::graphics::storage::m2d::{Model2D, Model2DBuilder};
+use crate::graphics::texture::t2d::Texture2DBuilder;
 use crate::support::image::RawImage;
+use crate::support::stats::TC;
+use crate::support::text::{text_2d_image, TextConfig};
 use crate::support::timing::EngineTiming;
-
-static TC: TextConfig = TextConfig {
-    foreground: Color::RED,
-    background: Color::TRANSPARENT,
-    typeface: Typeface::Generic,
-};
 
 pub(crate) fn show_fps(g2d: &mut Graph2D, timing: &EngineTiming, config: &EngineConfig) {
     /* nothing to do if not enabled */

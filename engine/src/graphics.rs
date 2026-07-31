@@ -1,7 +1,7 @@
 use crate::config::EngineConfig;
 use crate::graphics::camera::Camera;
-use crate::support::hud::coords::show_cam_coords;
-use crate::support::hud::fps::show_fps;
+use crate::support::stats::coords::show_cam_coords;
+use crate::support::stats::fps::show_fps;
 use crate::graphics::subsystem::{grss_factory, GraphicsSubSystem, RenderingSubSystemHandle};
 use crate::support::timing::EngineTiming;
 use crate::support::logger::log;

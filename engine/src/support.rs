@@ -5,7 +5,7 @@
 pub mod logger;
 pub mod resource;
 pub mod text;
-pub(crate) mod hud;
+pub(crate) mod stats;
 pub mod timing;
 pub mod image;
 pub(crate) mod binary;
