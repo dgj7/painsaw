@@ -1,17 +1,15 @@
 use crate::geometry::dim::Dimension2D;
-use keyboard::kc::KeyChange;
-use keyboard::kii::KeyInputInfo;
-use keyboard::ks::KeyState;
-use keyboard::kin::KeyInputName;
-use mouse::min::MouseInputName;
-use std::collections::{HashMap, VecDeque};
-use std::sync::{Arc, Mutex};
 use crate::geometry::primitive::v2d::Vertex2D;
 use crate::geometry::rect::Rectangle2D;
 use crate::input::mouse::mfs::MouseFunctionStatus;
 use crate::input::mouse::ms::MouseState;
-use crate::support::logger::log;
-use crate::support::logger::log_level::LogLevel;
+use keyboard::kc::KeyChange;
+use keyboard::kii::KeyInputInfo;
+use keyboard::kin::KeyInputName;
+use keyboard::ks::KeyState;
+use mouse::min::MouseInputName;
+use std::collections::{HashMap, VecDeque};
+use std::sync::{Arc, Mutex};
 
 pub mod keyboard;
 pub mod mouse;
@@ -37,6 +35,8 @@ pub struct UserInput {
     pub current_client_rect: Rectangle2D,
     pub previous_window_rect: Rectangle2D,
     pub current_window_rect: Rectangle2D,
+    pub window_center: Vertex2D,
+    pub client_center: Vertex2D,
 }
 
 impl UserInput {
@@ -63,6 +63,8 @@ impl UserInput {
             current_client_rect: Rectangle2D { top_left: Vertex2D { x: 0.0, y: 0.0 }, bottom_right: Vertex2D { x: 0.0, y: 0.0 }},
             previous_window_rect: Rectangle2D { top_left: Vertex2D { x: 0.0, y: 0.0 }, bottom_right: Vertex2D { x: 0.0, y: 0.0 }},
             current_window_rect: Rectangle2D { top_left: Vertex2D { x: 0.0, y: 0.0 }, bottom_right: Vertex2D { x: 0.0, y: 0.0 }},
+            window_center: Vertex2D::origin(),
+            client_center: Vertex2D::origin(),
         }))
     }
 
@@ -112,8 +114,6 @@ impl UserInput {
         self.current_client_rect.top_left.y = current.top_left.y;
         self.current_client_rect.bottom_right.x = current.bottom_right.x;
         self.current_client_rect.bottom_right.y = current.bottom_right.y;
-
-        log(LogLevel::Info, &|| String::from("updated client rect"));
     }
     
     pub fn update_window_rectangle(&mut self, current: Rectangle2D) {
@@ -126,7 +126,17 @@ impl UserInput {
         self.current_window_rect.top_left.y = current.top_left.y;
         self.current_window_rect.bottom_right.x = current.bottom_right.x;
         self.current_window_rect.bottom_right.y = current.bottom_right.y;
+    }
 
-        log(LogLevel::Info, &|| String::from("updated window rect"));
+    pub fn update_screen_center(&mut self) {
+        let wx = (self.current_window_rect.top_left.x + self.current_window_rect.bottom_right.x) / 2.0;
+        let wy = (self.current_window_rect.top_left.y + self.current_window_rect.bottom_right.y) / 2.0;
+        self.window_center.x = wx;
+        self.window_center.y = wy;
+
+        let cx = (self.current_client_rect.top_left.x + self.current_client_rect.bottom_right.x) / 2.0;
+        let cy = (self.current_client_rect.top_left.y + self.current_client_rect.bottom_right.y) / 2.0;
+        self.client_center.x = cx;
+        self.client_center.y = cy;
     }
 }

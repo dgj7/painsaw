@@ -11,6 +11,8 @@ use crate::window::context::RendererContext;
 use storage::g2d::Graph2D;
 use storage::g3d::Graph3D;
 use subsystem::RendererInfo;
+use crate::geometry::primitive::v2d::Vertex2D;
+use crate::input::mouse::min::MouseInputName;
 use crate::input::UserInput;
 use crate::support::stats::screen::show_screen_stats;
 
@@ -61,13 +63,20 @@ impl GraphicsIntermediary {
     }
 
     pub(crate) fn render_2d(&mut self, g2d: &mut Graph2D, timing: &EngineTiming, config: &EngineConfig, camera: &Camera, input: MutexGuard<UserInput>) {
+        /* track down the mouse position */
+        let mouse_pos = input.mouse_states.get(&MouseInputName::MouseMove)
+            .map(|ms| (ms.current.x as f32, ms.current.y as f32))
+            .or_else(|| Some((0.0, 0.0)))
+            .map(|(x,y)| Vertex2D::new(x, y))
+            .unwrap();
+
         /* render primitives */
         self.subsystem.render_2d(g2d);
 
         /* conditional display */
         show_fps(g2d, timing, config);
         show_cam_coords(g2d, config, camera);
-        show_screen_stats(g2d, config, &input.current_client_rect, &input.current_window_rect);
+        show_screen_stats(g2d, config, &input.current_client_rect, &input.current_window_rect, &input.client_center, &input.window_center, &mouse_pos);
     }
 
     pub(crate) fn after_2d(&self) {

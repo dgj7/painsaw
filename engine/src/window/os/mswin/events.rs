@@ -235,22 +235,30 @@ fn gather_raw_mouse(hwnd: HWND, lparam: LPARAM) -> Option<(i32, i32)> {
 fn handle_screen_change<F>(input: &Arc<Mutex<UserInput>>, hwnd: HWND, other_change: F) -> bool
     where
         F: FnOnce(MutexGuard<UserInput>),
-    {
+{
+    /* get the various screen stats from win32 */
     let window_dimensions = get_window_rect_dim2d(hwnd);
     let window_rect = get_window_rect(hwnd);
     let client_dimensions = get_client_rect_dim2d(hwnd);
     let client_rect = get_client_rect(hwnd);
+    
+    /* log what we pulled */
     log(LogLevel::Trace, &|| String::from(format!("window: {:?}", window_dimensions)));
     log(LogLevel::Trace, &|| String::from(format!("client: {:?}", client_dimensions)));
+    
+    /* update input state */
     match input.lock() {
         Ok(mut uin) => {
             uin.update_client_dimensions(client_dimensions);
             uin.update_window_dimensions(window_dimensions);
             uin.update_client_rectangle(Rectangle2D::new(client_rect));
             uin.update_window_rectangle(Rectangle2D::new(window_rect));
+            uin.update_screen_center();
             other_change(uin);
         }
         Err(_) => panic!("todo: handle_screen_change()")
     }
+    
+    /* done */
     HANDLED
 }

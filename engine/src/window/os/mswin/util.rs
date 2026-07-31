@@ -1,6 +1,6 @@
 use crate::geometry::dim::Dimension2D;
-use crate::window::os::mswin::winapi::{get_active_window, get_client_rect, get_cursor_pos, pt_in_rect, screen_to_client, set_cursor_pos};
-use windows::Win32::Foundation::{HWND};
+use crate::window::os::mswin::winapi::{get_active_window, get_client_rect, get_cursor_pos, pt_in_rect, screen_to_client};
+use windows::Win32::Foundation::HWND;
 
 ///
 /// Determine if the mouse is hovering over the window.
@@ -19,24 +19,6 @@ pub fn is_mouse_over_window(hwnd: HWND) -> bool {
 ///
 pub fn find_hwnd() -> HWND {
     get_active_window()
-}
-
-///
-/// find the center of the screen.
-///
-pub fn find_center() -> (i32, i32) {
-    let rect = get_client_rect(find_hwnd());
-    let cx = (rect.left + rect.right) / 2;
-    let cy = (rect.top + rect.bottom) / 2;
-    (cx, cy)
-}
-
-///
-/// move the cursor to the center of the screen.
-///
-pub fn center_mouse() {
-    let (cx, cy) = find_center();
-    set_cursor_pos(cx, cy)
 }
 
 ///
