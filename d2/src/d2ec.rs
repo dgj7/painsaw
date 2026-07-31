@@ -24,6 +24,7 @@ pub fn create_engine_config() -> EngineConfig {
             },
             show_fps: true,
             show_cam_coords: false,
+            show_screen_stats: false,
             fps_cap: Some(240),
         },
         InputConfig {

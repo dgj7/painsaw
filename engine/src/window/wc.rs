@@ -90,6 +90,9 @@ pub trait WorldController {
     /// during the update world step.
     ///
     fn display_world_scene(&self, context: &mut RendererContext) {
+        /* gather variables */
+        let uin = context.input.lock().unwrap();
+        
         /* prepare for drawing */
         context.graphics.before_scene(&context.camera);
 
@@ -100,7 +103,7 @@ pub trait WorldController {
 
         /* draw 2d, if desired */
         context.graphics.prepare_2d(&mut context.g2d, &context.camera);
-        context.graphics.render_2d(&mut context.g2d, &context.timing, &context.config, &context.camera);
+        context.graphics.render_2d(&mut context.g2d, &context.timing, &context.config, &context.camera, uin);
         context.graphics.after_2d();
     }
 }

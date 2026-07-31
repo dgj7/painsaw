@@ -8,12 +8,13 @@ use crate::support::logger::log;
 use crate::support::logger::log_level::LogLevel;
 use crate::window::os::mswin::userdata::{create_and_write_pointer, read_window_data};
 use crate::window::os::mswin::util::{get_client_rect_dim2d, get_window_rect_dim2d, is_mouse_over_window};
-use crate::window::os::mswin::winapi::{default_window_proc, get_cursor_pos, get_raw_input_data, post_quit_message, screen_to_client};
-use std::sync::{Arc, Mutex};
+use crate::window::os::mswin::winapi::{default_window_proc, get_client_rect, get_cursor_pos, get_raw_input_data, get_window_rect, post_quit_message, screen_to_client};
+use std::sync::{Arc, Mutex, MutexGuard};
 use windows::Win32::Foundation::{HWND, LPARAM, LRESULT, WPARAM};
 use windows::Win32::UI::Input::KeyboardAndMouse::{VIRTUAL_KEY, VK_A, VK_D, VK_ESCAPE, VK_G, VK_M, VK_S, VK_W};
 use windows::Win32::UI::Input::{HRAWINPUT, RAWINPUT, RAWINPUTHEADER, RID_INPUT, RIM_TYPEMOUSE};
-use windows::Win32::UI::WindowsAndMessaging::{WM_CLOSE, WM_CREATE, WM_DESTROY, WM_INPUT, WM_KEYDOWN, WM_KEYUP, WM_KILLFOCUS, WM_LBUTTONDOWN, WM_LBUTTONUP, WM_QUIT, WM_RBUTTONDOWN, WM_RBUTTONUP, WM_SETFOCUS, WM_SIZE};
+use windows::Win32::UI::WindowsAndMessaging::{WM_CLOSE, WM_CREATE, WM_DESTROY, WM_INPUT, WM_KEYDOWN, WM_KEYUP, WM_KILLFOCUS, WM_LBUTTONDOWN, WM_LBUTTONUP, WM_MOVE, WM_MOVING, WM_QUIT, WM_RBUTTONDOWN, WM_RBUTTONUP, WM_SETFOCUS, WM_SIZE};
+use crate::geometry::rect::Rectangle2D;
 
 ///
 /// required window procedure, for handling win32 event messages.
@@ -155,19 +156,10 @@ fn handle_message_if_applicable(input: &Arc<Mutex<UserInput>>, hwnd: HWND, messa
             // see also: WM_SIZING: while the user is actively resizing the window
             // see also: WM_ENTERSIZEMOVE: resizing started
             // see also: WM_EXITSIZEMOVE: resizing ended
-            let window_dimensions = get_window_rect_dim2d(hwnd);
-            let client_dimensions = get_client_rect_dim2d(hwnd);
-            log(LogLevel::Trace, &|| String::from(format!("window: {:?}", window_dimensions)));
-            log(LogLevel::Trace, &|| String::from(format!("client: {:?}", client_dimensions)));
-            match input.lock() {
-                Ok(mut uin) => {
-                    uin.screen_resized = true;
-                    uin.update_client_dimensions(client_dimensions);
-                    uin.update_window_dimensions(window_dimensions);
-                }
-                Err(_) => panic!("todo: wm_size")
-            }
-            HANDLED
+            handle_screen_change(input, hwnd, |mut uin| uin.screen_resized = true)
+        }
+        WM_MOVE | WM_MOVING => {
+            handle_screen_change(input, hwnd, |_| {})
         }
         WM_SETFOCUS => {
             input.lock().expect("todo: set-focus").focus.update(KeyChange::Active { info: KeyInputInfo::unhandled() });
@@ -235,4 +227,30 @@ fn gather_raw_mouse(hwnd: HWND, lparam: LPARAM) -> Option<(i32, i32)> {
     } else {
         None
     }
+}
+
+///
+/// handle a change in the screen position or dimensions.
+///
+fn handle_screen_change<F>(input: &Arc<Mutex<UserInput>>, hwnd: HWND, other_change: F) -> bool
+    where
+        F: FnOnce(MutexGuard<UserInput>),
+    {
+    let window_dimensions = get_window_rect_dim2d(hwnd);
+    let window_rect = get_window_rect(hwnd);
+    let client_dimensions = get_client_rect_dim2d(hwnd);
+    let client_rect = get_client_rect(hwnd);
+    log(LogLevel::Trace, &|| String::from(format!("window: {:?}", window_dimensions)));
+    log(LogLevel::Trace, &|| String::from(format!("client: {:?}", client_dimensions)));
+    match input.lock() {
+        Ok(mut uin) => {
+            uin.update_client_dimensions(client_dimensions);
+            uin.update_window_dimensions(window_dimensions);
+            uin.update_client_rectangle(Rectangle2D::new(client_rect));
+            uin.update_window_rectangle(Rectangle2D::new(window_rect));
+            other_change(uin);
+        }
+        Err(_) => panic!("todo: handle_screen_change()")
+    }
+    HANDLED
 }

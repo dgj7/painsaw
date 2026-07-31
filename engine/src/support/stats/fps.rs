@@ -3,7 +3,7 @@ use crate::graphics::storage::g2d::Graph2D;
 use crate::graphics::storage::m2d::{Model2D, Model2DBuilder};
 use crate::graphics::texture::t2d::Texture2DBuilder;
 use crate::support::image::RawImage;
-use crate::support::stats::TC;
+use crate::support::stats::{TC, X_POS};
 use crate::support::text::{text_2d_image, TextConfig};
 use crate::support::timing::EngineTiming;
 
@@ -28,7 +28,7 @@ fn create_text(config: TextConfig, fps: u32, avg: u32) -> RawImage {
 fn create_model(config: TextConfig, fps: u32, avg: u32) -> Model2D {
     Model2DBuilder::new()
         .with_texture(Texture2DBuilder::new()
-            .with_x(10.0)
+            .with_x(X_POS)
             .with_y(5.0)
             .with_image(create_text(config, fps, avg))
             .build())

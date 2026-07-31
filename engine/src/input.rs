@@ -6,8 +6,12 @@ use keyboard::kin::KeyInputName;
 use mouse::min::MouseInputName;
 use std::collections::{HashMap, VecDeque};
 use std::sync::{Arc, Mutex};
+use crate::geometry::primitive::v2d::Vertex2D;
+use crate::geometry::rect::Rectangle2D;
 use crate::input::mouse::mfs::MouseFunctionStatus;
 use crate::input::mouse::ms::MouseState;
+use crate::support::logger::log;
+use crate::support::logger::log_level::LogLevel;
 
 pub mod keyboard;
 pub mod mouse;
@@ -29,6 +33,10 @@ pub struct UserInput {
     pub current_window_dimensions: Dimension2D,
     pub screen_resized: bool,
     pub focus: KeyState,
+    pub previous_client_rect: Rectangle2D,
+    pub current_client_rect: Rectangle2D,
+    pub previous_window_rect: Rectangle2D,
+    pub current_window_rect: Rectangle2D,
 }
 
 impl UserInput {
@@ -51,6 +59,10 @@ impl UserInput {
             focus: KeyState::new(KeyChange::Active {
                 info: KeyInputInfo::handled(),
             }),
+            previous_client_rect: Rectangle2D { top_left: Vertex2D { x: 0.0, y: 0.0 }, bottom_right: Vertex2D { x: 0.0, y: 0.0 }},
+            current_client_rect: Rectangle2D { top_left: Vertex2D { x: 0.0, y: 0.0 }, bottom_right: Vertex2D { x: 0.0, y: 0.0 }},
+            previous_window_rect: Rectangle2D { top_left: Vertex2D { x: 0.0, y: 0.0 }, bottom_right: Vertex2D { x: 0.0, y: 0.0 }},
+            current_window_rect: Rectangle2D { top_left: Vertex2D { x: 0.0, y: 0.0 }, bottom_right: Vertex2D { x: 0.0, y: 0.0 }},
         }))
     }
 
@@ -88,5 +100,33 @@ impl UserInput {
         /* new info goes into current */
         self.current_window_dimensions.height = current.height;
         self.current_window_dimensions.width = current.width;
+    }
+    
+    pub fn update_client_rectangle(&mut self, current: Rectangle2D) {
+        self.previous_client_rect.top_left.x = self.current_client_rect.top_left.x;
+        self.previous_client_rect.top_left.y = self.current_client_rect.top_left.y;
+        self.previous_client_rect.bottom_right.x = self.current_client_rect.bottom_right.x;
+        self.previous_client_rect.bottom_right.y = self.current_client_rect.bottom_right.y;
+        
+        self.current_client_rect.top_left.x = current.top_left.x;
+        self.current_client_rect.top_left.y = current.top_left.y;
+        self.current_client_rect.bottom_right.x = current.bottom_right.x;
+        self.current_client_rect.bottom_right.y = current.bottom_right.y;
+
+        log(LogLevel::Info, &|| String::from("updated client rect"));
+    }
+    
+    pub fn update_window_rectangle(&mut self, current: Rectangle2D) {
+        self.previous_window_rect.top_left.x = self.current_window_rect.top_left.x;
+        self.previous_window_rect.top_left.y = self.current_window_rect.top_left.y;
+        self.previous_window_rect.bottom_right.x = self.current_window_rect.bottom_right.x;
+        self.previous_window_rect.bottom_right.y = self.current_window_rect.bottom_right.y;
+        
+        self.current_window_rect.top_left.x = current.top_left.x;
+        self.current_window_rect.top_left.y = current.top_left.y;
+        self.current_window_rect.bottom_right.x = current.bottom_right.x;
+        self.current_window_rect.bottom_right.y = current.bottom_right.y;
+
+        log(LogLevel::Info, &|| String::from("updated window rect"));
     }
 }

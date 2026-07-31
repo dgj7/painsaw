@@ -4,6 +4,7 @@ pub struct RendererConfig {
     pub graphics: GraphicsSubSystem,
     pub show_fps: bool,
     pub show_cam_coords: bool,
+    pub show_screen_stats: bool,
     pub fps_cap: Option<u16>,
 }
 
@@ -14,6 +15,7 @@ impl RendererConfig {
 
             show_fps: false,
             show_cam_coords: false,
+            show_screen_stats: false,
 
             fps_cap: None,
         }
@@ -29,6 +31,7 @@ impl Default for RendererConfig {
 
             show_fps: false,
             show_cam_coords: false,
+            show_screen_stats: false,
 
             fps_cap: None,
         }

@@ -1,3 +1,4 @@
+use std::sync::MutexGuard;
 use crate::config::EngineConfig;
 use crate::graphics::camera::Camera;
 use crate::support::stats::coords::show_cam_coords;
@@ -10,6 +11,8 @@ use crate::window::context::RendererContext;
 use storage::g2d::Graph2D;
 use storage::g3d::Graph3D;
 use subsystem::RendererInfo;
+use crate::input::UserInput;
+use crate::support::stats::screen::show_screen_stats;
 
 pub mod camera;
 pub mod color;
@@ -57,13 +60,14 @@ impl GraphicsIntermediary {
         self.subsystem.prepare_2d(camera, g2d);
     }
 
-    pub(crate) fn render_2d(&mut self, g2d: &mut Graph2D, timing: &EngineTiming, config: &EngineConfig, camera: &Camera) {
+    pub(crate) fn render_2d(&mut self, g2d: &mut Graph2D, timing: &EngineTiming, config: &EngineConfig, camera: &Camera, input: MutexGuard<UserInput>) {
         /* render primitives */
         self.subsystem.render_2d(g2d);
 
         /* conditional display */
         show_fps(g2d, timing, config);
-        show_cam_coords(g2d, config, camera, 1.0);
+        show_cam_coords(g2d, config, camera);
+        show_screen_stats(g2d, config, &input.current_client_rect, &input.current_window_rect);
     }
 
     pub(crate) fn after_2d(&self) {
