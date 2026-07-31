@@ -1,4 +1,4 @@
-use crate::window::os::mswin::errors::check_errors_mswin;
+use crate::window::mswin::errors::check_errors_mswin;
 use windows::Win32::Foundation;
 use windows::Win32::Foundation::{HWND, LRESULT, POINT, RECT};
 use windows::Win32::Graphics::Gdi::{PtInRect, ScreenToClient};

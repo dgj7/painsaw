@@ -2,9 +2,9 @@ use std::error::Error;
 use std::panic;
 use std::panic::AssertUnwindSafe;
 use crate::config::EngineConfig;
-use crate::window::os::mswin::MsWinWindow;
+use crate::window::mswin::MsWinWindow;
 use crate::window::Window;
-use crate::window::window_error::WindowingError;
+use crate::window::error::WindowingError;
 
 ///
 /// Create a window.

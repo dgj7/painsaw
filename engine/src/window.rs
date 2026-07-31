@@ -1,10 +1,13 @@
 use crate::config::EngineConfig;
 use crate::WorldController;
 
-pub mod os;
-pub mod window_error;
+pub mod error;
 pub mod api;
+pub mod mswin;
 
+///
+/// shared definition of a screen that we render to; not specific to any host operating system.
+/// 
 pub trait Window {
     fn begin_event_handling(&mut self, renderer: Box<dyn WorldController>, config: EngineConfig) -> Result<(), Box<dyn std::error::Error>>;
 }

@@ -1,5 +1,5 @@
 use crate::geometry::dim::Dimension2D;
-use crate::window::os::mswin::winapi::{get_active_window, get_client_rect, get_cursor_pos, pt_in_rect, screen_to_client};
+use crate::window::mswin::winapi::{get_active_window, get_client_rect, get_cursor_pos, pt_in_rect, screen_to_client};
 use windows::Win32::Foundation::HWND;
 
 ///
