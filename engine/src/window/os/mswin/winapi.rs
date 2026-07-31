@@ -181,6 +181,7 @@ pub(crate) fn get_raw_input_data(hrawinput: HRAWINPUT, uicommand: RAW_INPUT_DATA
 ///
 /// GetActiveWindow()
 ///
+#[allow(unused)]// todo: remove this
 pub(crate) fn get_active_window() -> HWND {
     unsafe { GetActiveWindow() }
 }

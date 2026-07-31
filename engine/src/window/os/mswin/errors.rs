@@ -9,7 +9,7 @@ use std::panic::Location;
 /// I don't know why last_os_error doesn't expose the code and message more clearly.
 ///
 #[track_caller]
-pub fn check_errors_mswin(caller: &str) {
+pub(crate) fn check_errors_mswin(caller: &str) {
     let loe = Error::last_os_error();
     let loe_message = loe.to_string();
     match loe.raw_os_error() {

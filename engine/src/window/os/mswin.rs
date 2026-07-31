@@ -86,7 +86,7 @@ impl MsWinWindow {
     ///
     /// create a new instance.
     ///
-    pub fn new(request : &EngineConfig) -> Result<Box<dyn Window>, Box<dyn std::error::Error>> {
+    pub(crate) fn new(request : &EngineConfig) -> Result<Box<dyn Window>, Box<dyn std::error::Error>> {
         /* make some variables */
         let wndclass = PCWSTR::from_raw(HSTRING::from(request.window.window_id.clone().unwrap_or(String::from("WindowConfig: set wndclass"))).as_ptr());
         let title = PCWSTR::from_raw(HSTRING::from(request.window.title.clone().unwrap_or(String::from("WindowConfig: set title"))).as_ptr());

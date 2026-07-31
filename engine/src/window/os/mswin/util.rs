@@ -5,7 +5,7 @@ use windows::Win32::Foundation::HWND;
 ///
 /// Determine if the mouse is hovering over the window.
 ///
-pub fn is_mouse_over_window(hwnd: HWND) -> bool {
+pub(crate) fn is_mouse_over_window(hwnd: HWND) -> bool {
     let mut pos = get_cursor_pos();
     screen_to_client(hwnd, &mut pos);
     let rect = get_client_rect(hwnd);
@@ -17,7 +17,8 @@ pub fn is_mouse_over_window(hwnd: HWND) -> bool {
 ///
 /// not really reliable unless there's only a single window.  otherwise, you get the top one.
 ///
-pub fn find_hwnd() -> HWND {
+#[allow(unused)]// todo: remove this
+pub(crate) fn find_hwnd() -> HWND {
     get_active_window()
 }
 
