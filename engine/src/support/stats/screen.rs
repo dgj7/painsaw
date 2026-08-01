@@ -4,6 +4,7 @@ use crate::geometry::rect::Rectangle2D;
 use crate::graphics::storage::g2d::Graph2D;
 use crate::graphics::storage::m2d::{Model2D, Model2DBuilder};
 use crate::graphics::texture::t2d::Texture2DBuilder;
+use crate::input::screen::ScreenState;
 use crate::support::image::RawImage;
 use crate::support::stats::{HEIGHT, TC, X_POS};
 use crate::support::text::{text_2d_image, TextConfig};
@@ -18,16 +19,19 @@ use crate::support::text::{text_2d_image, TextConfig};
 pub(crate) fn show_screen_stats(
     g2d: &mut Graph2D,
     config: &EngineConfig,
-    client_rect: &Rectangle2D,
-    window_rect: &Rectangle2D,
-    client_center: &Vertex2D,
-    window_center: &Vertex2D,
+    screen: &ScreenState,
     mouse_position: &Vertex2D,
 ) {
     /* nothing to do if not enabled */
     if !config.renderer.show_screen_stats {
         return;
     }
+    
+    /* gather variables */
+    let client_rect = &screen.current_client_rect;
+    let window_rect = &screen.current_window_rect;
+    let client_center = &screen.client_center;
+    let window_center = &screen.window_center;
 
     /* positioning variables */
     let y = 80.0;

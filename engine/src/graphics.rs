@@ -78,7 +78,7 @@ impl GraphicsIntermediary {
         show_fps(g2d, timing, config);
         show_cam_coords(g2d, config, camera);
         // todo: maybe we can just pass the ScreenState here
-        show_screen_stats(g2d, config, &screen.current_client_rect, &screen.current_window_rect, &screen.client_center, &screen.window_center, &mouse_pos);
+        show_screen_stats(g2d, config, &screen, &mouse_pos);
     }
 
     pub(crate) fn after_2d(&self) {
