@@ -1,9 +1,6 @@
 use crate::geometry::dim::Dimension2D;
 use crate::geometry::primitive::v2d::Vertex2D;
 use crate::geometry::rect::Rectangle2D;
-use crate::input::keyboard::kc::KeyChange;
-use crate::input::keyboard::kii::KeyInputInfo;
-use crate::input::keyboard::ks::KeyState;
 
 #[derive(Clone, Debug)]
 pub struct ScreenState {
@@ -18,10 +15,6 @@ pub struct ScreenState {
     pub current_client_rect: Rectangle2D,
     pub previous_window_rect: Rectangle2D,
     pub current_window_rect: Rectangle2D,
-    
-    /* indicators */
-    pub screen_resized: bool,
-    pub focus: KeyState,
     
     /* locations */
     pub window_center: Vertex2D,
@@ -42,12 +35,6 @@ impl ScreenState {
             current_client_rect: Rectangle2D { top_left: Vertex2D { x: 0.0, y: 0.0 }, bottom_right: Vertex2D { x: 0.0, y: 0.0 } },
             previous_window_rect: Rectangle2D { top_left: Vertex2D { x: 0.0, y: 0.0 }, bottom_right: Vertex2D { x: 0.0, y: 0.0 } },
             current_window_rect: Rectangle2D { top_left: Vertex2D { x: 0.0, y: 0.0 }, bottom_right: Vertex2D { x: 0.0, y: 0.0 } },
-            
-            /* indicators */
-            screen_resized: false,
-            focus: KeyState::new(KeyChange::Active {
-                info: KeyInputInfo::handled(),
-            }),
             
             /* locations */
             window_center: Vertex2D::origin(),

@@ -7,6 +7,7 @@ use keyboard::ks::KeyState;
 use mouse::min::MouseInputName;
 use std::collections::{HashMap, VecDeque};
 use std::sync::{Arc, Mutex};
+use crate::input::keyboard::kii::KeyInputInfo;
 
 pub mod keyboard;
 pub mod mouse;
@@ -23,6 +24,8 @@ pub struct UserInput {
     pub mouse_states: HashMap<MouseInputName, MouseState>,
 
     /* screen */
+    pub screen_resized: bool,
+    pub focus: KeyState,
     pub screen: ScreenState,
 }
 
@@ -38,6 +41,10 @@ impl UserInput {
             mouse_states:  HashMap::new(),
 
             /* screen */
+            screen_resized: false,
+            focus: KeyState::new(KeyChange::Active {
+                info: KeyInputInfo::handled(),
+            }),
             screen: ScreenState::new(),
         }))
     }

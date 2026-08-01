@@ -70,6 +70,15 @@ impl PainsawContext {
 ///
 /// Control various aspects of the world, as called by the windowing system.
 ///
+/// Because of tight integration between the windowing system and the renderer
+/// (opengl, directx, et al.), this trait becomes the interaction between
+/// the two and our custom engine.  Everything our engine does can ultimately be
+/// traced back to this trait.
+///
+/// Since this is a trait, it is/will be required that any game using the
+/// Painsaw engine create their own world controller, implementing the abstract
+/// unimplemented functions below.
+///
 pub trait WorldController {
     ///
     /// initialize the game world.
@@ -108,7 +117,7 @@ pub trait WorldController {
                 context.config.input.key_handler.clone().check_key_states(&uin.key_states, &mut context.camera, &context.config, &context.timing);
 
                 /* handle screen resize */
-                if uin.screen.screen_resized {
+                if uin.screen_resized {
                     context.camera.update_screen(&uin.screen.current_client_dimensions);
                     context.graphics.resize(context);
                 }
@@ -130,7 +139,7 @@ pub trait WorldController {
 
         match context.input.lock() {
             Ok(mut uin) => {
-                uin.screen.screen_resized = false;
+                uin.screen_resized = false;
             }
             Err(_) => {panic!("todo: resetting screen_resized")}
         }
