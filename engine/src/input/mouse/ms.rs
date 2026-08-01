@@ -39,4 +39,18 @@ impl MouseState {
             self.current.when = Instant::now();
         }
     }
+
+    ///
+    /// calculate the change in x, dx.
+    ///
+    pub fn change_x(state: &MouseState) -> f32 {
+        (state.current.x - state.previous.x) as f32
+    }
+
+    ///
+    /// calculate the change in y, dy.
+    ///
+    pub fn change_y(state: &MouseState) -> f32 {
+        (state.current.y - state.previous.y) as f32
+    }
 }

@@ -104,8 +104,6 @@ pub trait WorldController {
     /// update the game world state - fully controlled by client.
     ///
     fn update_world(&self, context: &mut PainsawContext) {
-        let screen = &context.screen;
-        
         match context.input.clone().lock() {
             Ok(mut uin) => {
                 /* handle key changes */
@@ -123,7 +121,7 @@ pub trait WorldController {
 
                 /* handle screen resize */
                 if uin.screen_resized {
-                    context.camera.update_screen(&screen.current_client_dimensions);
+                    context.camera.update_screen(&context.screen.current_client_dimensions);
                     context.graphics.resize(context);
                 }
 
@@ -132,7 +130,7 @@ pub trait WorldController {
                     let change = uin.mouse_changes.pop_front().unwrap();
                     let state = uin.mouse_states.get_mut(&change).unwrap();
                     if !state.current.handled {
-                        handle_mouse_change(context.config.input.mouse_handler.clone(), &change, state, &mut context.camera, &context.config, &context.timing);
+                        handle_mouse_change(context.config.input.mouse_handler.clone(), &change, state, &mut context.camera, &context.config, &context.timing, &mut context.screen);
                         state.current.handled = true;
                     }
                 }

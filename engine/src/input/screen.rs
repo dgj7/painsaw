@@ -51,6 +51,7 @@ impl ScreenState {
         screen
     }
 
+    // todo: this probably doesnt need to be called once per frame; more likely just once per update from the us (per win32 message)
     #[cfg(target_os="windows")]
     pub fn update_mswin(&mut self, hwnd: windows::Win32::Foundation::HWND) {
         /* get the various screen stats from win32 */
@@ -67,7 +68,7 @@ impl ScreenState {
         self.update_screen_center();
     }
 
-    pub fn update_client_dimensions(&mut self, current: Dimension2D) {
+    fn update_client_dimensions(&mut self, current: Dimension2D) {
         /* copy existing current into previous */
         self.previous_client_dimensions.height = self.current_client_dimensions.height;
         self.previous_client_dimensions.width = self.current_client_dimensions.width;
@@ -77,7 +78,7 @@ impl ScreenState {
         self.current_client_dimensions.width = current.width;
     }
 
-    pub fn update_window_dimensions(&mut self, current: Dimension2D) {
+    fn update_window_dimensions(&mut self, current: Dimension2D) {
         /* copy existing current into previous */
         self.previous_window_dimensions.height = self.current_window_dimensions.height;
         self.previous_window_dimensions.width = self.current_window_dimensions.width;
@@ -87,7 +88,7 @@ impl ScreenState {
         self.current_window_dimensions.width = current.width;
     }
 
-    pub fn update_client_rectangle(&mut self, current: Rectangle2D) {
+    fn update_client_rectangle(&mut self, current: Rectangle2D) {
         self.previous_client_rect.top_left.x = self.current_client_rect.top_left.x;
         self.previous_client_rect.top_left.y = self.current_client_rect.top_left.y;
         self.previous_client_rect.bottom_right.x = self.current_client_rect.bottom_right.x;
@@ -99,7 +100,7 @@ impl ScreenState {
         self.current_client_rect.bottom_right.y = current.bottom_right.y;
     }
 
-    pub fn update_window_rectangle(&mut self, current: Rectangle2D) {
+    fn update_window_rectangle(&mut self, current: Rectangle2D) {
         self.previous_window_rect.top_left.x = self.current_window_rect.top_left.x;
         self.previous_window_rect.top_left.y = self.current_window_rect.top_left.y;
         self.previous_window_rect.bottom_right.x = self.current_window_rect.bottom_right.x;
@@ -111,7 +112,7 @@ impl ScreenState {
         self.current_window_rect.bottom_right.y = current.bottom_right.y;
     }
 
-    pub fn update_screen_center(&mut self) {
+    fn update_screen_center(&mut self) {
         let wx = (self.current_window_rect.top_left.x + self.current_window_rect.bottom_right.x) / 2.0;
         let wy = (self.current_window_rect.top_left.y + self.current_window_rect.bottom_right.y) / 2.0;
         self.window_center.x = wx;

@@ -77,7 +77,6 @@ impl GraphicsIntermediary {
         /* conditional display */
         show_fps(g2d, timing, config);
         show_cam_coords(g2d, config, camera);
-        // todo: maybe we can just pass the ScreenState here
         show_screen_stats(g2d, config, &screen, &mouse_pos);
     }
 
