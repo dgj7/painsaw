@@ -28,10 +28,12 @@ impl WorldController for Demo1WorldController {
     }
 
     fn update_world_helper(&self, context: &mut PainsawContext) {
+        let screen = &context.screen;
+        
         match context.input.clone().lock() {
             Ok(uin) => {
                 /* gather some variables */
-                let ccd = uin.screen.current_client_dimensions.clone();
+                let ccd = screen.current_client_dimensions.clone();
 
                 /* handle window resize for grid */
                 if uin.screen_resized {

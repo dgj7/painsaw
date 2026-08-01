@@ -1,6 +1,8 @@
 use crate::geometry::dim::Dimension2D;
 use crate::geometry::primitive::v2d::Vertex2D;
 use crate::geometry::rect::Rectangle2D;
+use crate::window::mswin::util::{get_client_rect_dim2d, get_window_rect_dim2d};
+use crate::window::mswin::winapi::{get_client_rect, get_window_rect};
 
 #[derive(Clone, Debug)]
 pub struct ScreenState {
@@ -40,6 +42,29 @@ impl ScreenState {
             window_center: Vertex2D::origin(),
             client_center: Vertex2D::origin(),
         }
+    }
+
+    #[cfg(target_os="windows")]
+    pub fn from(hwnd: windows::Win32::Foundation::HWND) -> ScreenState {
+        let mut screen = ScreenState::new();
+        screen.update_mswin(hwnd);
+        screen
+    }
+
+    #[cfg(target_os="windows")]
+    pub fn update_mswin(&mut self, hwnd: windows::Win32::Foundation::HWND) {
+        /* get the various screen stats from win32 */
+        let window_dimensions = get_window_rect_dim2d(hwnd);
+        let window_rect = get_window_rect(hwnd);
+        let client_dimensions = get_client_rect_dim2d(hwnd);
+        let client_rect = get_client_rect(hwnd);
+
+        /* make updates */
+        self.update_client_dimensions(client_dimensions);
+        self.update_window_dimensions(window_dimensions);
+        self.update_client_rectangle(Rectangle2D::new(client_rect));
+        self.update_window_rectangle(Rectangle2D::new(window_rect));
+        self.update_screen_center();
     }
 
     pub fn update_client_dimensions(&mut self, current: Dimension2D) {

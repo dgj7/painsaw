@@ -13,6 +13,7 @@ use storage::g3d::Graph3D;
 use subsystem::RendererInfo;
 use crate::geometry::primitive::v2d::Vertex2D;
 use crate::input::mouse::min::MouseInputName;
+use crate::input::screen::ScreenState;
 use crate::input::UserInput;
 use crate::support::stats::screen::show_screen_stats;
 
@@ -62,7 +63,7 @@ impl GraphicsIntermediary {
         self.subsystem.prepare_2d(camera, g2d);
     }
 
-    pub(crate) fn render_2d(&mut self, g2d: &mut Graph2D, timing: &EngineTiming, config: &EngineConfig, camera: &Camera, input: MutexGuard<UserInput>) {
+    pub(crate) fn render_2d(&mut self, g2d: &mut Graph2D, timing: &EngineTiming, config: &EngineConfig, camera: &Camera, input: MutexGuard<UserInput>, screen: &ScreenState) {
         /* track down the mouse position */
         let mouse_pos = input.mouse_states.get(&MouseInputName::MouseMove)
             .map(|ms| (ms.current.x as f32, ms.current.y as f32))
@@ -77,7 +78,7 @@ impl GraphicsIntermediary {
         show_fps(g2d, timing, config);
         show_cam_coords(g2d, config, camera);
         // todo: maybe we can just pass the ScreenState here
-        show_screen_stats(g2d, config, &input.screen.current_client_rect, &input.screen.current_window_rect, &input.screen.client_center, &input.screen.window_center, &mouse_pos);
+        show_screen_stats(g2d, config, &screen.current_client_rect, &screen.current_window_rect, &screen.client_center, &screen.window_center, &mouse_pos);
     }
 
     pub(crate) fn after_2d(&self) {

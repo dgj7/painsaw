@@ -18,6 +18,7 @@ use windows::Win32::Graphics::OpenGL::HGLRC;
 use windows::Win32::UI::Input::{RAWINPUTDEVICE, RAWINPUTDEVICE_FLAGS};
 use windows::Win32::UI::WindowsAndMessaging::{CS_HREDRAW, CS_OWNDC, CS_VREDRAW, CW_USEDEFAULT, IDC_ARROW, MSG, PM_REMOVE, WINDOW_EX_STYLE, WM_QUIT, WNDCLASSW, WS_OVERLAPPEDWINDOW, WS_THICKFRAME, WS_VISIBLE};
 use windows_core::{HSTRING, PCWSTR};
+use crate::input::screen::ScreenState;
 
 pub mod winapi;
 pub mod userdata;
@@ -44,7 +45,8 @@ impl Window for MsWinWindow {
     fn begin_event_handling(&mut self, wc: Box<dyn WorldController>, config: EngineConfig) -> Result<(), Box<dyn std::error::Error>> {
         log(LogLevel::Info, &|| "begin event handling".parse().unwrap());
         let mut message: MSG = MSG::default();
-        let mut context = PainsawContext::new(&self.input, config);
+        let screen = ScreenState::from(self.hwnd);
+        let mut context = PainsawContext::new(&self.input, config, screen);
 
         /* initialize client renderer, if necessary */
         wc.initialize_world(&mut context);
@@ -63,6 +65,9 @@ impl Window for MsWinWindow {
             } else if context.timing.is_ok_to_render() {
                 /* timing */
                 context.timing.begin_frame();
+
+                /* update data */
+                context.screen.update_mswin(self.hwnd);
 
                 /* update world info; graphics scene */
                 wc.update_world(&mut context);

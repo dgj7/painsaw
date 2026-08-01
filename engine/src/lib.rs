@@ -6,6 +6,7 @@ use crate::graphics::camera::Camera;
 use crate::graphics::GraphicsIntermediary;
 use crate::graphics::storage::g2d::Graph2D;
 use crate::graphics::storage::g3d::Graph3D;
+use crate::input::screen::ScreenState;
 use crate::input::UserInput;
 use crate::support::logger::log;
 use crate::support::logger::log_level::LogLevel;
@@ -43,11 +44,12 @@ pub struct PainsawContext {
     /* scene for input state */
     pub input: Arc<Mutex<UserInput>>,
     pub config: EngineConfig,
+    pub screen: ScreenState,
 }
 
 impl PainsawContext {
-    pub(crate) fn new(input: &Arc<Mutex<UserInput>>, config: EngineConfig) -> PainsawContext {
-        let dim = &input.lock().unwrap().screen.current_client_dimensions.clone();
+    pub(crate) fn new(input: &Arc<Mutex<UserInput>>, config: EngineConfig, screen: ScreenState) -> PainsawContext {
+        let dim = &screen.current_client_dimensions;
         log(LogLevel::Info, &|| String::from(format!("initializing camera with width={},height={}", &dim.width, &dim.height)));
         PainsawContext {
             first_frame_rendered: false,
@@ -57,12 +59,13 @@ impl PainsawContext {
 
             g2d: Graph2D::new(),
             g3d: Graph3D::new(),
-            camera: Camera::new(dim),
+            camera: Camera::new(&dim),
 
             graphics: GraphicsIntermediary::new(config.renderer.graphics.clone()),
 
             input: input.clone(),
             config,
+            screen,
         }
     }
 }
@@ -101,6 +104,8 @@ pub trait WorldController {
     /// update the game world state - fully controlled by client.
     ///
     fn update_world(&self, context: &mut PainsawContext) {
+        let screen = &context.screen;
+        
         match context.input.clone().lock() {
             Ok(mut uin) => {
                 /* handle key changes */
@@ -118,7 +123,7 @@ pub trait WorldController {
 
                 /* handle screen resize */
                 if uin.screen_resized {
-                    context.camera.update_screen(&uin.screen.current_client_dimensions);
+                    context.camera.update_screen(&screen.current_client_dimensions);
                     context.graphics.resize(context);
                 }
 
@@ -157,6 +162,7 @@ pub trait WorldController {
     fn display_world_scene(&self, context: &mut PainsawContext) {
         /* gather variables */
         let uin = context.input.lock().unwrap();
+        let screen = &context.screen;
 
         /* prepare for drawing */
         context.graphics.before_scene(&context.camera);
@@ -168,7 +174,7 @@ pub trait WorldController {
 
         /* draw 2d, if desired */
         context.graphics.prepare_2d(&mut context.g2d, &context.camera);
-        context.graphics.render_2d(&mut context.g2d, &context.timing, &context.config, &context.camera, uin);
+        context.graphics.render_2d(&mut context.g2d, &context.timing, &context.config, &context.camera, uin, &screen);
         context.graphics.after_2d();
     }
 }

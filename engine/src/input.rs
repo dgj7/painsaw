@@ -1,13 +1,12 @@
+use crate::input::keyboard::kii::KeyInputInfo;
 use crate::input::mouse::mfs::MouseFunctionStatus;
 use crate::input::mouse::ms::MouseState;
-use crate::input::screen::ScreenState;
 use keyboard::kc::KeyChange;
 use keyboard::kin::KeyInputName;
 use keyboard::ks::KeyState;
 use mouse::min::MouseInputName;
 use std::collections::{HashMap, VecDeque};
 use std::sync::{Arc, Mutex};
-use crate::input::keyboard::kii::KeyInputInfo;
 
 pub mod keyboard;
 pub mod mouse;
@@ -26,7 +25,6 @@ pub struct UserInput {
     /* screen */
     pub screen_resized: bool,
     pub focus: KeyState,
-    pub screen: ScreenState,
 }
 
 impl UserInput {
@@ -45,7 +43,6 @@ impl UserInput {
             focus: KeyState::new(KeyChange::Active {
                 info: KeyInputInfo::handled(),
             }),
-            screen: ScreenState::new(),
         }))
     }
 
