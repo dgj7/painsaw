@@ -99,13 +99,13 @@ pub trait WorldController {
                     let change = uin.key_changes.pop_front().unwrap();
                     let state = uin.key_states.get_mut(&change).unwrap();
                     if !state.current.is_handled() {
-                        handle_key_change(context.config.input.key_handler.clone(), &change, state, context);
+                        handle_key_change(context.config.input.key_handler.clone(), &change, state, &mut context.camera, &context.config, &context.timing);
                         state.current.set_handled();
                     }
                 }
 
                 /* check key states */
-                context.config.input.key_handler.clone().check_key_states(&uin.key_states, context);
+                context.config.input.key_handler.clone().check_key_states(&uin.key_states, &mut context.camera, &context.config, &context.timing);
 
                 /* handle screen resize */
                 if uin.screen.screen_resized {
@@ -118,7 +118,7 @@ pub trait WorldController {
                     let change = uin.mouse_changes.pop_front().unwrap();
                     let state = uin.mouse_states.get_mut(&change).unwrap();
                     if !state.current.handled {
-                        handle_mouse_change(context.config.input.mouse_handler.clone(), &change, state, context);
+                        handle_mouse_change(context.config.input.mouse_handler.clone(), &change, state, &mut context.camera, &context.config, &context.timing);
                         state.current.handled = true;
                     }
                 }
