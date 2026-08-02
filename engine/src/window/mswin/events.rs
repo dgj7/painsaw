@@ -209,10 +209,12 @@ fn gather_raw_mouse(hwnd: HWND, lparam: LPARAM) -> Option<(i32, i32)> {
     if rs > 0 {
         let ri = unsafe { &*(buffer.as_ptr() as *const RAWINPUT) };
         if ri.header.dwType == RIM_TYPEMOUSE.0 {
-            //let md = unsafe { &ri.data.mouse };
-            //let dx = md.lLastX;
-            //let dy = md.lLastY;
-            //Some((dx, dy))
+            let md = unsafe { &ri.data.mouse };
+            let usbf = unsafe { md.Anonymous.Anonymous.usButtonFlags };//RI_MOUSE_LEFT_BUTTON_DOWN,RI_MOUSE_LEFT_BUTTON_UP,RI_MOUSE_RIGHT_BUTTON_DOWN,RI_MOUSE_RIGHT_BUTTON_UP
+            if usbf > 0 {
+                return None;
+            }
+
             let mut pos = get_cursor_pos();
             screen_to_client(hwnd, &mut pos);
             let xp = pos.x;

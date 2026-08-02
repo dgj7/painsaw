@@ -7,6 +7,8 @@ use keyboard::ks::KeyState;
 use mouse::min::MouseInputName;
 use std::collections::{HashMap, VecDeque};
 use std::sync::{Arc, Mutex};
+use crate::support::logger::log;
+use crate::support::logger::log_level::LogLevel;
 
 pub mod keyboard;
 pub mod mouse;
@@ -55,6 +57,16 @@ impl UserInput {
     }
 
     pub fn record_mouse_change(&mut self, name: MouseInputName, x: i32, y: i32, status: &MouseFunctionStatus) {
+        /* don't make any update if the current position is equal to the update */
+        if let Some(pos) = self.mouse_states.get(&name) {
+            if pos.current.x == x && pos.current.y == y {
+                return;
+            }
+        }
+
+        log(LogLevel::Info, &|| format!("MouseMove({},{})", x, y));
+
+        /* update */
         self.mouse_changes.push_back(name.clone());
         self.mouse_states
             .entry(name)
