@@ -3,6 +3,7 @@ use crate::input::mouse::mfs::MouseFunctionStatus;
 
 #[derive(Clone, Debug)]
 pub struct MouseChange {
+    // todo: these should be f32
     pub x: i32,
     pub y: i32,
     pub when: Instant,

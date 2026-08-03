@@ -109,16 +109,18 @@ impl Orientation {
     }
 
     pub fn look(&mut self, change: &MouseState, config: &EngineConfig, _timing: &EngineTiming) {
-        let dx = MouseState::change_x(change);
-        let dy = MouseState::change_y(change);
+        let mdx = MouseState::change_x(change);
+        let mdy = MouseState::change_y(change);
 
         //if dx != 0.0 || dy != 0.0 { log(LogLevel::Info, &|| format!("dx={},dy={} ({},{})", dx, dy, change.current.x, change.current.y)); }
 
-        self.yaw = self.yaw + (dx * config.input.mouse_sensitivity);
-        self.pitch = self.pitch + (dy * config.input.mouse_sensitivity);
+        if let Some(dx) = mdx && let Some(dy) = mdy {
+            self.yaw = self.yaw + (dx * config.input.mouse_sensitivity);
+            self.pitch = self.pitch + (dy * config.input.mouse_sensitivity);
 
-        if self.pitch > 89.0 { self.pitch = 89.0; }
-        if self.pitch < -89.0 { self.pitch = -89.0; }
+            if self.pitch > 89.0 { self.pitch = 89.0; }
+            if self.pitch < -89.0 { self.pitch = -89.0; }
+        }
     }
 }
 

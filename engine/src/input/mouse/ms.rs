@@ -4,7 +4,7 @@ use std::time::Instant;
 
 #[derive(Clone, Debug)]
 pub struct MouseState {
-    pub previous: MouseChange,
+    pub previous: Option<MouseChange>,
     pub current: MouseChange,
 }
 
@@ -14,7 +14,7 @@ impl MouseState {
     ///
     pub fn new(x: i32, y: i32, status: MouseFunctionStatus) -> MouseState {
         MouseState {
-            previous: MouseChange::handled(0, 0),
+            previous: None,
             current: MouseChange::unhandled(x, y, status),
         }
     }
@@ -30,7 +30,7 @@ impl MouseState {
     ///
     pub fn update(&mut self, x: i32, y: i32, status: &MouseFunctionStatus) {
         if self.current.handled {
-            self.previous = self.current.clone();
+            self.previous = Some(self.current.clone());
             self.current = MouseChange::unhandled(x, y, status.clone());
         } else {
             self.current.x = x;
@@ -43,14 +43,20 @@ impl MouseState {
     ///
     /// calculate the change in x, dx.
     ///
-    pub fn change_x(state: &MouseState) -> f32 {
-        (state.current.x - state.previous.x) as f32
+    pub fn change_x(state: &MouseState) -> Option<f32> {
+        if let Some(previous) = &state.previous {
+            return Some(state.current.x as f32 - previous.x as f32);
+        }
+        None
     }
 
     ///
     /// calculate the change in y, dy.
     ///
-    pub fn change_y(state: &MouseState) -> f32 {
-        (state.current.y - state.previous.y) as f32
+    pub fn change_y(state: &MouseState) -> Option<f32> {
+        if let Some(previous) = &state.previous {
+            return Some(state.current.y as f32 - previous.y as f32);
+        }
+        None
     }
 }
