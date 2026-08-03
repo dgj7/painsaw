@@ -2,23 +2,22 @@ use crate::config::window_config::WindowDimensions;
 use crate::config::EngineConfig;
 use crate::graphics::subsystem::opengl::msw::window::{init_opengl, opengl_cleanup, swap_buffers};
 use crate::graphics::subsystem::GraphicsSubSystem;
+use crate::input::screen::ScreenState;
 use crate::input::UserInput;
 use crate::support::logger::log;
 use crate::support::logger::log_level::LogLevel;
-use crate::PainsawContext;
+use crate::window::key::WindowKey;
 use crate::window::mswin::events::wndproc;
 use crate::window::mswin::userdata::input_state_to_raw_pointer;
 use crate::window::mswin::winapi::{create_window_ex, dispatch_message, get_module_handle, load_cursor, peek_message, register_class, register_raw_input_devices, translate_message};
 use crate::window::Window;
+use crate::PainsawContext;
 use crate::WorldController;
 use std::sync::{Arc, Mutex};
 use windows::Win32::Foundation::{HINSTANCE, HWND};
-use windows::Win32::Graphics::Gdi::HDC;
-use windows::Win32::Graphics::OpenGL::HGLRC;
 use windows::Win32::UI::Input::{RAWINPUTDEVICE, RAWINPUTDEVICE_FLAGS};
 use windows::Win32::UI::WindowsAndMessaging::{CS_HREDRAW, CS_OWNDC, CS_VREDRAW, CW_USEDEFAULT, IDC_ARROW, MSG, PM_REMOVE, WINDOW_EX_STYLE, WM_QUIT, WNDCLASSW, WS_OVERLAPPEDWINDOW, WS_THICKFRAME, WS_VISIBLE};
 use windows_core::{HSTRING, PCWSTR};
-use crate::input::screen::ScreenState;
 
 pub mod winapi;
 pub mod userdata;
@@ -28,24 +27,18 @@ pub mod util;
 
 pub struct MsWinWindow {
     pub input: Arc<Mutex<UserInput>>,
-
-    pub hinstance: HINSTANCE,
-    pub wndclassw: WNDCLASSW,
-    pub atom: u16,
-    pub hwnd: HWND,
     pub quit: bool,
 
     pub grss: GraphicsSubSystem,
 
-    pub hdc: HDC,
-    pub hrc: HGLRC,
+    pub key: WindowKey,
 }
 
 impl Window for MsWinWindow {
     fn begin_event_handling(&mut self, wc: Box<dyn WorldController>, config: EngineConfig) -> Result<(), Box<dyn std::error::Error>> {
         log(LogLevel::Info, &|| "begin event handling".parse().unwrap());
         let mut message: MSG = MSG::default();
-        let screen = ScreenState::from(self.hwnd);
+        let screen = ScreenState::from(&self.key);
         let mut context = PainsawContext::new(&self.input, config, screen);
 
         /* initialize client renderer, if necessary */
@@ -56,7 +49,7 @@ impl Window for MsWinWindow {
                 if message.message == WM_QUIT {
                     log(LogLevel::Debug, &|| String::from("WM_QUIT"));
                     self.quit = true;
-                    opengl_cleanup(self.hwnd);
+                    opengl_cleanup(self.key.hwnd);
                     break;
                 }
 
@@ -66,15 +59,12 @@ impl Window for MsWinWindow {
                 /* timing */
                 context.timing.begin_frame();
 
-                /* update data */
-                context.screen.update_mswin(self.hwnd);
-
                 /* update world info; graphics scene */
-                wc.update_world(&mut context);
+                wc.update_world(&mut context, &self.key);
                 wc.display_world_scene(&mut context);
 
                 /* swap buffers after it's all done */
-                swap_buffers(self.hdc);
+                swap_buffers(self.key.hdc);
 
                 /* timing */
                 context.timing.end_frame();
@@ -162,16 +152,18 @@ impl MsWinWindow {
         /* done; returning handles to window */
         Ok(Box::new(MsWinWindow {
             input,
-            hinstance,
-            wndclassw: wc,
-            atom,
-            hwnd,
             quit: false,
 
             grss,
 
-            hdc,
-            hrc,
+            key: WindowKey {
+                hinstance,
+                wndclassw: wc,
+                atom,
+                hwnd,
+                hdc,
+                hrc,
+            }
         }))
     }
 }

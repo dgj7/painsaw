@@ -2,8 +2,6 @@ use crate::config::EngineConfig;
 use crate::geometry::orient::matrix::m4x4::Matrix4x4;
 use crate::geometry::primitive::v3d::Vertex3D;
 use crate::input::mouse::ms::MouseState;
-use crate::support::logger::log;
-use crate::support::logger::log_level::LogLevel;
 use crate::support::timing::EngineTiming;
 
 pub mod matrix;
@@ -114,7 +112,7 @@ impl Orientation {
         let dx = MouseState::change_x(change);
         let dy = MouseState::change_y(change);
 
-        if dx != 0.0 || dy != 0.0 { log(LogLevel::Info, &|| format!("dx={},dy={} ({},{})", dx, dy, change.current.x, change.current.y)); }
+        //if dx != 0.0 || dy != 0.0 { log(LogLevel::Info, &|| format!("dx={},dy={} ({},{})", dx, dy, change.current.x, change.current.y)); }
 
         self.yaw = self.yaw + (dx * config.input.mouse_sensitivity);
         self.pitch = self.pitch + (dy * config.input.mouse_sensitivity);

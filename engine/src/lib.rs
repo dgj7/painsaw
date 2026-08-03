@@ -11,6 +11,7 @@ use crate::input::UserInput;
 use crate::support::logger::log;
 use crate::support::logger::log_level::LogLevel;
 use crate::support::timing::EngineTiming;
+use crate::window::key::WindowKey;
 
 pub mod config;
 pub mod graphics;
@@ -103,7 +104,7 @@ pub trait WorldController {
     ///
     /// update the game world state - fully controlled by client.
     ///
-    fn update_world(&self, context: &mut PainsawContext) {
+    fn update_world(&self, context: &mut PainsawContext, key: &WindowKey) {
         match context.input.clone().lock() {
             Ok(mut uin) => {
                 /* handle key changes */
@@ -121,6 +122,7 @@ pub trait WorldController {
 
                 /* handle screen resize */
                 if uin.screen_resized {
+                    context.screen.update(key);
                     context.camera.update_screen(&context.screen.current_client_dimensions);
                     context.graphics.resize(context);
                 }

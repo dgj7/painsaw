@@ -4,6 +4,7 @@ use crate::WorldController;
 pub mod error;
 pub mod api;
 pub mod mswin;
+pub mod key;
 
 ///
 /// shared definition of a screen that we render to; not specific to any host operating system.

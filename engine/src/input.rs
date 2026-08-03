@@ -7,8 +7,6 @@ use keyboard::ks::KeyState;
 use mouse::min::MouseInputName;
 use std::collections::{HashMap, VecDeque};
 use std::sync::{Arc, Mutex};
-use crate::support::logger::log;
-use crate::support::logger::log_level::LogLevel;
 
 pub mod keyboard;
 pub mod mouse;
@@ -64,7 +62,9 @@ impl UserInput {
             }
         }
 
-        log(LogLevel::Info, &|| format!("MouseMove({},{})", x, y));
+        //if name == MouseInputName::MouseMove {
+        //    log(LogLevel::Info, &|| format!("MouseMove({},{})", x, y));
+        //}
 
         /* update */
         self.mouse_changes.push_back(name.clone());

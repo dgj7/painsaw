@@ -1,6 +1,7 @@
 use crate::geometry::dim::Dimension2D;
 use crate::geometry::primitive::v2d::Vertex2D;
 use crate::geometry::rect::Rectangle2D;
+use crate::window::key::WindowKey;
 use crate::window::mswin::util::{get_client_rect_dim2d, get_window_rect_dim2d};
 use crate::window::mswin::winapi::{get_client_rect, get_window_rect};
 
@@ -45,20 +46,24 @@ impl ScreenState {
     }
 
     #[cfg(target_os="windows")]
-    pub fn from(hwnd: windows::Win32::Foundation::HWND) -> ScreenState {
+    pub fn from(key: &WindowKey) -> ScreenState {
         let mut screen = ScreenState::new();
-        screen.update_mswin(hwnd);
+        screen.update_os(key);
         screen
     }
-
-    // todo: this probably doesnt need to be called once per frame; more likely just once per update from the us (per win32 message)
+    
+    pub fn update(&mut self, key: &WindowKey) {
+        self.update_os(key);
+    }
+    
+    // todo: implementations for other operating systems
     #[cfg(target_os="windows")]
-    pub fn update_mswin(&mut self, hwnd: windows::Win32::Foundation::HWND) {
+    pub fn update_os(&mut self, key: &WindowKey) {
         /* get the various screen stats from win32 */
-        let window_dimensions = get_window_rect_dim2d(hwnd);
-        let window_rect = get_window_rect(hwnd);
-        let client_dimensions = get_client_rect_dim2d(hwnd);
-        let client_rect = get_client_rect(hwnd);
+        let window_dimensions = get_window_rect_dim2d(key.hwnd);
+        let window_rect = get_window_rect(key.hwnd);
+        let client_dimensions = get_client_rect_dim2d(key.hwnd);
+        let client_rect = get_client_rect(key.hwnd);
 
         /* make updates */
         self.update_client_dimensions(client_dimensions);
