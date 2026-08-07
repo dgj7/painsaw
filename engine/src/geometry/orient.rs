@@ -108,7 +108,8 @@ impl Orientation {
         self.position.column_major_update_position(&updated);
     }
 
-    pub fn look(&mut self, change: &MouseState, config: &EngineConfig, _timing: &EngineTiming) {
+    pub fn look(&mut self, _change: &MouseState, _config: &EngineConfig, _timing: &EngineTiming) {
+        /*
         let mdx = MouseState::change_x(change);
         let mdy = MouseState::change_y(change);
 
@@ -121,6 +122,7 @@ impl Orientation {
             if self.pitch > 89.0 { self.pitch = 89.0; }
             if self.pitch < -89.0 { self.pitch = -89.0; }
         }
+        */
     }
 }
 

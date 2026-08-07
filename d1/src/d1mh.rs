@@ -8,24 +8,28 @@ use engine::support::timing::EngineTiming;
 pub(crate) struct MouseInputs {}
 
 impl MouseHandler for MouseInputs {
-    fn handle_mouse_move(&self, state: &mut MouseState, camera: &mut Camera, config: &EngineConfig, timing: &EngineTiming, _screen: &mut ScreenState) {
-        //let center = &screen.window_center;
-        //let dx = MouseState::change_x(state);
-        //let dy = MouseState::change_y(state);
+    fn handle_mouse_move(&self, _state: &mut MouseState, _camera: &mut Camera, _config: &EngineConfig, _timing: &EngineTiming, _screen: &mut ScreenState) {
+        /*
+        if state.current.handled {
+            return;
+        }
 
-        camera.orientation.look(state, &config, &timing);
-/*
-        state.enabled = false;
-        screen.enabled = false;
+        if state.previous.is_some() {
+            state.enabled = false;
 
-        move_cursor(center);
 
-        state.enabled = true;
-        screen.enabled = true;
+            camera.orientation.yaw = camera.orientation.yaw + (dx * config.input.mouse_sensitivity * -1.0);
+            camera.orientation.pitch = camera.orientation.pitch + (dy * config.input.mouse_sensitivity * -1.0);
 
-        state.current.x = center.x as i32;
-        state.current.y = center.y as i32;
-        state.previous.x = (center.x - dx) as i32;
-        state.previous.y = (center.y - dy) as i32;*/
+            if camera.orientation.pitch > 89.0 { camera.orientation.pitch = 89.0; }
+            if camera.orientation.pitch < -89.0 { camera.orientation.pitch = -89.0; }
+
+
+            let center = &screen.window_center;
+            move_cursor(center);
+            state.previous = None;
+            state.enabled = true;
+        }
+        */
     }
 }

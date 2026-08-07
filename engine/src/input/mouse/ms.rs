@@ -6,6 +6,7 @@ use std::time::Instant;
 pub struct MouseState {
     pub previous: Option<MouseChange>,
     pub current: MouseChange,
+    pub enabled: bool,
 }
 
 impl MouseState {
@@ -16,6 +17,7 @@ impl MouseState {
         MouseState {
             previous: None,
             current: MouseChange::unhandled(x, y, status),
+            enabled: true,
         }
     }
 
@@ -29,6 +31,10 @@ impl MouseState {
     /// value with the input parameters and leave previous unchanged.
     ///
     pub fn update(&mut self, x: i32, y: i32, status: &MouseFunctionStatus) {
+        if !self.enabled {
+            return;
+        }
+        
         if self.current.handled {
             self.previous = Some(self.current.clone());
             self.current = MouseChange::unhandled(x, y, status.clone());
@@ -38,25 +44,5 @@ impl MouseState {
             self.current.status = status.clone();
             self.current.when = Instant::now();
         }
-    }
-
-    ///
-    /// calculate the change in x, dx.
-    ///
-    pub fn change_x(state: &MouseState) -> Option<f32> {
-        if let Some(previous) = &state.previous {
-            return Some(state.current.x as f32 - previous.x as f32);
-        }
-        None
-    }
-
-    ///
-    /// calculate the change in y, dy.
-    ///
-    pub fn change_y(state: &MouseState) -> Option<f32> {
-        if let Some(previous) = &state.previous {
-            return Some(state.current.y as f32 - previous.y as f32);
-        }
-        None
     }
 }
