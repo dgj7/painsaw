@@ -35,7 +35,7 @@ pub struct MsWinWindow {
 }
 
 impl Window for MsWinWindow {
-    fn begin_event_handling(&mut self, wc: Box<dyn WorldController>, config: EngineConfig) -> Result<(), Box<dyn std::error::Error>> {
+    fn begin_event_handling(&mut self, wc: Arc<dyn WorldController>, config: EngineConfig) -> Result<(), Box<dyn std::error::Error>> {
         log(LogLevel::Info, &|| "begin event handling".parse().unwrap());
         let mut message: MSG = MSG::default();
         let screen = ScreenState::from(&self.key);

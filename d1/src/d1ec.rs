@@ -1,14 +1,16 @@
-use crate::d1kh::KeyInputs;
-use engine::config::input_config::InputConfig;
+use engine::config::input_config::{InputConfig, KeyHandler};
 use engine::config::move_config::MoveConfig;
 use engine::config::renderer_config::RendererConfig;
 use engine::config::window_config::{WindowConfig, WindowDimensions};
 use engine::config::EngineConfig;
 use engine::graphics::subsystem::{GraphicsSubSystem, OpenGLPipeline};
 use std::sync::Arc;
-use crate::d1mh::MouseInputs;
+use engine::config::input_config::mc::MouseHandler;
 
-pub fn create_engine_config() -> EngineConfig {
+pub fn create_engine_config<T>(core: Arc<T>) -> EngineConfig
+    where
+    T: KeyHandler + MouseHandler + 'static,
+{
     EngineConfig::new(
         WindowConfig {
             dimensions: WindowDimensions::Dimensional {
@@ -28,8 +30,8 @@ pub fn create_engine_config() -> EngineConfig {
             fps_cap: Some(60),
         },
         InputConfig {
-            key_handler: Arc::new(KeyInputs {}),
-            mouse_handler: Arc::new(MouseInputs{}),
+            key_handler: core.clone(),
+            mouse_handler: core.clone(),
             mouse_sensitivity: 0.2,
         },
         MoveConfig {

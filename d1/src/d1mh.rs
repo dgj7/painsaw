@@ -5,10 +5,9 @@ use engine::input::mouse::md::MouseDelta;
 use engine::input::screen::ScreenState;
 use engine::support::timing::EngineTiming;
 use engine::window::api::mc::move_cursor;
+use crate::d1::Demo1;
 
-pub(crate) struct MouseInputs {}
-
-impl MouseHandler for MouseInputs {
+impl MouseHandler for Demo1 {
 
     fn handle_mouse_deltas(
         &self,

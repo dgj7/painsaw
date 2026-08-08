@@ -4,15 +4,15 @@ use engine::support::logger::log;
 use engine::support::logger::log_level::LogLevel;
 use engine::PainsawContext;
 use engine::WorldController;
+use crate::d1::Demo1;
 
 static M2D_XY_PURPLE: &str = "1-2d-xy-purple";
 static M2D_X_HORIZ: &str = "2-2d-x-horizontal";
 static M2D_Y_VERT: &str = "2-2d-y-vertical";
 static M2D_CROSSHAIRS : &str = "999-2d-crosshairs";
 
-pub(crate) struct Demo1WorldController {}
 
-impl WorldController for Demo1WorldController {
+impl WorldController for Demo1 {
     fn initialize_world_helper(&self, context: &mut PainsawContext) {
         /* 2d */
         context.g2d.attach(M2D_XY_PURPLE, create_2d_axes(&context.camera));
@@ -52,11 +52,5 @@ impl WorldController for Demo1WorldController {
 
         context.first_frame_rendered = true;
         context.frame_count += 1;
-    }
-}
-
-impl Demo1WorldController {
-    pub(crate) fn new() -> Self {
-        Self {}
     }
 }

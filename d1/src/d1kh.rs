@@ -11,6 +11,7 @@ use engine::support::logger::log_level::LogLevel;
 use engine::support::timing::EngineTiming;
 use std::collections::HashMap;
 use std::sync::{LazyLock, Mutex};
+use crate::d1::Demo1;
 
 static KEYS: LazyLock<Mutex<HashMap<KeyInputName, Command>>> = LazyLock::new(|| {
     let mut map = HashMap::new();
@@ -21,9 +22,7 @@ static KEYS: LazyLock<Mutex<HashMap<KeyInputName, Command>>> = LazyLock::new(|| 
     Mutex::new(map)
 });
 
-pub(crate) struct KeyInputs {}
-
-impl KeyHandler for KeyInputs {
+impl KeyHandler for Demo1 {
     fn check_key_states(&self, states: &HashMap<KeyInputName, KeyState>, camera: &mut Camera, config: &EngineConfig, timing: &EngineTiming) {
         states.into_iter()
             .filter(|(_, input_state)| input_state.current.is_active())

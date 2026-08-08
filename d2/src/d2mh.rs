@@ -4,9 +4,8 @@ use engine::graphics::camera::Camera;
 use engine::input::mouse::ms::MouseState;
 use engine::input::screen::ScreenState;
 use engine::support::timing::EngineTiming;
+use crate::d2::Demo2;
 
-pub(crate) struct MouseInputs {}
-
-impl MouseHandler for MouseInputs {
+impl MouseHandler for Demo2 {
     fn handle_mouse_move(&self, _state: &mut MouseState, _camera: &mut Camera, _config: &EngineConfig, _timing: &EngineTiming, _screen: &mut ScreenState) {}
 }
