@@ -5,7 +5,7 @@ use windows::Win32::Graphics::Gdi::{PtInRect, ScreenToClient};
 use windows::Win32::System::LibraryLoader::GetModuleHandleW;
 use windows::Win32::UI::Input::{GetRawInputData, RegisterRawInputDevices, HRAWINPUT, RAWINPUTDEVICE, RAW_INPUT_DATA_COMMAND_FLAGS};
 use windows::Win32::UI::Input::KeyboardAndMouse::GetActiveWindow;
-use windows::Win32::UI::WindowsAndMessaging::{CreateWindowExW, DefWindowProcW, DispatchMessageW, GetClientRect, GetCursorPos, GetWindowRect, LoadCursorW, PeekMessageW, PostQuitMessage, RegisterClassW, SetCursorPos, TranslateMessage, HCURSOR, HMENU, MSG, PEEK_MESSAGE_REMOVE_TYPE, WINDOW_EX_STYLE, WINDOW_STYLE, WNDCLASSW};
+use windows::Win32::UI::WindowsAndMessaging::{CreateWindowExW, DefWindowProcW, DispatchMessageW, GetClientRect, GetCursorPos, GetWindowRect, LoadCursorW, PeekMessageW, PostQuitMessage, RegisterClassW, SetCursorPos, ShowCursor, TranslateMessage, HCURSOR, HMENU, MSG, PEEK_MESSAGE_REMOVE_TYPE, WINDOW_EX_STYLE, WINDOW_STYLE, WNDCLASSW};
 
 ///
 /// PeekMessageW()
@@ -196,4 +196,11 @@ pub(crate) fn set_cursor_pos(x: i32, y: i32) {
         Ok(_) => {}
         Err(_) => {check_errors_mswin("SetCursorPos")}
     }
+}
+
+///
+/// ShowCursor(bool)
+///
+pub(crate) fn show_cursor(bs: bool) -> i32 {
+    unsafe { ShowCursor(bs) }
 }
