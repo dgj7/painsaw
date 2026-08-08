@@ -14,6 +14,7 @@ use windows::Win32::Foundation::{HWND, LPARAM, LRESULT, WPARAM};
 use windows::Win32::UI::Input::KeyboardAndMouse::{VIRTUAL_KEY, VK_A, VK_D, VK_ESCAPE, VK_G, VK_M, VK_S, VK_W};
 use windows::Win32::UI::Input::{HRAWINPUT, RAWINPUT, RAWINPUTHEADER, RID_INPUT, RIM_TYPEMOUSE};
 use windows::Win32::UI::WindowsAndMessaging::{WM_CLOSE, WM_CREATE, WM_DESTROY, WM_INPUT, WM_KEYDOWN, WM_KEYUP, WM_KILLFOCUS, WM_LBUTTONDOWN, WM_LBUTTONUP, WM_QUIT, WM_RBUTTONDOWN, WM_RBUTTONUP, WM_SETFOCUS, WM_SIZE};
+use crate::input::mouse::md::MouseDelta;
 
 ///
 /// required window procedure, for handling win32 event messages.
@@ -121,8 +122,16 @@ fn handle_message_if_applicable(input: &Arc<Mutex<UserInput>>, hwnd: HWND, messa
         }
         WM_INPUT => {
             // see also: WM_MOUSEMOVE: lower precision mouse detection; can use get_x_lparam() and get_y_lparam() like other mouse functions do
-            if let Some((x,y)) = gather_raw_mouse(hwnd, lparam) {
-                input.lock().expect("todo: wm_input").record_mouse_change(MouseInputName::MouseMove, x, y, &MouseFunctionStatus::Active);
+            if let Some(md) = gather_raw_mouse(hwnd, lparam) {
+                if let Ok(mut uin) = input.try_lock() {
+                    /* add a delta */
+                    uin.mouse_deltas.push(md);
+
+                    /* grab mouse position and send event */
+                    let mut pos = get_cursor_pos();
+                    screen_to_client(hwnd, &mut pos);
+                    uin.record_mouse_change(MouseInputName::MouseMove, pos.x, pos.y, &MouseFunctionStatus::Active);
+                }
                 return HANDLED
             }
             NOT_HANDLED
@@ -191,7 +200,7 @@ fn get_y_lparam(lparam: LPARAM) -> i32 {
 /// here we're hijacking the high refresh rate, but calling GetCursorPos() regardless
 /// because dx/dy isn't what we're looking for.
 ///
-fn gather_raw_mouse(hwnd: HWND, lparam: LPARAM) -> Option<(i32, i32)> {
+fn gather_raw_mouse(hwnd: HWND, lparam: LPARAM) -> Option<MouseDelta> {
     /* sc if not over our window */
     if !is_mouse_over_window(hwnd) {
         return None;
@@ -215,11 +224,11 @@ fn gather_raw_mouse(hwnd: HWND, lparam: LPARAM) -> Option<(i32, i32)> {
                 return None;
             }
 
-            let mut pos = get_cursor_pos();
-            screen_to_client(hwnd, &mut pos);
-            let xp = pos.x;
-            let yp = pos.y;
-            Some((xp, yp))
+            if md.lLastX == 0 && md.lLastY == 0 {
+                None
+            } else {
+                Some(MouseDelta { dx: md.lLastX as f32, dy: md.lLastY as f32 })
+            }
         } else {
             None
         }

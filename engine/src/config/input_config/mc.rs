@@ -3,6 +3,7 @@ use crate::input::mouse::ms::MouseState;
 use std::sync::Arc;
 use crate::config::EngineConfig;
 use crate::graphics::camera::Camera;
+use crate::input::mouse::md::MouseDelta;
 use crate::input::screen::ScreenState;
 use crate::support::timing::EngineTiming;
 
@@ -23,12 +24,11 @@ pub fn handle_mouse_change(handler: Arc<dyn MouseHandler>, name: &MouseInputName
 /// handle mouse changes.
 ///
 pub trait MouseHandler {
-    ///
-    /// handle mouse move.
-    ///
     fn handle_mouse_move(&self, _state: &mut MouseState, _camera: &mut Camera, _config: &EngineConfig, _timing: &EngineTiming, _screen: &mut ScreenState) {}
     fn handle_left_click(&self, _state: &MouseState, _camera: &mut Camera, _config: &EngineConfig, _timing: &EngineTiming, _screen: &mut ScreenState) {}
     fn handle_right_click(&self, _state: &MouseState, _camera: &mut Camera, _config: &EngineConfig, _timing: &EngineTiming, _screen: &mut ScreenState) {}
+
+    fn handle_mouse_deltas(&self, _deltas: &Vec<MouseDelta>, _camera: &mut Camera, _config: &EngineConfig, _timing: &EngineTiming, _screen: &mut ScreenState) {}
 }
 
 ///

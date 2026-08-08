@@ -7,6 +7,7 @@ use keyboard::ks::KeyState;
 use mouse::min::MouseInputName;
 use std::collections::{HashMap, VecDeque};
 use std::sync::{Arc, Mutex};
+use crate::input::mouse::md::MouseDelta;
 
 pub mod keyboard;
 pub mod mouse;
@@ -21,6 +22,7 @@ pub struct UserInput {
     /* mouse */
     pub mouse_changes: VecDeque<MouseInputName>,
     pub mouse_states: HashMap<MouseInputName, MouseState>,
+    pub mouse_deltas: Vec<MouseDelta>,
 
     /* screen */
     pub screen_resized: bool,
@@ -36,7 +38,8 @@ impl UserInput {
 
             /* mouse */
             mouse_changes: VecDeque::new(),
-            mouse_states:  HashMap::new(),
+            mouse_states: HashMap::new(),
+            mouse_deltas: Vec::new(),
 
             /* screen */
             screen_resized: false,

@@ -136,6 +136,12 @@ pub trait WorldController {
                         state.current.handled = true;
                     }
                 }
+                
+                /* handle mouse deltas */
+                if !uin.mouse_deltas.is_empty() {
+                    context.config.input.mouse_handler.handle_mouse_deltas(&mut uin.mouse_deltas, &mut context.camera, &context.config, &context.timing, &mut context.screen);
+                    uin.mouse_deltas.clear();
+                }
             }
             Err(_) => {}
         }

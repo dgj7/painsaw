@@ -7,6 +7,7 @@ pub struct MouseState {
     pub previous: Option<MouseChange>,
     pub current: MouseChange,
     pub enabled: bool,
+    // todo: is enabled needed?
 }
 
 impl MouseState {
