@@ -56,6 +56,9 @@ pub struct Matrix4x4 {
     pub c4r4: f32,
 }
 
+///
+/// vector retrieval functions
+///
 impl Matrix4x4 {
     pub fn column_major_x_right(&self) -> Vertex3D {
         Vertex3D {
@@ -100,11 +103,48 @@ impl Matrix4x4 {
     pub fn column_major_z_scale(&self) -> f32 {
         scale(self.column_major_z_forward())
     }
+}
+
+///
+/// vector update functions
+///
+impl Matrix4x4 {
+    pub fn column_major_update_right(&mut self, right: &Vertex3D) {
+        self.c1r1 = right.x;
+        self.c1r2 = right.y;
+        self.c1r3 = right.z;
+    }
+
+    pub fn column_major_update_up(&mut self, up: &Vertex3D) {
+        self.c2r1 = up.x;
+        self.c2r2 = up.y;
+        self.c2r3 = up.z;
+    }
+
+    pub fn column_major_update_forward(&mut self, forward: &Vertex3D) {
+        self.c3r1 = forward.x;
+        self.c3r2 = forward.y;
+        self.c3r3 = forward.z;
+    }
 
     pub fn column_major_update_position(&mut self, position: &Vertex3D) {
         self.c4r1 = position.x;
         self.c4r2 = position.y;
         self.c4r3 = position.z;
+    }
+
+    pub fn normalize(&mut self) {
+        let mut forward = self.column_major_z_forward();
+        forward.normalize();
+        self.column_major_update_forward(&forward);
+
+        let mut right = self.column_major_x_right();
+        right.normalize();
+        self.column_major_update_right(&right);
+        
+        let mut up = self.column_major_y_up();
+        up.normalize();
+        self.column_major_update_up(&up);
     }
 }
 

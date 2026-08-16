@@ -45,8 +45,17 @@ impl Vertex3D {
     pub fn dot_product(&mut self, multiplier: &Vertex3D) -> f32 {
         self.x * multiplier.x + self.y * multiplier.y + self.z * multiplier.z
     }
+
+    pub fn cross_product(&mut self, multiplier: &Vertex3D) {
+        self.x = self.y * multiplier.z - self.z * multiplier.y;
+        self.y = self.z * multiplier.x - self.x * multiplier.z;
+        self.z = self.x * multiplier.y - self.y * multiplier.x;
+    }
 }
 
+///
+/// functions that result in a new instance.
+///
 impl Vertex3D {
     pub fn new(x: f32, y: f32, z: f32) -> Vertex3D {
         Vertex3D { x, y, z }
@@ -109,6 +118,9 @@ impl Vertex3D {
     }
 }
 
+///
+/// calculate the magnitude.
+///
 pub fn magnitude(p: &Vertex3D) -> f32 {
     ((p.x * p.x) + (p.y * p.y) + (p.z * p.z)).sqrt()
 }

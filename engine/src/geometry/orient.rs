@@ -1,11 +1,8 @@
-use crate::config::EngineConfig;
 use crate::geometry::orient::matrix::m4x4::Matrix4x4;
-use crate::geometry::primitive::v3d::Vertex3D;
-use crate::input::mouse::ms::MouseState;
-use crate::support::timing::EngineTiming;
 
 pub mod matrix;
 pub mod quaternion;
+pub mod movement;
 
 #[derive(Clone)]
 pub struct Orientation {
@@ -52,78 +49,6 @@ impl Orientation {
             pitch: 0.0,
             yaw: 0.0,
         }
-    }
-}
-
-impl Orientation {
-    pub fn move_forward(&mut self, config: &EngineConfig, timing: &EngineTiming) {
-        /* gather necessary variables */
-        let forward = self.position.column_major_z_forward();
-        let position = self.position.column_major_position();
-
-        /* compute change (forward * speed * delta_time), then update position */
-        let change = Vertex3D::new_mult_scalar(&Vertex3D::new_mult_scalar(&forward, config.movement.forward_speed), timing.delta_time as f32);
-        let updated = Vertex3D::new_subtract(&position, &change);
-
-        /* update the orientation matrix */
-        self.position.column_major_update_position(&updated);
-    }
-
-    pub fn move_backward(&mut self, config: &EngineConfig, timing: &EngineTiming) {
-        /* gather necessary variables */
-        let forward = self.position.column_major_z_forward();
-        let position = self.position.column_major_position();
-
-        /* compute change (forward * speed * delta_time), then update position */
-        let change = Vertex3D::new_mult_scalar(&Vertex3D::new_mult_scalar(&forward, config.movement.forward_speed), timing.delta_time as f32);
-        let updated = Vertex3D::new_add(&position, &change);
-
-        /* update the orientation matrix */
-        self.position.column_major_update_position(&updated);
-    }
-
-    pub fn move_left(&mut self, config: &EngineConfig, timing: &EngineTiming) {
-        /* gather necessary variables */
-        let right = self.position.column_major_x_right();
-        let position = self.position.column_major_position();
-
-        /* compute change (right * speed * delta_time), then update position */
-        let change = Vertex3D::new_mult_scalar(&Vertex3D::new_mult_scalar(&right, config.movement.forward_speed), timing.delta_time as f32);
-        let updated = Vertex3D::new_subtract(&position, &change);
-
-        /* update the orientation matrix */
-        self.position.column_major_update_position(&updated);
-    }
-
-    pub fn move_right(&mut self, config: &EngineConfig, timing: &EngineTiming) {
-        /* gather necessary variables */
-        let right = self.position.column_major_x_right();
-        let position = self.position.column_major_position();
-
-        /* compute change (right * speed * delta_time), then update position */
-        let change = Vertex3D::new_mult_scalar(&Vertex3D::new_mult_scalar(&right, config.movement.forward_speed), timing.delta_time as f32);
-        let updated = Vertex3D::new_add(&position, &change);
-
-        /* update the orientation matrix */
-        self.position.column_major_update_position(&updated);
-    }
-
-    // todo: maybe remove this
-    pub fn look(&mut self, _change: &MouseState, _config: &EngineConfig, _timing: &EngineTiming) {
-        /*
-        let mdx = MouseState::change_x(change);
-        let mdy = MouseState::change_y(change);
-
-        //if dx != 0.0 || dy != 0.0 { log(LogLevel::Info, &|| format!("dx={},dy={} ({},{})", dx, dy, change.current.x, change.current.y)); }
-
-        if let Some(dx) = mdx && let Some(dy) = mdy {
-            self.yaw = self.yaw + (dx * config.input.mouse_sensitivity);
-            self.pitch = self.pitch + (dy * config.input.mouse_sensitivity);
-
-            if self.pitch > 89.0 { self.pitch = 89.0; }
-            if self.pitch < -89.0 { self.pitch = -89.0; }
-        }
-        */
     }
 }
 

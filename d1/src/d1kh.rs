@@ -29,7 +29,7 @@ impl KeyHandler for Demo1 {
             .for_each(|(key_name, _)| {
                 if let Ok(mutex) = KEYS.lock() {
                     if let Some(command) = mutex.get(&key_name) {
-                        handle_command(&command, &mut camera.orientation, &config, &timing);
+                        handle_command(&command, camera, &config, &timing);
                     }
                 }
             });
