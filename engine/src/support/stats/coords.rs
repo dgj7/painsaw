@@ -32,92 +32,32 @@ pub(crate) fn show_cam_coords(
     let y_up = y + HEIGHT + HEIGHT + HEIGHT;
 
     /* update models */
-    g2d.attach_or_update("99-2d-text-cam-pos", || create_pos_model(X_POS, y_cam, TC.clone(), &position), |m| m.textures[0].replacement = create_pos_text(TC.clone(), &position));
-    g2d.attach_or_update("99-2d-text-forward", || create_forward_model(X_POS, y_forward, TC.clone(), &forward), |m| m.textures[0].replacement = create_forward_text(TC.clone(), &forward));
-    g2d.attach_or_update("99-2d-text-right", || create_right_model(X_POS, y_right, TC.clone(), &right), |m| m.textures[0].replacement = create_right_text(TC.clone(), &right));
-    g2d.attach_or_update("99-2d-text-up", || create_up_model(X_POS, y_up, TC.clone(), &up), |m| m.textures[0].replacement = create_up_text(TC.clone(), &up));
+    g2d.attach_or_update("99-2d-text-cam-pos", || create_model(X_POS, y_cam,     "cam-pos: ", TC.clone(), &position), |m| m.textures[0].replacement = create_text(TC.clone(), "cam-pos: ", &position));
+    g2d.attach_or_update("99-2d-text-forward", || create_model(X_POS, y_forward, "forward: ", TC.clone(), &forward), |m| m.textures[0].replacement =  create_text(TC.clone(), "forward: ", &forward));
+    g2d.attach_or_update("99-2d-text-right",   || create_model(X_POS, y_right,   "right:   ", TC.clone(), &right), |m| m.textures[0].replacement =    create_text(TC.clone(), "right:   ", &right));
+    g2d.attach_or_update("99-2d-text-up",      || create_model(X_POS, y_up,      "up:      ", TC.clone(), &up), |m| m.textures[0].replacement =       create_text(TC.clone(), "up:      ", &up));
+
+    // todo: print yaw(left/right, about y), pitch(up,down, about x), roll(side/side, about z)
 }
 
-fn create_pos_model(x: f32, y_cam: f32, config: TextConfig, position: &Vertex3D) -> Model2D {
+fn create_model(x: f32, y_cam: f32, label: &str, config: TextConfig, vertex: &Vertex3D) -> Model2D {
     Model2DBuilder::new()
         .with_texture(Texture2DBuilder::new()
             .with_x(x)
             .with_y(y_cam)
-            .with_image(create_pos_text(config, &position).unwrap())
+            .with_image(create_text(config, label, &vertex).unwrap())
             .build())
         .build()
 }
 
-fn create_pos_text(config: TextConfig, position: &Vertex3D) -> Option<RawImage> {
+fn create_text(config: TextConfig, label: &str, position: &Vertex3D) -> Option<RawImage> {
     Option::from(text_2d_image(config.clone(), || {
         String::from(format!(
-            "cam-pos: ({:+08.2},{:+08.2},{:+08.2})",
+            "{}({:+08.2},{:+08.2},{:+08.2})",
+            label,
             position.x,
             position.y,
             position.z,
-        ))
-    }))
-}
-
-fn create_forward_model(x: f32, y_forward: f32, config: TextConfig, forward: &Vertex3D) -> Model2D {
-    Model2DBuilder::new()
-        .with_texture(Texture2DBuilder::new()
-            .with_x(x)
-            .with_y(y_forward)
-            .with_image(create_forward_text(config, &forward).unwrap())
-            .build())
-        .build()
-}
-
-fn create_forward_text(config: TextConfig, forward: &Vertex3D) -> Option<RawImage> {
-    Option::from(text_2d_image(config.clone(), || {
-        String::from(format!(
-            "forward: ({:+.2},{:+.2},{:+.2})",
-            forward.x,
-            forward.y,
-            forward.z,
-        ))
-    }))
-}
-
-fn create_right_model(x: f32, y_right: f32, config: TextConfig, right: &Vertex3D) -> Model2D {
-    Model2DBuilder::new()
-        .with_texture(Texture2DBuilder::new()
-            .with_x(x)
-            .with_y(y_right)
-            .with_image(create_right_text(config, &right).unwrap())
-            .build())
-        .build()
-}
-
-fn create_right_text(config: TextConfig, right: &Vertex3D) -> Option<RawImage> {
-    Option::from(text_2d_image(config.clone(), || {
-        String::from(format!(
-            "right:   ({:+.2},{:+.2},{:+.2})",
-            right.x,
-            right.y,
-            right.z,
-        ))
-    }))
-}
-
-fn create_up_model(x: f32, y_up: f32, config: TextConfig, up: &Vertex3D) -> Model2D {
-    Model2DBuilder::new()
-        .with_texture(Texture2DBuilder::new()
-            .with_x(x)
-            .with_y(y_up)
-            .with_image(create_up_text(config, &up).unwrap())
-            .build())
-        .build()
-}
-
-fn create_up_text(config: TextConfig, up: &Vertex3D) -> Option<RawImage> {
-    Option::from(text_2d_image(config.clone(), || {
-        String::from(format!(
-            "up:      ({:+.2},{:+.2},{:+.2})",
-            up.x,
-            up.y,
-            up.z,
         ))
     }))
 }
