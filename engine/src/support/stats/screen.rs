@@ -34,7 +34,7 @@ pub(crate) fn show_screen_stats(
     let window_center = &screen.window_center;
 
     /* positioning variables */
-    let y = 80.0;
+    let y = 120.0;
     let y_cr = y;
     let y_wr = y + HEIGHT;
     let y_cc = y + HEIGHT + HEIGHT;

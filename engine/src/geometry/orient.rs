@@ -10,8 +10,9 @@ pub struct Orientation {
     pub x_scale: f32,
     pub y_scale: f32,
     pub z_scale: f32,
-    pub pitch: f32,
-    pub yaw: f32,
+    pub pitch: f32,    // up/down, about x
+    pub yaw: f32,      // left/right; about y
+    pub roll: f32,     // side/side, about z
 }
 
 pub struct OrientationBuilder {
@@ -21,10 +22,11 @@ pub struct OrientationBuilder {
     the_z_scale: Option<f32>,
     the_pitch: Option<f32>,
     the_yaw: Option<f32>,
+    the_roll: Option<f32>,
 }
 
 impl Orientation {
-    pub fn new(position: Matrix4x4, x_scale: f32, y_scale: f32, z_scale: f32, pitch: f32,  yaw: f32) -> Orientation {
+    pub fn new(position: Matrix4x4, x_scale: f32, y_scale: f32, z_scale: f32, pitch: f32,  yaw: f32, roll: f32) -> Orientation {
         Orientation {
             position,
             x_scale,
@@ -32,6 +34,7 @@ impl Orientation {
             z_scale,
             pitch,
             yaw,
+            roll,
         }
     }
 
@@ -48,6 +51,7 @@ impl Orientation {
             z_scale: 1.0,
             pitch: 0.0,
             yaw: 0.0,
+            roll: 0.0,
         }
     }
 }
@@ -61,6 +65,7 @@ impl Default for Orientation {
             z_scale: 1.0,
             pitch: 0.0,
             yaw: 0.0,
+            roll: 0.0,
         }
     }
 }
@@ -74,6 +79,7 @@ impl OrientationBuilder {
             the_z_scale: None,
             the_pitch: None,
             the_yaw: None,
+            the_roll: None,
         }
     }
 
@@ -105,6 +111,7 @@ impl OrientationBuilder {
             z_scale: self.the_z_scale.unwrap_or_else(|| 1.0),
             pitch: self.the_pitch.unwrap_or_else(|| 0.0),
             yaw: self.the_yaw.unwrap_or_else(|| 0.0),
+            roll: self.the_roll.unwrap_or_else(|| 0.0),
         }
     }
 }
