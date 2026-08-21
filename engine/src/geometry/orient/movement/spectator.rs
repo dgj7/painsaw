@@ -1,5 +1,5 @@
 use crate::config::EngineConfig;
-use crate::geometry::primitive::v3d::{magnitude, Vertex3D};
+use crate::geometry::primitive::v3d::Vertex3D;
 use crate::graphics::camera::Camera;
 use crate::input::mouse::md::MouseDelta;
 use crate::support::timing::EngineTiming;
@@ -88,46 +88,8 @@ pub trait SpectatorMovementStrategy {
         if camera.orientation.pitch < -89.0 { camera.orientation.pitch = -89.0; }
         
         /* finally, update orientation */
-        //Self::update_orientation(camera);
-    }
-
-    ///
-    /// update orientation based on previously updated yaw/pitch (radians).
-    ///
-    // todo: move this directly into the update_look() function; needs associated unit testing as well
-    fn update_orientation(
-        camera: &mut Camera
-    ) {
-        /* calc new unit forward vector; forward changes depending on pitch/yaw; presuming default is 0,0,-1 looking down -z */
-        let cos_pitch = camera.orientation.pitch.cos();
-        let sin_pitch = camera.orientation.pitch.sin();
-        let cos_yaw = camera.orientation.yaw.cos();
-        let sin_yaw = camera.orientation.yaw.sin();
-        let fx = cos_pitch * sin_yaw;
-        let fy = sin_pitch;
-        let fz = -cos_pitch * cos_yaw;
-
-        /* assemble forward from new fx,fy,fz coord */
-        let forward = Vertex3D::new(fx, fy, fz);
-        if magnitude(&forward) > 0.0 {
-            camera.orientation.position.column_major_update_forward(&forward);
-        }
-
-        /* right = cross_product(forward, up), where up defaults to 0,1,0 */
-        //let up = camera.orientation.position.column_major_y_up();
-        let up = Vertex3D::new(0.0, 1.0, 0.0);
-        let right = Vertex3D::new_cross_product(&forward, &up);
-        if magnitude(&right) > 0.0 {
-            camera.orientation.position.column_major_update_right(&right);
-        }
-
-        /* up = cross_product(forward, right) */
-        let up = Vertex3D::new_cross_product(&forward, &right);
-        if magnitude(&up) > 0.0 {
-            camera.orientation.position.column_major_update_up(&up);
-        }
-
-        /* normalize */
-        camera.orientation.position.normalize();
+        // todo: complete this
+        //let rotation = Matrix3x3::from_pitch_yaw_roll(camera.orientation.pitch, camera.orientation.yaw, camera.orientation.roll);
+        //camera.orientation.position = rotate(&camera.orientation.position, &rotation);
     }
 }

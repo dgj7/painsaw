@@ -1,10 +1,10 @@
-use crate::d1m2d::{create_2d_axes, create_2d_crosshairs, create_2d_grid_x_lines, create_2d_grid_y_lines, create_2d_repeated_texts};
-use crate::d1m3d::{create_3d_axes, create_3d_cuboid_1, create_3d_cuboid_wall_2};
+use crate::d1::Demo1;
+use crate::d1m2d::{create_2d_axes, create_2d_crosshairs, create_2d_grid_x_lines, create_2d_grid_y_lines};
+use crate::d1m3d::{create_3d_axes, create_3d_cuboid_1, create_3d_cuboid_wall_2, create_3d_enclosing_box};
 use engine::support::logger::log;
 use engine::support::logger::log_level::LogLevel;
 use engine::PainsawContext;
 use engine::WorldController;
-use crate::d1::Demo1;
 
 static M2D_XY_PURPLE: &str = "1-2d-xy-purple";
 static M2D_X_HORIZ: &str = "2-2d-x-horizontal";
@@ -16,15 +16,16 @@ impl WorldController for Demo1 {
     fn initialize_world_helper(&self, context: &mut PainsawContext) {
         /* 2d */
         context.g2d.attach(M2D_XY_PURPLE, create_2d_axes(&context.camera));
-        context.g2d.attach(M2D_X_HORIZ, create_2d_grid_x_lines(&context.camera));
-        context.g2d.attach(M2D_Y_VERT, create_2d_grid_y_lines(&context.camera));
-        context.g2d.attach("99-repeated", create_2d_repeated_texts(16, 0.0, 710.0));
+        //context.g2d.attach(M2D_X_HORIZ, create_2d_grid_x_lines(&context.camera));
+        //context.g2d.attach(M2D_Y_VERT, create_2d_grid_y_lines(&context.camera));
+        //context.g2d.attach("99-repeated", create_2d_repeated_texts(16, 0.0, 710.0));
         context.g2d.attach(M2D_CROSSHAIRS, create_2d_crosshairs(&context.camera));
 
         /* 3d */
         context.g3d.attach("4-3d-axes", create_3d_axes());
         context.g3d.attach("6-3d-cuboid-1", create_3d_cuboid_1());
         context.g3d.attach("6-3d-cuboid-wall-2", create_3d_cuboid_wall_2());
+        context.g3d.attach("6-3d-cuboid-enclosing", create_3d_enclosing_box());
     }
 
     fn update_world_helper(&self, context: &mut PainsawContext) {

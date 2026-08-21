@@ -99,3 +99,27 @@ pub(super) fn create_3d_cuboid_wall_2() -> Model3D {
             .expect("invalid quad"))
         .build()
 }
+
+pub(super) fn create_3d_enclosing_box() -> Model3D {
+    let orientation = Orientation::new(Matrix4x4::from(
+        Vertex3D::origin(),
+        Vertex3D::origin(),
+        Vertex3D::origin(),
+        Vertex3D::new(10.0, 10.0, 15.0)
+    ), 1.0, 1.0, 1.0, 0.0, 0.0, 0.0);
+    Model3DBuilder::new()
+        .with_primitive(Primitive3DBuilder::new()
+            .with_type(PrimitiveType::Point {point_size: 10.0})
+            .with_orientation(orientation.clone())
+            .with_color(Color::RED)
+            .with_vertex(Vertex3D::origin())
+            .build())
+        .with_primitive(QuadBuilder::new()
+            .with_orientation(orientation)
+            .with_width(20.0)
+            .with_height(12.0)
+            .with_depth(30.0)
+            .build()
+            .expect("invalid quad"))
+        .build()
+}

@@ -69,7 +69,7 @@ checksum = "773648b94d0e5d620f64f280777445740e61fe701025087ec8b57f45c791888b"
 
 [[package]]
 name = "d1"
-version = "0.0.103"
+version = "0.0.104"
 dependencies = [
  "engine",
 ]
@@ -83,7 +83,7 @@ dependencies = [
 
 [[package]]
 name = "engine"
-version = "0.0.215"
+version = "0.0.216"
 dependencies = [
  "chrono",
  "colored",

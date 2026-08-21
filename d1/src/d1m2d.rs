@@ -1,12 +1,10 @@
-use std::f32::consts::PI;
+use engine::geometry::primitive::prim2d::Primitive2DBuilder;
+use engine::geometry::primitive::v2d::Vertex2D;
+use engine::geometry::primitive::PrimitiveType;
 use engine::graphics::camera::Camera;
 use engine::graphics::color::Color;
-use engine::geometry::primitive::prim2d::Primitive2DBuilder;
-use engine::geometry::primitive::PrimitiveType;
-use engine::geometry::primitive::v2d::Vertex2D;
-use engine::graphics::texture::t2d::Texture2DBuilder;
-use engine::support::text::{text_2d_image, TextConfig, Typeface};
 use engine::graphics::storage::m2d::{Model2D, Model2DBuilder};
+use std::f32::consts::PI;
 
 pub(super) fn create_2d_axes(camera: &Camera) -> Model2D {
     Model2DBuilder::new()
@@ -70,25 +68,6 @@ pub(super) fn create_2d_grid_y_lines(camera: &Camera) -> Model2D {
             .with_vertices(vertices)
             .build())
         .build()
-}
-
-pub(super) fn create_2d_repeated_texts(count: u16, x: f32, y: f32) -> Model2D {
-    let mut textures = vec!();
-    let config = TextConfig {
-        typeface: Typeface::Generic,
-        foreground: Color::from_rgba(1.0, 1.0, 1.0, 0.4),
-        background: Color::from_rgba(1.0, 1.0, 1.0, 0.0),
-    };
-
-    for i in 0..count {
-        textures.push(Texture2DBuilder::new()
-            .with_x(x)
-            .with_y(y + 20.0 * i as f32)
-            .with_image(text_2d_image(config.clone(), || "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.".to_string()))
-            .build());
-    }
-
-    Model2D::new(vec!(), textures)
 }
 
 pub(super) fn create_2d_crosshairs(camera: &Camera) -> Model2D {
