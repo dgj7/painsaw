@@ -18,19 +18,27 @@ pub(crate) fn show_fps(g2d: &mut Graph2D, timing: &EngineTiming, config: &Engine
     let avg = timing.compute_avg_fps();
 
     /* add or update models */
-    g2d.attach_or_update("99-builtin-fps", || create_model(TC.clone(), fps, avg), |m| m.textures[0].replacement = Option::from(create_text(TC.clone(), fps, avg)));
+    g2d.attach_or_update(
+        "99-builtin-fps",
+        || create_model(TC.clone(), fps, avg),
+        |m| m.textures[0].replacement = Option::from(create_text(TC.clone(), fps, avg)),
+    );
 }
 
 fn create_text(config: TextConfig, fps: u32, avg: u32) -> RawImage {
-    text_2d_image(config.clone(), || String::from(format!("FPS:{:4} ({:4} avg)", fps, avg)))
+    text_2d_image(config.clone(), || {
+        String::from(format!("FPS:{:4} ({:4} avg)", fps, avg))
+    })
 }
 
 fn create_model(config: TextConfig, fps: u32, avg: u32) -> Model2D {
     Model2DBuilder::new()
-        .with_texture(Texture2DBuilder::new()
-            .with_x(X_POS)
-            .with_y(5.0)
-            .with_image(create_text(config, fps, avg))
-            .build())
+        .with_texture(
+            Texture2DBuilder::new()
+                .with_x(X_POS)
+                .with_y(5.0)
+                .with_image(create_text(config, fps, avg))
+                .build(),
+        )
         .build()
 }

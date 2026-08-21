@@ -1,13 +1,17 @@
 use crate::config::EngineConfig;
 use crate::geometry::primitive::v2d::Vertex2D;
-use crate::geometry::rect::Rectangle2D;
 use crate::graphics::storage::g2d::Graph2D;
-use crate::graphics::storage::m2d::{Model2D, Model2DBuilder};
-use crate::graphics::texture::t2d::Texture2DBuilder;
 use crate::input::screen::ScreenState;
-use crate::support::image::RawImage;
-use crate::support::stats::{HEIGHT, TC, X_POS};
-use crate::support::text::{text_2d_image, TextConfig};
+use crate::support::stats::{
+    create_rect2d_model, create_rect2d_text, create_vertex2d_model, create_vertex2d_text, HEIGHT, TC,
+    X_POS,
+};
+
+static CLT_POS: &str = "clt pos: ";
+static WIN_POS: &str = "win pos: ";
+static CLT_CTR: &str = "clt ctr: ";
+static WIN_CTR: &str = "win ctr: ";
+static MOS_POS: &str = "mouse:   ";
 
 ///
 /// display various screen statistics.
@@ -26,7 +30,7 @@ pub(crate) fn show_screen_stats(
     if !config.renderer.show_screen_stats {
         return;
     }
-    
+
     /* gather variables */
     let client_rect = &screen.current_client_rect;
     let window_rect = &screen.current_window_rect;
@@ -42,53 +46,29 @@ pub(crate) fn show_screen_stats(
     let y_mp = y + HEIGHT + HEIGHT + HEIGHT + HEIGHT;
 
     /* update models */
-    g2d.attach_or_update("99-2d-screen-client-rect", || create_rect_model(X_POS, y_cr, TC.clone(), &client_rect, "clt pos"), |m| m.textures[0].replacement = create_rect_text(TC.clone(), &client_rect, "clt pos"));
-    g2d.attach_or_update("99-2d-screen-window-rect", || create_rect_model(X_POS, y_wr, TC.clone(), &window_rect, "win pos"), |m| m.textures[0].replacement = create_rect_text(TC.clone(), &window_rect, "win pos"));
-    g2d.attach_or_update("99-2d-screen-client-center", || create_vertex_model(X_POS, y_cc, TC.clone(), &client_center, "clt ctr"), |m| m.textures[0].replacement = create_vertex_text(TC.clone(), &client_center, "clt ctr"));
-    g2d.attach_or_update("99-2d-screen-window-center", || create_vertex_model(X_POS, y_wc, TC.clone(), &window_center, "win ctr"), |m| m.textures[0].replacement = create_vertex_text(TC.clone(), &window_center, "win ctr"));
-    g2d.attach_or_update("99-2d-screen-mouse-pos", || create_vertex_model(X_POS, y_mp, TC.clone(), &mouse_position, "mouse  "), |m| m.textures[0].replacement = create_vertex_text(TC.clone(), &mouse_position, "mouse  "));
-}
-
-fn create_rect_model(x: f32, y: f32, config: TextConfig, rect: &Rectangle2D, label: &str) -> Model2D {
-    Model2DBuilder::new()
-        .with_texture(Texture2DBuilder::new()
-            .with_x(x)
-            .with_y(y)
-            .with_image(create_rect_text(config, &rect, label).unwrap())
-            .build())
-        .build()
-}
-
-fn create_rect_text(config: TextConfig, rect: &Rectangle2D, label: &str) -> Option<RawImage> {
-    Option::from(text_2d_image(config.clone(), || {
-        String::from(format!(
-            "{}: ({:+08.2},{:+08.2}),({:+08.2},{:+08.2})",
-            label,
-            rect.top_left.x,
-            rect.top_left.y,
-            rect.bottom_right.x,
-            rect.bottom_right.y,
-        ))
-    }))
-}
-
-fn create_vertex_model(x: f32, y: f32, config: TextConfig, pt: &Vertex2D, label: &str) -> Model2D {
-    Model2DBuilder::new()
-        .with_texture(Texture2DBuilder::new()
-            .with_x(x)
-            .with_y(y)
-            .with_image(create_vertex_text(config, pt, label).unwrap())
-            .build())
-        .build()
-}
-
-fn create_vertex_text(config: TextConfig, pt: &Vertex2D, label: &str) -> Option<RawImage> {
-    Option::from(text_2d_image(config.clone(), || {
-        String::from(format!(
-            "{}: ({:+08.2},{:+08.2})",
-            label,
-            pt.x,
-            pt.y,
-        ))
-    }))
+    g2d.attach_or_update(
+        "99-2d-screen-client-rect",
+        || create_rect2d_model(X_POS, y_cr, TC.clone(), CLT_POS, &client_rect),
+        |m| m.textures[0].replacement = create_rect2d_text(TC.clone(), CLT_POS, &client_rect),
+    );
+    g2d.attach_or_update(
+        "99-2d-screen-window-rect",
+        || create_rect2d_model(X_POS, y_wr, TC.clone(), WIN_POS, &window_rect),
+        |m| m.textures[0].replacement = create_rect2d_text(TC.clone(), WIN_POS, &window_rect),
+    );
+    g2d.attach_or_update(
+        "99-2d-screen-client-center",
+        || create_vertex2d_model(X_POS, y_cc, TC.clone(), CLT_CTR, &client_center),
+        |m| m.textures[0].replacement = create_vertex2d_text(TC.clone(), CLT_CTR, &client_center),
+    );
+    g2d.attach_or_update(
+        "99-2d-screen-window-center",
+        || create_vertex2d_model(X_POS, y_wc, TC.clone(), WIN_CTR, &window_center),
+        |m| m.textures[0].replacement = create_vertex2d_text(TC.clone(), WIN_CTR, &window_center),
+    );
+    g2d.attach_or_update(
+        "99-2d-screen-mouse-pos",
+        || create_vertex2d_model(X_POS, y_mp, TC.clone(), MOS_POS, &mouse_position),
+        |m| m.textures[0].replacement = create_vertex2d_text(TC.clone(), MOS_POS, &mouse_position),
+    );
 }
