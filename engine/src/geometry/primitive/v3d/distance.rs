@@ -51,4 +51,24 @@ mod test_vtx3d_distance {
 
         assert_eq!(10.246951, left.distance_to(&right));
     }
+
+    #[test]
+    fn test_positive1() {
+        let left = Vertex3D::new(2.0, 3.0, 4.0);
+        let right = Vertex3D::new(5.0, 7.0, 9.0);
+
+        let dist = left.distance_to(&right);
+
+        assert_eq!(7.0710678118654755, dist);
+    }
+
+    #[test]
+    fn test_mixed1() {
+        let left = Vertex3D::new(-3.0, 4.0, -2.0);
+        let right = Vertex3D::new(1.0, -1.0, 3.0);
+
+        let dist = left.distance_to(&right);
+
+        assert_eq!(8.12403840463596, dist);
+    }
 }
