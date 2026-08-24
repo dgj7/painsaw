@@ -1,3 +1,5 @@
+mod mult_scalar;
+
 #[derive(Clone)]
 pub struct Vertex3D {
     pub x: f32,
@@ -64,6 +66,8 @@ impl Vertex3D {
         self.y = self.z * multiplier.x - self.x * multiplier.z;
         self.z = self.x * multiplier.y - self.y * multiplier.x;
     }
+
+
 }
 
 ///
@@ -106,14 +110,6 @@ impl Vertex3D {
         }
     }
 
-    pub fn new_mult_scalar(multiplicand: &Vertex3D, multiplier: f32) -> Vertex3D {
-        Vertex3D {
-            x: multiplicand.x * multiplier,
-            y: multiplicand.y * multiplier,
-            z: multiplicand.z * multiplier,
-        }
-    }
-
     pub fn new_div_scalar(dividend: &Vertex3D, divisor: f32) -> Vertex3D {
         Vertex3D {
             x: dividend.x / divisor,
@@ -149,6 +145,9 @@ pub fn distance(left: &Vertex3D, right: &Vertex3D) -> f32 {
     distance_squared(left, right).sqrt()
 }
 
+///
+/// test [v3d::distance()].
+///
 #[cfg(test)]
 mod point3d_distance_tests {
     use crate::geometry::primitive::v3d::Vertex3D;
