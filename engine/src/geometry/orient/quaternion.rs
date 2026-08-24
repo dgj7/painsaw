@@ -1,4 +1,5 @@
-use crate::geometry::primitive::v3d::{magnitude, Vertex3D};
+use crate::geometry::primitive::v3d::magnitude::magnitude;
+use crate::geometry::primitive::v3d::Vertex3D;
 use crate::geometry::safe_a_cos;
 
 ///

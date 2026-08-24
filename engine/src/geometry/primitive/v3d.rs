@@ -1,6 +1,9 @@
 pub(crate) mod mult_scalar;
 pub(crate) mod add;
-mod subtract;
+pub(crate) mod subtract;
+pub(crate) mod negate;
+pub(crate) mod magnitude;
+mod distance;
 
 #[derive(Clone)]
 pub struct Vertex3D {
@@ -10,12 +13,6 @@ pub struct Vertex3D {
 }
 
 impl Vertex3D {
-    pub fn negate(&mut self) {
-        self.x = -self.x;
-        self.y = -self.y;
-        self.z = -self.z;
-    }
-
     pub fn is_equal(&self, other: &Vertex3D) -> bool {
         self.x == other.x && self.y == other.y && self.z == other.z
     }
@@ -28,10 +25,6 @@ impl Vertex3D {
             self.y = self.y * one_div_mag;
             self.z = self.z * one_div_mag;
         }
-    }
-
-    pub fn distance_to(&self, other: &Vertex3D) -> f32 {
-        distance(self, other)
     }
 
     ///
@@ -99,24 +92,6 @@ impl Vertex3D {
             z: left.x * right.y - left.y * right.x,
         }
     }
-}
-
-///
-/// calculate the magnitude.
-///
-pub fn magnitude(p: &Vertex3D) -> f32 {
-    ((p.x * p.x) + (p.y * p.y) + (p.z * p.z)).sqrt()
-}
-
-pub fn distance_squared(left: &Vertex3D, right: &Vertex3D) -> f32 {
-    let dx = left.x - right.x;
-    let dy = left.y - right.y;
-    let dz = left.z - right.z;
-    dx * dx + dy * dy + dz * dz
-}
-
-pub fn distance(left: &Vertex3D, right: &Vertex3D) -> f32 {
-    distance_squared(left, right).sqrt()
 }
 
 ///

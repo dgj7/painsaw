@@ -24,7 +24,8 @@ impl Vertex3D {
 /// this will automatically test [Vertex3D::subtract()].
 #[cfg(test)]
 mod test_vtx3d_subtract {
-    use crate::geometry::primitive::v3d::{magnitude, Vertex3D};
+    use crate::geometry::primitive::v3d::magnitude::magnitude;
+    use crate::geometry::primitive::v3d::Vertex3D;
 
     #[test]
     fn test_positive_addend() {
