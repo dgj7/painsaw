@@ -1,4 +1,6 @@
-mod mult_scalar;
+pub(crate) mod mult_scalar;
+pub(crate) mod add;
+mod subtract;
 
 #[derive(Clone)]
 pub struct Vertex3D {
@@ -30,18 +32,6 @@ impl Vertex3D {
 
     pub fn distance_to(&self, other: &Vertex3D) -> f32 {
         distance(self, other)
-    }
-
-    pub fn add(&mut self, addend: &Vertex3D) {
-        self.x = self.x + addend.x;
-        self.y = self.y + addend.y;
-        self.z = self.z + addend.z;
-    }
-
-    pub fn subtract(&mut self, subtrahend: &Vertex3D) {
-        self.x = self.x - subtrahend.x;
-        self.y = self.y - subtrahend.y;
-        self.z = self.z - subtrahend.z;
     }
 
     ///
@@ -92,22 +82,6 @@ impl Vertex3D {
 
     pub fn create_z_unit() -> Vertex3D {
         Vertex3D::new(0.0, 0.0, 1.0)
-    }
-
-    pub fn new_add(left_addend: &Vertex3D, right_addend: &Vertex3D) -> Vertex3D {
-        Vertex3D {
-            x: left_addend.x + right_addend.x,
-            y: left_addend.y + right_addend.y,
-            z: left_addend.z + right_addend.z,
-        }
-    }
-
-    pub fn new_subtract(minuend: &Vertex3D, subtrahend: &Vertex3D) -> Vertex3D {
-        Vertex3D {
-            x: minuend.x - subtrahend.x,
-            y: minuend.y - subtrahend.y,
-            z: minuend.z - subtrahend.z,
-        }
     }
 
     pub fn new_div_scalar(dividend: &Vertex3D, divisor: f32) -> Vertex3D {

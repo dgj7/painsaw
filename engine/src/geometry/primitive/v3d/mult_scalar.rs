@@ -32,7 +32,8 @@ impl Vertex3D {
 }
 
 ///
-/// test [Vertex3D::mult_scalar()] and [Vertex3D::new_mult_scalar()].
+/// test [Vertex3D::new_mult_scalar()].
+/// that will automatically test [Vertex3D::mult_scalar()].
 ///
 #[cfg(test)]
 mod test_vertex3d_mult_scalar {
