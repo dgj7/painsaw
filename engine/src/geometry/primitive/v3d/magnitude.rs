@@ -7,6 +7,12 @@ use crate::geometry::primitive::v3d::Vertex3D;
 ///
 /// similar to absolute value.
 ///
+impl Vertex3D {
+    pub fn magnitude(&self) -> f32 {
+        magnitude(&self)
+    }
+}
+
 pub fn magnitude(p: &Vertex3D) -> f32 {
     ((p.x * p.x) + (p.y * p.y) + (p.z * p.z)).sqrt()
 }
@@ -15,7 +21,6 @@ pub fn magnitude(p: &Vertex3D) -> f32 {
 /// test [v3d::magnitude()].
 #[cfg(test)]
 mod test_vtx3d_magnitude {
-    use crate::geometry::primitive::v3d::magnitude::magnitude;
     use crate::geometry::primitive::v3d::Vertex3D;
 
     #[test]
@@ -26,7 +31,7 @@ mod test_vtx3d_magnitude {
             z: 5.0,
         };
 
-        assert_eq!(7.071068, magnitude(&input));
+        assert_eq!(7.071068, input.magnitude());
     }
 
     #[test]
@@ -37,6 +42,6 @@ mod test_vtx3d_magnitude {
             z: -5.0,
         };
 
-        assert_eq!(7.071068, magnitude(&input));
+        assert_eq!(7.071068, input.magnitude());
     }
 }
