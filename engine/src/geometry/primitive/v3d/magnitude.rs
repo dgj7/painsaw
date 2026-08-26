@@ -19,6 +19,7 @@ pub fn magnitude(p: &Vertex3D) -> f32 {
 
 ///
 /// test [v3d::magnitude()].
+///
 #[cfg(test)]
 mod test_vtx3d_magnitude {
     use crate::geometry::primitive::v3d::Vertex3D;

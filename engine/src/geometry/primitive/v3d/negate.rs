@@ -1,5 +1,10 @@
 use crate::geometry::primitive::v3d::Vertex3D;
 
+///
+/// negate a vertex/vector.
+///
+/// produces a vector that is pointing in the opposite direction, with maintained magnitude.
+///
 impl Vertex3D {
     pub fn negate(&mut self) {
         self.x = -self.x;
@@ -8,7 +13,9 @@ impl Vertex3D {
     }
 }
 
-
+///
+/// test [Vertex3d::negate()].
+///
 #[cfg(test)]
 mod test_vtx3d_negate {
     use crate::geometry::primitive::v3d::Vertex3D;
