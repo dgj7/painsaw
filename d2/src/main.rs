@@ -19,26 +19,15 @@ use engine::support::logger::{configure, log, LoggerConfig};
 use engine::window::api::cw::create_window;
 
 fn main() {
-    configure(LoggerConfig {
-        level: LogLevel::Debug,
-        target: LogTarget::StdOut,
-    });
+    configure(LoggerConfig { level: LogLevel::Debug, target: LogTarget::StdOut, });
     log(LogLevel::Info, &|| "main(): begin".parse().unwrap());
 
     let game = Demo2::new();
     let cfg = create_engine_config();
 
     match create_window(&cfg) {
-        Ok(mut win) => {
-            win.begin_event_handling(cfg.clone(), &game)
-                .expect("window creation failed");
-        }
-        Err(_e) => {
-            log(LogLevel::Error, &|| {
-                "window creation failed".parse().unwrap()
-            });
-            std::process::exit(1);
-        }
+        Ok(mut win) => { win.begin_event_handling(cfg.clone(), &game).expect("window creation failed"); }
+        Err(_e) => { log(LogLevel::Error, &|| { "window creation failed".parse().unwrap() });std::process::exit(1); }
     }
 
     log(LogLevel::Info, &|| "main(): end.".parse().unwrap());

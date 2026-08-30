@@ -26,12 +26,7 @@ pub fn create_generic(config: &TextConfig, message: String) -> RawImage {
     let key = ColorSelection::new(config.foreground, config.background);
     let mut guard = ALPHABET.lock().unwrap();
     if !guard.contains_key(&key) {
-        log(LogLevel::Debug, &|| {
-            String::from(format!(
-                "dynamically created alphabet: [{:?}],[{:?}]",
-                config.foreground, config.background
-            ))
-        });
+        log(LogLevel::Debug, &|| { String::from(format!("dynamically created alphabet: [{:?}],[{:?}]", config.foreground, config.background)) });
         guard.insert(key, define_upscaled(config.foreground, config.background));
     }
     let alphabet = guard.get(&key).expect("todo: still can't find alphabet");
@@ -47,11 +42,7 @@ pub fn create_generic(config: &TextConfig, message: String) -> RawImage {
 
     /* the rows array should never be more than the number of rows needed for encoding the characters */
     if rows.len() != HEIGHT {
-        panic!(
-            "rows.len() should be [{}], but it's [{}]",
-            HEIGHT,
-            rows.len()
-        );
+        panic!("rows.len() should be [{}], but it's [{}]", HEIGHT, rows.len());
     }
 
     /* copy rows into contiguous array */
@@ -69,10 +60,7 @@ pub fn create_generic(config: &TextConfig, message: String) -> RawImage {
 fn define_by_color() -> HashMap<ColorSelection, HashMap<char, Vec<Vec<u8>>>> {
     let mut output = HashMap::new();
 
-    output.insert(
-        ColorSelection::new(Color::RED, Color::TRANSPARENT),
-        define_upscaled(Color::RED, Color::TRANSPARENT),
-    );
+    output.insert(ColorSelection::new(Color::RED, Color::TRANSPARENT), define_upscaled(Color::RED, Color::TRANSPARENT), );
 
     output
 }
@@ -114,12 +102,7 @@ fn define_upscaled(foreground: Color, background: Color) -> HashMap<char, Vec<Ve
         output.insert(*letter, upscaled);
     }
 
-    log(LogLevel::Debug, &|| {
-        String::from(format!(
-            "created alphabet: [{:?}],[{:?}]",
-            foreground, background
-        ))
-    });
+    log(LogLevel::Debug, &|| { String::from(format!("created alphabet: [{:?}],[{:?}]", foreground, background)) });
     output
 }
 

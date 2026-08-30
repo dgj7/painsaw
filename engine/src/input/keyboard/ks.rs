@@ -11,16 +11,13 @@ pub struct KeyState {
 impl KeyState {
     pub fn new(position: KeyChange) -> KeyState {
         KeyState {
-            previous: KeyChange::Inactive {
-                info: KeyInputInfo::handled(),
-            },
+            previous: KeyChange::Inactive { info: KeyInputInfo::handled(), },
             current: position,
         }
     }
 
     pub fn update(&mut self, change: KeyChange) {
-        if (self.current.is_inactive() && change.is_inactive())
-            || (self.current.is_active() && change.is_active())
+        if (self.current.is_inactive() && change.is_inactive()) || (self.current.is_active() && change.is_active())
         {
             return;
         } else {

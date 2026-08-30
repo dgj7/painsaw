@@ -35,15 +35,7 @@ impl Orientation {
         yaw: f32,
         roll: f32,
     ) -> Orientation {
-        Orientation {
-            position,
-            x_scale,
-            y_scale,
-            z_scale,
-            pitch,
-            yaw,
-            roll,
-        }
+        Orientation { position, x_scale, y_scale, z_scale, pitch, yaw, roll,}
     }
 
     pub fn camera_default() -> Orientation {

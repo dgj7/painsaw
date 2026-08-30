@@ -13,12 +13,7 @@ pub struct Color {
 
 impl Color {
     pub const fn from_rgba(red: f32, green: f32, blue: f32, alpha: f32) -> Color {
-        Color {
-            red,
-            green,
-            blue,
-            alpha,
-        }
+        Color { red, green, blue, alpha, }
     }
 
     pub const fn from_rgb(red: f32, green: f32, blue: f32) -> Color {
@@ -62,14 +57,8 @@ impl ColorSelection {
         let (fgr, fgg, fgb, fga) = foreground.to_u8();
         let (bgr, bgg, bgb, bga) = background.to_u8();
         ColorSelection {
-            fgr,
-            fgg,
-            fgb,
-            fga,
-            bgr,
-            bgg,
-            bgb,
-            bga,
+            fgr, fgg, fgb, fga,
+            bgr, bgg, bgb, bga,
         }
     }
 }

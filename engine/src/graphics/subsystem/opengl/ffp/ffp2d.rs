@@ -31,14 +31,7 @@ pub(crate) fn ffp_2d_setup(camera: &Camera) {
     /* projection: reset matrix; setup ortho for 2d drawing */
     gl_matrix_mode(GL_PROJECTION);
     gl_load_identity();
-    gl_ortho(
-        0.0,
-        camera.projection.width as f64,
-        camera.projection.height as f64,
-        0.0,
-        -99999.0,
-        99999.0,
-    );
+    gl_ortho(0.0, camera.projection.width as f64, camera.projection.height as f64, 0.0, -99999.0, 99999.0, );
 
     /* storage/view: reset matrix; ready for 2d drawing */
     gl_matrix_mode(GL_MODELVIEW);
@@ -130,12 +123,7 @@ pub(crate) fn ffp_render_2d_points(primitive: &Primitive2D, point_size: f32) {
     gl_push_matrix();
     gl_push_attrib(GL_ALL_ATTRIB_BITS);
 
-    gl_color_4f(
-        primitive.color.red,
-        primitive.color.green,
-        primitive.color.blue,
-        primitive.color.alpha,
-    );
+    gl_color_4f(primitive.color.red, primitive.color.green, primitive.color.blue, primitive.color.alpha, );
     gl_point_size(point_size);
 
     gl_begin_points();
@@ -152,12 +140,7 @@ pub(crate) fn ffp_render_2d_lines(primitive: &Primitive2D, thickness: f32) {
     gl_push_matrix();
     gl_push_attrib(GL_ALL_ATTRIB_BITS);
 
-    gl_color_4f(
-        primitive.color.red,
-        primitive.color.green,
-        primitive.color.blue,
-        primitive.color.alpha,
-    );
+    gl_color_4f(primitive.color.red, primitive.color.green, primitive.color.blue, primitive.color.alpha, );
     gl_line_width(thickness);
 
     gl_begin_lines();
@@ -174,12 +157,7 @@ pub(crate) fn ffp_render_2d_line_strip(primitive: &Primitive2D, thickness: f32) 
     gl_push_matrix();
     gl_push_attrib(GL_ALL_ATTRIB_BITS);
 
-    gl_color_4f(
-        primitive.color.red,
-        primitive.color.green,
-        primitive.color.blue,
-        primitive.color.alpha,
-    );
+    gl_color_4f(primitive.color.red, primitive.color.green, primitive.color.blue, primitive.color.alpha, );
     gl_line_width(thickness);
 
     gl_begin(GL_LINE_STRIP);
@@ -196,12 +174,7 @@ pub(crate) fn ffp_render_2d_quads(primitive: &Primitive2D) {
     gl_push_matrix();
     gl_push_attrib(GL_ALL_ATTRIB_BITS);
 
-    gl_color_4f(
-        primitive.color.red,
-        primitive.color.green,
-        primitive.color.blue,
-        primitive.color.alpha,
-    );
+    gl_color_4f(primitive.color.red, primitive.color.green, primitive.color.blue, primitive.color.alpha, );
 
     gl_begin_quads();
     for vertex in primitive.vertices.iter() {

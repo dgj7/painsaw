@@ -28,12 +28,7 @@ impl Projection {
     pub(crate) fn update_screen(&mut self, dimension: &Dimension2D) {
         self.width = dimension.width;
         self.height = dimension.height;
-        log(LogLevel::Info, &|| {
-            String::from(format!(
-                "updated screen: width={}, height={}",
-                self.width as f64, self.height as f64
-            ))
-        });
+        log(LogLevel::Info, &|| { String::from(format!("updated screen: width={}, height={}", self.width as f64, self.height as f64)) });
     }
 }
 

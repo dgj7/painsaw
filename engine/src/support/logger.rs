@@ -16,10 +16,7 @@ pub fn log<F>(level: LogLevel, message_provider: &F)
 where
     F: Fn() -> String,
 {
-    LOGGER
-        .lock()
-        .unwrap()
-        .log(level, Location::caller(), message_provider)
+    LOGGER.lock().unwrap().log(level, Location::caller(), message_provider)
 }
 
 pub fn log_caller<F>(level: LogLevel, caller: &Location, message_provider: &F)

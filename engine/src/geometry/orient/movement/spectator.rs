@@ -17,17 +17,11 @@ pub trait SpectatorMovementStrategy {
         let position = camera.orientation.position.column_major_position();
 
         /* compute change (forward * speed * delta_time), then update position */
-        let change = Vertex3D::new_mult_scalar(
-            &Vertex3D::new_mult_scalar(&forward, config.movement.forward_speed),
-            timing.delta_time as f32,
-        );
+        let change = Vertex3D::new_mult_scalar(&Vertex3D::new_mult_scalar(&forward, config.movement.forward_speed), timing.delta_time as f32, );
         let updated = Vertex3D::new_subtract(&position, &change);
 
         /* update the orientation matrix */
-        camera
-            .orientation
-            .position
-            .column_major_update_position(&updated);
+        camera.orientation.position.column_major_update_position(&updated);
     }
 
     fn move_backward(camera: &mut Camera, config: &EngineConfig, timing: &EngineTiming) {
@@ -36,17 +30,11 @@ pub trait SpectatorMovementStrategy {
         let position = camera.orientation.position.column_major_position();
 
         /* compute change (forward * speed * delta_time), then update position */
-        let change = Vertex3D::new_mult_scalar(
-            &Vertex3D::new_mult_scalar(&forward, config.movement.forward_speed),
-            timing.delta_time as f32,
-        );
+        let change = Vertex3D::new_mult_scalar(&Vertex3D::new_mult_scalar(&forward, config.movement.forward_speed), timing.delta_time as f32, );
         let updated = Vertex3D::new_add(&position, &change);
 
         /* update the orientation matrix */
-        camera
-            .orientation
-            .position
-            .column_major_update_position(&updated);
+        camera.orientation.position.column_major_update_position(&updated);
     }
 
     fn move_left(camera: &mut Camera, config: &EngineConfig, timing: &EngineTiming) {
@@ -55,17 +43,11 @@ pub trait SpectatorMovementStrategy {
         let position = camera.orientation.position.column_major_position();
 
         /* compute change (right * speed * delta_time), then update position */
-        let change = Vertex3D::new_mult_scalar(
-            &Vertex3D::new_mult_scalar(&right, config.movement.forward_speed),
-            timing.delta_time as f32,
-        );
+        let change = Vertex3D::new_mult_scalar(&Vertex3D::new_mult_scalar(&right, config.movement.forward_speed), timing.delta_time as f32, );
         let updated = Vertex3D::new_subtract(&position, &change);
 
         /* update the orientation matrix */
-        camera
-            .orientation
-            .position
-            .column_major_update_position(&updated);
+        camera.orientation.position.column_major_update_position(&updated);
     }
 
     fn move_right(camera: &mut Camera, config: &EngineConfig, timing: &EngineTiming) {
@@ -74,17 +56,11 @@ pub trait SpectatorMovementStrategy {
         let position = camera.orientation.position.column_major_position();
 
         /* compute change (right * speed * delta_time), then update position */
-        let change = Vertex3D::new_mult_scalar(
-            &Vertex3D::new_mult_scalar(&right, config.movement.forward_speed),
-            timing.delta_time as f32,
-        );
+        let change = Vertex3D::new_mult_scalar(&Vertex3D::new_mult_scalar(&right, config.movement.forward_speed), timing.delta_time as f32, );
         let updated = Vertex3D::new_add(&position, &change);
 
         /* update the orientation matrix */
-        camera
-            .orientation
-            .position
-            .column_major_update_position(&updated);
+        camera.orientation.position.column_major_update_position(&updated);
     }
 
     ///
@@ -104,12 +80,8 @@ pub trait SpectatorMovementStrategy {
         camera.orientation.pitch = camera.orientation.pitch + delta_pitch;
 
         /* clamp to prevent flip */
-        if camera.orientation.pitch > 89.0 {
-            camera.orientation.pitch = 89.0;
-        }
-        if camera.orientation.pitch < -89.0 {
-            camera.orientation.pitch = -89.0;
-        }
+        if camera.orientation.pitch > 89.0 { camera.orientation.pitch = 89.0; }
+        if camera.orientation.pitch < -89.0 { camera.orientation.pitch = -89.0; }
 
         /* finally, update orientation */
         // todo: complete this

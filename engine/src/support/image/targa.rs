@@ -55,9 +55,7 @@ struct TargaFooter {
 impl Image for Targa {
     fn load_from_buf_read<R: BufRead + Seek>(mut reader: R) -> std::io::Result<RawImage> {
         /* load the metadata */
-        log(LogLevel::Debug, &|| {
-            "TGA: begin----------------".to_string()
-        });
+        log(LogLevel::Debug, &|| { "TGA: begin----------------".to_string() });
         let metadata = load_metadata(&mut reader);
         log(LogLevel::Debug, &|| format!("TGA: {:?}", metadata));
         validate(&metadata);
@@ -69,16 +67,9 @@ impl Image for Targa {
         /* parse the image data based on characteristics of the image */
         if metadata.pixel_depth == 32 {
             let pixels = parse_32_bit(&metadata, data);
-            Ok(RawImage::new(
-                metadata.width as u32,
-                metadata.height as u32,
-                pixels,
-            ))
+            Ok(RawImage::new(metadata.width as u32, metadata.height as u32, pixels, ))
         } else {
-            Err(Error::new(
-                Unsupported,
-                format!("TGA: unsupported pixel depth: {}", metadata.pixel_depth),
-            ))
+            Err(Error::new(Unsupported, format!("TGA: unsupported pixel depth: {}", metadata.pixel_depth), ))
         }
     }
 }
@@ -106,9 +97,7 @@ fn parse_32_bit(metadata: &TargaMetaData, bytes: Vec<u8>) -> Vec<u8> {
                         pixels.push(pixel[0]); // BGRA: blue
                         pixels.push(pixel[3]);
                     } else {
-                        log(LogLevel::Warning, &|| {
-                            format!("TGA: bottom-to-top: chunk_length={}", pixel.len())
-                        });
+                        log(LogLevel::Warning, &|| { format!("TGA: bottom-to-top: chunk_length={}", pixel.len()) });
                     }
                 }
             } else {
@@ -123,10 +112,7 @@ fn parse_32_bit(metadata: &TargaMetaData, bytes: Vec<u8>) -> Vec<u8> {
 fn validate(metadata: &TargaMetaData) {
     /* color map type:  */
     if metadata.color_map_type > 0 {
-        panic!(
-            "TGA: unsupported color map type {}",
-            metadata.color_map_type
-        );
+        panic!("TGA: unsupported color map type {}", metadata.color_map_type);
     }
 
     /* currently only support 2, uncompressed truecolor */

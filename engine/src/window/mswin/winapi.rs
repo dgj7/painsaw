@@ -25,15 +25,7 @@ pub(crate) fn peek_message(
     wmsgfiltermax: u32,
     wremovemsg: PEEK_MESSAGE_REMOVE_TYPE,
 ) -> bool {
-    unsafe {
-        bool::from(PeekMessageW(
-            lpmsg,
-            hwnd,
-            wmsgfiltermin,
-            wmsgfiltermax,
-            wremovemsg,
-        ))
-    }
+    unsafe { bool::from(PeekMessageW(lpmsg, hwnd, wmsgfiltermin, wmsgfiltermax, wremovemsg, )) }
 }
 
 ///
@@ -47,9 +39,7 @@ pub(crate) fn translate_message(lpmsg: *const MSG) -> bool {
 /// DispatchMessageW()
 ///
 pub(crate) fn dispatch_message(lpmsg: *const MSG) {
-    unsafe {
-        DispatchMessageW(lpmsg);
-    }
+    unsafe { DispatchMessageW(lpmsg); }
 }
 
 ///
@@ -214,9 +204,7 @@ pub(crate) fn get_cursor_pos() -> POINT {
 ///
 pub(crate) fn screen_to_client(hwnd: HWND, mp: &mut POINT) {
     let result = unsafe { ScreenToClient(hwnd, mp) };
-    if !bool::from(result) {
-        check_errors_mswin("ScreenToClient")
-    }
+    if !bool::from(result) { check_errors_mswin("ScreenToClient") }
 }
 
 ///
@@ -248,9 +236,7 @@ pub(crate) fn get_raw_input_data(
     cbsizeheader: u32,
 ) -> u32 {
     let result = unsafe { GetRawInputData(hrawinput, uicommand, pdata, pcbsize, cbsizeheader) };
-    if result == u32::MAX {
-        check_errors_mswin("GetRawInputData");
-    }
+    if result == u32::MAX { check_errors_mswin("GetRawInputData"); }
     result
 }
 

@@ -8,21 +8,6 @@ use engine::support::timing::EngineTiming;
 use std::collections::HashMap;
 
 impl KeyHandler for Demo2 {
-    fn check_key_states(
-        &self,
-        _states: &HashMap<KeyInputName, KeyState>,
-        _camera: &mut Camera,
-        _config: &EngineConfig,
-        _timing: &EngineTiming,
-    ) {
-    }
-    fn handle_g_key_change(
-        &self,
-        _name: &KeyInputName,
-        _state: &mut KeyState,
-        _camera: &mut Camera,
-        _config: &EngineConfig,
-        _timing: &EngineTiming,
-    ) {
-    }
+    fn check_key_states(&self, _states: &HashMap<KeyInputName, KeyState>, _camera: &mut Camera, _config: &EngineConfig, _timing: &EngineTiming, ) {}
+    fn handle_g_key_change(&self, _name: &KeyInputName, _state: &mut KeyState, _camera: &mut Camera, _config: &EngineConfig, _timing: &EngineTiming, ) {}
 }

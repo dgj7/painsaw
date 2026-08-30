@@ -22,12 +22,7 @@ impl Image for Bitmap {
         let file_sz = u32::from_le_bytes(header[2..6].try_into().unwrap());
         let reserved = u32::from_le_bytes(header[6..10].try_into().unwrap());
         let offset = u32::from_le_bytes(header[10..14].try_into().unwrap());
-        log(LogLevel::Debug, &|| {
-            format!(
-                "BMP: Header: magic={:?}, file_sz={}, reserved={}, offset={}",
-                magic, file_sz, reserved, offset
-            )
-        });
+        log(LogLevel::Debug, &|| { format!("BMP: Header: magic={:?}, file_sz={}, reserved={}, offset={}", magic, file_sz, reserved, offset) });
 
         /* first 2 bytes should be BM; otherwise, not a bitmap */
         if magic != *b"BM" {
@@ -44,12 +39,7 @@ impl Image for Bitmap {
         let height = u32::from_le_bytes(dib[8..12].try_into().unwrap());
         let planes = u16::from_le_bytes(dib[12..14].try_into().unwrap());
         let bpp = u16::from_le_bytes(dib[14..16].try_into().unwrap());
-        log(LogLevel::Debug, &|| {
-            format!(
-                "BMP: DIB: dib_sz={}, width={}, height={}, planes={}, bpp={}",
-                dib_sz, width, height, planes, bpp
-            )
-        });
+        log(LogLevel::Debug, &|| { format!("BMP: DIB: dib_sz={}, width={}, height={}, planes={}, bpp={}", dib_sz, width, height, planes, bpp) });
 
         /* prepare read pixel data */
         reader.seek(SeekFrom::Start(offset as u64))?;
@@ -61,20 +51,11 @@ impl Image for Bitmap {
 
         /* determine if there's a color table */
         let color_table_bytes = file_sz - (14 + dib_sz + (bytes.len() as u32));
-        log(LogLevel::Debug, &|| {
-            format!("BMP: color table bytes: {}", color_table_bytes)
-        });
+        log(LogLevel::Debug, &|| { format!("BMP: color table bytes: {}", color_table_bytes) });
 
         /* read the pixel data */
         if bpp == 24 {
-            log(LogLevel::Debug, &|| {
-                format!(
-                    "BMP: 24b: bytes={}, pixels(bytes/3)={}, width*height={}",
-                    bytes.len(),
-                    bytes.len() as f32 / 3f32,
-                    width * height
-                )
-            });
+            log(LogLevel::Debug, &|| { format!("BMP: 24b: bytes={}, pixels(bytes/3)={}, width*height={}", bytes.len(), bytes.len() as f32 / 3f32, width * height) });
             let pixels = parse_24_bit(width, height, bytes);
             log(LogLevel::Debug, &|| "BMP: 24b: success".to_string());
             Ok(RawImage::new(width, height, pixels))

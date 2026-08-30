@@ -34,12 +34,7 @@ impl RenderingSubSystemHandle for OpenGLHandle {
                 let vendor = gl_get_string(GL_VENDOR);
                 let device = gl_get_string(GL_RENDERER);
 
-                Some(RendererInfo {
-                    name: Some(String::from("OpenGL")),
-                    version,
-                    vendor,
-                    device,
-                })
+                Some(RendererInfo { name: Some(String::from("OpenGL")), version, vendor, device, })
             }
             OpenGLPipeline::ProgrammableShader => None,
         }
@@ -82,16 +77,10 @@ impl RenderingSubSystemHandle for OpenGLHandle {
                 for (_, model) in g2d.iter() {
                     for primitive in model.primitives.iter() {
                         match primitive.p_type {
-                            PrimitiveType::Point { point_size } => {
-                                ffp_render_2d_points(primitive, point_size)
-                            }
-                            PrimitiveType::Line { thickness } => {
-                                ffp_render_2d_lines(primitive, thickness)
-                            }
+                            PrimitiveType::Point { point_size } => { ffp_render_2d_points(primitive, point_size) }
+                            PrimitiveType::Line { thickness } => { ffp_render_2d_lines(primitive, thickness) }
                             PrimitiveType::Quad {} => ffp_render_2d_quads(primitive),
-                            PrimitiveType::LineStrip { thickness } => {
-                                ffp_render_2d_line_strip(primitive, thickness)
-                            }
+                            PrimitiveType::LineStrip { thickness } => { ffp_render_2d_line_strip(primitive, thickness) }
                         }
                     }
 
@@ -127,9 +116,7 @@ impl RenderingSubSystemHandle for OpenGLHandle {
                     for primitive in model.primitives.iter() {
                         match primitive.ptype {
                             PrimitiveType::Point { point_size } => match self.pipeline {
-                                OpenGLPipeline::FixedFunction => {
-                                    ffp_3d_points(primitive, point_size)
-                                }
+                                OpenGLPipeline::FixedFunction => { ffp_3d_points(primitive, point_size) }
                                 OpenGLPipeline::ProgrammableShader => {}
                             },
                             PrimitiveType::Line { thickness } => match self.pipeline {

@@ -24,12 +24,7 @@ pub(crate) fn ffp_3d_setup(camera: &Camera) {
     gl_load_identity();
 
     /* adjust perspective (removes ortho) */
-    glu_perspective(
-        camera.projection.fov as f64,
-        camera.projection.to_aspect() as f64,
-        camera.projection.near as f64,
-        camera.projection.far as f64,
-    );
+    glu_perspective(camera.projection.fov as f64, camera.projection.to_aspect() as f64, camera.projection.near as f64, camera.projection.far as f64, );
 
     /* storage/view: reset matrix; enable depth test; ready for 3d drawing */
     gl_matrix_mode(GL_MODELVIEW);
@@ -54,11 +49,7 @@ fn ffp_3d_translate(orientation: &Orientation) {
     gl_translate_f(position.x, position.y, position.z);
     gl_rotate_f(orientation.pitch, 1.0, 0.0, 0.0);
     gl_rotate_f(orientation.yaw, 0.0, 1.0, 0.0);
-    gl_scale_f(
-        orientation.x_scale,
-        orientation.y_scale,
-        orientation.z_scale,
-    );
+    gl_scale_f(orientation.x_scale, orientation.y_scale, orientation.z_scale, );
 }
 
 pub(crate) fn ffp_3d_points(primitive: &Primitive3D, point_size: f32) {
@@ -67,12 +58,7 @@ pub(crate) fn ffp_3d_points(primitive: &Primitive3D, point_size: f32) {
 
     ffp_3d_translate(&primitive.orientation);
 
-    gl_color_4f(
-        primitive.color.red,
-        primitive.color.green,
-        primitive.color.blue,
-        primitive.color.alpha,
-    );
+    gl_color_4f(primitive.color.red, primitive.color.green, primitive.color.blue, primitive.color.alpha, );
     gl_point_size(point_size);
 
     gl_begin_points();
@@ -91,12 +77,7 @@ pub(crate) fn ffp_3d_lines(primitive: &Primitive3D, thickness: f32) {
 
     ffp_3d_translate(&primitive.orientation);
 
-    gl_color_4f(
-        primitive.color.red,
-        primitive.color.green,
-        primitive.color.blue,
-        primitive.color.alpha,
-    );
+    gl_color_4f(primitive.color.red, primitive.color.green, primitive.color.blue, primitive.color.alpha, );
     gl_line_width(thickness);
 
     gl_begin_lines();
@@ -116,12 +97,7 @@ pub(crate) fn ffp_3d_quads(primitive: &Primitive3D) {
     ffp_3d_translate(&primitive.orientation);
     gl_polygon_mode(GL_FRONT_AND_BACK, GL_LINE);
 
-    gl_color_4f(
-        primitive.color.red,
-        primitive.color.green,
-        primitive.color.blue,
-        primitive.color.alpha,
-    );
+    gl_color_4f(primitive.color.red, primitive.color.green, primitive.color.blue, primitive.color.alpha, );
     //gl_line_width(thickness.to_f32().unwrap());
 
     gl_begin_quads();

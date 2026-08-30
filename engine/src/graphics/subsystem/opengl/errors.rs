@@ -9,9 +9,7 @@ pub fn check_errors_gl(caller: &str) {
     let code = gl_get_error();
     if code != GL_NO_ERROR {
         let message = glu_error_string(code);
-        log_caller(LogLevel::Error, Location::caller(), &|| {
-            String::from(format!("GL_ERROR: {}: {}: {}", caller, code, message))
-        });
+        log_caller(LogLevel::Error, Location::caller(), &|| { String::from(format!("GL_ERROR: {}: {}: {}", caller, code, message)) });
     }
 }
 

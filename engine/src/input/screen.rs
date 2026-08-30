@@ -130,17 +130,13 @@ impl ScreenState {
     }
 
     fn update_screen_center(&mut self) {
-        let wx =
-            (self.current_window_rect.top_left.x + self.current_window_rect.bottom_right.x) / 2.0;
-        let wy =
-            (self.current_window_rect.top_left.y + self.current_window_rect.bottom_right.y) / 2.0;
+        let wx = (self.current_window_rect.top_left.x + self.current_window_rect.bottom_right.x) / 2.0;
+        let wy = (self.current_window_rect.top_left.y + self.current_window_rect.bottom_right.y) / 2.0;
         self.window_center.x = wx;
         self.window_center.y = wy;
 
-        let cx =
-            (self.current_client_rect.top_left.x + self.current_client_rect.bottom_right.x) / 2.0;
-        let cy =
-            (self.current_client_rect.top_left.y + self.current_client_rect.bottom_right.y) / 2.0;
+        let cx = (self.current_client_rect.top_left.x + self.current_client_rect.bottom_right.x) / 2.0;
+        let cy = (self.current_client_rect.top_left.y + self.current_client_rect.bottom_right.y) / 2.0;
         self.client_center.x = cx;
         self.client_center.y = cy;
     }

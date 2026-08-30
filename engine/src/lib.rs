@@ -121,12 +121,8 @@ pub trait WorldController {
         self.update_world_helper(input.clone(), screen, camera, timing, g2d, g3d);
 
         match input.lock() {
-            Ok(mut uin) => {
-                uin.screen_resized = false;
-            }
-            Err(_) => {
-                panic!("todo: resetting screen_resized")
-            }
+            Ok(mut uin) => { uin.screen_resized = false; }
+            Err(_) => { panic!("todo: resetting screen_resized") }
         }
     }
 

@@ -48,37 +48,19 @@ impl Matrix3x3 {
         let cr = roll.cos();
 
         let rotx = Matrix3x3 {
-            c1r1: 1.0,
-            c1r2: 0.0,
-            c1r3: 0.0,
-            c2r1: 0.0,
-            c2r2: cp,
-            c2r3: sp,
-            c3r1: 0.0,
-            c3r2: -sp,
-            c3r3: cp,
+            c1r1: 1.0, c1r2: 0.0, c1r3: 0.0,
+            c2r1: 0.0, c2r2: cp, c2r3: sp,
+            c3r1: 0.0, c3r2: -sp, c3r3: cp,
         };
         let roty = Matrix3x3 {
-            c1r1: cy,
-            c1r2: 0.0,
-            c1r3: -sy,
-            c2r1: 0.0,
-            c2r2: 1.0,
-            c2r3: 0.0,
-            c3r1: sy,
-            c3r2: 0.0,
-            c3r3: cy,
+            c1r1: cy, c1r2: 0.0, c1r3: -sy,
+            c2r1: 0.0, c2r2: 1.0, c2r3: 0.0,
+            c3r1: sy, c3r2: 0.0, c3r3: cy,
         };
         let rotz = Matrix3x3 {
-            c1r1: cr,
-            c1r2: sr,
-            c1r3: 0.0,
-            c2r1: -sr,
-            c2r2: cr,
-            c2r3: 0.0,
-            c3r1: 0.0,
-            c3r2: 0.0,
-            c3r3: 1.0,
+            c1r1: cr, c1r2: sr, c1r3: 0.0,
+            c2r1: -sr, c2r2: cr, c2r3: 0.0,
+            c3r1: 0.0, c3r2: 0.0, c3r3: 1.0,
         };
 
         rotx.multiply(&roty).multiply(&rotz)

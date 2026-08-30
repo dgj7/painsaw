@@ -36,19 +36,10 @@ impl Primitive3D {
 
         /* print warnings based on content of vertices */
         match ptype {
-            PrimitiveType::Point {
-                point_size: _point_size,
-            } => {}
-            PrimitiveType::Line {
-                thickness: _thickness,
-            } => {
+            PrimitiveType::Point { point_size: _point_size, } => {}
+            PrimitiveType::Line { thickness: _thickness, } => {
                 if vertices.len() / 2 != 0 {
-                    log(LogLevel::Warning, &|| {
-                        String::from(format!(
-                            "lines configured with odd number of vertices: {}",
-                            vertices.len()
-                        ))
-                    })
+                    log(LogLevel::Warning, &|| { String::from(format!("lines configured with odd number of vertices: {}", vertices.len())) })
                 }
             }
             PrimitiveType::Quad {} => {}
@@ -97,13 +88,9 @@ impl Primitive3DBuilder {
 
     pub fn build(self) -> Primitive3D {
         Primitive3D {
-            ptype: self
-                .the_type
-                .unwrap_or_else(|| PrimitiveType::Point { point_size: 1.0 }),
+            ptype: self.the_type.unwrap_or_else(|| PrimitiveType::Point { point_size: 1.0 }),
             vertices: self.the_vertices,
-            orientation: self
-                .the_orientation
-                .unwrap_or_else(|| Orientation::default()),
+            orientation: self.the_orientation.unwrap_or_else(|| Orientation::default()),
             color: self.the_color.unwrap_or_else(|| Color::WHITE),
         }
     }

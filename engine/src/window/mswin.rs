@@ -92,12 +92,7 @@ impl Window for MsWinWindow {
             }
         }
 
-        log(LogLevel::Info, &|| {
-            return String::from(format!(
-                "after while(!quit); rendered {} frames",
-                timing.frame_count
-            ));
-        });
+        log(LogLevel::Info, &|| { return String::from(format!("after while(!quit); rendered {} frames", timing.frame_count)); });
 
         Ok(())
     }
@@ -109,24 +104,8 @@ impl MsWinWindow {
     ///
     pub(crate) fn new(request: &EngineConfig) -> Result<Box<Self>, Box<dyn std::error::Error>> {
         /* make some variables */
-        let wndclass = PCWSTR::from_raw(
-            HSTRING::from(
-                request
-                    .window
-                    .window_id
-                    .clone()
-                    .unwrap_or(String::from("WindowConfig: set wndclass"))
-            ).as_ptr(),
-        );
-        let title = PCWSTR::from_raw(
-            HSTRING::from(
-                request
-                    .window
-                    .title
-                    .clone()
-                    .unwrap_or(String::from("WindowConfig: set title")),
-            ).as_ptr(),
-        );
+        let wndclass = PCWSTR::from_raw(HSTRING::from(request.window.window_id.clone().unwrap_or(String::from("WindowConfig: set wndclass"))).as_ptr(), );
+        let title = PCWSTR::from_raw(HSTRING::from(request.window.title.clone().unwrap_or(String::from("WindowConfig: set title")), ).as_ptr(), );
         let grss = request.renderer.graphics.clone();
 
         /* get handle instance */
@@ -154,17 +133,11 @@ impl MsWinWindow {
         /* determine some settings based on configuration */
         let dwstyle = match request.window.dimensions {
             WindowDimensions::Fullscreen => WS_VISIBLE,
-            WindowDimensions::Dimensional {
-                width: _width,
-                height: _height,
-            } => WS_OVERLAPPEDWINDOW | WS_VISIBLE | WS_THICKFRAME,
+            WindowDimensions::Dimensional { width: _width, height: _height, } => WS_OVERLAPPEDWINDOW | WS_VISIBLE | WS_THICKFRAME,
         };
         let (x, y) = match request.window.dimensions {
             WindowDimensions::Fullscreen => (0, 0),
-            WindowDimensions::Dimensional {
-                width: _width,
-                height: _height,
-            } => (CW_USEDEFAULT, CW_USEDEFAULT),
+            WindowDimensions::Dimensional { width: _width, height: _height, } => (CW_USEDEFAULT, CW_USEDEFAULT),
         };
         let (width, height) = match request.window.dimensions {
             WindowDimensions::Fullscreen => (CW_USEDEFAULT, CW_USEDEFAULT),

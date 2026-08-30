@@ -25,19 +25,10 @@ impl Primitive2D {
 
         /* log other warnings */
         match p_type {
-            PrimitiveType::Point {
-                point_size: _point_size,
-            } => {}
-            PrimitiveType::Line {
-                thickness: _thickness,
-            } => {
+            PrimitiveType::Point { point_size: _point_size, } => {}
+            PrimitiveType::Line { thickness: _thickness, } => {
                 if vertices.len() / 2 != 0 {
-                    log(LogLevel::Warning, &|| {
-                        String::from(format!(
-                            "lines configured with odd number of vertices: {}",
-                            vertices.len()
-                        ))
-                    })
+                    log(LogLevel::Warning, &|| { String::from(format!("lines configured with odd number of vertices: {}", vertices.len())) })
                 }
             }
             PrimitiveType::Quad {} => {}
@@ -84,9 +75,7 @@ impl Primitive2DBuilder {
 
     pub fn build(self) -> Primitive2D {
         Primitive2D {
-            p_type: self
-                .the_p_type
-                .unwrap_or_else(|| PrimitiveType::Point { point_size: 1.0 }),
+            p_type: self.the_p_type.unwrap_or_else(|| PrimitiveType::Point { point_size: 1.0 }),
             vertices: self.the_vertices,
             color: self.the_color.unwrap_or_else(|| Color::WHITE),
         }

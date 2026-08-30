@@ -22,12 +22,8 @@ pub fn create_window(request: &EngineConfig) -> Result<Box<impl Window>, Box<dyn
 ///
 #[cfg(target_os = "windows")]
 fn create_window_os(request: &EngineConfig) -> Result<Box<impl Window>, Box<dyn Error>> {
-    let result = panic::catch_unwind(AssertUnwindSafe(|| {
-        return MsWinWindow::new(request);
-    }));
-    result.unwrap_or_else(|_err| {
-        Err(WindowingError(String::from("TODO: gather error info here")).into())
-    })
+    let result = panic::catch_unwind(AssertUnwindSafe(|| { return MsWinWindow::new(request); }));
+    result.unwrap_or_else(|_err| { Err(WindowingError(String::from("TODO: gather error info here")).into()) })
 }
 
 ///

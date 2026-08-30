@@ -9,7 +9,6 @@ pub struct QuadBuilder {
     the_width: Option<f32>,
     the_height: Option<f32>,
     the_depth: Option<f32>,
-
     the_color: Option<Color>,
 }
 
@@ -99,11 +98,6 @@ impl QuadBuilder {
         vertices.push(Vertex3D::new(-width, -height, -depth));
         vertices.push(Vertex3D::new(0.0, -height, -depth));
 
-        Some(Primitive3D::new(
-            PrimitiveType::Quad {},
-            vertices,
-            orientation,
-            color,
-        ))
+        Some(Primitive3D::new(PrimitiveType::Quad {}, vertices, orientation, color, ))
     }
 }

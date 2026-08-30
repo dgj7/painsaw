@@ -58,14 +58,7 @@ impl WorldController for Demo1 {
                     g2d.update(M2D_Y_VERT, |e| *e = create_2d_grid_y_lines(&camera));
                     g2d.update(M2D_CROSSHAIRS, |e| *e = create_2d_crosshairs(&camera));
 
-                    log(LogLevel::Debug, &|| {
-                        String::from(format!(
-                            "window size changed ({}x{}); 2d storage count is [{}]",
-                            ccd.width,
-                            ccd.height,
-                            g2d.count()
-                        ))
-                    });
+                    log(LogLevel::Debug, &|| { String::from(format!("window size changed ({}x{}); 2d storage count is [{}]", ccd.width, ccd.height, g2d.count())) });
                 }
             }
             Err(_) => {

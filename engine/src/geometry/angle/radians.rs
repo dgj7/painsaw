@@ -16,9 +16,7 @@ impl Radians {
     }
 
     pub fn to_degrees(&self) -> Degrees {
-        Degrees {
-            degrees: radians_to_degrees(self.radians),
-        }
+        Degrees { degrees: radians_to_degrees(self.radians), }
     }
 }
 

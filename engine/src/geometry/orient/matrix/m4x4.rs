@@ -149,12 +149,7 @@ impl Matrix4x4 {
 
 impl Default for Matrix4x4 {
     fn default() -> Matrix4x4 {
-        Matrix4x4::from(
-            Vertex3D::create_x_unit(),
-            Vertex3D::create_y_unit(),
-            Vertex3D::create_z_unit(),
-            Vertex3D::origin(),
-        )
+        Matrix4x4::from(Vertex3D::create_x_unit(), Vertex3D::create_y_unit(), Vertex3D::create_z_unit(), Vertex3D::origin(), )
     }
 }
 

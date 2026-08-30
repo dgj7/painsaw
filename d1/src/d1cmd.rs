@@ -23,17 +23,9 @@ pub(crate) fn handle_command<T: KeyHandler + MouseHandler + WorldController + 's
     et: &EngineTiming,
 ) {
     match command {
-        Command::CameraMoveForward => {
-            <Demo1 as SpectatorMovementStrategy>::move_forward(camera, ec, et)
-        }
-        Command::CameraStrafeLeft => {
-            <Demo1 as SpectatorMovementStrategy>::move_left(camera, ec, et)
-        }
-        Command::CameraMoveBackward => {
-            <Demo1 as SpectatorMovementStrategy>::move_backward(camera, ec, et)
-        }
-        Command::CameraStrafeRight => {
-            <Demo1 as SpectatorMovementStrategy>::move_right(camera, ec, et)
-        }
+        Command::CameraMoveForward => { <Demo1 as SpectatorMovementStrategy>::move_forward(camera, ec, et) }
+        Command::CameraStrafeLeft => { <Demo1 as SpectatorMovementStrategy>::move_left(camera, ec, et) }
+        Command::CameraMoveBackward => { <Demo1 as SpectatorMovementStrategy>::move_backward(camera, ec, et) }
+        Command::CameraStrafeRight => { <Demo1 as SpectatorMovementStrategy>::move_right(camera, ec, et) }
     }
 }

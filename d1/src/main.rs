@@ -1,7 +1,4 @@
-#![cfg_attr(
-    all(not(debug_assertions), target_os = "windows"),
-    windows_subsystem = "windows"
-)] // if windows, and release build, don't display console window
+#![cfg_attr(all(not(debug_assertions), target_os = "windows"), windows_subsystem = "windows")] // if windows, and release build, don't display console window
 
 use crate::d1::Demo1;
 use crate::d1ec::create_engine_config;
@@ -31,16 +28,8 @@ fn main() {
     let cfg = create_engine_config();
 
     match create_window(&cfg) {
-        Ok(mut win) => {
-            win.begin_event_handling(cfg.clone(), &game)
-                .expect("window creation failed");
-        }
-        Err(_e) => {
-            log(LogLevel::Error, &|| {
-                "window creation failed".parse().unwrap()
-            });
-            std::process::exit(1);
-        }
+        Ok(mut win) => { win.begin_event_handling(cfg.clone(), &game).expect("window creation failed"); }
+        Err(_e) => { log(LogLevel::Error, &|| { "window creation failed".parse().unwrap() });std::process::exit(1); }
     }
 
     log(LogLevel::Info, &|| "main(): end.".parse().unwrap());
