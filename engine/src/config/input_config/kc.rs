@@ -14,8 +14,8 @@ pub(crate) fn handle_key_change<T: KeyHandler + MouseHandler + WorldController +
     name: &KeyInputName,
     state: &mut KeyState,
     game: &T,
-    camera: &mut Camera,
     config: &EngineConfig,
+    camera: &mut Camera,
     timing: &EngineTiming,
 ) {
     match name {
@@ -41,7 +41,7 @@ pub trait KeyHandler {
     /// this is useful for handling scenarios where holding a key down might not be a
     /// "new" change, but still needs to be handled as input for some games.
     ///
-    fn check_key_states(&self, _states: &HashMap<KeyInputName, KeyState>, _camera: &mut Camera, _config: &EngineConfig, _timing: &EngineTiming, ) {}
+    fn check_key_states(&self, _states: &HashMap<KeyInputName, KeyState>, _config: &EngineConfig, _camera: &mut Camera, _timing: &EngineTiming) {}
     fn handle_escape_key_change(&self, _name: &KeyInputName, _state: &mut KeyState, _camera: &mut Camera, _config: &EngineConfig, _timing: &EngineTiming, ) {}
     fn handle_a_key_change(&self, _name: &KeyInputName, _state: &mut KeyState, _camera: &mut Camera, _config: &EngineConfig, _timing: &EngineTiming, ) {}
     fn handle_d_key_change(&self, _name: &KeyInputName, _state: &mut KeyState, _camera: &mut Camera, _config: &EngineConfig, _timing: &EngineTiming, ) {}

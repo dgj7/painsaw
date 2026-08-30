@@ -11,17 +11,17 @@ use engine::window::api::mc::move_cursor;
 impl MouseHandler for Demo1 {
     fn handle_mouse_deltas(
         &self,
-        deltas: &Vec<MouseDelta>,
-        camera: &mut Camera,
-        config: &EngineConfig,
+        _deltas: &Vec<MouseDelta>,
+        _config: &EngineConfig,
+        _screen: &mut ScreenState,
+        _camera: &mut Camera,
         _timing: &EngineTiming,
-        screen: &mut ScreenState,
     ) {
         /* update mouse look  */
-        <Demo1 as SpectatorMovementStrategy>::update_look(deltas, camera, config);
+        <Demo1 as SpectatorMovementStrategy>::update_look(_deltas, _camera, _config);
 
         /* compute center and move cursor */
-        let center = &screen.window_center;
+        let center = &_screen.window_center;
         move_cursor(center);
     }
 }

@@ -32,14 +32,14 @@ pub mod texture;
 /// This system separates/abstracts the concrete graphics rendering subsystem
 /// from both the operating system and the geometry systems.
 ///
-pub struct GraphicsIntermediary {
+pub struct RendererWrapper {
     subsystem: Box<dyn RenderingSubSystemHandle>,
     info: Option<RendererInfo>,
 }
 
-impl GraphicsIntermediary {
-    pub(crate) fn new(grss: GraphicsSubSystem) -> GraphicsIntermediary {
-        GraphicsIntermediary {
+impl RendererWrapper {
+    pub(crate) fn new(grss: GraphicsSubSystem) -> RendererWrapper {
+        RendererWrapper {
             subsystem: grss_factory(grss),
             info: None,
         }
@@ -61,18 +61,18 @@ impl GraphicsIntermediary {
         self.subsystem.before_scene(camera);
     }
 
-    pub(crate) fn prepare_2d(&self, g2d: &mut Graph2D, camera: &Camera) {
+    pub(crate) fn prepare_2d(&self, camera: &Camera, g2d: &mut Graph2D) {
         self.subsystem.prepare_2d(camera, g2d);
     }
 
     pub(crate) fn render_2d<T: KeyHandler + MouseHandler + WorldController + 'static>(
         &mut self,
-        g2d: &mut Graph2D,
-        timing: &EngineTiming,
         config: &EngineConfig,
-        camera: &Camera,
         input: MutexGuard<UserInput>,
         screen: &ScreenState,
+        camera: &Camera,
+        timing: &EngineTiming,
+        g2d: &mut Graph2D,
     ) {
         /* track down the mouse position */
         let mouse_pos = input

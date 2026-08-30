@@ -4,7 +4,7 @@ use crate::config::EngineConfig;
 use crate::graphics::camera::Camera;
 use crate::graphics::storage::g2d::Graph2D;
 use crate::graphics::storage::g3d::Graph3D;
-use crate::graphics::GraphicsIntermediary;
+use crate::graphics::RendererWrapper;
 use crate::input::screen::ScreenState;
 use crate::input::UserInput;
 use crate::support::logger::log;
@@ -38,14 +38,14 @@ pub trait WorldController {
     ///
     fn initialize_world(
         &self,
-        graphics: &mut GraphicsIntermediary,
         camera: &Camera,
+        renderer: &mut RendererWrapper,
         g2d: &mut Graph2D,
         g3d: &mut Graph3D,
     ) {
         self.initialize_world_helper(camera, g2d, g3d);
 
-        graphics.initialize(g2d, g3d);
+        renderer.initialize(g2d, g3d);
 
         log(LogLevel::Debug, &|| String::from("initialization complete"));
     }
@@ -61,15 +61,15 @@ pub trait WorldController {
     fn update_world<T: KeyHandler + MouseHandler + WorldController + 'static>(
         &self,
         game: &T,
-        input: Arc<Mutex<UserInput>>,
-        camera: &mut Camera,
         config: &EngineConfig,
+        input: Arc<Mutex<UserInput>>,
+        key: &WindowKey,
         screen: &mut ScreenState,
+        camera: &mut Camera,
         timing: &mut EngineTiming,
-        graphics: &GraphicsIntermediary,
+        renderer: &RendererWrapper,
         g2d: &mut Graph2D,
         g3d: &mut Graph3D,
-        key: &WindowKey,
     ) {
         match input.clone().lock() {
             Ok(mut uin) => {
@@ -78,19 +78,19 @@ pub trait WorldController {
                     let change = uin.key_changes.pop_front().unwrap();
                     let state = uin.key_states.get_mut(&change).unwrap();
                     if !state.current.is_handled() {
-                        handle_key_change(&change, state, game, camera, config, timing);
+                        handle_key_change(&change, state, game, config, camera, timing);
                         state.current.set_handled();
                     }
                 }
 
                 /* check key states */
-                game.check_key_states(&uin.key_states, camera, &config, &timing);
+                game.check_key_states(&uin.key_states, &config, camera, &timing);
 
                 /* handle screen resize */
                 if uin.screen_resized {
                     screen.update(key);
                     camera.update_screen(&screen.current_client_dimensions);
-                    graphics.resize(camera);
+                    renderer.resize(camera);
                 }
 
                 /* handle mouse changes */
@@ -98,20 +98,14 @@ pub trait WorldController {
                     let change = uin.mouse_changes.pop_front().unwrap();
                     let state = uin.mouse_states.get_mut(&change).unwrap();
                     if !state.current.handled {
-                        handle_mouse_change(game, &change, state, camera, &config, &timing, screen);
+                        handle_mouse_change(&change, state, game, &config, screen, camera, &timing);
                         state.current.handled = true;
                     }
                 }
 
                 /* handle mouse deltas */
                 if !uin.mouse_deltas.is_empty() {
-                    game.handle_mouse_deltas(
-                        &mut uin.mouse_deltas,
-                        camera,
-                        &config,
-                        &timing,
-                        screen,
-                    );
+                    game.handle_mouse_deltas(&mut uin.mouse_deltas, &config, screen, camera, &timing);
                     uin.mouse_deltas.clear();
                 }
             }
@@ -146,12 +140,12 @@ pub trait WorldController {
     fn display_world_scene<T: KeyHandler + MouseHandler + WorldController + 'static>(
         &self,
         _game: &T,
-        input: Arc<Mutex<UserInput>>,
-        camera: &mut Camera,
         config: &EngineConfig,
+        input: Arc<Mutex<UserInput>>,
         screen: &mut ScreenState,
+        camera: &mut Camera,
         timing: &EngineTiming,
-        graphics: &mut GraphicsIntermediary,
+        renderer: &mut RendererWrapper,
         g2d: &mut Graph2D,
         g3d: &mut Graph3D,
     ) {
@@ -159,16 +153,16 @@ pub trait WorldController {
         let uin = input.lock().unwrap();
 
         /* prepare for drawing */
-        graphics.before_scene(&camera);
+        renderer.before_scene(&camera);
 
         /* draw 3d, if desired */
-        graphics.prepare_3d(camera);
-        graphics.render_3d(g3d);
-        graphics.after_3d();
+        renderer.prepare_3d(camera);
+        renderer.render_3d(g3d);
+        renderer.after_3d();
 
         /* draw 2d, if desired */
-        graphics.prepare_2d(g2d, &camera);
-        graphics.render_2d::<T>(g2d, &timing, &config, &camera, uin, &screen);
-        graphics.after_2d();
+        renderer.prepare_2d(&camera, g2d);
+        renderer.render_2d::<T>(&config, uin, &screen, &camera, &timing, g2d);
+        renderer.after_2d();
     }
 }

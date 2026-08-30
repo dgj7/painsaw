@@ -12,13 +12,13 @@ use crate::WorldController;
 /// handle mouse inputs.
 ///
 pub fn handle_mouse_change<T: KeyHandler + MouseHandler + WorldController + 'static>(
-    game: &T,
     name: &MouseInputName,
     state: &mut MouseState,
-    camera: &mut Camera,
+    game: &T,
     config: &EngineConfig,
-    timing: &EngineTiming,
     screen: &mut ScreenState,
+    camera: &mut Camera,
+    timing: &EngineTiming,
 ) {
     match name {
         MouseInputName::MouseLeftButton => { game.handle_left_click(state, camera, config, timing, screen) }
@@ -35,5 +35,5 @@ pub trait MouseHandler {
     fn handle_mouse_move(&self, _state: &mut MouseState, _camera: &mut Camera, _config: &EngineConfig, _timing: &EngineTiming, _screen: &mut ScreenState, ) {}
     fn handle_left_click(&self, _state: &MouseState, _camera: &mut Camera, _config: &EngineConfig, _timing: &EngineTiming, _screen: &mut ScreenState, ) {}
     fn handle_right_click(&self, _state: &MouseState, _camera: &mut Camera, _config: &EngineConfig, _timing: &EngineTiming, _screen: &mut ScreenState, ) {}
-    fn handle_mouse_deltas(&self, _deltas: &Vec<MouseDelta>, _camera: &mut Camera, _config: &EngineConfig, _timing: &EngineTiming, _screen: &mut ScreenState, ) {}
+    fn handle_mouse_deltas(&self, _deltas: &Vec<MouseDelta>, _config: &EngineConfig, _screen: &mut ScreenState, _camera: &mut Camera, _timing: &EngineTiming) {}
 }

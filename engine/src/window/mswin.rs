@@ -7,7 +7,7 @@ use crate::graphics::storage::g2d::Graph2D;
 use crate::graphics::storage::g3d::Graph3D;
 use crate::graphics::subsystem::opengl::msw::window::{init_opengl, opengl_cleanup, swap_buffers};
 use crate::graphics::subsystem::GraphicsSubSystem;
-use crate::graphics::GraphicsIntermediary;
+use crate::graphics::RendererWrapper;
 use crate::input::screen::ScreenState;
 use crate::input::UserInput;
 use crate::support::logger::log;
@@ -49,21 +49,22 @@ pub struct MsWinWindow {
 impl Window for MsWinWindow {
     fn begin_event_handling<T: KeyHandler + MouseHandler + WorldController + 'static>(
         &mut self,
-        config: EngineConfig,
         game: &T,
+        config: EngineConfig,
     ) -> Result<(), Box<dyn std::error::Error>> {
         log(LogLevel::Info, &|| "begin event handling".parse().unwrap());
         let mut message: MSG = MSG::default();
+
+        /* initialize data that stores the state of the engine */
         let mut screen = ScreenState::from(&self.key);
+        let mut camera = Camera::new(&screen.current_client_dimensions);
         let mut timing = EngineTiming::new(&config.renderer);
+        let mut renderer = RendererWrapper::new(self.grss.clone());
         let mut g2d = Graph2D::new();
         let mut g3d = Graph3D::new();
-        let mut camera = Camera::new(&screen.current_client_dimensions);
-        let mut graphics = GraphicsIntermediary::new(config.renderer.graphics.clone());
-        
 
         /* initialize client renderer, if necessary */
-        game.initialize_world(&mut graphics, &camera, &mut g2d, &mut g3d, );
+        game.initialize_world(&camera, &mut renderer, &mut g2d, &mut g3d);
 
         while !self.quit {
             if peek_message(&mut message, Default::default(), 0, 0, PM_REMOVE) {
@@ -81,8 +82,8 @@ impl Window for MsWinWindow {
                 timing.begin_frame();
 
                 /* update world info; graphics scene */
-                game.update_world(game, self.input.clone(), &mut camera, &config, &mut screen, &mut timing, &graphics, &mut g2d, &mut g3d, &self.key, );
-                game.display_world_scene(game, self.input.clone(), &mut camera, &config, &mut screen, &timing, &mut graphics, &mut g2d, &mut g3d, );
+                game.update_world(game, &config, self.input.clone(), &self.key, &mut screen, &mut camera, &mut timing, &renderer, &mut g2d, &mut g3d);
+                game.display_world_scene(game, &config, self.input.clone(), &mut screen, &mut camera, &timing, &mut renderer, &mut g2d, &mut g3d);
 
                 /* swap buffers after it's all done */
                 swap_buffers(self.key.hdc);
@@ -106,7 +107,7 @@ impl MsWinWindow {
         /* make some variables */
         let wndclass = PCWSTR::from_raw(HSTRING::from(request.window.window_id.clone().unwrap_or(String::from("WindowConfig: set wndclass"))).as_ptr(), );
         let title = PCWSTR::from_raw(HSTRING::from(request.window.title.clone().unwrap_or(String::from("WindowConfig: set title")), ).as_ptr(), );
-        let grss = request.renderer.graphics.clone();
+        let grss = request.renderer.subsystem.clone();
 
         /* get handle instance */
         let hinstance: HINSTANCE = HINSTANCE::from(get_module_handle(None)?);

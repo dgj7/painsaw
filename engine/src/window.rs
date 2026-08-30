@@ -14,7 +14,7 @@ pub mod mswin;
 pub trait Window {
     fn begin_event_handling<T: KeyHandler + MouseHandler + WorldController + 'static>(
         &mut self,
-        config: EngineConfig,
         game: &T,
+        config: EngineConfig,
     ) -> Result<(), Box<dyn std::error::Error>>;
 }

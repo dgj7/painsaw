@@ -27,18 +27,18 @@ static KEYS: LazyLock<Mutex<HashMap<KeyInputName, Command>>> = LazyLock::new(|| 
 impl KeyHandler for Demo1 {
     fn check_key_states(
         &self,
-        states: &HashMap<KeyInputName, KeyState>,
-        camera: &mut Camera,
-        config: &EngineConfig,
-        timing: &EngineTiming,
+        _states: &HashMap<KeyInputName, KeyState>,
+        _config: &EngineConfig,
+        _camera: &mut Camera,
+        _timing: &EngineTiming,
     ) {
-        states
+        _states
             .into_iter()
             .filter(|(_, input_state)| input_state.current.is_active())
             .for_each(|(key_name, _)| {
                 if let Ok(mutex) = KEYS.lock() {
                     if let Some(command) = mutex.get(&key_name) {
-                        handle_command::<Demo1>(&command, camera, &config, &timing);
+                        handle_command::<Demo1>(&command, _camera, &_config, &_timing);
                     }
                 }
             });

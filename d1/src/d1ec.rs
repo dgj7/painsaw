@@ -8,17 +8,12 @@ use engine::graphics::subsystem::{GraphicsSubSystem, OpenGLPipeline};
 pub fn create_engine_config() -> EngineConfig {
     EngineConfig::new(
         WindowConfig {
-            dimensions: WindowDimensions::Dimensional {
-                width: 1920,
-                height: 1080,
-            },
+            dimensions: WindowDimensions::Dimensional { width: 1920, height: 1080, },
             title: Some(String::from("Demo1 - MsWin/OpenGL")),
             window_id: Some(String::from("PAINSAW-DEMO1")),
         },
         RendererConfig {
-            graphics: GraphicsSubSystem::OpenGL {
-                pipeline: OpenGLPipeline::FixedFunction,
-            },
+            subsystem: GraphicsSubSystem::OpenGL { pipeline: OpenGLPipeline::FixedFunction, },
             show_fps: true,
             show_cam_coords: true,
             show_screen_stats: true,

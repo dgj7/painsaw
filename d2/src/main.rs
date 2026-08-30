@@ -26,7 +26,7 @@ fn main() {
     let cfg = create_engine_config();
 
     match create_window(&cfg) {
-        Ok(mut win) => { win.begin_event_handling(cfg.clone(), &game).expect("window creation failed"); }
+        Ok(mut win) => { win.begin_event_handling(&game, cfg.clone()).expect("window creation failed"); }
         Err(_e) => { log(LogLevel::Error, &|| { "window creation failed".parse().unwrap() });std::process::exit(1); }
     }
 
