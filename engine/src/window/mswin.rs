@@ -2,12 +2,17 @@ use crate::config::input_config::kc::KeyHandler;
 use crate::config::input_config::mc::MouseHandler;
 use crate::config::window_config::WindowDimensions;
 use crate::config::EngineConfig;
+use crate::graphics::camera::Camera;
+use crate::graphics::storage::g2d::Graph2D;
+use crate::graphics::storage::g3d::Graph3D;
 use crate::graphics::subsystem::opengl::msw::window::{init_opengl, opengl_cleanup, swap_buffers};
 use crate::graphics::subsystem::GraphicsSubSystem;
+use crate::graphics::GraphicsIntermediary;
 use crate::input::screen::ScreenState;
 use crate::input::UserInput;
 use crate::support::logger::log;
 use crate::support::logger::log_level::LogLevel;
+use crate::support::timing::EngineTiming;
 use crate::window::key::WindowKey;
 use crate::window::mswin::events::wndproc;
 use crate::window::mswin::userdata::input_state_to_raw_pointer;
@@ -16,7 +21,6 @@ use crate::window::mswin::winapi::{
     register_class, register_raw_input_devices, translate_message,
 };
 use crate::window::Window;
-use crate::PainsawContext;
 use crate::WorldController;
 use std::sync::{Arc, Mutex};
 use windows::Win32::Foundation::{HINSTANCE, HWND};
@@ -50,16 +54,16 @@ impl Window for MsWinWindow {
     ) -> Result<(), Box<dyn std::error::Error>> {
         log(LogLevel::Info, &|| "begin event handling".parse().unwrap());
         let mut message: MSG = MSG::default();
-        let screen = ScreenState::from(&self.key);
-        let mut context = PainsawContext::new(&self.input, config, screen);
+        let mut screen = ScreenState::from(&self.key);
+        let mut timing = EngineTiming::new(&config.renderer);
+        let mut g2d = Graph2D::new();
+        let mut g3d = Graph3D::new();
+        let mut camera = Camera::new(&screen.current_client_dimensions);
+        let mut graphics = GraphicsIntermediary::new(config.renderer.graphics.clone());
+        
 
         /* initialize client renderer, if necessary */
-        game.initialize_world(
-            &mut context.graphics,
-            &context.camera,
-            &mut context.g2d,
-            &mut context.g3d,
-        );
+        game.initialize_world(&mut graphics, &camera, &mut g2d, &mut g3d, );
 
         while !self.quit {
             if peek_message(&mut message, Default::default(), 0, 0, PM_REMOVE) {
@@ -72,47 +76,26 @@ impl Window for MsWinWindow {
 
                 let _ = translate_message(&message);
                 dispatch_message(&message);
-            } else if context.timing.is_ok_to_render() {
+            } else if timing.is_ok_to_render() {
                 /* timing */
-                context.timing.begin_frame();
+                timing.begin_frame();
 
                 /* update world info; graphics scene */
-                game.update_world(
-                    game,
-                    context.input.clone(),
-                    &mut context.camera,
-                    &context.config,
-                    &mut context.screen,
-                    &mut context.timing,
-                    &context.graphics,
-                    &mut context.g2d,
-                    &mut context.g3d,
-                    &self.key,
-                );
-                game.display_world_scene(
-                    game,
-                    context.input.clone(),
-                    &mut context.camera,
-                    &context.config,
-                    &mut context.screen,
-                    &context.timing,
-                    &mut context.graphics,
-                    &mut context.g2d,
-                    &mut context.g3d,
-                );
+                game.update_world(game, self.input.clone(), &mut camera, &config, &mut screen, &mut timing, &graphics, &mut g2d, &mut g3d, &self.key, );
+                game.display_world_scene(game, self.input.clone(), &mut camera, &config, &mut screen, &timing, &mut graphics, &mut g2d, &mut g3d, );
 
                 /* swap buffers after it's all done */
                 swap_buffers(self.key.hdc);
 
                 /* timing */
-                context.timing.end_frame();
+                timing.end_frame();
             }
         }
 
         log(LogLevel::Info, &|| {
             return String::from(format!(
                 "after while(!quit); rendered {} frames",
-                context.timing.frame_count
+                timing.frame_count
             ));
         });
 
@@ -132,9 +115,8 @@ impl MsWinWindow {
                     .window
                     .window_id
                     .clone()
-                    .unwrap_or(String::from("WindowConfig: set wndclass")),
-            )
-            .as_ptr(),
+                    .unwrap_or(String::from("WindowConfig: set wndclass"))
+            ).as_ptr(),
         );
         let title = PCWSTR::from_raw(
             HSTRING::from(
@@ -143,8 +125,7 @@ impl MsWinWindow {
                     .title
                     .clone()
                     .unwrap_or(String::from("WindowConfig: set title")),
-            )
-            .as_ptr(),
+            ).as_ptr(),
         );
         let grss = request.renderer.graphics.clone();
 
