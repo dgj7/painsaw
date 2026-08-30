@@ -1,4 +1,3 @@
-
 ///
 /// read some number of bits from a byte.
 ///

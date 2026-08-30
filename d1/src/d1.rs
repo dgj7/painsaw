@@ -1,5 +1,3 @@
-
-
 pub struct Demo1 {
     // todo: add data specific to demo1
 }

@@ -19,6 +19,6 @@ pub fn rotate(world: &Matrix4x4, rotation: &Matrix3x3) -> Matrix4x4 {
         c1r1: combined.c1r1, c2r1: combined.c2r1, c3r1: combined.c3r1, c4r1: world.c4r1,
         c1r2: combined.c1r2, c2r2: combined.c2r2, c3r2: combined.c3r2, c4r2: world.c4r2,
         c1r3: combined.c1r3, c2r3: combined.c2r3, c3r3: combined.c3r3, c4r3: world.c4r3,
-        c1r4: world.c1r4,       c2r4: world.c2r4,       c3r4: world.c3r4,       c4r4: world.c4r4,
+        c1r4: world.c1r4, c2r4: world.c2r4, c3r4: world.c3r4, c4r4: world.c4r4,
     }
 }

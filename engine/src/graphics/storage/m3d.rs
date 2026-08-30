@@ -10,17 +10,13 @@ pub struct Model3DBuilder {
 
 impl Model3D {
     pub fn new(primitives: Vec<Primitive3D>) -> Model3D {
-        Model3D {
-            primitives,
-        }
+        Model3D { primitives }
     }
 }
 
 impl Model3DBuilder {
     pub fn new() -> Model3DBuilder {
-        Model3DBuilder {
-            the_primitives: Vec::new(),
-        }
+        Model3DBuilder { the_primitives: Vec::new(), }
     }
 
     pub fn with_primitive(mut self, primitive: Primitive3D) -> Self {
@@ -29,8 +25,6 @@ impl Model3DBuilder {
     }
 
     pub fn build(self) -> Model3D {
-        Model3D {
-            primitives: self.the_primitives,
-        }
+        Model3D { primitives: self.the_primitives, }
     }
 }

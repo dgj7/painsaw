@@ -22,7 +22,11 @@ pub fn choose_pixel_format(hdc: HDC, pfd: *const PIXELFORMATDESCRIPTOR) -> i32 {
     unsafe { ChoosePixelFormat(hdc, pfd) }
 }
 
-pub fn set_pixel_format(hdc: HDC, format: i32, pfd: *const PIXELFORMATDESCRIPTOR) -> windows_core::Result<()> {
+pub fn set_pixel_format(
+    hdc: HDC,
+    format: i32,
+    pfd: *const PIXELFORMATDESCRIPTOR,
+) -> windows_core::Result<()> {
     unsafe { SetPixelFormat(hdc, format, pfd) }
 }
 

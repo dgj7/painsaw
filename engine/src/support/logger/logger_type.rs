@@ -25,6 +25,11 @@ impl Logger {
             .iter()
             .filter(|x| level.is_allowed(&x.level))
             .map(|tc| (tc, message_provider()))
-            .for_each(|tuple| tuple.0.target.print(&level, DateTime::from(Utc::now()), caller, &tuple.1));
+            .for_each(|tuple| {
+                tuple
+                    .0
+                    .target
+                    .print(&level, DateTime::from(Utc::now()), caller, &tuple.1)
+            });
     }
 }

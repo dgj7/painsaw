@@ -1,37 +1,25 @@
-use engine::config::input_config::{InputConfig, KeyHandler};
+use engine::config::input_config::InputConfig;
 use engine::config::move_config::MoveConfig;
 use engine::config::renderer_config::RendererConfig;
 use engine::config::window_config::{WindowConfig, WindowDimensions};
 use engine::config::EngineConfig;
 use engine::graphics::subsystem::{GraphicsSubSystem, OpenGLPipeline};
-use std::sync::Arc;
-use engine::config::input_config::mc::MouseHandler;
 
-pub fn create_engine_config<T>(core: Arc<T>) -> EngineConfig
-    where
-    T: KeyHandler + MouseHandler + 'static,
-{
+pub fn create_engine_config() -> EngineConfig {
     EngineConfig::new(
         WindowConfig {
-            dimensions: WindowDimensions::Dimensional {
-                width: 1920,
-                height: 1080,
-            },
+            dimensions: WindowDimensions::Dimensional { width: 1920, height: 1080, },
             title: Some(String::from("Demo1 - MsWin/OpenGL")),
             window_id: Some(String::from("PAINSAW-DEMO1")),
         },
         RendererConfig {
-            graphics: GraphicsSubSystem::OpenGL {
-                pipeline: OpenGLPipeline::FixedFunction,
-            },
+            subsystem: GraphicsSubSystem::OpenGL { pipeline: OpenGLPipeline::FixedFunction, },
             show_fps: true,
             show_cam_coords: true,
             show_screen_stats: true,
             fps_cap: Some(60),
         },
         InputConfig {
-            key_handler: core.clone(),
-            mouse_handler: core.clone(),
             mouse_sensitivity: 0.2,
         },
         MoveConfig {

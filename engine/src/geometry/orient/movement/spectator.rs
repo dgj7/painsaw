@@ -17,7 +17,7 @@ pub trait SpectatorMovementStrategy {
         let position = camera.orientation.position.column_major_position();
 
         /* compute change (forward * speed * delta_time), then update position */
-        let change = Vertex3D::new_mult_scalar(&Vertex3D::new_mult_scalar(&forward, config.movement.forward_speed), timing.delta_time as f32);
+        let change = Vertex3D::new_mult_scalar(&Vertex3D::new_mult_scalar(&forward, config.movement.forward_speed), timing.delta_time as f32, );
         let updated = Vertex3D::new_subtract(&position, &change);
 
         /* update the orientation matrix */
@@ -30,7 +30,7 @@ pub trait SpectatorMovementStrategy {
         let position = camera.orientation.position.column_major_position();
 
         /* compute change (forward * speed * delta_time), then update position */
-        let change = Vertex3D::new_mult_scalar(&Vertex3D::new_mult_scalar(&forward, config.movement.forward_speed), timing.delta_time as f32);
+        let change = Vertex3D::new_mult_scalar(&Vertex3D::new_mult_scalar(&forward, config.movement.forward_speed), timing.delta_time as f32, );
         let updated = Vertex3D::new_add(&position, &change);
 
         /* update the orientation matrix */
@@ -43,7 +43,7 @@ pub trait SpectatorMovementStrategy {
         let position = camera.orientation.position.column_major_position();
 
         /* compute change (right * speed * delta_time), then update position */
-        let change = Vertex3D::new_mult_scalar(&Vertex3D::new_mult_scalar(&right, config.movement.forward_speed), timing.delta_time as f32);
+        let change = Vertex3D::new_mult_scalar(&Vertex3D::new_mult_scalar(&right, config.movement.forward_speed), timing.delta_time as f32, );
         let updated = Vertex3D::new_subtract(&position, &change);
 
         /* update the orientation matrix */
@@ -56,7 +56,7 @@ pub trait SpectatorMovementStrategy {
         let position = camera.orientation.position.column_major_position();
 
         /* compute change (right * speed * delta_time), then update position */
-        let change = Vertex3D::new_mult_scalar(&Vertex3D::new_mult_scalar(&right, config.movement.forward_speed), timing.delta_time as f32);
+        let change = Vertex3D::new_mult_scalar(&Vertex3D::new_mult_scalar(&right, config.movement.forward_speed), timing.delta_time as f32, );
         let updated = Vertex3D::new_add(&position, &change);
 
         /* update the orientation matrix */
@@ -66,11 +66,7 @@ pub trait SpectatorMovementStrategy {
     ///
     /// update mouse look based on dx/dy.
     ///
-    fn update_look(
-        deltas: &Vec<MouseDelta>,
-        camera: &mut Camera,
-        config: &EngineConfig,
-    ) {
+    fn update_look(deltas: &Vec<MouseDelta>, camera: &mut Camera, config: &EngineConfig) {
         /* get the collective delta x and y */
         let dx = deltas.iter().map(|d| d.dx).sum::<f32>();
         let dy = deltas.iter().map(|d| d.dy).sum::<f32>();
@@ -86,7 +82,7 @@ pub trait SpectatorMovementStrategy {
         /* clamp to prevent flip */
         if camera.orientation.pitch > 89.0 { camera.orientation.pitch = 89.0; }
         if camera.orientation.pitch < -89.0 { camera.orientation.pitch = -89.0; }
-        
+
         /* finally, update orientation */
         // todo: complete this
         //let rotation = Matrix3x3::from_pitch_yaw_roll(camera.orientation.pitch, camera.orientation.yaw, camera.orientation.roll);

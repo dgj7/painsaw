@@ -1,5 +1,5 @@
-use std::time::Instant;
 use crate::input::mouse::mfs::MouseFunctionStatus;
+use std::time::Instant;
 
 #[derive(Clone, Debug)]
 pub struct MouseChange {

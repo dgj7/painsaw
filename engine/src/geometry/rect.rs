@@ -1,5 +1,5 @@
-use windows::Win32::Foundation::RECT;
 use crate::geometry::primitive::v2d::Vertex2D;
+use windows::Win32::Foundation::RECT;
 
 #[derive(Clone, Debug)]
 pub struct Rectangle2D {
@@ -8,7 +8,7 @@ pub struct Rectangle2D {
 }
 
 impl Rectangle2D {
-    #[cfg(target_os="windows")]
+    #[cfg(target_os = "windows")]
     pub fn new(rect: RECT) -> Rectangle2D {
         Rectangle2D {
             top_left: Vertex2D {
@@ -18,7 +18,7 @@ impl Rectangle2D {
             bottom_right: Vertex2D {
                 x: rect.right as f32,
                 y: rect.bottom as f32,
-            }
+            },
         }
     }
 }

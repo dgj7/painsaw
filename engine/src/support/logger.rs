@@ -1,12 +1,12 @@
+pub mod log_config;
 pub mod log_level;
 pub mod log_target;
-pub mod log_config;
 pub mod logger_type;
 
-use std::panic::Location;
 pub use crate::support::logger::log_config::LoggerConfig;
 use crate::support::logger::log_level::LogLevel;
 use crate::support::logger::logger_type::Logger;
+use std::panic::Location;
 use std::sync::{LazyLock, Mutex};
 
 static LOGGER: LazyLock<Mutex<Logger>> = LazyLock::new(|| Mutex::new(Logger::new()));

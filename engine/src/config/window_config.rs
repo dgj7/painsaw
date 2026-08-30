@@ -1,9 +1,11 @@
+#[derive(Clone, Debug)]
 pub struct WindowConfig {
     pub dimensions: WindowDimensions,
     pub title: Option<String>,
     pub window_id: Option<String>,
 }
 
+#[derive(Clone, Debug)]
 pub enum WindowDimensions {
     Fullscreen,
     Dimensional { width: i32, height: i32 },
@@ -23,7 +25,7 @@ impl Default for WindowConfig {
     fn default() -> WindowConfig {
         WindowConfig {
             title: Some("window title".to_owned()),
-            dimensions: WindowDimensions::Dimensional { width: 800, height: 600 },
+            dimensions: WindowDimensions::Dimensional { width: 800, height: 600, },
             window_id: Some("PAINSAW".to_owned()),
         }
     }

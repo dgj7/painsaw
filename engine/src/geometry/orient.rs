@@ -1,8 +1,8 @@
 use crate::geometry::orient::matrix::m4x4::Matrix4x4;
 
 pub mod matrix;
-pub mod quaternion;
 pub mod movement;
+pub mod quaternion;
 
 #[derive(Clone)]
 pub struct Orientation {
@@ -10,9 +10,9 @@ pub struct Orientation {
     pub x_scale: f32,
     pub y_scale: f32,
     pub z_scale: f32,
-    pub pitch: f32,    // up/down, about x
-    pub yaw: f32,      // left/right; about y
-    pub roll: f32,     // side/side, about z
+    pub pitch: f32, // up/down, about x
+    pub yaw: f32,   // left/right; about y
+    pub roll: f32,  // side/side, about z
 }
 
 pub struct OrientationBuilder {
@@ -26,16 +26,16 @@ pub struct OrientationBuilder {
 }
 
 impl Orientation {
-    pub fn new(position: Matrix4x4, x_scale: f32, y_scale: f32, z_scale: f32, pitch: f32,  yaw: f32, roll: f32) -> Orientation {
-        Orientation {
-            position,
-            x_scale,
-            y_scale,
-            z_scale,
-            pitch,
-            yaw,
-            roll,
-        }
+    pub fn new(
+        position: Matrix4x4,
+        x_scale: f32,
+        y_scale: f32,
+        z_scale: f32,
+        pitch: f32,
+        yaw: f32,
+        roll: f32,
+    ) -> Orientation {
+        Orientation { position, x_scale, y_scale, z_scale, pitch, yaw, roll,}
     }
 
     pub fn camera_default() -> Orientation {

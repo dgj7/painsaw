@@ -6,21 +6,21 @@ use crate::geometry::orient::matrix::m4x4::Matrix4x4;
 impl PartialEq<Self> for Matrix4x4 {
     fn eq(&self, other: &Self) -> bool {
         self.c1r1 == other.c1r1
-        && self.c1r2 == other.c1r2
-        && self.c1r3 == other.c1r3
-        && self.c1r4 == other.c1r4
-        && self.c2r1 == other.c2r1
-        && self.c2r2 == other.c2r2
-        && self.c2r3 == other.c2r3
-        && self.c2r4 == other.c2r4
-        && self.c3r1 == other.c3r1
-        && self.c3r2 == other.c3r2
-        && self.c3r3 == other.c3r3
-        && self.c3r4 == other.c3r4
-        && self.c4r1 == other.c4r1
-        && self.c4r2 == other.c4r2
-        && self.c4r3 == other.c4r3
-        && self.c4r4 == other.c4r4
+            && self.c1r2 == other.c1r2
+            && self.c1r3 == other.c1r3
+            && self.c1r4 == other.c1r4
+            && self.c2r1 == other.c2r1
+            && self.c2r2 == other.c2r2
+            && self.c2r3 == other.c2r3
+            && self.c2r4 == other.c2r4
+            && self.c3r1 == other.c3r1
+            && self.c3r2 == other.c3r2
+            && self.c3r3 == other.c3r3
+            && self.c3r4 == other.c3r4
+            && self.c4r1 == other.c4r1
+            && self.c4r2 == other.c4r2
+            && self.c4r3 == other.c4r3
+            && self.c4r4 == other.c4r4
     }
 }
 

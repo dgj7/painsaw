@@ -1,6 +1,6 @@
 [package]
 name = "d1"
-version = "0.0.105"
+version = "0.0.108"
 edition = "2024"
 
 [dependencies]

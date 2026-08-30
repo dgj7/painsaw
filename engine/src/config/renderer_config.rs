@@ -1,7 +1,8 @@
 use crate::graphics::subsystem::{GraphicsSubSystem, OpenGLPipeline};
 
+#[derive(Clone, Debug)]
 pub struct RendererConfig {
-    pub graphics: GraphicsSubSystem,
+    pub subsystem: GraphicsSubSystem,
     pub show_fps: bool,
     pub show_cam_coords: bool,
     pub show_screen_stats: bool,
@@ -11,7 +12,7 @@ pub struct RendererConfig {
 impl RendererConfig {
     pub fn new(grss: GraphicsSubSystem) -> RendererConfig {
         RendererConfig {
-            graphics: grss,
+            subsystem: grss,
 
             show_fps: false,
             show_cam_coords: false,
@@ -25,7 +26,7 @@ impl RendererConfig {
 impl Default for RendererConfig {
     fn default() -> RendererConfig {
         RendererConfig {
-            graphics: GraphicsSubSystem::OpenGL {
+            subsystem: GraphicsSubSystem::OpenGL {
                 pipeline: OpenGLPipeline::FixedFunction,
             },
 

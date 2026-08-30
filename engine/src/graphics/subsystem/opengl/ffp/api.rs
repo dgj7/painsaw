@@ -2,7 +2,14 @@ use crate::graphics::subsystem::opengl::errors::check_errors_gl;
 use crate::support::logger::log;
 use crate::support::logger::log_level::LogLevel;
 use std::ffi::{c_char, CStr};
-use windows::Win32::Graphics::OpenGL::{glBegin, glBindTexture, glBlendFunc, glClear, glClearColor, glColor4f, glDisable, glEnable, glEnd, glFrustum, glGenTextures, glGetString, glLineWidth, glLoadIdentity, glMatrixMode, glOrtho, glPointSize, glPolygonMode, glPopAttrib, glPopMatrix, glPushAttrib, glPushMatrix, glRotatef, glScalef, glTexCoord2f, glTexEnvf, glTexImage2D, glTexParameteri, glTexSubImage2D, glTranslatef, glVertex2f, glVertex3f, glViewport, gluPerspective, GL_LINES, GL_POINTS, GL_QUADS};
+use windows::Win32::Graphics::OpenGL::{
+    glBegin, glBindTexture, glBlendFunc, glClear, glClearColor, glColor4f, glDisable, glEnable,
+    glEnd, glFrustum, glGenTextures, glGetString, glLineWidth, glLoadIdentity, glMatrixMode, glOrtho,
+    glPointSize, glPolygonMode, glPopAttrib, glPopMatrix, glPushAttrib, glPushMatrix, glRotatef,
+    glScalef, glTexCoord2f, glTexEnvf, glTexImage2D, glTexParameteri, glTexSubImage2D, glTranslatef,
+    glVertex2f, glVertex3f, glViewport, gluPerspective, GL_LINES, GL_POINTS,
+    GL_QUADS,
+};
 
 pub(crate) fn gl_clear(mask: u32) {
     unsafe { glClear(mask); }
@@ -88,7 +95,7 @@ pub(crate) fn gl_get_string(name: u32) -> Option<String> {
     match c_str.to_str() {
         Ok(s) => Some(s.to_string()),
         Err(_e) => {
-            log(LogLevel::Error, &|| String::from("glGetString returned invalid string"));
+            log(LogLevel::Error, &|| { String::from("glGetString returned invalid string") });
             None
         }
     }
@@ -144,13 +151,34 @@ pub(crate) fn gl_tex_parameter_i(target: u32, pname: u32, param2: i32) {
     check_errors_gl("glTexParameteri");
 }
 
-pub(crate) fn gl_tex_image_2d(target: u32, level: i32, internalformat: i32, width: i32, height: i32, border: i32, format: u32, r#type: u32, pixels: *const core::ffi::c_void) {
-    unsafe { glTexImage2D(target, level, internalformat, width, height, border, format, r#type, pixels) }
+pub(crate) fn gl_tex_image_2d(
+    target: u32,
+    level: i32,
+    internalformat: i32,
+    width: i32,
+    height: i32,
+    border: i32,
+    format: u32,
+    r#type: u32,
+    pixels: *const core::ffi::c_void,
+) {
+    unsafe {
+        glTexImage2D(target, level, internalformat, width, height, border, format, r#type, pixels, ) }
     check_errors_gl("glTexImage2D");
 }
 
-pub(crate) fn gl_tex_sub_image_2d(target: u32, level: i32, xoffset: i32, yoffset: i32, width: i32, height: i32, format: u32, r#type: u32, pixels: *const core::ffi::c_void) {
-    unsafe { glTexSubImage2D(target, level, xoffset, yoffset, width, height, format, r#type, pixels) }
+pub(crate) fn gl_tex_sub_image_2d(
+    target: u32,
+    level: i32,
+    xoffset: i32,
+    yoffset: i32,
+    width: i32,
+    height: i32,
+    format: u32,
+    r#type: u32,
+    pixels: *const core::ffi::c_void,
+) {
+    unsafe { glTexSubImage2D(target, level, xoffset, yoffset, width, height, format, r#type, pixels, ) }
     check_errors_gl("glTexSubImage2D");
 }
 

@@ -22,9 +22,7 @@ impl FileResource {
     /// initialize from path buf.
     ///
     pub fn from_path(path: PathBuf) -> FileResource {
-        FileResource {
-            path,
-        }
+        FileResource { path }
     }
 }
 

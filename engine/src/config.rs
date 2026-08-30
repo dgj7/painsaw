@@ -12,6 +12,7 @@ pub mod move_config;
 pub mod renderer_config;
 pub mod window_config;
 
+#[derive(Debug, Clone)]
 pub struct EngineConfig {
     pub window: WindowConfig,
     pub renderer: RendererConfig,
@@ -20,23 +21,17 @@ pub struct EngineConfig {
 }
 
 impl EngineConfig {
-    pub fn new(window: WindowConfig, renderer: RendererConfig, input: InputConfig, movement: MoveConfig) -> Self {
+    pub fn new(
+        window: WindowConfig,
+        renderer: RendererConfig,
+        input: InputConfig,
+        movement: MoveConfig,
+    ) -> Self {
         EngineConfig {
             window,
             renderer,
             input,
             movement,
-        }
-    }
-}
-
-impl Default for EngineConfig {
-    fn default() -> EngineConfig {
-        EngineConfig {
-            window: WindowConfig::default(),
-            renderer: RendererConfig::default(),
-            input: InputConfig::default(),
-            movement: MoveConfig::default(),
         }
     }
 }

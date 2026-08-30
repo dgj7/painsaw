@@ -11,7 +11,8 @@ pub struct EngineTiming {
     engine_start: Instant,
     frame_start: Instant,
 
-    frame_count: u128,
+    pub frame_count: u128,
+    pub first_frame_rendered: bool,
 
     pub delta_time: f64,
 
@@ -27,6 +28,7 @@ impl EngineTiming {
             engine_start: Instant::now(),
             frame_start: Instant::now(),
             frame_count: 0,
+            first_frame_rendered: false,
             delta_time: 0.0,
             wait_between_frames: rc.fps_cap.map(|x| 1.0 / x as f64).unwrap_or(0.0),
         }

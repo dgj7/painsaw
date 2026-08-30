@@ -35,7 +35,7 @@ impl MouseState {
         if !self.enabled {
             return;
         }
-        
+
         if self.current.handled {
             self.previous = Some(self.current.clone());
             self.current = MouseChange::unhandled(x, y, status.clone());

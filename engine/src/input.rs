@@ -1,4 +1,5 @@
 use crate::input::keyboard::kii::KeyInputInfo;
+use crate::input::mouse::md::MouseDelta;
 use crate::input::mouse::mfs::MouseFunctionStatus;
 use crate::input::mouse::ms::MouseState;
 use keyboard::kc::KeyChange;
@@ -7,7 +8,6 @@ use keyboard::ks::KeyState;
 use mouse::min::MouseInputName;
 use std::collections::{HashMap, VecDeque};
 use std::sync::{Arc, Mutex};
-use crate::input::mouse::md::MouseDelta;
 
 pub mod keyboard;
 pub mod mouse;
@@ -57,7 +57,13 @@ impl UserInput {
             .or_insert(KeyState::new(position));
     }
 
-    pub fn record_mouse_change(&mut self, name: MouseInputName, x: i32, y: i32, status: &MouseFunctionStatus) {
+    pub fn record_mouse_change(
+        &mut self,
+        name: MouseInputName,
+        x: i32,
+        y: i32,
+        status: &MouseFunctionStatus,
+    ) {
         /* don't make any update if the current position is equal to the update */
         if let Some(pos) = self.mouse_states.get(&name) {
             if pos.current.x == x && pos.current.y == y {

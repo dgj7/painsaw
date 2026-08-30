@@ -1,75 +1,24 @@
-use std::sync::{Arc, Mutex};
+use crate::config::input_config::kc::{handle_key_change, KeyHandler};
+use crate::config::input_config::mc::{handle_mouse_change, MouseHandler};
 use crate::config::EngineConfig;
-use crate::config::input_config::kc::handle_key_change;
-use crate::config::input_config::mc::handle_mouse_change;
 use crate::graphics::camera::Camera;
-use crate::graphics::GraphicsIntermediary;
 use crate::graphics::storage::g2d::Graph2D;
 use crate::graphics::storage::g3d::Graph3D;
+use crate::graphics::RendererWrapper;
 use crate::input::screen::ScreenState;
 use crate::input::UserInput;
 use crate::support::logger::log;
 use crate::support::logger::log_level::LogLevel;
 use crate::support::timing::EngineTiming;
 use crate::window::key::WindowKey;
+use std::sync::{Arc, Mutex};
 
 pub mod config;
+pub mod geometry;
 pub mod graphics;
 pub mod input;
-pub mod window;
 pub mod support;
-pub mod geometry;
-
-///
-/// core context object used by the engine.
-///
-/// this data is passed through functions and ultimately to the end user, for access
-/// to various engine configurations and states.
-///
-pub struct PainsawContext {
-    /* scene for game statistics */
-    pub first_frame_rendered: bool,
-    pub frame_count: u128,
-
-    /* timing */
-    pub timing: EngineTiming,
-
-    /* scene for world state */
-    pub g2d: Graph2D,
-    pub g3d: Graph3D,
-    pub camera: Camera,
-
-    /* rendering subsystem */
-    pub(crate) graphics: GraphicsIntermediary,
-
-    /* scene for input state */
-    pub input: Arc<Mutex<UserInput>>,
-    pub config: EngineConfig,
-    pub screen: ScreenState,
-}
-
-impl PainsawContext {
-    pub(crate) fn new(input: &Arc<Mutex<UserInput>>, config: EngineConfig, screen: ScreenState) -> PainsawContext {
-        let dim = &screen.current_client_dimensions;
-        log(LogLevel::Info, &|| String::from(format!("initializing camera with width={},height={}", &dim.width, &dim.height)));
-        PainsawContext {
-            first_frame_rendered: false,
-            frame_count: 0,
-
-            timing: EngineTiming::new(&config.renderer),
-
-            g2d: Graph2D::new(),
-            g3d: Graph3D::new(),
-            camera: Camera::new(&dim),
-
-            graphics: GraphicsIntermediary::new(config.renderer.graphics.clone()),
-
-            input: input.clone(),
-            config,
-            screen,
-        }
-    }
-}
+pub mod window;
 
 ///
 /// Control various aspects of the world, as called by the windowing system.
@@ -87,11 +36,16 @@ pub trait WorldController {
     ///
     /// initialize the game world.
     ///
-    fn initialize_world(&self, context: &mut PainsawContext) {
-        self.initialize_world_helper(context);
+    fn initialize_world(
+        &self,
+        camera: &Camera,
+        renderer: &mut RendererWrapper,
+        g2d: &mut Graph2D,
+        g3d: &mut Graph3D,
+    ) {
+        self.initialize_world_helper(camera, g2d, g3d);
 
-        let graphics = &mut context.graphics;
-        graphics.initialize(&mut context.g2d, &mut context.g3d);
+        renderer.initialize(g2d, g3d);
 
         log(LogLevel::Debug, &|| String::from("initialization complete"));
     }
@@ -99,32 +53,44 @@ pub trait WorldController {
     ///
     /// initialize game world - customizer for client.
     ///
-    fn initialize_world_helper(&self, context: &mut PainsawContext);
+    fn initialize_world_helper(&self, camera: &Camera, g2d: &mut Graph2D, g3d: &mut Graph3D);
 
     ///
     /// update the game world state - fully controlled by client.
     ///
-    fn update_world(&self, context: &mut PainsawContext, key: &WindowKey) {
-        match context.input.clone().lock() {
+    fn update_world<T: KeyHandler + MouseHandler + WorldController + 'static>(
+        &self,
+        game: &T,
+        config: &EngineConfig,
+        input: Arc<Mutex<UserInput>>,
+        key: &WindowKey,
+        screen: &mut ScreenState,
+        camera: &mut Camera,
+        timing: &mut EngineTiming,
+        renderer: &RendererWrapper,
+        g2d: &mut Graph2D,
+        g3d: &mut Graph3D,
+    ) {
+        match input.clone().lock() {
             Ok(mut uin) => {
                 /* handle key changes */
                 while !uin.key_changes.is_empty() {
                     let change = uin.key_changes.pop_front().unwrap();
                     let state = uin.key_states.get_mut(&change).unwrap();
                     if !state.current.is_handled() {
-                        handle_key_change(context.config.input.key_handler.clone(), &change, state, &mut context.camera, &context.config, &context.timing);
+                        handle_key_change(&change, state, game, config, camera, timing);
                         state.current.set_handled();
                     }
                 }
 
                 /* check key states */
-                context.config.input.key_handler.clone().check_key_states(&uin.key_states, &mut context.camera, &context.config, &context.timing);
+                game.check_key_states(&uin.key_states, &config, camera, &timing);
 
                 /* handle screen resize */
                 if uin.screen_resized {
-                    context.screen.update(key);
-                    context.camera.update_screen(&context.screen.current_client_dimensions);
-                    context.graphics.resize(context);
+                    screen.update(key);
+                    camera.update_screen(&screen.current_client_dimensions);
+                    renderer.resize(camera);
                 }
 
                 /* handle mouse changes */
@@ -132,31 +98,37 @@ pub trait WorldController {
                     let change = uin.mouse_changes.pop_front().unwrap();
                     let state = uin.mouse_states.get_mut(&change).unwrap();
                     if !state.current.handled {
-                        handle_mouse_change(context.config.input.mouse_handler.clone(), &change, state, &mut context.camera, &context.config, &context.timing, &mut context.screen);
+                        handle_mouse_change(&change, state, game, &config, screen, camera, &timing);
                         state.current.handled = true;
                     }
                 }
-                
+
                 /* handle mouse deltas */
                 if !uin.mouse_deltas.is_empty() {
-                    context.config.input.mouse_handler.handle_mouse_deltas(&mut uin.mouse_deltas, &mut context.camera, &context.config, &context.timing, &mut context.screen);
+                    game.handle_mouse_deltas(&mut uin.mouse_deltas, &config, screen, camera, &timing);
                     uin.mouse_deltas.clear();
                 }
             }
             Err(_) => {}
         }
 
-        self.update_world_helper(context);
+        self.update_world_helper(input.clone(), screen, camera, timing, g2d, g3d);
 
-        match context.input.lock() {
-            Ok(mut uin) => {
-                uin.screen_resized = false;
-            }
-            Err(_) => {panic!("todo: resetting screen_resized")}
+        match input.lock() {
+            Ok(mut uin) => { uin.screen_resized = false; }
+            Err(_) => { panic!("todo: resetting screen_resized") }
         }
     }
 
-    fn update_world_helper(&self, context: &mut PainsawContext);
+    fn update_world_helper(
+        &self,
+        input: Arc<Mutex<UserInput>>,
+        screen: &ScreenState,
+        camera: &Camera,
+        timing: &mut EngineTiming,
+        g2d: &mut Graph2D,
+        g3d: &mut Graph3D,
+    );
 
     ///
     /// display the game world scene.
@@ -165,22 +137,32 @@ pub trait WorldController {
     /// come from models supplied during initialization, along with changes to those models
     /// during the update world step.
     ///
-    fn display_world_scene(&self, context: &mut PainsawContext) {
+    fn display_world_scene<T: KeyHandler + MouseHandler + WorldController + 'static>(
+        &self,
+        _game: &T,
+        config: &EngineConfig,
+        input: Arc<Mutex<UserInput>>,
+        screen: &mut ScreenState,
+        camera: &mut Camera,
+        timing: &EngineTiming,
+        renderer: &mut RendererWrapper,
+        g2d: &mut Graph2D,
+        g3d: &mut Graph3D,
+    ) {
         /* gather variables */
-        let uin = context.input.lock().unwrap();
-        let screen = &context.screen;
+        let uin = input.lock().unwrap();
 
         /* prepare for drawing */
-        context.graphics.before_scene(&context.camera);
+        renderer.before_scene(&camera);
 
         /* draw 3d, if desired */
-        context.graphics.prepare_3d(&context);
-        context.graphics.render_3d(&mut context.g3d);
-        context.graphics.after_3d(&context);
+        renderer.prepare_3d(camera);
+        renderer.render_3d(g3d);
+        renderer.after_3d();
 
         /* draw 2d, if desired */
-        context.graphics.prepare_2d(&mut context.g2d, &context.camera);
-        context.graphics.render_2d(&mut context.g2d, &context.timing, &context.config, &context.camera, uin, &screen);
-        context.graphics.after_2d();
+        renderer.prepare_2d(&camera, g2d);
+        renderer.render_2d::<T>(&config, uin, &screen, &camera, &timing, g2d);
+        renderer.after_2d();
     }
 }
