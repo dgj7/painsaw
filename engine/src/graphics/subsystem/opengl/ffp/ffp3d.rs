@@ -90,7 +90,7 @@ pub(crate) fn ffp_3d_lines(primitive: &Primitive3D, thickness: f32) {
     gl_pop_matrix();
 }
 
-pub(crate) fn ffp_3d_quads(primitive: &Primitive3D) {
+pub(crate) fn ffp_3d_cubes(primitive: &Primitive3D) {
     gl_push_matrix();
     gl_push_attrib(GL_ALL_ATTRIB_BITS);
 

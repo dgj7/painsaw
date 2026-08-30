@@ -7,7 +7,7 @@ use crate::graphics::subsystem::opengl::ffp::ffp2d::{
     ffp_render_2d_quads,
 };
 use crate::graphics::subsystem::opengl::ffp::ffp3d::{
-    ffp_3d_lines, ffp_3d_points, ffp_3d_quads, ffp_3d_setup, ffp_3d_teardown,
+    ffp_3d_lines, ffp_3d_points, ffp_3d_cubes, ffp_3d_setup, ffp_3d_teardown,
 };
 use crate::graphics::subsystem::opengl::ffp::{ffp_before_scene, ffp_resize};
 use crate::graphics::subsystem::RendererInfo;
@@ -79,7 +79,7 @@ impl RenderingSubSystemHandle for OpenGLHandle {
                         match primitive.p_type {
                             PrimitiveType::Point { point_size } => { ffp_render_2d_points(primitive, point_size) }
                             PrimitiveType::Line { thickness } => { ffp_render_2d_lines(primitive, thickness) }
-                            PrimitiveType::Quad {} => ffp_render_2d_quads(primitive),
+                            PrimitiveType::Cube {} => ffp_render_2d_quads(primitive),
                             PrimitiveType::LineStrip { thickness } => { ffp_render_2d_line_strip(primitive, thickness) }
                         }
                     }
@@ -123,8 +123,8 @@ impl RenderingSubSystemHandle for OpenGLHandle {
                                 OpenGLPipeline::FixedFunction => ffp_3d_lines(primitive, thickness),
                                 OpenGLPipeline::ProgrammableShader => {}
                             },
-                            PrimitiveType::Quad {} => match self.pipeline {
-                                OpenGLPipeline::FixedFunction => ffp_3d_quads(primitive),
+                            PrimitiveType::Cube {} => match self.pipeline {
+                                OpenGLPipeline::FixedFunction => ffp_3d_cubes(primitive),
                                 OpenGLPipeline::ProgrammableShader => {}
                             },
                             PrimitiveType::LineStrip { .. } => {}

@@ -4,7 +4,7 @@ use crate::geometry::primitive::v3d::Vertex3D;
 use crate::geometry::primitive::PrimitiveType;
 use crate::graphics::color::Color;
 
-pub struct QuadBuilder {
+pub struct CubeBuilder {
     the_orientation: Option<Orientation>,
     the_width: Option<f32>,
     the_height: Option<f32>,
@@ -12,9 +12,9 @@ pub struct QuadBuilder {
     the_color: Option<Color>,
 }
 
-impl QuadBuilder {
-    pub fn new() -> QuadBuilder {
-        QuadBuilder {
+impl CubeBuilder {
+    pub fn new() -> CubeBuilder {
+        CubeBuilder {
             the_orientation: None,
             the_width: None,
             the_height: None,
@@ -23,27 +23,27 @@ impl QuadBuilder {
         }
     }
 
-    pub fn with_orientation(mut self, the_orientation: Orientation) -> QuadBuilder {
+    pub fn with_orientation(mut self, the_orientation: Orientation) -> CubeBuilder {
         self.the_orientation = Some(the_orientation);
         self
     }
 
-    pub fn with_width(mut self, the_width: f32) -> QuadBuilder {
+    pub fn with_width(mut self, the_width: f32) -> CubeBuilder {
         self.the_width = Some(the_width);
         self
     }
 
-    pub fn with_height(mut self, the_height: f32) -> QuadBuilder {
+    pub fn with_height(mut self, the_height: f32) -> CubeBuilder {
         self.the_height = Some(the_height);
         self
     }
 
-    pub fn with_depth(mut self, the_depth: f32) -> QuadBuilder {
+    pub fn with_depth(mut self, the_depth: f32) -> CubeBuilder {
         self.the_depth = Some(the_depth);
         self
     }
 
-    pub fn with_color(mut self, the_color: Color) -> QuadBuilder {
+    pub fn with_color(mut self, the_color: Color) -> CubeBuilder {
         self.the_color = Some(the_color);
         self
     }
@@ -98,6 +98,6 @@ impl QuadBuilder {
         vertices.push(Vertex3D::new(-width, -height, -depth));
         vertices.push(Vertex3D::new(0.0, -height, -depth));
 
-        Some(Primitive3D::new(PrimitiveType::Quad {}, vertices, orientation, color, ))
+        Some(Primitive3D::new(PrimitiveType::Cube {}, vertices, orientation, color, ))
     }
 }
