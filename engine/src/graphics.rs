@@ -1,28 +1,30 @@
-use std::sync::MutexGuard;
+use crate::config::input_config::kc::KeyHandler;
+use crate::config::input_config::mc::MouseHandler;
 use crate::config::EngineConfig;
-use crate::graphics::camera::Camera;
-use crate::support::stats::coords::show_cam_coords;
-use crate::support::stats::fps::show_fps;
-use crate::graphics::subsystem::{grss_factory, GraphicsSubSystem, RenderingSubSystemHandle};
-use crate::support::timing::EngineTiming;
-use crate::support::logger::log;
-use crate::support::logger::log_level::LogLevel;
-use crate::PainsawContext;
-use storage::g2d::Graph2D;
-use storage::g3d::Graph3D;
-use subsystem::RendererInfo;
 use crate::geometry::primitive::v2d::Vertex2D;
+use crate::graphics::camera::Camera;
+use crate::graphics::subsystem::{grss_factory, GraphicsSubSystem, RenderingSubSystemHandle};
 use crate::input::mouse::min::MouseInputName;
 use crate::input::screen::ScreenState;
 use crate::input::UserInput;
+use crate::support::logger::log;
+use crate::support::logger::log_level::LogLevel;
+use crate::support::stats::coords::show_cam_coords;
+use crate::support::stats::fps::show_fps;
 use crate::support::stats::screen::show_screen_stats;
+use crate::support::timing::EngineTiming;
+use crate::WorldController;
+use std::sync::MutexGuard;
+use storage::g2d::Graph2D;
+use storage::g3d::Graph3D;
+use subsystem::RendererInfo;
 
 pub mod camera;
 pub mod color;
-pub mod texture;
+pub mod scenegraph;
 pub mod storage;
 pub mod subsystem;
-pub mod scenegraph;
+pub mod texture;
 
 ///
 /// Graphics rendering intermediary.
@@ -30,7 +32,7 @@ pub mod scenegraph;
 /// This system separates/abstracts the concrete graphics rendering subsystem
 /// from both the operating system and the geometry systems.
 ///
-pub(crate) struct GraphicsIntermediary {
+pub struct GraphicsIntermediary {
     subsystem: Box<dyn RenderingSubSystemHandle>,
     info: Option<RendererInfo>,
 }
@@ -51,8 +53,8 @@ impl GraphicsIntermediary {
         log(LogLevel::Debug, &|| String::from("initialization complete"));
     }
 
-    pub(crate) fn resize(&self, context: &PainsawContext) {
-        self.subsystem.resize(context);
+    pub(crate) fn resize(&self, camera: &Camera) {
+        self.subsystem.resize(camera);
     }
 
     pub(crate) fn before_scene(&mut self, camera: &Camera) {
@@ -63,12 +65,22 @@ impl GraphicsIntermediary {
         self.subsystem.prepare_2d(camera, g2d);
     }
 
-    pub(crate) fn render_2d(&mut self, g2d: &mut Graph2D, timing: &EngineTiming, config: &EngineConfig, camera: &Camera, input: MutexGuard<UserInput>, screen: &ScreenState) {
+    pub(crate) fn render_2d<T: KeyHandler + MouseHandler + WorldController + 'static>(
+        &mut self,
+        g2d: &mut Graph2D,
+        timing: &EngineTiming,
+        config: &EngineConfig,
+        camera: &Camera,
+        input: MutexGuard<UserInput>,
+        screen: &ScreenState,
+    ) {
         /* track down the mouse position */
-        let mouse_pos = input.mouse_states.get(&MouseInputName::MouseMove)
+        let mouse_pos = input
+            .mouse_states
+            .get(&MouseInputName::MouseMove)
             .map(|ms| (ms.current.x as f32, ms.current.y as f32))
             .or_else(|| Some((0.0, 0.0)))
-            .map(|(x,y)| Vertex2D::new(x, y))
+            .map(|(x, y)| Vertex2D::new(x, y))
             .unwrap();
 
         /* render primitives */
@@ -84,15 +96,15 @@ impl GraphicsIntermediary {
         self.subsystem.after_2d();
     }
 
-    pub(crate) fn prepare_3d(&self, context: &PainsawContext) {
-        self.subsystem.prepare_3d(context);
+    pub(crate) fn prepare_3d(&self, camera: &Camera) {
+        self.subsystem.prepare_3d(camera);
     }
 
     pub(crate) fn render_3d(&self, g3d: &mut Graph3D) {
         self.subsystem.render_3d(g3d);
     }
 
-    pub(crate) fn after_3d(&self, context: &PainsawContext) {
-        self.subsystem.after_3d(context);
+    pub(crate) fn after_3d(&self) {
+        self.subsystem.after_3d();
     }
 }

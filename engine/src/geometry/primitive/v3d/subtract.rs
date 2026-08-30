@@ -29,8 +29,16 @@ mod test_vtx3d_subtract {
 
     #[test]
     fn test_positive_addend() {
-        let left = Vertex3D{x: 1.0, y: 2.0, z: 3.0};
-        let right = Vertex3D{x: 3.0, y: 2.0, z: 1.0};
+        let left = Vertex3D {
+            x: 1.0,
+            y: 2.0,
+            z: 3.0,
+        };
+        let right = Vertex3D {
+            x: 3.0,
+            y: 2.0,
+            z: 1.0,
+        };
 
         let result = Vertex3D::new_subtract(&left, &right);
         assert_eq!(-2.0, result.x);
@@ -41,8 +49,16 @@ mod test_vtx3d_subtract {
 
     #[test]
     fn test_negative_addend() {
-        let left = Vertex3D{x: 1.0, y: 2.0, z: 3.0};
-        let right = Vertex3D{x: -3.0, y: -2.0, z: -1.0};
+        let left = Vertex3D {
+            x: 1.0,
+            y: 2.0,
+            z: 3.0,
+        };
+        let right = Vertex3D {
+            x: -3.0,
+            y: -2.0,
+            z: -1.0,
+        };
 
         let result = Vertex3D::new_subtract(&left, &right);
         assert_eq!(4.0, result.x);

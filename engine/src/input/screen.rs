@@ -12,13 +12,13 @@ pub struct ScreenState {
     pub current_client_dimensions: Dimension2D,
     pub previous_window_dimensions: Dimension2D,
     pub current_window_dimensions: Dimension2D,
-    
+
     /* rects */
     pub previous_client_rect: Rectangle2D,
     pub current_client_rect: Rectangle2D,
     pub previous_window_rect: Rectangle2D,
     pub current_window_rect: Rectangle2D,
-    
+
     /* locations */
     pub window_center: Vertex2D,
     pub client_center: Vertex2D,
@@ -32,32 +32,44 @@ impl ScreenState {
             current_client_dimensions: Dimension2D::new(0.0, 0.0),
             previous_window_dimensions: Dimension2D::new(0.0, 0.0),
             current_window_dimensions: Dimension2D::new(0.0, 0.0),
-            
+
             /* rects */
-            previous_client_rect: Rectangle2D { top_left: Vertex2D { x: 0.0, y: 0.0 }, bottom_right: Vertex2D { x: 0.0, y: 0.0 } },
-            current_client_rect: Rectangle2D { top_left: Vertex2D { x: 0.0, y: 0.0 }, bottom_right: Vertex2D { x: 0.0, y: 0.0 } },
-            previous_window_rect: Rectangle2D { top_left: Vertex2D { x: 0.0, y: 0.0 }, bottom_right: Vertex2D { x: 0.0, y: 0.0 } },
-            current_window_rect: Rectangle2D { top_left: Vertex2D { x: 0.0, y: 0.0 }, bottom_right: Vertex2D { x: 0.0, y: 0.0 } },
-            
+            previous_client_rect: Rectangle2D {
+                top_left: Vertex2D { x: 0.0, y: 0.0 },
+                bottom_right: Vertex2D { x: 0.0, y: 0.0 },
+            },
+            current_client_rect: Rectangle2D {
+                top_left: Vertex2D { x: 0.0, y: 0.0 },
+                bottom_right: Vertex2D { x: 0.0, y: 0.0 },
+            },
+            previous_window_rect: Rectangle2D {
+                top_left: Vertex2D { x: 0.0, y: 0.0 },
+                bottom_right: Vertex2D { x: 0.0, y: 0.0 },
+            },
+            current_window_rect: Rectangle2D {
+                top_left: Vertex2D { x: 0.0, y: 0.0 },
+                bottom_right: Vertex2D { x: 0.0, y: 0.0 },
+            },
+
             /* locations */
             window_center: Vertex2D::origin(),
             client_center: Vertex2D::origin(),
         }
     }
 
-    #[cfg(target_os="windows")]
+    #[cfg(target_os = "windows")]
     pub fn from(key: &WindowKey) -> ScreenState {
         let mut screen = ScreenState::new();
         screen.update_os(key);
         screen
     }
-    
+
     pub fn update(&mut self, key: &WindowKey) {
         self.update_os(key);
     }
-    
+
     // todo: implementations for other operating systems
-    #[cfg(target_os="windows")]
+    #[cfg(target_os = "windows")]
     pub fn update_os(&mut self, key: &WindowKey) {
         /* get the various screen stats from win32 */
         let window_dimensions = get_window_rect_dim2d(key.hwnd);
@@ -118,13 +130,17 @@ impl ScreenState {
     }
 
     fn update_screen_center(&mut self) {
-        let wx = (self.current_window_rect.top_left.x + self.current_window_rect.bottom_right.x) / 2.0;
-        let wy = (self.current_window_rect.top_left.y + self.current_window_rect.bottom_right.y) / 2.0;
+        let wx =
+            (self.current_window_rect.top_left.x + self.current_window_rect.bottom_right.x) / 2.0;
+        let wy =
+            (self.current_window_rect.top_left.y + self.current_window_rect.bottom_right.y) / 2.0;
         self.window_center.x = wx;
         self.window_center.y = wy;
 
-        let cx = (self.current_client_rect.top_left.x + self.current_client_rect.bottom_right.x) / 2.0;
-        let cy = (self.current_client_rect.top_left.y + self.current_client_rect.bottom_right.y) / 2.0;
+        let cx =
+            (self.current_client_rect.top_left.x + self.current_client_rect.bottom_right.x) / 2.0;
+        let cy =
+            (self.current_client_rect.top_left.y + self.current_client_rect.bottom_right.y) / 2.0;
         self.client_center.x = cx;
         self.client_center.y = cy;
     }

@@ -1,11 +1,11 @@
 use std::f64::consts::PI;
 
+pub mod angle;
 pub mod build;
 pub mod dim;
 pub mod orient;
 pub mod primitive;
 pub mod projection;
-pub mod angle;
 pub mod rect;
 
 pub(crate) static C_PI: f32 = PI as f32;

@@ -1,6 +1,7 @@
 use crate::input::keyboard::kc::KeyChange;
 use crate::input::keyboard::kii::KeyInputInfo;
 use crate::input::keyboard::kin::KeyInputName;
+use crate::input::mouse::md::MouseDelta;
 use crate::input::mouse::mfs::MouseFunctionStatus;
 use crate::input::mouse::min::MouseInputName;
 use crate::input::UserInput;
@@ -8,41 +9,56 @@ use crate::support::logger::log;
 use crate::support::logger::log_level::LogLevel;
 use crate::window::mswin::userdata::{create_and_write_pointer, read_window_data};
 use crate::window::mswin::util::is_mouse_over_window;
-use crate::window::mswin::winapi::{default_window_proc, get_cursor_pos, get_raw_input_data, post_quit_message, screen_to_client};
+use crate::window::mswin::winapi::{
+    default_window_proc, get_cursor_pos, get_raw_input_data, post_quit_message, screen_to_client,
+};
 use std::sync::{Arc, Mutex};
 use windows::Win32::Foundation::{HWND, LPARAM, LRESULT, WPARAM};
-use windows::Win32::UI::Input::KeyboardAndMouse::{VIRTUAL_KEY, VK_A, VK_D, VK_ESCAPE, VK_G, VK_M, VK_S, VK_W};
+use windows::Win32::UI::Input::KeyboardAndMouse::{
+    VIRTUAL_KEY, VK_A, VK_D, VK_ESCAPE, VK_G, VK_M, VK_S, VK_W,
+};
 use windows::Win32::UI::Input::{HRAWINPUT, RAWINPUT, RAWINPUTHEADER, RID_INPUT, RIM_TYPEMOUSE};
-use windows::Win32::UI::WindowsAndMessaging::{WM_CLOSE, WM_CREATE, WM_DESTROY, WM_INPUT, WM_KEYDOWN, WM_KEYUP, WM_KILLFOCUS, WM_LBUTTONDOWN, WM_LBUTTONUP, WM_QUIT, WM_RBUTTONDOWN, WM_RBUTTONUP, WM_SETFOCUS, WM_SIZE};
-use crate::input::mouse::md::MouseDelta;
+use windows::Win32::UI::WindowsAndMessaging::{
+    WM_CLOSE, WM_CREATE, WM_DESTROY, WM_INPUT, WM_KEYDOWN, WM_KEYUP, WM_KILLFOCUS, WM_LBUTTONDOWN,
+    WM_LBUTTONUP, WM_QUIT, WM_RBUTTONDOWN, WM_RBUTTONUP, WM_SETFOCUS, WM_SIZE,
+};
 
 ///
 /// required window procedure, for handling win32 event messages.
 ///
-pub(crate) extern "system" fn wndproc(window: HWND, message: u32, wparam: WPARAM, lparam: LPARAM) -> LRESULT {
+pub(crate) extern "system" fn wndproc(
+    window: HWND,
+    message: u32,
+    wparam: WPARAM,
+    lparam: LPARAM,
+) -> LRESULT {
     match message {
-        WM_CREATE => {// 0x0001: sent when createwindowex/createwindow is called; https://learn.microsoft.com/en-us/windows/win32/winmsg/wm-create
+        WM_CREATE => {
+            // 0x0001: sent when createwindowex/createwindow is called; https://learn.microsoft.com/en-us/windows/win32/winmsg/wm-create
             create_and_write_pointer(window, lparam);
             LRESULT(0)
         }
-        WM_DESTROY => {// 0x0002: sent when (uncancellable) window removal (not shown anymore); https://learn.microsoft.com/en-us/windows/win32/winmsg/wm-destroy
+        WM_DESTROY => {
+            // 0x0002: sent when (uncancellable) window removal (not shown anymore); https://learn.microsoft.com/en-us/windows/win32/winmsg/wm-destroy
             log(LogLevel::Debug, &|| String::from("WM_DESTROY"));
 
-            post_quit_message(0);// this probably isn't necessary
+            post_quit_message(0); // this probably isn't necessary
 
             LRESULT(0)
         }
-        WM_QUIT => {// 0x0012: called when PostQuitMessage(0) is called; https://learn.microsoft.com/en-us/windows/win32/winmsg/wm-quit
+        WM_QUIT => {
+            // 0x0012: called when PostQuitMessage(0) is called; https://learn.microsoft.com/en-us/windows/win32/winmsg/wm-quit
             log(LogLevel::Debug, &|| String::from("WM_QUIT"));
 
             let input = read_window_data(window).unwrap();
             drop(input);
 
-            post_quit_message(0);// this probably isn't necessary
+            post_quit_message(0); // this probably isn't necessary
 
             LRESULT(0)
         }
-        WM_CLOSE => {// 0x0010: called when window 'x' is clicked to close the window; https://learn.microsoft.com/en-us/windows/win32/winmsg/wm-close
+        WM_CLOSE => {
+            // 0x0010: called when window 'x' is clicked to close the window; https://learn.microsoft.com/en-us/windows/win32/winmsg/wm-close
             log(LogLevel::Debug, &|| String::from("WM_CLOSE"));
 
             post_quit_message(0);
@@ -92,32 +108,153 @@ static NOT_HANDLED: bool = false;
 ///
 /// handle input messages, such as key down/up or mouse movement.
 ///
-fn handle_message_if_applicable(input: &Arc<Mutex<UserInput>>, hwnd: HWND, message: u32, wparam: WPARAM, lparam: LPARAM) -> bool {
+fn handle_message_if_applicable(
+    input: &Arc<Mutex<UserInput>>,
+    hwnd: HWND,
+    message: u32,
+    wparam: WPARAM,
+    lparam: LPARAM,
+) -> bool {
     match message {
         WM_KEYDOWN => {
             match VIRTUAL_KEY(wparam.0 as u16) {
-                VK_ESCAPE => { input.lock().expect("todo: esc: down").record_keyboard_change(KeyInputName::KeyEscape, KeyChange::Active { info: KeyInputInfo::unhandled()});HANDLED }
-                VK_A => { input.lock().expect("todo: a: down").record_keyboard_change(KeyInputName::KeyA, KeyChange::Active { info: KeyInputInfo::unhandled() }); HANDLED }
-                VK_D => { input.lock().expect("todo: d: down").record_keyboard_change(KeyInputName::KeyD, KeyChange::Active { info: KeyInputInfo::unhandled() }); HANDLED }
-                VK_G => { input.lock().expect("todo: g: down").record_keyboard_change(KeyInputName::KeyG, KeyChange::Active { info: KeyInputInfo::unhandled() }); HANDLED }
-                VK_M => { input.lock().expect("todo: m: down").record_keyboard_change(KeyInputName::KeyM, KeyChange::Active { info: KeyInputInfo::unhandled() }); HANDLED }
-                VK_S => { input.lock().expect("todo: s: down").record_keyboard_change(KeyInputName::KeyS, KeyChange::Active { info: KeyInputInfo::unhandled() }); HANDLED }
-                VK_W => { input.lock().expect("todo: w: down").record_keyboard_change(KeyInputName::KeyW, KeyChange::Active { info: KeyInputInfo::unhandled() }); HANDLED }
+                VK_ESCAPE => {
+                    input
+                        .lock()
+                        .expect("todo: esc: down")
+                        .record_keyboard_change(
+                            KeyInputName::KeyEscape,
+                            KeyChange::Active {
+                                info: KeyInputInfo::unhandled(),
+                            },
+                        );
+                    HANDLED
+                }
+                VK_A => {
+                    input.lock().expect("todo: a: down").record_keyboard_change(
+                        KeyInputName::KeyA,
+                        KeyChange::Active {
+                            info: KeyInputInfo::unhandled(),
+                        },
+                    );
+                    HANDLED
+                }
+                VK_D => {
+                    input.lock().expect("todo: d: down").record_keyboard_change(
+                        KeyInputName::KeyD,
+                        KeyChange::Active {
+                            info: KeyInputInfo::unhandled(),
+                        },
+                    );
+                    HANDLED
+                }
+                VK_G => {
+                    input.lock().expect("todo: g: down").record_keyboard_change(
+                        KeyInputName::KeyG,
+                        KeyChange::Active {
+                            info: KeyInputInfo::unhandled(),
+                        },
+                    );
+                    HANDLED
+                }
+                VK_M => {
+                    input.lock().expect("todo: m: down").record_keyboard_change(
+                        KeyInputName::KeyM,
+                        KeyChange::Active {
+                            info: KeyInputInfo::unhandled(),
+                        },
+                    );
+                    HANDLED
+                }
+                VK_S => {
+                    input.lock().expect("todo: s: down").record_keyboard_change(
+                        KeyInputName::KeyS,
+                        KeyChange::Active {
+                            info: KeyInputInfo::unhandled(),
+                        },
+                    );
+                    HANDLED
+                }
+                VK_W => {
+                    input.lock().expect("todo: w: down").record_keyboard_change(
+                        KeyInputName::KeyW,
+                        KeyChange::Active {
+                            info: KeyInputInfo::unhandled(),
+                        },
+                    );
+                    HANDLED
+                }
                 // todo: add remaining keys down
-                _ => NOT_HANDLED
+                _ => NOT_HANDLED,
             }
         }
         WM_KEYUP => {
             match VIRTUAL_KEY(wparam.0 as u16) {
-                VK_ESCAPE => { input.lock().expect("todo: esc: up").record_keyboard_change(KeyInputName::KeyEscape, KeyChange::Inactive { info: KeyInputInfo::unhandled() }); HANDLED }
-                VK_A => { input.lock().expect("todo: a: up").record_keyboard_change(KeyInputName::KeyA, KeyChange::Inactive { info: KeyInputInfo::unhandled() }); HANDLED }
-                VK_D => { input.lock().expect("todo: d: up").record_keyboard_change(KeyInputName::KeyD, KeyChange::Inactive { info: KeyInputInfo::unhandled() }); HANDLED }
-                VK_G => { input.lock().expect("todo: g: up").record_keyboard_change(KeyInputName::KeyG, KeyChange::Inactive { info: KeyInputInfo::unhandled() }); HANDLED }
-                VK_M => { input.lock().expect("todo: m: up").record_keyboard_change(KeyInputName::KeyM, KeyChange::Inactive { info: KeyInputInfo::unhandled() }); HANDLED }
-                VK_S => { input.lock().expect("todo: s: up").record_keyboard_change(KeyInputName::KeyS, KeyChange::Inactive { info: KeyInputInfo::unhandled() }); HANDLED }
-                VK_W => { input.lock().expect("todo: w: up").record_keyboard_change(KeyInputName::KeyW, KeyChange::Inactive { info: KeyInputInfo::unhandled() }); HANDLED }
+                VK_ESCAPE => {
+                    input.lock().expect("todo: esc: up").record_keyboard_change(
+                        KeyInputName::KeyEscape,
+                        KeyChange::Inactive {
+                            info: KeyInputInfo::unhandled(),
+                        },
+                    );
+                    HANDLED
+                }
+                VK_A => {
+                    input.lock().expect("todo: a: up").record_keyboard_change(
+                        KeyInputName::KeyA,
+                        KeyChange::Inactive {
+                            info: KeyInputInfo::unhandled(),
+                        },
+                    );
+                    HANDLED
+                }
+                VK_D => {
+                    input.lock().expect("todo: d: up").record_keyboard_change(
+                        KeyInputName::KeyD,
+                        KeyChange::Inactive {
+                            info: KeyInputInfo::unhandled(),
+                        },
+                    );
+                    HANDLED
+                }
+                VK_G => {
+                    input.lock().expect("todo: g: up").record_keyboard_change(
+                        KeyInputName::KeyG,
+                        KeyChange::Inactive {
+                            info: KeyInputInfo::unhandled(),
+                        },
+                    );
+                    HANDLED
+                }
+                VK_M => {
+                    input.lock().expect("todo: m: up").record_keyboard_change(
+                        KeyInputName::KeyM,
+                        KeyChange::Inactive {
+                            info: KeyInputInfo::unhandled(),
+                        },
+                    );
+                    HANDLED
+                }
+                VK_S => {
+                    input.lock().expect("todo: s: up").record_keyboard_change(
+                        KeyInputName::KeyS,
+                        KeyChange::Inactive {
+                            info: KeyInputInfo::unhandled(),
+                        },
+                    );
+                    HANDLED
+                }
+                VK_W => {
+                    input.lock().expect("todo: w: up").record_keyboard_change(
+                        KeyInputName::KeyW,
+                        KeyChange::Inactive {
+                            info: KeyInputInfo::unhandled(),
+                        },
+                    );
+                    HANDLED
+                }
                 // todo: add remaining keys up
-                _ => NOT_HANDLED
+                _ => NOT_HANDLED,
             }
         }
         WM_INPUT => {
@@ -130,34 +267,72 @@ fn handle_message_if_applicable(input: &Arc<Mutex<UserInput>>, hwnd: HWND, messa
                     /* grab mouse position and send event */
                     let mut pos = get_cursor_pos();
                     screen_to_client(hwnd, &mut pos);
-                    uin.record_mouse_change(MouseInputName::MouseMove, pos.x, pos.y, &MouseFunctionStatus::Active);
+                    uin.record_mouse_change(
+                        MouseInputName::MouseMove,
+                        pos.x,
+                        pos.y,
+                        &MouseFunctionStatus::Active,
+                    );
                 }
-                return HANDLED
+                return HANDLED;
             }
             NOT_HANDLED
         }
-        WM_LBUTTONDOWN => {// todo: can we source these from wm_input instead?
+        WM_LBUTTONDOWN => {
+            // todo: can we source these from wm_input instead?
             let x = get_x_lparam(lparam);
             let y = get_y_lparam(lparam);
-            input.lock().expect("todo: wm_mousemove").record_mouse_change(MouseInputName::MouseLeftButton, x, y, &MouseFunctionStatus::Active);
+            input
+                .lock()
+                .expect("todo: wm_mousemove")
+                .record_mouse_change(
+                    MouseInputName::MouseLeftButton,
+                    x,
+                    y,
+                    &MouseFunctionStatus::Active,
+                );
             HANDLED
         }
         WM_LBUTTONUP => {
             let x = get_x_lparam(lparam);
             let y = get_y_lparam(lparam);
-            input.lock().expect("todo: wm_mousemove").record_mouse_change(MouseInputName::MouseLeftButton, x, y, &MouseFunctionStatus::Inactive);
+            input
+                .lock()
+                .expect("todo: wm_mousemove")
+                .record_mouse_change(
+                    MouseInputName::MouseLeftButton,
+                    x,
+                    y,
+                    &MouseFunctionStatus::Inactive,
+                );
             HANDLED
         }
         WM_RBUTTONDOWN => {
             let x = get_x_lparam(lparam);
             let y = get_y_lparam(lparam);
-            input.lock().expect("todo: wm_mousemove").record_mouse_change(MouseInputName::MouseRightButton, x, y, &MouseFunctionStatus::Active);
+            input
+                .lock()
+                .expect("todo: wm_mousemove")
+                .record_mouse_change(
+                    MouseInputName::MouseRightButton,
+                    x,
+                    y,
+                    &MouseFunctionStatus::Active,
+                );
             HANDLED
         }
         WM_RBUTTONUP => {
             let x = get_x_lparam(lparam);
             let y = get_y_lparam(lparam);
-            input.lock().expect("todo: wm_mousemove").record_mouse_change(MouseInputName::MouseRightButton, x, y, &MouseFunctionStatus::Inactive);
+            input
+                .lock()
+                .expect("todo: wm_mousemove")
+                .record_mouse_change(
+                    MouseInputName::MouseRightButton,
+                    x,
+                    y,
+                    &MouseFunctionStatus::Inactive,
+                );
             HANDLED
         }
         WM_SIZE => {
@@ -168,15 +343,27 @@ fn handle_message_if_applicable(input: &Arc<Mutex<UserInput>>, hwnd: HWND, messa
             HANDLED
         }
         WM_SETFOCUS => {
-            input.lock().expect("todo: set-focus").focus.update(KeyChange::Active { info: KeyInputInfo::unhandled() });
+            input
+                .lock()
+                .expect("todo: set-focus")
+                .focus
+                .update(KeyChange::Active {
+                    info: KeyInputInfo::unhandled(),
+                });
             HANDLED
         }
         WM_KILLFOCUS => {
-            input.lock().expect("todo: kill-focus").focus.update(KeyChange::Inactive { info: KeyInputInfo::unhandled() });
+            input
+                .lock()
+                .expect("todo: kill-focus")
+                .focus
+                .update(KeyChange::Inactive {
+                    info: KeyInputInfo::unhandled(),
+                });
             HANDLED
         }
         // todo: add mouse scroll
-        _ => NOT_HANDLED
+        _ => NOT_HANDLED,
     }
 }
 
@@ -208,18 +395,30 @@ fn gather_raw_mouse(hwnd: HWND, lparam: LPARAM) -> Option<MouseDelta> {
 
     /* get sizeof RAWINPUT struct */
     let mut ds = 0;
-    get_raw_input_data(HRAWINPUT(lparam.0 as *mut std::ffi::c_void), RID_INPUT, None, &mut ds, size_of::<RAWINPUTHEADER>() as u32,);
+    get_raw_input_data(
+        HRAWINPUT(lparam.0 as *mut std::ffi::c_void),
+        RID_INPUT,
+        None,
+        &mut ds,
+        size_of::<RAWINPUTHEADER>() as u32,
+    );
 
     /* allocate buffer; retrieve data */
     let mut buffer = vec![0u8; ds as usize];
-    let rs = get_raw_input_data(HRAWINPUT(lparam.0 as *mut std::ffi::c_void), RID_INPUT, Some(buffer.as_mut_ptr() as *mut std::ffi::c_void), &mut ds, size_of::<RAWINPUTHEADER>() as u32);
+    let rs = get_raw_input_data(
+        HRAWINPUT(lparam.0 as *mut std::ffi::c_void),
+        RID_INPUT,
+        Some(buffer.as_mut_ptr() as *mut std::ffi::c_void),
+        &mut ds,
+        size_of::<RAWINPUTHEADER>() as u32,
+    );
 
     /* if data was received, return */
     if rs > 0 {
         let ri = unsafe { &*(buffer.as_ptr() as *const RAWINPUT) };
         if ri.header.dwType == RIM_TYPEMOUSE.0 {
             let md = unsafe { &ri.data.mouse };
-            let usbf = unsafe { md.Anonymous.Anonymous.usButtonFlags };//RI_MOUSE_LEFT_BUTTON_DOWN,RI_MOUSE_LEFT_BUTTON_UP,RI_MOUSE_RIGHT_BUTTON_DOWN,RI_MOUSE_RIGHT_BUTTON_UP
+            let usbf = unsafe { md.Anonymous.Anonymous.usButtonFlags }; //RI_MOUSE_LEFT_BUTTON_DOWN,RI_MOUSE_LEFT_BUTTON_UP,RI_MOUSE_RIGHT_BUTTON_DOWN,RI_MOUSE_RIGHT_BUTTON_UP
             if usbf > 0 {
                 return None;
             }
@@ -227,7 +426,10 @@ fn gather_raw_mouse(hwnd: HWND, lparam: LPARAM) -> Option<MouseDelta> {
             if md.lLastX == 0 && md.lLastY == 0 {
                 None
             } else {
-                Some(MouseDelta { dx: md.lLastX as f32, dy: md.lLastY as f32 })
+                Some(MouseDelta {
+                    dx: md.lLastX as f32,
+                    dy: md.lLastY as f32,
+                })
             }
         } else {
             None

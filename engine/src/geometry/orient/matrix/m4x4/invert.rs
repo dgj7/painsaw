@@ -3,25 +3,57 @@ use crate::geometry::orient::matrix::m4x4::Matrix4x4;
 ///
 /// invert the given matrix, as long as it's invertible (having determinant > 0).
 ///
-#[allow(dead_code)]// todo: remove this
+#[allow(dead_code)] // todo: remove this
 fn invert(m: &Matrix4x4) -> Option<Matrix4x4> {
     /* calculate cofactors */
-    let c11 = m.c2r2 * (m.c3r3 * m.c4r4 - m.c4r3 * m.c3r4) - m.c3r2 * (m.c2r3 * m.c4r4 - m.c4r3 * m.c2r4) + m.c4r2 * (m.c2r3 * m.c3r4 - m.c3r3 * m.c2r4);
-    let c12 = -(m.c1r2 * (m.c3r3 * m.c4r4 - m.c4r3 * m.c3r4) - m.c3r2 * (m.c1r3 * m.c4r4 - m.c4r3 * m.c1r4) + m.c4r2 * (m.c1r3 * m.c3r4 - m.c3r3 * m.c1r4));
-    let c13 = m.c1r2 * (m.c2r3 * m.c4r4 - m.c4r3 * m.c2r4) - m.c2r2 * (m.c1r3 * m.c4r4 - m.c4r3 * m.c1r4) + m.c4r2 * (m.c1r3 * m.c2r4 - m.c2r3 * m.c1r4);
-    let c14 = -(m.c1r2 * (m.c2r3 * m.c3r4 - m.c3r3 * m.c2r4) - m.c2r2 * (m.c1r3 * m.c3r4 - m.c3r3 * m.c1r4) + m.c3r2 * (m.c1r3 * m.c2r4 - m.c2r3 * m.c1r4));
-    let c21 = -(m.c2r1 * (m.c3r3 * m.c4r4 - m.c4r3 * m.c3r4) - m.c3r1 * (m.c2r3 * m.c4r4 - m.c4r3 * m.c2r4) + m.c4r1 * (m.c2r3 * m.c3r4 - m.c3r3 * m.c2r4));
-    let c22 = m.c1r1 * (m.c3r3 * m.c4r4 - m.c4r3 * m.c3r4) - m.c3r1 * (m.c1r3 * m.c4r4 - m.c4r3 * m.c1r4) + m.c4r1 * (m.c1r3 * m.c3r4 - m.c3r3 * m.c1r4);
-    let c23 = -(m.c1r1 * (m.c2r3 * m.c4r4 - m.c4r3 * m.c2r4) - m.c2r1 * (m.c1r3 * m.c4r4 - m.c4r3 * m.c1r4) + m.c4r1 * (m.c1r3 * m.c2r4 - m.c2r3 * m.c1r4));
-    let c24 = m.c1r1 * (m.c2r3 * m.c3r4 - m.c3r3 * m.c2r4) - m.c2r1 * (m.c1r3 * m.c3r4 - m.c3r3 * m.c1r4) + m.c3r1 * (m.c1r3 * m.c2r4 - m.c2r3 * m.c1r4);
-    let c31 = m.c2r1 * (m.c3r2 * m.c4r4 - m.c4r2 * m.c3r4) - m.c3r1 * (m.c2r2 * m.c4r4 - m.c4r2 * m.c2r4) + m.c4r1 * (m.c2r2 * m.c3r4 - m.c3r2 * m.c2r4);
-    let c32 = -(m.c1r1 * (m.c3r2 * m.c4r4 - m.c4r2 * m.c3r4) - m.c3r1 * (m.c1r2 * m.c4r4 - m.c4r2 * m.c1r4) + m.c4r1 * (m.c1r2 * m.c3r4 - m.c3r2 * m.c1r4));
-    let c33 = m.c1r1 * (m.c2r2 * m.c4r4 - m.c4r2 * m.c2r4) - m.c2r1 * (m.c1r2 * m.c4r4 - m.c4r2 * m.c1r4) + m.c4r1 * (m.c1r2 * m.c2r4 - m.c2r2 * m.c1r4);
-    let c34 = -(m.c1r1 * (m.c2r2 * m.c3r4 - m.c3r2 * m.c2r4) - m.c2r1 * (m.c1r2 * m.c3r4 - m.c3r2 * m.c1r4) + m.c3r1 * (m.c1r2 * m.c2r4 - m.c2r2 * m.c1r4));
-    let c41 = -(m.c2r1 * (m.c3r2 * m.c4r3 - m.c4r2 * m.c3r3) - m.c3r1 * (m.c2r2 * m.c4r3 - m.c4r2 * m.c2r3) + m.c4r1 * (m.c2r2 * m.c3r3 - m.c3r2 * m.c2r3));
-    let c42 = m.c1r1 * (m.c3r2 * m.c4r3 - m.c4r2 * m.c3r3) - m.c3r1 * (m.c1r2 * m.c4r3 - m.c4r2 * m.c1r3) + m.c4r1 * (m.c1r2 * m.c3r3 - m.c3r2 * m.c1r3);
-    let c43 = -(m.c1r1 * (m.c2r2 * m.c4r3 - m.c4r2 * m.c2r3) - m.c2r1 * (m.c1r2 * m.c4r3 - m.c4r2 * m.c1r3) + m.c4r1 * (m.c1r2 * m.c2r3 - m.c2r2 * m.c1r3));
-    let c44 = m.c1r1 * (m.c2r2 * m.c3r3 - m.c3r2 * m.c2r3) - m.c2r1 * (m.c1r2 * m.c3r3 - m.c3r2 * m.c1r3) + m.c3r1 * (m.c1r2 * m.c2r3 - m.c2r2 * m.c1r3);
+    let c11 = m.c2r2 * (m.c3r3 * m.c4r4 - m.c4r3 * m.c3r4)
+        - m.c3r2 * (m.c2r3 * m.c4r4 - m.c4r3 * m.c2r4)
+        + m.c4r2 * (m.c2r3 * m.c3r4 - m.c3r3 * m.c2r4);
+    let c12 = -(m.c1r2 * (m.c3r3 * m.c4r4 - m.c4r3 * m.c3r4)
+        - m.c3r2 * (m.c1r3 * m.c4r4 - m.c4r3 * m.c1r4)
+        + m.c4r2 * (m.c1r3 * m.c3r4 - m.c3r3 * m.c1r4));
+    let c13 = m.c1r2 * (m.c2r3 * m.c4r4 - m.c4r3 * m.c2r4)
+        - m.c2r2 * (m.c1r3 * m.c4r4 - m.c4r3 * m.c1r4)
+        + m.c4r2 * (m.c1r3 * m.c2r4 - m.c2r3 * m.c1r4);
+    let c14 = -(m.c1r2 * (m.c2r3 * m.c3r4 - m.c3r3 * m.c2r4)
+        - m.c2r2 * (m.c1r3 * m.c3r4 - m.c3r3 * m.c1r4)
+        + m.c3r2 * (m.c1r3 * m.c2r4 - m.c2r3 * m.c1r4));
+    let c21 = -(m.c2r1 * (m.c3r3 * m.c4r4 - m.c4r3 * m.c3r4)
+        - m.c3r1 * (m.c2r3 * m.c4r4 - m.c4r3 * m.c2r4)
+        + m.c4r1 * (m.c2r3 * m.c3r4 - m.c3r3 * m.c2r4));
+    let c22 = m.c1r1 * (m.c3r3 * m.c4r4 - m.c4r3 * m.c3r4)
+        - m.c3r1 * (m.c1r3 * m.c4r4 - m.c4r3 * m.c1r4)
+        + m.c4r1 * (m.c1r3 * m.c3r4 - m.c3r3 * m.c1r4);
+    let c23 = -(m.c1r1 * (m.c2r3 * m.c4r4 - m.c4r3 * m.c2r4)
+        - m.c2r1 * (m.c1r3 * m.c4r4 - m.c4r3 * m.c1r4)
+        + m.c4r1 * (m.c1r3 * m.c2r4 - m.c2r3 * m.c1r4));
+    let c24 = m.c1r1 * (m.c2r3 * m.c3r4 - m.c3r3 * m.c2r4)
+        - m.c2r1 * (m.c1r3 * m.c3r4 - m.c3r3 * m.c1r4)
+        + m.c3r1 * (m.c1r3 * m.c2r4 - m.c2r3 * m.c1r4);
+    let c31 = m.c2r1 * (m.c3r2 * m.c4r4 - m.c4r2 * m.c3r4)
+        - m.c3r1 * (m.c2r2 * m.c4r4 - m.c4r2 * m.c2r4)
+        + m.c4r1 * (m.c2r2 * m.c3r4 - m.c3r2 * m.c2r4);
+    let c32 = -(m.c1r1 * (m.c3r2 * m.c4r4 - m.c4r2 * m.c3r4)
+        - m.c3r1 * (m.c1r2 * m.c4r4 - m.c4r2 * m.c1r4)
+        + m.c4r1 * (m.c1r2 * m.c3r4 - m.c3r2 * m.c1r4));
+    let c33 = m.c1r1 * (m.c2r2 * m.c4r4 - m.c4r2 * m.c2r4)
+        - m.c2r1 * (m.c1r2 * m.c4r4 - m.c4r2 * m.c1r4)
+        + m.c4r1 * (m.c1r2 * m.c2r4 - m.c2r2 * m.c1r4);
+    let c34 = -(m.c1r1 * (m.c2r2 * m.c3r4 - m.c3r2 * m.c2r4)
+        - m.c2r1 * (m.c1r2 * m.c3r4 - m.c3r2 * m.c1r4)
+        + m.c3r1 * (m.c1r2 * m.c2r4 - m.c2r2 * m.c1r4));
+    let c41 = -(m.c2r1 * (m.c3r2 * m.c4r3 - m.c4r2 * m.c3r3)
+        - m.c3r1 * (m.c2r2 * m.c4r3 - m.c4r2 * m.c2r3)
+        + m.c4r1 * (m.c2r2 * m.c3r3 - m.c3r2 * m.c2r3));
+    let c42 = m.c1r1 * (m.c3r2 * m.c4r3 - m.c4r2 * m.c3r3)
+        - m.c3r1 * (m.c1r2 * m.c4r3 - m.c4r2 * m.c1r3)
+        + m.c4r1 * (m.c1r2 * m.c3r3 - m.c3r2 * m.c1r3);
+    let c43 = -(m.c1r1 * (m.c2r2 * m.c4r3 - m.c4r2 * m.c2r3)
+        - m.c2r1 * (m.c1r2 * m.c4r3 - m.c4r2 * m.c1r3)
+        + m.c4r1 * (m.c1r2 * m.c2r3 - m.c2r2 * m.c1r3));
+    let c44 = m.c1r1 * (m.c2r2 * m.c3r3 - m.c3r2 * m.c2r3)
+        - m.c2r1 * (m.c1r2 * m.c3r3 - m.c3r2 * m.c1r3)
+        + m.c3r1 * (m.c1r2 * m.c2r3 - m.c2r2 * m.c1r3);
 
     /* calculate determinant; consists of the first column and its cofactors */
     let determinant = m.c1r1 * c11 + m.c2r1 * c12 + m.c3r1 * c13 + m.c4r1 * c14;
@@ -61,8 +93,8 @@ fn invert(m: &Matrix4x4) -> Option<Matrix4x4> {
 #[cfg(test)]
 mod tests {
     use crate::geometry::orient::matrix::m4x4::invert::invert;
-    use crate::geometry::orient::matrix::m4x4::Matrix4x4;
     use crate::geometry::orient::matrix::m4x4::mult::multiply;
+    use crate::geometry::orient::matrix::m4x4::Matrix4x4;
 
     fn is_near(left: f32, right: f32) -> bool {
         (left - right).abs() <= f32::EPSILON

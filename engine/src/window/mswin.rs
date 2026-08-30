@@ -1,3 +1,5 @@
+use crate::config::input_config::kc::KeyHandler;
+use crate::config::input_config::mc::MouseHandler;
 use crate::config::window_config::WindowDimensions;
 use crate::config::EngineConfig;
 use crate::graphics::subsystem::opengl::msw::window::{init_opengl, opengl_cleanup, swap_buffers};
@@ -9,21 +11,27 @@ use crate::support::logger::log_level::LogLevel;
 use crate::window::key::WindowKey;
 use crate::window::mswin::events::wndproc;
 use crate::window::mswin::userdata::input_state_to_raw_pointer;
-use crate::window::mswin::winapi::{create_window_ex, dispatch_message, get_module_handle, load_cursor, peek_message, register_class, register_raw_input_devices, translate_message};
+use crate::window::mswin::winapi::{
+    create_window_ex, dispatch_message, get_module_handle, load_cursor, peek_message,
+    register_class, register_raw_input_devices, translate_message,
+};
 use crate::window::Window;
 use crate::PainsawContext;
 use crate::WorldController;
 use std::sync::{Arc, Mutex};
 use windows::Win32::Foundation::{HINSTANCE, HWND};
 use windows::Win32::UI::Input::{RAWINPUTDEVICE, RAWINPUTDEVICE_FLAGS};
-use windows::Win32::UI::WindowsAndMessaging::{CS_HREDRAW, CS_OWNDC, CS_VREDRAW, CW_USEDEFAULT, IDC_ARROW, MSG, PM_REMOVE, WINDOW_EX_STYLE, WM_QUIT, WNDCLASSW, WS_OVERLAPPEDWINDOW, WS_THICKFRAME, WS_VISIBLE};
+use windows::Win32::UI::WindowsAndMessaging::{
+    CS_HREDRAW, CS_OWNDC, CS_VREDRAW, CW_USEDEFAULT, IDC_ARROW, MSG, PM_REMOVE, WINDOW_EX_STYLE,
+    WM_QUIT, WNDCLASSW, WS_OVERLAPPEDWINDOW, WS_THICKFRAME, WS_VISIBLE,
+};
 use windows_core::{HSTRING, PCWSTR};
 
-pub mod winapi;
-pub mod userdata;
 pub mod errors;
 pub mod events;
+pub mod userdata;
 pub mod util;
+pub mod winapi;
 
 pub struct MsWinWindow {
     pub input: Arc<Mutex<UserInput>>,
@@ -35,14 +43,23 @@ pub struct MsWinWindow {
 }
 
 impl Window for MsWinWindow {
-    fn begin_event_handling(&mut self, wc: Arc<dyn WorldController>, config: EngineConfig) -> Result<(), Box<dyn std::error::Error>> {
+    fn begin_event_handling<T: KeyHandler + MouseHandler + WorldController + 'static>(
+        &mut self,
+        config: EngineConfig,
+        game: &T,
+    ) -> Result<(), Box<dyn std::error::Error>> {
         log(LogLevel::Info, &|| "begin event handling".parse().unwrap());
         let mut message: MSG = MSG::default();
         let screen = ScreenState::from(&self.key);
         let mut context = PainsawContext::new(&self.input, config, screen);
 
         /* initialize client renderer, if necessary */
-        wc.initialize_world(&mut context);
+        game.initialize_world(
+            &mut context.graphics,
+            &context.camera,
+            &mut context.g2d,
+            &mut context.g3d,
+        );
 
         while !self.quit {
             if peek_message(&mut message, Default::default(), 0, 0, PM_REMOVE) {
@@ -60,8 +77,29 @@ impl Window for MsWinWindow {
                 context.timing.begin_frame();
 
                 /* update world info; graphics scene */
-                wc.update_world(&mut context, &self.key);
-                wc.display_world_scene(&mut context);
+                game.update_world(
+                    game,
+                    context.input.clone(),
+                    &mut context.camera,
+                    &context.config,
+                    &mut context.screen,
+                    &mut context.timing,
+                    &context.graphics,
+                    &mut context.g2d,
+                    &mut context.g3d,
+                    &self.key,
+                );
+                game.display_world_scene(
+                    game,
+                    context.input.clone(),
+                    &mut context.camera,
+                    &context.config,
+                    &mut context.screen,
+                    &context.timing,
+                    &mut context.graphics,
+                    &mut context.g2d,
+                    &mut context.g3d,
+                );
 
                 /* swap buffers after it's all done */
                 swap_buffers(self.key.hdc);
@@ -71,7 +109,12 @@ impl Window for MsWinWindow {
             }
         }
 
-        log(LogLevel::Info, &|| { return String::from(format!("after while(!quit); rendered {} frames", context.frame_count)) });
+        log(LogLevel::Info, &|| {
+            return String::from(format!(
+                "after while(!quit); rendered {} frames",
+                context.timing.frame_count
+            ));
+        });
 
         Ok(())
     }
@@ -81,10 +124,28 @@ impl MsWinWindow {
     ///
     /// create a new instance.
     ///
-    pub(crate) fn new(request : &EngineConfig) -> Result<Box<dyn Window>, Box<dyn std::error::Error>> {
+    pub(crate) fn new(request: &EngineConfig) -> Result<Box<Self>, Box<dyn std::error::Error>> {
         /* make some variables */
-        let wndclass = PCWSTR::from_raw(HSTRING::from(request.window.window_id.clone().unwrap_or(String::from("WindowConfig: set wndclass"))).as_ptr());
-        let title = PCWSTR::from_raw(HSTRING::from(request.window.title.clone().unwrap_or(String::from("WindowConfig: set title"))).as_ptr());
+        let wndclass = PCWSTR::from_raw(
+            HSTRING::from(
+                request
+                    .window
+                    .window_id
+                    .clone()
+                    .unwrap_or(String::from("WindowConfig: set wndclass")),
+            )
+            .as_ptr(),
+        );
+        let title = PCWSTR::from_raw(
+            HSTRING::from(
+                request
+                    .window
+                    .title
+                    .clone()
+                    .unwrap_or(String::from("WindowConfig: set title")),
+            )
+            .as_ptr(),
+        );
         let grss = request.renderer.graphics.clone();
 
         /* get handle instance */
@@ -112,13 +173,19 @@ impl MsWinWindow {
         /* determine some settings based on configuration */
         let dwstyle = match request.window.dimensions {
             WindowDimensions::Fullscreen => WS_VISIBLE,
-            WindowDimensions::Dimensional { width: _width, height: _height } => WS_OVERLAPPEDWINDOW | WS_VISIBLE | WS_THICKFRAME,
+            WindowDimensions::Dimensional {
+                width: _width,
+                height: _height,
+            } => WS_OVERLAPPEDWINDOW | WS_VISIBLE | WS_THICKFRAME,
         };
         let (x, y) = match request.window.dimensions {
             WindowDimensions::Fullscreen => (0, 0),
-            WindowDimensions::Dimensional { width: _width, height: _height } => (CW_USEDEFAULT, CW_USEDEFAULT),
+            WindowDimensions::Dimensional {
+                width: _width,
+                height: _height,
+            } => (CW_USEDEFAULT, CW_USEDEFAULT),
         };
-        let (width,height) = match request.window.dimensions {
+        let (width, height) = match request.window.dimensions {
             WindowDimensions::Fullscreen => (CW_USEDEFAULT, CW_USEDEFAULT),
             WindowDimensions::Dimensional { width, height } => (width, height),
         };
@@ -137,11 +204,12 @@ impl MsWinWindow {
             y,
             width,
             height,
-            None,                                               // no parent window
-            None,                                               // no menus
+            None, // no parent window
+            None, // no menus
             Option::from(hinstance),
             Some(input_pointer),
-        ).expect("CreateWindowEx* failed");
+        )
+        .expect("CreateWindowEx* failed");
 
         /* register raw input for mouse movement detection */
         init_raw(&hwnd);
@@ -163,27 +231,24 @@ impl MsWinWindow {
                 hwnd,
                 hdc,
                 hrc,
-            }
+            },
         }))
     }
 }
 
 ///
 /// initialize WM_INPUT raw input device.  in this case, we're using it for mouse movement.
-/// 
+///
 /// normal keyboard input tracking for win32 works well enough, so that won't be configured here.
-/// 
+///
 fn init_raw(hwnd: &HWND) {
     /* create array of RIDs */
-    let rid = [
-        /* create RID for mouse */
-        RAWINPUTDEVICE {
-            usUsagePage: 0x01,                          // generic desktop
-            usUsage: 0x02,                              // mouse=0x02, keyboard=0x06
-            dwFlags: RAWINPUTDEVICE_FLAGS(0),           // RIDEV_INPUTSINK: recv input even when in background (not in focus)
-            hwndTarget: *hwnd,
-        }
-    ];
+    let rid = [/* create RID for mouse */ RAWINPUTDEVICE {
+        usUsagePage: 0x01,                // generic desktop
+        usUsage: 0x02,                    // mouse=0x02, keyboard=0x06
+        dwFlags: RAWINPUTDEVICE_FLAGS(0), // RIDEV_INPUTSINK: recv input even when in background (not in focus)
+        hwndTarget: *hwnd,
+    }];
 
     register_raw_input_devices(&rid);
 }

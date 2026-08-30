@@ -1,20 +1,20 @@
-pub(crate) mod multiply_scalar;
 pub(crate) mod add;
-pub(crate) mod subtract;
-pub(crate) mod negate;
-pub(crate) mod magnitude;
+pub(crate) mod cross_product;
 pub(crate) mod distance;
 pub(crate) mod divide_scalar;
-pub(crate) mod cross_product;
 pub(crate) mod dot_product;
-pub(crate) mod normalize;
 pub(crate) mod equal;
+pub(crate) mod magnitude;
+pub(crate) mod multiply_scalar;
+pub(crate) mod negate;
+pub(crate) mod normalize;
+pub(crate) mod subtract;
 
 ///
 /// Representation of a 3d point, vertex, or vector.
-/// 
+///
 /// includes supporting methods for all 3 types.
-/// 
+///
 #[derive(Clone)]
 pub struct Vertex3D {
     pub x: f32,

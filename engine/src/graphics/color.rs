@@ -13,13 +13,18 @@ pub struct Color {
 
 impl Color {
     pub const fn from_rgba(red: f32, green: f32, blue: f32, alpha: f32) -> Color {
-        Color {red, green, blue, alpha }
+        Color {
+            red,
+            green,
+            blue,
+            alpha,
+        }
     }
-    
+
     pub const fn from_rgb(red: f32, green: f32, blue: f32) -> Color {
         Self::from_rgba(red, green, blue, ALPHA_OPAQUE)
     }
-    
+
     pub fn to_u8(&self) -> (u8, u8, u8, u8) {
         let red = (self.red * 255.0) as u8;
         let green = (self.green * 255.0) as u8;
@@ -27,14 +32,14 @@ impl Color {
         let alpha = (self.alpha * 255.0) as u8;
         (red, green, blue, alpha)
     }
-    
+
     pub const RED: Color = Color::from_rgb(1.0, 0.0, 0.0);
     pub const GREEN: Color = Color::from_rgb(0.0, 1.0, 0.0);
     pub const BLUE: Color = Color::from_rgb(0.0, 0.0, 1.0);
-    
+
     pub const WHITE: Color = Color::from_rgb(1.0, 1.0, 1.0);
     pub const BLACK: Color = Color::from_rgb(0.0, 0.0, 0.0);
-    
+
     pub const YELLOW: Color = Color::from_rgb(1.0, 1.0, 0.0);
 
     pub const TRANSPARENT: Color = Color::from_rgba(1.0, 1.0, 1.0, ALPHA_TRANSPARENT);
@@ -42,8 +47,14 @@ impl Color {
 
 #[derive(Hash, Ord, PartialOrd, PartialEq, Eq, Clone, Copy, Debug)]
 pub struct ColorSelection {
-    fgr: u8, fgg: u8, fgb: u8, fga: u8,
-    bgr: u8, bgg: u8, bgb: u8, bga: u8,
+    fgr: u8,
+    fgg: u8,
+    fgb: u8,
+    fga: u8,
+    bgr: u8,
+    bgg: u8,
+    bgb: u8,
+    bga: u8,
 }
 
 impl ColorSelection {
@@ -51,8 +62,14 @@ impl ColorSelection {
         let (fgr, fgg, fgb, fga) = foreground.to_u8();
         let (bgr, bgg, bgb, bga) = background.to_u8();
         ColorSelection {
-            fgr, fgg, fgb, fga,
-            bgr, bgg, bgb, bga,
+            fgr,
+            fgg,
+            fgb,
+            fga,
+            bgr,
+            bgg,
+            bgb,
+            bga,
         }
     }
 }

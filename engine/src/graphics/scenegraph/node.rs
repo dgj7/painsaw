@@ -8,7 +8,6 @@ pub struct SceneNode {
 
     /* orientation of the node */
     pub orientation: Orientation,
-
     /* models attached here */
     // todo: model(s) (Model3D)
 }

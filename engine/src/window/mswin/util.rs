@@ -1,5 +1,7 @@
 use crate::geometry::dim::Dimension2D;
-use crate::window::mswin::winapi::{get_active_window, get_client_rect, get_cursor_pos, pt_in_rect, screen_to_client};
+use crate::window::mswin::winapi::{
+    get_active_window, get_client_rect, get_cursor_pos, pt_in_rect, screen_to_client,
+};
 use windows::Win32::Foundation::HWND;
 
 ///
@@ -17,7 +19,7 @@ pub(crate) fn is_mouse_over_window(hwnd: HWND) -> bool {
 ///
 /// not really reliable unless there's only a single window.  otherwise, you get the top one.
 ///
-#[allow(unused)]// todo: remove this
+#[allow(unused)] // todo: remove this
 pub(crate) fn find_hwnd() -> HWND {
     get_active_window()
 }
@@ -29,7 +31,10 @@ pub(crate) fn find_hwnd() -> HWND {
 ///
 pub(crate) fn get_client_rect_dim2d(hwnd: HWND) -> Dimension2D {
     let rect = get_client_rect(hwnd);
-    Dimension2D::new((rect.bottom - rect.top) as f32, (rect.right - rect.left) as f32)
+    Dimension2D::new(
+        (rect.bottom - rect.top) as f32,
+        (rect.right - rect.left) as f32,
+    )
 }
 
 ///
@@ -39,5 +44,8 @@ pub(crate) fn get_client_rect_dim2d(hwnd: HWND) -> Dimension2D {
 ///
 pub(crate) fn get_window_rect_dim2d(hwnd: HWND) -> Dimension2D {
     let rect = get_client_rect(hwnd);
-    Dimension2D::new((rect.bottom - rect.top) as f32, (rect.right - rect.left) as f32)
+    Dimension2D::new(
+        (rect.bottom - rect.top) as f32,
+        (rect.right - rect.left) as f32,
+    )
 }

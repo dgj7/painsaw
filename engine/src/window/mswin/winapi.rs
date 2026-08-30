@@ -3,15 +3,37 @@ use windows::Win32::Foundation;
 use windows::Win32::Foundation::{HWND, LRESULT, POINT, RECT};
 use windows::Win32::Graphics::Gdi::{PtInRect, ScreenToClient};
 use windows::Win32::System::LibraryLoader::GetModuleHandleW;
-use windows::Win32::UI::Input::{GetRawInputData, RegisterRawInputDevices, HRAWINPUT, RAWINPUTDEVICE, RAW_INPUT_DATA_COMMAND_FLAGS};
 use windows::Win32::UI::Input::KeyboardAndMouse::GetActiveWindow;
-use windows::Win32::UI::WindowsAndMessaging::{CreateWindowExW, DefWindowProcW, DispatchMessageW, GetClientRect, GetCursorPos, GetWindowRect, LoadCursorW, PeekMessageW, PostQuitMessage, RegisterClassW, SetCursorPos, ShowCursor, TranslateMessage, HCURSOR, HMENU, MSG, PEEK_MESSAGE_REMOVE_TYPE, WINDOW_EX_STYLE, WINDOW_STYLE, WNDCLASSW};
+use windows::Win32::UI::Input::{
+    GetRawInputData, RegisterRawInputDevices, HRAWINPUT, RAWINPUTDEVICE,
+    RAW_INPUT_DATA_COMMAND_FLAGS,
+};
+use windows::Win32::UI::WindowsAndMessaging::{
+    CreateWindowExW, DefWindowProcW, DispatchMessageW, GetClientRect, GetCursorPos, GetWindowRect,
+    LoadCursorW, PeekMessageW, PostQuitMessage, RegisterClassW, SetCursorPos, ShowCursor, TranslateMessage,
+    HCURSOR, HMENU, MSG, PEEK_MESSAGE_REMOVE_TYPE, WINDOW_EX_STYLE, WINDOW_STYLE,
+    WNDCLASSW,
+};
 
 ///
 /// PeekMessageW()
 ///
-pub(crate) fn peek_message(lpmsg: *mut MSG, hwnd: Option<HWND>, wmsgfiltermin: u32, wmsgfiltermax: u32, wremovemsg: PEEK_MESSAGE_REMOVE_TYPE) -> bool {
-    unsafe { bool::from(PeekMessageW(lpmsg, hwnd, wmsgfiltermin, wmsgfiltermax, wremovemsg)) }
+pub(crate) fn peek_message(
+    lpmsg: *mut MSG,
+    hwnd: Option<HWND>,
+    wmsgfiltermin: u32,
+    wmsgfiltermax: u32,
+    wremovemsg: PEEK_MESSAGE_REMOVE_TYPE,
+) -> bool {
+    unsafe {
+        bool::from(PeekMessageW(
+            lpmsg,
+            hwnd,
+            wmsgfiltermin,
+            wmsgfiltermax,
+            wremovemsg,
+        ))
+    }
 }
 
 ///
@@ -25,7 +47,9 @@ pub(crate) fn translate_message(lpmsg: *const MSG) -> bool {
 /// DispatchMessageW()
 ///
 pub(crate) fn dispatch_message(lpmsg: *const MSG) {
-    unsafe { DispatchMessageW(lpmsg); }
+    unsafe {
+        DispatchMessageW(lpmsg);
+    }
 }
 
 ///
@@ -38,7 +62,7 @@ where
     let result = unsafe { GetModuleHandleW(lpmodulename) };
     match &result {
         Ok(_) => {}
-        Err(_) => check_errors_mswin("GetModuleHandleW")
+        Err(_) => check_errors_mswin("GetModuleHandleW"),
     }
     result
 }
@@ -46,14 +70,17 @@ where
 ///
 /// LoadCursorW()
 ///
-pub(crate) fn load_cursor<P>(hinstance: Option<Foundation::HINSTANCE>, lpcursorname: P) -> windows_core::Result<HCURSOR>
+pub(crate) fn load_cursor<P>(
+    hinstance: Option<Foundation::HINSTANCE>,
+    lpcursorname: P,
+) -> windows_core::Result<HCURSOR>
 where
     P: windows_core::Param<windows_core::PCWSTR>,
 {
     let result = unsafe { LoadCursorW(hinstance, lpcursorname) };
     match &result {
         Ok(_) => {}
-        Err(_) => check_errors_mswin("LoadCursorW")
+        Err(_) => check_errors_mswin("LoadCursorW"),
     }
     result
 }
@@ -72,15 +99,43 @@ pub(crate) fn register_class(lpwndclass: *const WNDCLASSW) -> u16 {
 ///
 /// CreateWindowExW()
 ///
-pub(crate) fn create_window_ex<P1, P2>(dwexstyle: WINDOW_EX_STYLE, lpclassname: P1, lpwindowname: P2, dwstyle: WINDOW_STYLE, x: i32, y: i32, nwidth: i32, nheight: i32, hwndparent: Option<HWND>, hmenu: Option<HMENU>, hinstance: Option<Foundation::HINSTANCE>, lpparam: Option<*const core::ffi::c_void>) -> windows_core::Result<Foundation::HWND>
+pub(crate) fn create_window_ex<P1, P2>(
+    dwexstyle: WINDOW_EX_STYLE,
+    lpclassname: P1,
+    lpwindowname: P2,
+    dwstyle: WINDOW_STYLE,
+    x: i32,
+    y: i32,
+    nwidth: i32,
+    nheight: i32,
+    hwndparent: Option<HWND>,
+    hmenu: Option<HMENU>,
+    hinstance: Option<Foundation::HINSTANCE>,
+    lpparam: Option<*const core::ffi::c_void>,
+) -> windows_core::Result<Foundation::HWND>
 where
     P1: windows_core::Param<windows_core::PCWSTR>,
     P2: windows_core::Param<windows_core::PCWSTR>,
 {
-    let result = unsafe { CreateWindowExW(dwexstyle, lpclassname, lpwindowname, dwstyle, x, y, nwidth, nheight, hwndparent, hmenu, hinstance, lpparam) };
+    let result = unsafe {
+        CreateWindowExW(
+            dwexstyle,
+            lpclassname,
+            lpwindowname,
+            dwstyle,
+            x,
+            y,
+            nwidth,
+            nheight,
+            hwndparent,
+            hmenu,
+            hinstance,
+            lpparam,
+        )
+    };
     match &result {
-        Ok(_) => {},
-        Err(_) => check_errors_mswin("CreateWindowExW")
+        Ok(_) => {}
+        Err(_) => check_errors_mswin("CreateWindowExW"),
     }
     result
 }
@@ -95,7 +150,12 @@ pub(crate) fn post_quit_message(nexitcode: i32) {
 ///
 /// DefWindowProcW()
 ///
-pub(crate) fn default_window_proc(hwnd: HWND, msg: u32, wparam: Foundation::WPARAM, lparam: Foundation::LPARAM) -> LRESULT {
+pub(crate) fn default_window_proc(
+    hwnd: HWND,
+    msg: u32,
+    wparam: Foundation::WPARAM,
+    lparam: Foundation::LPARAM,
+) -> LRESULT {
     unsafe { DefWindowProcW(hwnd, msg, wparam, lparam) }
 }
 
@@ -103,11 +163,16 @@ pub(crate) fn default_window_proc(hwnd: HWND, msg: u32, wparam: Foundation::WPAR
 /// GetClientRect()
 ///
 pub(crate) fn get_client_rect(hwnd: HWND) -> RECT {
-    let mut rect = RECT { left: 0, top: 0, right: 0, bottom: 0, };
+    let mut rect = RECT {
+        left: 0,
+        top: 0,
+        right: 0,
+        bottom: 0,
+    };
     let result = unsafe { GetClientRect(hwnd, &mut rect) };
     match result {
         Ok(_) => {}
-        Err(_) => {check_errors_mswin("GetClientRect")}
+        Err(_) => check_errors_mswin("GetClientRect"),
     }
     rect
 }
@@ -117,11 +182,16 @@ pub(crate) fn get_client_rect(hwnd: HWND) -> RECT {
 ///
 #[allow(unused)]
 pub(crate) fn get_window_rect(hwnd: HWND) -> RECT {
-    let mut rect = RECT { left: 0, top: 0, right: 0, bottom: 0, };
+    let mut rect = RECT {
+        left: 0,
+        top: 0,
+        right: 0,
+        bottom: 0,
+    };
     let result = unsafe { GetWindowRect(hwnd, &mut rect) };
     match result {
         Ok(_) => {}
-        Err(_) => {check_errors_mswin("GetWindowRect")}
+        Err(_) => check_errors_mswin("GetWindowRect"),
     }
     rect
 }
@@ -134,14 +204,14 @@ pub(crate) fn get_cursor_pos() -> POINT {
     let result = unsafe { GetCursorPos(&mut pt) };
     match result {
         Ok(_) => {}
-        Err(_) => {check_errors_mswin("GetCursorPos")}
+        Err(_) => check_errors_mswin("GetCursorPos"),
     }
     pt
 }
 
 ///
 /// ScreenToClient()
-/// 
+///
 pub(crate) fn screen_to_client(hwnd: HWND, mp: &mut POINT) {
     let result = unsafe { ScreenToClient(hwnd, mp) };
     if !bool::from(result) {
@@ -163,14 +233,20 @@ pub(crate) fn register_raw_input_devices(rid: &[RAWINPUTDEVICE]) {
     let result = unsafe { RegisterRawInputDevices(rid, size_of::<RAWINPUTDEVICE>() as u32) };
     match result {
         Ok(_) => {}
-        Err(_) => {check_errors_mswin("RegisterRawInputDevices")}
+        Err(_) => check_errors_mswin("RegisterRawInputDevices"),
     }
 }
 
 ///
 /// GetRawInputData()
 ///
-pub(crate) fn get_raw_input_data(hrawinput: HRAWINPUT, uicommand: RAW_INPUT_DATA_COMMAND_FLAGS, pdata: Option<*mut core::ffi::c_void>, pcbsize: *mut u32, cbsizeheader: u32) -> u32 {
+pub(crate) fn get_raw_input_data(
+    hrawinput: HRAWINPUT,
+    uicommand: RAW_INPUT_DATA_COMMAND_FLAGS,
+    pdata: Option<*mut core::ffi::c_void>,
+    pcbsize: *mut u32,
+    cbsizeheader: u32,
+) -> u32 {
     let result = unsafe { GetRawInputData(hrawinput, uicommand, pdata, pcbsize, cbsizeheader) };
     if result == u32::MAX {
         check_errors_mswin("GetRawInputData");
@@ -181,7 +257,7 @@ pub(crate) fn get_raw_input_data(hrawinput: HRAWINPUT, uicommand: RAW_INPUT_DATA
 ///
 /// GetActiveWindow()
 ///
-#[allow(unused)]// todo: remove this
+#[allow(unused)] // todo: remove this
 pub(crate) fn get_active_window() -> HWND {
     unsafe { GetActiveWindow() }
 }
@@ -189,12 +265,12 @@ pub(crate) fn get_active_window() -> HWND {
 ///
 /// SetCursorPos()
 ///
-#[allow(unused)]// todo: remove this
+#[allow(unused)] // todo: remove this
 pub(crate) fn set_cursor_pos(x: i32, y: i32) {
     let result = unsafe { SetCursorPos(x, y) };
     match result {
         Ok(_) => {}
-        Err(_) => {check_errors_mswin("SetCursorPos")}
+        Err(_) => check_errors_mswin("SetCursorPos"),
     }
 }
 

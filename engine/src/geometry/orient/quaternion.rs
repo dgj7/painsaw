@@ -69,15 +69,16 @@ impl Quaternion {
 
     pub fn cross_product(&self, other: &Quaternion) -> Quaternion {
         Quaternion {
-            w: self.w* other.w - self.x* other.x - self.y* other.y - self.z* other.z,
-            x: self.w* other.x + self.x* other.w + self.z* other.y - self.y* other.z,
-            y: self.w* other.y + self.y* other.w + self.x* other.z - self.z* other.x,
-            z: self.w* other.z + self.z* other.w + self.y* other.x - self.x* other.y,
+            w: self.w * other.w - self.x * other.x - self.y * other.y - self.z * other.z,
+            x: self.w * other.x + self.x * other.w + self.z * other.y - self.y * other.z,
+            y: self.w * other.y + self.y * other.w + self.x * other.z - self.z * other.x,
+            z: self.w * other.z + self.z * other.w + self.y * other.x - self.x * other.y,
         }
     }
 
     pub fn normalize(&mut self) {
-        let magnitude = (self.w*self.w + self.x*self.x + self.y*self.y + self.z*self.z).sqrt();
+        let magnitude =
+            (self.w * self.w + self.x * self.x + self.y * self.y + self.z * self.z).sqrt();
         let one_over_mag = 1.0 / magnitude;
 
         self.w = self.w * one_over_mag;
@@ -124,7 +125,7 @@ impl Quaternion {
 }
 
 pub fn dot_product(left: &Quaternion, right: &Quaternion) -> f32 {
-    left.w*right.w + left.x*right.x + left.y*right.y + left.z*right.z
+    left.w * right.w + left.x * right.x + left.y * right.y + left.z * right.z
 }
 
 ///
@@ -161,7 +162,7 @@ pub fn slerp(q0: &Quaternion, q1: &Quaternion, t: f32) -> Quaternion {
         k0 = 1.0 - t;
         k1 = t;
     } else {
-        let sin_omega = (1.0 - cos_omega*cos_omega).sqrt();
+        let sin_omega = (1.0 - cos_omega * cos_omega).sqrt();
         let omega = sin_omega.atan2(cos_omega);
         let one_over_sin_omega = 1.0 / sin_omega;
         k0 = (1.0 - t) * omega * one_over_sin_omega;
@@ -169,10 +170,10 @@ pub fn slerp(q0: &Quaternion, q1: &Quaternion, t: f32) -> Quaternion {
     }
 
     Quaternion {
-        x: k0*q0.x + k1*q1x,
-        y: k0*q0.y + k1*q1y,
-        z: k0*q0.z + k1*q1z,
-        w: k0*q0.w + k1*q1w,
+        x: k0 * q0.x + k1 * q1x,
+        y: k0 * q0.y + k1 * q1y,
+        z: k0 * q0.z + k1 * q1z,
+        w: k0 * q0.w + k1 * q1w,
     }
 }
 
@@ -207,5 +208,3 @@ pub fn pow(q: &Quaternion, exponent: f32) -> Quaternion {
         z: q.z * mult,
     }
 }
-
-

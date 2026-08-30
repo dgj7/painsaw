@@ -1,3 +1,4 @@
+#[derive(Clone, Debug)]
 pub struct MoveConfig {
     pub forward_speed: f32,
     pub backward_speed: f32,

@@ -7,13 +7,13 @@ use crate::support::logger::log_level::LogLevel;
 /// The screen projection.
 ///
 pub struct Projection {
-    pub width: f32,     // window width
-    pub height: f32,    // window height
+    pub width: f32,  // window width
+    pub height: f32, // window height
 
-    pub near: f32,      // 3d near clipping plane
-    pub far: f32,       // 3d far clipping plane
+    pub near: f32, // 3d near clipping plane
+    pub far: f32,  // 3d far clipping plane
 
-    pub fov: f32,       // field of view
+    pub fov: f32, // field of view
 }
 
 impl Projection {
@@ -24,11 +24,16 @@ impl Projection {
             ..Default::default()
         }
     }
-    
+
     pub(crate) fn update_screen(&mut self, dimension: &Dimension2D) {
         self.width = dimension.width;
         self.height = dimension.height;
-        log(LogLevel::Info, &|| String::from(format!("updated screen: width={}, height={}", self.width as f64, self.height as f64)));
+        log(LogLevel::Info, &|| {
+            String::from(format!(
+                "updated screen: width={}, height={}",
+                self.width as f64, self.height as f64
+            ))
+        });
     }
 }
 
@@ -52,7 +57,6 @@ impl Projection {
             c2r3: 0.0,
             c2r4: 0.0,
 
-
             c3r1: 0.0,
             c3r2: 0.0,
             c3r3: (self.far + self.near) / (self.near - self.far),
@@ -74,7 +78,7 @@ impl Default for Projection {
 
             near: 0.01,
             far: 500.0,
-            
+
             fov: 45.0,
         }
     }

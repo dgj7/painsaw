@@ -1,4 +1,7 @@
-use crate::graphics::subsystem::opengl::msw::api::{choose_pixel_format, get_dc, release_dc, set_pixel_format, wgl_create_context, wgl_delete_context, wgl_get_current_context, wgl_make_current};
+use crate::graphics::subsystem::opengl::msw::api::{
+    choose_pixel_format, get_dc, release_dc, set_pixel_format, wgl_create_context,
+    wgl_delete_context, wgl_get_current_context, wgl_make_current,
+};
 use crate::support::logger::log;
 use crate::support::logger::log_level::LogLevel;
 use windows::Win32::Foundation::HWND;
@@ -51,14 +54,18 @@ pub fn init_opengl(hwnd: HWND) -> (HDC, HGLRC) {
     wgl_make_current(hdc, hrc).expect("todo: wgl make current");
 
     /* log the things */
-    log(LogLevel::Debug, &|| String::from(format!("init_opengl(): hdc={:?}, hrc={:?}", hdc, hrc)));
+    log(LogLevel::Debug, &|| {
+        String::from(format!("init_opengl(): hdc={:?}, hrc={:?}", hdc, hrc))
+    });
 
     /* done */
     (hdc, hrc)
 }
 
 pub(crate) fn swap_buffers(hdc: HDC) {
-    unsafe { SwapBuffers(hdc).expect("TODO: swap buffers"); }
+    unsafe {
+        SwapBuffers(hdc).expect("TODO: swap buffers");
+    }
 }
 
 ///
@@ -70,13 +77,18 @@ pub(crate) fn opengl_cleanup(hwnd: HWND) {
     let hrc = wgl_get_current_context();
 
     /* log the values in case we need to compare them at some point */
-    log(LogLevel::Debug, &|| String::from(format!("opengl cleanup: hdc={:?}, hrc={:?}", hdc, hrc)));
+    log(LogLevel::Debug, &|| {
+        String::from(format!("opengl cleanup: hdc={:?}, hrc={:?}", hdc, hrc))
+    });
 
     /* do the cleanup */
-    wgl_make_current(HDC(std::ptr::null_mut()), HGLRC(std::ptr::null_mut())).expect("TODO: cleanup: make current failed");
+    wgl_make_current(HDC(std::ptr::null_mut()), HGLRC(std::ptr::null_mut()))
+        .expect("TODO: cleanup: make current failed");
     wgl_delete_context(hrc).expect("TODO: cleanup: delete context failed");
     release_dc(Option::from(hwnd), hdc);
 
     /* declare success */
-    log(LogLevel::Trace, &|| String::from("opengl cleanup completed"));
+    log(LogLevel::Trace, &|| {
+        String::from("opengl cleanup completed")
+    });
 }

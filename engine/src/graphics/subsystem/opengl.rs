@@ -1,15 +1,21 @@
-use crate::graphics::camera::Camera;
 use crate::geometry::primitive::PrimitiveType;
+use crate::graphics::camera::Camera;
 use crate::graphics::storage::g2d::Graph2D;
 use crate::graphics::storage::g3d::Graph3D;
-use crate::graphics::subsystem::opengl::ffp::ffp2d::{ffp_2d_initialize_textures, ffp_2d_update_textures, ffp_render_2d_line_strip, ffp_render_2d_quads};
-use crate::graphics::subsystem::opengl::ffp::ffp3d::{ffp_3d_lines, ffp_3d_points, ffp_3d_quads, ffp_3d_setup, ffp_3d_teardown};
+use crate::graphics::subsystem::opengl::ffp::ffp2d::{
+    ffp_2d_initialize_textures, ffp_2d_update_textures, ffp_render_2d_line_strip,
+    ffp_render_2d_quads,
+};
+use crate::graphics::subsystem::opengl::ffp::ffp3d::{
+    ffp_3d_lines, ffp_3d_points, ffp_3d_quads, ffp_3d_setup, ffp_3d_teardown,
+};
 use crate::graphics::subsystem::opengl::ffp::{ffp_before_scene, ffp_resize};
 use crate::graphics::subsystem::RendererInfo;
 use crate::graphics::subsystem::{OpenGLPipeline, RenderingSubSystemHandle};
-use crate::PainsawContext;
 use ffp::api::gl_get_string;
-use ffp::ffp2d::{ffp_2d_setup, ffp_2d_teardown, ffp_render_2d_lines, ffp_render_2d_points, ffp_render_2d_texture};
+use ffp::ffp2d::{
+    ffp_2d_setup, ffp_2d_teardown, ffp_render_2d_lines, ffp_render_2d_points, ffp_render_2d_texture,
+};
 use windows::Win32::Graphics::OpenGL::{GL_RENDERER, GL_VENDOR, GL_VERSION};
 
 mod errors;
@@ -28,31 +34,34 @@ impl RenderingSubSystemHandle for OpenGLHandle {
                 let vendor = gl_get_string(GL_VENDOR);
                 let device = gl_get_string(GL_RENDERER);
 
-                Some(RendererInfo { name: Some(String::from("OpenGL")), version, vendor, device })
+                Some(RendererInfo {
+                    name: Some(String::from("OpenGL")),
+                    version,
+                    vendor,
+                    device,
+                })
             }
-            OpenGLPipeline::ProgrammableShader => {
-                None
-            }
+            OpenGLPipeline::ProgrammableShader => None,
         }
     }
 
     fn initialize(&self, g2d: &mut Graph2D, _g3d: &mut Graph3D) {
         match self.pipeline {
-            OpenGLPipeline::FixedFunction => {ffp_2d_initialize_textures(g2d)},
-            OpenGLPipeline::ProgrammableShader => {},
+            OpenGLPipeline::FixedFunction => ffp_2d_initialize_textures(g2d),
+            OpenGLPipeline::ProgrammableShader => {}
         }
     }
 
-    fn resize(&self, context: &PainsawContext) {
+    fn resize(&self, camera: &Camera) {
         match self.pipeline {
-            OpenGLPipeline::FixedFunction => {ffp_resize(&context.camera)}
+            OpenGLPipeline::FixedFunction => ffp_resize(camera),
             OpenGLPipeline::ProgrammableShader => {}
         }
     }
 
     fn before_scene(&self, _camera: &Camera) {
         match self.pipeline {
-            OpenGLPipeline::FixedFunction => {ffp_before_scene()}
+            OpenGLPipeline::FixedFunction => ffp_before_scene(),
             OpenGLPipeline::ProgrammableShader => {}
         }
     }
@@ -73,33 +82,40 @@ impl RenderingSubSystemHandle for OpenGLHandle {
                 for (_, model) in g2d.iter() {
                     for primitive in model.primitives.iter() {
                         match primitive.p_type {
-                            PrimitiveType::Point{point_size} => { ffp_render_2d_points(primitive, point_size)},
-                            PrimitiveType::Line{thickness} => { ffp_render_2d_lines(primitive, thickness)},
-                            PrimitiveType::Quad {} => {ffp_render_2d_quads(primitive)},
-                            PrimitiveType::LineStrip {thickness} => {ffp_render_2d_line_strip(primitive, thickness)},
+                            PrimitiveType::Point { point_size } => {
+                                ffp_render_2d_points(primitive, point_size)
+                            }
+                            PrimitiveType::Line { thickness } => {
+                                ffp_render_2d_lines(primitive, thickness)
+                            }
+                            PrimitiveType::Quad {} => ffp_render_2d_quads(primitive),
+                            PrimitiveType::LineStrip { thickness } => {
+                                ffp_render_2d_line_strip(primitive, thickness)
+                            }
                         }
                     }
 
-                    model.textures
+                    model
+                        .textures
                         .iter()
                         .filter(|x| x.initialized)
                         .for_each(|x| ffp_render_2d_texture(x));
                 }
-            },
-            OpenGLPipeline::ProgrammableShader => {},
+            }
+            OpenGLPipeline::ProgrammableShader => {}
         }
     }
 
     fn after_2d(&self) {
         match self.pipeline {
-            OpenGLPipeline::FixedFunction => {ffp_2d_teardown()},
-            OpenGLPipeline::ProgrammableShader => {},
+            OpenGLPipeline::FixedFunction => ffp_2d_teardown(),
+            OpenGLPipeline::ProgrammableShader => {}
         }
     }
 
-    fn prepare_3d(&self, context: &PainsawContext) {
+    fn prepare_3d(&self, camera: &Camera) {
         match self.pipeline {
-            OpenGLPipeline::FixedFunction => {ffp_3d_setup(context)},
+            OpenGLPipeline::FixedFunction => ffp_3d_setup(camera),
             OpenGLPipeline::ProgrammableShader => {}
         }
     }
@@ -110,37 +126,33 @@ impl RenderingSubSystemHandle for OpenGLHandle {
                 for (_, model) in g3d.iter() {
                     for primitive in model.primitives.iter() {
                         match primitive.ptype {
-                            PrimitiveType::Point {point_size} => {
-                                match self.pipeline {
-                                    OpenGLPipeline::FixedFunction => {ffp_3d_points(primitive, point_size)},
-                                    OpenGLPipeline::ProgrammableShader => {},
+                            PrimitiveType::Point { point_size } => match self.pipeline {
+                                OpenGLPipeline::FixedFunction => {
+                                    ffp_3d_points(primitive, point_size)
                                 }
+                                OpenGLPipeline::ProgrammableShader => {}
                             },
-                            PrimitiveType::Line {thickness} => {
-                                match self.pipeline {
-                                    OpenGLPipeline::FixedFunction => {ffp_3d_lines(primitive, thickness)},
-                                    OpenGLPipeline::ProgrammableShader => {},
-                                }
+                            PrimitiveType::Line { thickness } => match self.pipeline {
+                                OpenGLPipeline::FixedFunction => ffp_3d_lines(primitive, thickness),
+                                OpenGLPipeline::ProgrammableShader => {}
                             },
-                            PrimitiveType::Quad {} => {
-                                match self.pipeline {
-                                    OpenGLPipeline::FixedFunction => {ffp_3d_quads(primitive)},
-                                    OpenGLPipeline::ProgrammableShader => {},
-                                }
+                            PrimitiveType::Quad {} => match self.pipeline {
+                                OpenGLPipeline::FixedFunction => ffp_3d_quads(primitive),
+                                OpenGLPipeline::ProgrammableShader => {}
                             },
-                            PrimitiveType::LineStrip { .. } => {},
+                            PrimitiveType::LineStrip { .. } => {}
                         }
                     }
                 }
-            },
-            OpenGLPipeline::ProgrammableShader => {},
+            }
+            OpenGLPipeline::ProgrammableShader => {}
         }
     }
 
-    fn after_3d(&self, _context: &PainsawContext) {
+    fn after_3d(&self) {
         match self.pipeline {
-            OpenGLPipeline::FixedFunction => {ffp_3d_teardown()},
-            OpenGLPipeline::ProgrammableShader => {},
+            OpenGLPipeline::FixedFunction => ffp_3d_teardown(),
+            OpenGLPipeline::ProgrammableShader => {}
         }
     }
 }

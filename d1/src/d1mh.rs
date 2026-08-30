@@ -9,7 +9,6 @@ use engine::support::timing::EngineTiming;
 use engine::window::api::mc::move_cursor;
 
 impl MouseHandler for Demo1 {
-
     fn handle_mouse_deltas(
         &self,
         deltas: &Vec<MouseDelta>,
@@ -26,5 +25,3 @@ impl MouseHandler for Demo1 {
         move_cursor(center);
     }
 }
-
-

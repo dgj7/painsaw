@@ -7,7 +7,6 @@ use crate::geometry::primitive::v3d::Vertex3D;
 /// exactly 1.0, while retaining its "direction/heading" (relationship to origin).
 ///
 impl Vertex3D {
-
     pub fn normalize(&mut self) {
         let magnitude_squared = self.x * self.x + self.y * self.y + self.z * self.z;
         if magnitude_squared > 0.0 {

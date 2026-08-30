@@ -3,35 +3,83 @@ use crate::geometry::orient::matrix::m4x4::Matrix4x4;
 ///
 /// multiply two matrices.
 ///
-#[allow(unused)]// todo: remove this
+#[allow(unused)] // todo: remove this
 pub fn multiply(left: &Matrix4x4, right: &Matrix4x4) -> Matrix4x4 {
     Matrix4x4 {
-        c1r1: left.c1r1* right.c1r1 + left.c2r1* right.c1r2 + left.c3r1* right.c1r3 + left.c4r1* right.c1r4,
-        c1r2: left.c1r2* right.c1r1 + left.c2r2* right.c1r2 + left.c3r2* right.c1r3 + left.c4r2* right.c1r4,
-        c1r3: left.c1r3* right.c1r1 + left.c2r3* right.c1r2 + left.c3r3* right.c1r3 + left.c4r3* right.c1r4,
-        c1r4: left.c1r4* right.c1r1 + left.c2r4* right.c1r2 + left.c3r4* right.c1r3 + left.c4r4* right.c1r4,
+        c1r1: left.c1r1 * right.c1r1
+            + left.c2r1 * right.c1r2
+            + left.c3r1 * right.c1r3
+            + left.c4r1 * right.c1r4,
+        c1r2: left.c1r2 * right.c1r1
+            + left.c2r2 * right.c1r2
+            + left.c3r2 * right.c1r3
+            + left.c4r2 * right.c1r4,
+        c1r3: left.c1r3 * right.c1r1
+            + left.c2r3 * right.c1r2
+            + left.c3r3 * right.c1r3
+            + left.c4r3 * right.c1r4,
+        c1r4: left.c1r4 * right.c1r1
+            + left.c2r4 * right.c1r2
+            + left.c3r4 * right.c1r3
+            + left.c4r4 * right.c1r4,
 
-        c2r1: left.c1r1* right.c2r1 + left.c2r1* right.c2r2 + left.c3r1* right.c2r3 + left.c4r1* right.c2r4,
-        c2r2: left.c1r2* right.c2r1 + left.c2r2* right.c2r2 + left.c3r2* right.c2r3 + left.c4r2* right.c2r4,
-        c2r3: left.c1r3* right.c2r1 + left.c2r3* right.c2r2 + left.c3r3* right.c2r3 + left.c4r3* right.c2r4,
-        c2r4: left.c1r4* right.c2r1 + left.c2r4* right.c2r2 + left.c3r4* right.c2r3 + left.c4r4* right.c2r4,
+        c2r1: left.c1r1 * right.c2r1
+            + left.c2r1 * right.c2r2
+            + left.c3r1 * right.c2r3
+            + left.c4r1 * right.c2r4,
+        c2r2: left.c1r2 * right.c2r1
+            + left.c2r2 * right.c2r2
+            + left.c3r2 * right.c2r3
+            + left.c4r2 * right.c2r4,
+        c2r3: left.c1r3 * right.c2r1
+            + left.c2r3 * right.c2r2
+            + left.c3r3 * right.c2r3
+            + left.c4r3 * right.c2r4,
+        c2r4: left.c1r4 * right.c2r1
+            + left.c2r4 * right.c2r2
+            + left.c3r4 * right.c2r3
+            + left.c4r4 * right.c2r4,
 
-        c3r1: left.c1r1* right.c3r1 + left.c2r1* right.c3r2 + left.c3r1* right.c3r3 + left.c4r1* right.c3r4,
-        c3r2: left.c1r2* right.c3r1 + left.c2r2* right.c3r2 + left.c3r2* right.c3r3 + left.c4r2* right.c3r4,
-        c3r3: left.c1r3* right.c3r1 + left.c2r3* right.c3r2 + left.c3r3* right.c3r3 + left.c4r3* right.c3r4,
-        c3r4: left.c1r4* right.c3r1 + left.c2r4* right.c3r2 + left.c3r4* right.c3r3 + left.c4r4* right.c3r4,
+        c3r1: left.c1r1 * right.c3r1
+            + left.c2r1 * right.c3r2
+            + left.c3r1 * right.c3r3
+            + left.c4r1 * right.c3r4,
+        c3r2: left.c1r2 * right.c3r1
+            + left.c2r2 * right.c3r2
+            + left.c3r2 * right.c3r3
+            + left.c4r2 * right.c3r4,
+        c3r3: left.c1r3 * right.c3r1
+            + left.c2r3 * right.c3r2
+            + left.c3r3 * right.c3r3
+            + left.c4r3 * right.c3r4,
+        c3r4: left.c1r4 * right.c3r1
+            + left.c2r4 * right.c3r2
+            + left.c3r4 * right.c3r3
+            + left.c4r4 * right.c3r4,
 
-        c4r1: left.c1r1* right.c4r1 + left.c2r1* right.c4r2 + left.c3r1* right.c4r3 + left.c4r1* right.c4r4,
-        c4r2: left.c1r2* right.c4r1 + left.c2r2* right.c4r2 + left.c3r2* right.c4r3 + left.c4r2* right.c4r4,
-        c4r3: left.c1r3* right.c4r1 + left.c2r3* right.c4r2 + left.c3r3* right.c4r3 + left.c4r3* right.c4r4,
-        c4r4: left.c1r4* right.c4r1 + left.c2r4* right.c4r2 + left.c3r4* right.c4r3 + left.c4r4* right.c4r4,
+        c4r1: left.c1r1 * right.c4r1
+            + left.c2r1 * right.c4r2
+            + left.c3r1 * right.c4r3
+            + left.c4r1 * right.c4r4,
+        c4r2: left.c1r2 * right.c4r1
+            + left.c2r2 * right.c4r2
+            + left.c3r2 * right.c4r3
+            + left.c4r2 * right.c4r4,
+        c4r3: left.c1r3 * right.c4r1
+            + left.c2r3 * right.c4r2
+            + left.c3r3 * right.c4r3
+            + left.c4r3 * right.c4r4,
+        c4r4: left.c1r4 * right.c4r1
+            + left.c2r4 * right.c4r2
+            + left.c3r4 * right.c4r3
+            + left.c4r4 * right.c4r4,
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::geometry::orient::matrix::m4x4::Matrix4x4;
     use crate::geometry::orient::matrix::m4x4::mult::multiply;
+    use crate::geometry::orient::matrix::m4x4::Matrix4x4;
 
     #[test]
     fn test_mult_by_identity() {

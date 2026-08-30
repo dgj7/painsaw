@@ -16,7 +16,9 @@ pub(crate) fn check_errors_mswin(caller: &str) {
         None => {}
         Some(raw_error_code) => {
             if raw_error_code > 0 {
-                log_caller(LogLevel::Error, Location::caller(), &|| String::from(format!("{}: {}: {}", caller, raw_error_code, loe_message)));
+                log_caller(LogLevel::Error, Location::caller(), &|| {
+                    String::from(format!("{}: {}: {}", caller, raw_error_code, loe_message))
+                });
             }
         }
     }

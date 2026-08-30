@@ -1,5 +1,6 @@
 use crate::graphics::subsystem::{GraphicsSubSystem, OpenGLPipeline};
 
+#[derive(Clone, Debug)]
 pub struct RendererConfig {
     pub graphics: GraphicsSubSystem,
     pub show_fps: bool,

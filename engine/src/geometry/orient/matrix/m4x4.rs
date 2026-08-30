@@ -1,7 +1,7 @@
-pub(crate) mod invert;
-pub mod new;
-mod mult;
 mod eq;
+pub(crate) mod invert;
+mod mult;
+pub mod new;
 
 use crate::geometry::primitive::v3d::Vertex3D;
 
@@ -28,8 +28,7 @@ use crate::geometry::primitive::v3d::Vertex3D;
 ///
 /// row-major (directx/unreal): each row represents 3 (basis) vectors and position.
 ///
-#[derive(Clone)]
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct Matrix4x4 {
     /* column1: x(right) */
     pub c1r1: f32,
@@ -141,7 +140,7 @@ impl Matrix4x4 {
         let mut right = self.column_major_x_right();
         right.normalize();
         self.column_major_update_right(&right);
-        
+
         let mut up = self.column_major_y_up();
         up.normalize();
         self.column_major_update_up(&up);
@@ -150,7 +149,12 @@ impl Matrix4x4 {
 
 impl Default for Matrix4x4 {
     fn default() -> Matrix4x4 {
-        Matrix4x4::from(Vertex3D::create_x_unit(), Vertex3D::create_y_unit(), Vertex3D::create_z_unit(), Vertex3D::origin())
+        Matrix4x4::from(
+            Vertex3D::create_x_unit(),
+            Vertex3D::create_y_unit(),
+            Vertex3D::create_z_unit(),
+            Vertex3D::origin(),
+        )
     }
 }
 

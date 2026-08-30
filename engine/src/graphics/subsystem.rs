@@ -8,16 +8,15 @@ use crate::graphics::camera::Camera;
 use crate::graphics::storage::g2d::Graph2D;
 use crate::graphics::storage::g3d::Graph3D;
 use crate::graphics::subsystem::opengl::OpenGLHandle;
-use crate::PainsawContext;
 
 pub mod opengl;
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub enum GraphicsSubSystem {
     OpenGL { pipeline: OpenGLPipeline },
 }
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub enum OpenGLPipeline {
     FixedFunction,
     ProgrammableShader,
@@ -36,7 +35,7 @@ pub trait RenderingSubSystemHandle {
 
     fn initialize(&self, g2d: &mut Graph2D, g3d: &mut Graph3D);
 
-    fn resize(&self, context: &PainsawContext);
+    fn resize(&self, camera: &Camera);
 
     fn before_scene(&self, camera: &Camera);
 
@@ -44,12 +43,12 @@ pub trait RenderingSubSystemHandle {
     fn render_2d(&self, g2d: &mut Graph2D);
     fn after_2d(&self);
 
-    fn prepare_3d(&self, context: &PainsawContext);
+    fn prepare_3d(&self, camera: &Camera);
     fn render_3d(&self, g3d: &mut Graph3D);
-    fn after_3d(&self, context: &PainsawContext);
+    fn after_3d(&self);
 }
 
-pub fn grss_factory(gss: GraphicsSubSystem) -> Box<dyn RenderingSubSystemHandle> {
+pub fn grss_factory(gss: GraphicsSubSystem) -> Box<impl RenderingSubSystemHandle> {
     match gss {
         GraphicsSubSystem::OpenGL { pipeline: pl } => Box::new(OpenGLHandle { pipeline: pl }),
     }

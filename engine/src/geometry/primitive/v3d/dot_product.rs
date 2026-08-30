@@ -14,7 +14,6 @@ use crate::geometry::primitive::v3d::Vertex3D;
 /// x cosine of the angle betwixt them
 ///
 impl Vertex3D {
-
     pub fn dot_product(&self, multiplier: &Vertex3D) -> f32 {
         self.x * multiplier.x + self.y * multiplier.y + self.z * multiplier.z
     }

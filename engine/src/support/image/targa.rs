@@ -1,14 +1,14 @@
-use crate::support::image::{Image, RawImage};
-use std::io::{BufRead, Error, Seek, SeekFrom};
-use std::io::ErrorKind::Unsupported;
 use crate::support::binary::byte_to_bits_as_u8;
+use crate::support::image::{Image, RawImage};
 use crate::support::logger::log;
 use crate::support::logger::log_level::LogLevel;
+use std::io::ErrorKind::Unsupported;
+use std::io::{BufRead, Error, Seek, SeekFrom};
 
 pub struct Targa;
 
-const HEADER_LEN : usize = 18;
-const FOOTER_IDX : usize = 26;
+const HEADER_LEN: usize = 18;
+const FOOTER_IDX: usize = 26;
 
 #[repr(C)]
 #[derive(Debug)]
@@ -18,7 +18,7 @@ struct TargaMetaData {
     id_len: u8,
     color_map_type: u8,
     image_type: u8,
-    color_map_spec: [u8;5],
+    color_map_spec: [u8; 5],
     x_origin: u16,
     y_origin: u16,
     width: u16,
@@ -42,7 +42,7 @@ struct TargaMetaData {
 struct TargaFooter {
     extension_offset: u32,
     developer_offset: u32,
-    marker: [u8;16],
+    marker: [u8; 16],
     reserved: u8,
     terminator: u8,
     dev_sz: u32,
@@ -55,7 +55,9 @@ struct TargaFooter {
 impl Image for Targa {
     fn load_from_buf_read<R: BufRead + Seek>(mut reader: R) -> std::io::Result<RawImage> {
         /* load the metadata */
-        log(LogLevel::Debug, &|| "TGA: begin----------------".to_string());
+        log(LogLevel::Debug, &|| {
+            "TGA: begin----------------".to_string()
+        });
         let metadata = load_metadata(&mut reader);
         log(LogLevel::Debug, &|| format!("TGA: {:?}", metadata));
         validate(&metadata);
@@ -67,9 +69,16 @@ impl Image for Targa {
         /* parse the image data based on characteristics of the image */
         if metadata.pixel_depth == 32 {
             let pixels = parse_32_bit(&metadata, data);
-            Ok(RawImage::new(metadata.width as u32, metadata.height as u32, pixels))
+            Ok(RawImage::new(
+                metadata.width as u32,
+                metadata.height as u32,
+                pixels,
+            ))
         } else {
-            Err(Error::new(Unsupported, format!("TGA: unsupported pixel depth: {}", metadata.pixel_depth)))
+            Err(Error::new(
+                Unsupported,
+                format!("TGA: unsupported pixel depth: {}", metadata.pixel_depth),
+            ))
         }
     }
 }
@@ -92,12 +101,14 @@ fn parse_32_bit(metadata: &TargaMetaData, bytes: Vec<u8>) -> Vec<u8> {
             if metadata.left_to_right {
                 for pixel in row.chunks(chunk_sz) {
                     if pixel.len() == chunk_sz {
-                        pixels.push(pixel[2]);      // BGRA: red
-                        pixels.push(pixel[1]);      // BGRA: green
-                        pixels.push(pixel[0]);      // BGRA: blue
+                        pixels.push(pixel[2]); // BGRA: red
+                        pixels.push(pixel[1]); // BGRA: green
+                        pixels.push(pixel[0]); // BGRA: blue
                         pixels.push(pixel[3]);
                     } else {
-                        log(LogLevel::Warning, &|| format!("TGA: bottom-to-top: chunk_length={}", pixel.len()));
+                        log(LogLevel::Warning, &|| {
+                            format!("TGA: bottom-to-top: chunk_length={}", pixel.len())
+                        });
                     }
                 }
             } else {
@@ -112,7 +123,10 @@ fn parse_32_bit(metadata: &TargaMetaData, bytes: Vec<u8>) -> Vec<u8> {
 fn validate(metadata: &TargaMetaData) {
     /* color map type:  */
     if metadata.color_map_type > 0 {
-        panic!("TGA: unsupported color map type {}", metadata.color_map_type);
+        panic!(
+            "TGA: unsupported color map type {}",
+            metadata.color_map_type
+        );
     }
 
     /* currently only support 2, uncompressed truecolor */
@@ -134,7 +148,9 @@ fn load_metadata<R: BufRead + Seek>(mut reader: R) -> TargaMetaData {
         footer_bytes_consumed += footer.dev_sz as usize;
         footer_bytes_consumed += footer.ext_sz as usize;
     }
-    reader.seek(SeekFrom::Start(0)).expect("TODO: panic message");
+    reader
+        .seek(SeekFrom::Start(0))
+        .expect("TODO: panic message");
 
     /* load the header */
     let mut header = [0u8; HEADER_LEN];
@@ -142,18 +158,18 @@ fn load_metadata<R: BufRead + Seek>(mut reader: R) -> TargaMetaData {
 
     /* extract header fields */
     let id_len = header[0];
-    let color_map_type = header[1];                                                             // 0=no color map, 1=color map
-    let image_type = header[2];                                                                 // 0=empty, 1=uncompressed color-mapped, 2=uncompressed truecolor, 3=uncompressed b/w, 9=rle colormapped, 10=rletruecolor (compressed), 11=rle b/w
-    let color_map_spec: [u8;5] = header[3..8].try_into().unwrap();                              // 2b=color map origin, 2b=color map length, 1b=color map size
+    let color_map_type = header[1]; // 0=no color map, 1=color map
+    let image_type = header[2]; // 0=empty, 1=uncompressed color-mapped, 2=uncompressed truecolor, 3=uncompressed b/w, 9=rle colormapped, 10=rletruecolor (compressed), 11=rle b/w
+    let color_map_spec: [u8; 5] = header[3..8].try_into().unwrap(); // 2b=color map origin, 2b=color map length, 1b=color map size
     let x_origin = u16::from_le_bytes(header[8..10].try_into().unwrap());
     let y_origin = u16::from_le_bytes(header[10..12].try_into().unwrap());
     let width = u16::from_le_bytes(header[12..14].try_into().unwrap());
     let height = u16::from_le_bytes(header[14..16].try_into().unwrap());
     let pixel_depth = header[16];
     let image_desc = header[17];
-    let alpha_channel_depth = byte_to_bits_as_u8(image_desc, 0, 4);                    // 0=no alpha, 8=32-bit/8-bit alpha, 1=16-bit/1-bit alpha
-    let left_to_right = byte_to_bits_as_u8(image_desc, 4, 1);                          // 0=left-to-right, 1=right-to-left
-    let bottom_to_top = byte_to_bits_as_u8(image_desc, 5, 1);                          // 0=bottom-to-top, 1=top-to-bottom
+    let alpha_channel_depth = byte_to_bits_as_u8(image_desc, 0, 4); // 0=no alpha, 8=32-bit/8-bit alpha, 1=16-bit/1-bit alpha
+    let left_to_right = byte_to_bits_as_u8(image_desc, 4, 1); // 0=left-to-right, 1=right-to-left
+    let bottom_to_top = byte_to_bits_as_u8(image_desc, 5, 1); // 0=bottom-to-top, 1=top-to-bottom
     let reserved = byte_to_bits_as_u8(image_desc, 6, 2);
 
     /* calculate where image data starts */
@@ -187,14 +203,16 @@ fn load_metadata<R: BufRead + Seek>(mut reader: R) -> TargaMetaData {
 
 fn load_footer<R: BufRead + Seek>(mut reader: R) -> Option<TargaFooter> {
     /* load footer bytes */
-    reader.seek(SeekFrom::End(-26)).expect("TODO: panic message");
+    reader
+        .seek(SeekFrom::End(-26))
+        .expect("TODO: panic message");
     let footer_begin = reader.stream_position().unwrap();
 
     let mut footer = [0u8; FOOTER_IDX];
     reader.read_exact(&mut footer).expect("TODO: panic message");
 
     /* read the marker */
-    let marker: [u8;16] = footer[8..24].try_into().unwrap();
+    let marker: [u8; 16] = footer[8..24].try_into().unwrap();
 
     /* if footer marker matches, fill fields and return */
     if marker == *b"TRUEVISION-XFILE" {
@@ -211,14 +229,18 @@ fn load_footer<R: BufRead + Seek>(mut reader: R) -> Option<TargaFooter> {
             } else {
                 footer_begin as u32 - extension_offset
             }
-        } else { 0 };
+        } else {
+            0
+        };
         let dev_sz: u32 = if developer_offset != 0 {
             if extension_offset != 0 {
                 footer_begin as u32 - extension_offset.abs_diff(developer_offset)
             } else {
                 footer_begin as u32 - developer_offset
             }
-        } else { 0 };
+        } else {
+            0
+        };
 
         /* done */
         let footer = TargaFooter {

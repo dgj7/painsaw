@@ -25,7 +25,7 @@ impl RawImage {
 pub trait Image {
     fn load_from_buf_read<R: BufRead + Seek>(reader: R) -> std::io::Result<RawImage>;
 
-    fn load_from_path<P: AsRef<Path>>(path : P) -> std::io::Result<RawImage> {
+    fn load_from_path<P: AsRef<Path>>(path: P) -> std::io::Result<RawImage> {
         let file = File::open(path)?;
         let mut reader = BufReader::new(file);
         Self::load_from_buf_read(&mut reader)

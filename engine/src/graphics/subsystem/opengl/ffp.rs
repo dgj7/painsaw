@@ -15,8 +15,18 @@ pub(crate) fn ffp_before_scene() {
 
 pub(crate) fn ffp_resize(camera: &Camera) {
     /* set the viewport; this call doesn't need a specific matrix mode as it's an independent function */
-    gl_viewport(0, 0, camera.projection.width as i32, camera.projection.height as i32);
+    gl_viewport(
+        0,
+        0,
+        camera.projection.width as i32,
+        camera.projection.height as i32,
+    );
 
     /* observe and report */
-    log(LogLevel::Debug, &|| String::from(format!("resize(): w=[{}],h=[{}]", camera.projection.width, camera.projection.height)));
+    log(LogLevel::Debug, &|| {
+        String::from(format!(
+            "resize(): w=[{}],h=[{}]",
+            camera.projection.width, camera.projection.height
+        ))
+    });
 }

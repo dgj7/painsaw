@@ -1,8 +1,8 @@
-use crate::graphics::color::Color;
 use crate::geometry::orient::Orientation;
 use crate::geometry::primitive::prim3d::Primitive3D;
 use crate::geometry::primitive::v3d::Vertex3D;
 use crate::geometry::primitive::PrimitiveType;
+use crate::graphics::color::Color;
 
 pub struct QuadBuilder {
     the_orientation: Option<Orientation>,
@@ -99,6 +99,11 @@ impl QuadBuilder {
         vertices.push(Vertex3D::new(-width, -height, -depth));
         vertices.push(Vertex3D::new(0.0, -height, -depth));
 
-        Some(Primitive3D::new(PrimitiveType::Quad {}, vertices, orientation, color))
+        Some(Primitive3D::new(
+            PrimitiveType::Quad {},
+            vertices,
+            orientation,
+            color,
+        ))
     }
 }

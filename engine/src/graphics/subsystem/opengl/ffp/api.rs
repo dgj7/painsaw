@@ -2,22 +2,38 @@ use crate::graphics::subsystem::opengl::errors::check_errors_gl;
 use crate::support::logger::log;
 use crate::support::logger::log_level::LogLevel;
 use std::ffi::{c_char, CStr};
-use windows::Win32::Graphics::OpenGL::{glBegin, glBindTexture, glBlendFunc, glClear, glClearColor, glColor4f, glDisable, glEnable, glEnd, glFrustum, glGenTextures, glGetString, glLineWidth, glLoadIdentity, glMatrixMode, glOrtho, glPointSize, glPolygonMode, glPopAttrib, glPopMatrix, glPushAttrib, glPushMatrix, glRotatef, glScalef, glTexCoord2f, glTexEnvf, glTexImage2D, glTexParameteri, glTexSubImage2D, glTranslatef, glVertex2f, glVertex3f, glViewport, gluPerspective, GL_LINES, GL_POINTS, GL_QUADS};
+use windows::Win32::Graphics::OpenGL::{
+    glBegin, glBindTexture, glBlendFunc, glClear, glClearColor, glColor4f, glDisable, glEnable,
+    glEnd, glFrustum, glGenTextures, glGetString, glLineWidth, glLoadIdentity, glMatrixMode, glOrtho,
+    glPointSize, glPolygonMode, glPopAttrib, glPopMatrix, glPushAttrib, glPushMatrix, glRotatef,
+    glScalef, glTexCoord2f, glTexEnvf, glTexImage2D, glTexParameteri, glTexSubImage2D, glTranslatef,
+    glVertex2f, glVertex3f, glViewport, gluPerspective, GL_LINES, GL_POINTS,
+    GL_QUADS,
+};
 
 pub(crate) fn gl_clear(mask: u32) {
-    unsafe { glClear(mask); }
+    unsafe {
+        glClear(mask);
+    }
     check_errors_gl("glClear");
 }
 
 pub(crate) fn gl_clear_color(red: f32, green: f32, blue: f32, alpha: f32) {
-    unsafe { glClearColor(red, green, blue, alpha); }
+    unsafe {
+        glClearColor(red, green, blue, alpha);
+    }
     check_errors_gl("glClearColor");
 }
 
 #[allow(unused)] // todo: remove this
 pub(crate) fn gl_frustum(left: f64, right: f64, bottom: f64, top: f64, znear: f64, zfar: f64) {
-    unsafe { glFrustum(left, right, bottom, top, znear, zfar); }
-    check_errors_gl(&format!("glFrustum({},{},{},{},{},{})", left, right, bottom, top, znear, zfar));
+    unsafe {
+        glFrustum(left, right, bottom, top, znear, zfar);
+    }
+    check_errors_gl(&format!(
+        "glFrustum({},{},{},{},{},{})",
+        left, right, bottom, top, znear, zfar
+    ));
 }
 
 pub(crate) fn gl_begin(mode: u32) {
@@ -26,26 +42,36 @@ pub(crate) fn gl_begin(mode: u32) {
 
 // todo: remove and replace with gl_begin
 pub(crate) fn gl_begin_lines() {
-    unsafe { glBegin(GL_LINES); }
+    unsafe {
+        glBegin(GL_LINES);
+    }
 }
 
 // todo: remove and replace with gl_begin
 pub(crate) fn gl_begin_points() {
-    unsafe { glBegin(GL_POINTS); }
+    unsafe {
+        glBegin(GL_POINTS);
+    }
 }
 
 // todo: remove and replace with gl_begin
 pub(crate) fn gl_begin_quads() {
-    unsafe { glBegin(GL_QUADS); }
+    unsafe {
+        glBegin(GL_QUADS);
+    }
 }
 
 pub(crate) fn gl_end() {
-    unsafe { glEnd(); }
+    unsafe {
+        glEnd();
+    }
     check_errors_gl("glEnd");
 }
 
 pub(crate) fn gl_viewport(x: i32, y: i32, width: i32, height: i32) {
-    unsafe { glViewport(x, y, width, height); }
+    unsafe {
+        glViewport(x, y, width, height);
+    }
     check_errors_gl("glViewport");
 }
 
@@ -56,13 +82,17 @@ pub(crate) fn gl_matrix_mode(mode: u32) {
 
 #[allow(unused)] // todo: remove this
 pub(crate) fn gl_push_matrix() {
-    unsafe { glPushMatrix(); }
+    unsafe {
+        glPushMatrix();
+    }
     check_errors_gl("glPushMatrix");
 }
 
 #[allow(unused)] // todo: remove this
 pub(crate) fn gl_pop_matrix() {
-    unsafe { glPopMatrix(); }
+    unsafe {
+        glPopMatrix();
+    }
     check_errors_gl("glPopMatrix");
 }
 
@@ -88,44 +118,60 @@ pub(crate) fn gl_get_string(name: u32) -> Option<String> {
     match c_str.to_str() {
         Ok(s) => Some(s.to_string()),
         Err(_e) => {
-            log(LogLevel::Error, &|| String::from("glGetString returned invalid string"));
+            log(LogLevel::Error, &|| {
+                String::from("glGetString returned invalid string")
+            });
             None
         }
     }
 }
 
 pub(crate) fn gl_enable(cap: u32) {
-    unsafe { glEnable(cap); }
+    unsafe {
+        glEnable(cap);
+    }
     check_errors_gl("glEnable");
 }
 
 pub(crate) fn gl_disable(cap: u32) {
-    unsafe { glDisable(cap); }
+    unsafe {
+        glDisable(cap);
+    }
     check_errors_gl("glDisable");
 }
 
 pub(crate) fn gl_line_width(width_pixels: f32) {
-    unsafe { glLineWidth(width_pixels); }
+    unsafe {
+        glLineWidth(width_pixels);
+    }
     check_errors_gl("glLineWidth");
 }
 
 pub(crate) fn gl_point_size(width_pixels: f32) {
-    unsafe { glPointSize(width_pixels); }
+    unsafe {
+        glPointSize(width_pixels);
+    }
     check_errors_gl("glPointSize");
 }
 
 pub(crate) fn gl_color_4f(red: f32, green: f32, blue: f32, alpha: f32) {
-    unsafe { glColor4f(red, green, blue, alpha); }
+    unsafe {
+        glColor4f(red, green, blue, alpha);
+    }
     check_errors_gl("glColor4f");
 }
 
 pub(crate) fn gl_vertex_2f(x: f32, y: f32) {
-    unsafe { glVertex2f(x, y); }
+    unsafe {
+        glVertex2f(x, y);
+    }
     //check_errors_gl("glVertex2f");
 }
 
 pub(crate) fn gl_vertex_3f(x: f32, y: f32, z: f32) {
-    unsafe { glVertex3f(x, y, z); }
+    unsafe {
+        glVertex3f(x, y, z);
+    }
     //check_errors_gl("glVertex3f");
 }
 
@@ -135,7 +181,9 @@ pub(crate) fn gl_gen_textures(n: i32, textures: *mut u32) {
 }
 
 pub(crate) fn gl_bind_texture(target: u32, texture: u32) {
-    unsafe { glBindTexture(target, texture); }
+    unsafe {
+        glBindTexture(target, texture);
+    }
     check_errors_gl("glBindTexture");
 }
 
@@ -144,13 +192,49 @@ pub(crate) fn gl_tex_parameter_i(target: u32, pname: u32, param2: i32) {
     check_errors_gl("glTexParameteri");
 }
 
-pub(crate) fn gl_tex_image_2d(target: u32, level: i32, internalformat: i32, width: i32, height: i32, border: i32, format: u32, r#type: u32, pixels: *const core::ffi::c_void) {
-    unsafe { glTexImage2D(target, level, internalformat, width, height, border, format, r#type, pixels) }
+pub(crate) fn gl_tex_image_2d(
+    target: u32,
+    level: i32,
+    internalformat: i32,
+    width: i32,
+    height: i32,
+    border: i32,
+    format: u32,
+    r#type: u32,
+    pixels: *const core::ffi::c_void,
+) {
+    unsafe {
+        glTexImage2D(
+            target,
+            level,
+            internalformat,
+            width,
+            height,
+            border,
+            format,
+            r#type,
+            pixels,
+        )
+    }
     check_errors_gl("glTexImage2D");
 }
 
-pub(crate) fn gl_tex_sub_image_2d(target: u32, level: i32, xoffset: i32, yoffset: i32, width: i32, height: i32, format: u32, r#type: u32, pixels: *const core::ffi::c_void) {
-    unsafe { glTexSubImage2D(target, level, xoffset, yoffset, width, height, format, r#type, pixels) }
+pub(crate) fn gl_tex_sub_image_2d(
+    target: u32,
+    level: i32,
+    xoffset: i32,
+    yoffset: i32,
+    width: i32,
+    height: i32,
+    format: u32,
+    r#type: u32,
+    pixels: *const core::ffi::c_void,
+) {
+    unsafe {
+        glTexSubImage2D(
+            target, level, xoffset, yoffset, width, height, format, r#type, pixels,
+        )
+    }
     check_errors_gl("glTexSubImage2D");
 }
 
@@ -195,12 +279,16 @@ pub(crate) fn gl_translate_f(x: f32, y: f32, z: f32) {
 
 #[allow(unused)] // todo: remove this
 pub(crate) fn gl_rotate_f(angle: f32, x: f32, y: f32, z: f32) {
-    unsafe { glRotatef(angle, x, y, z); }
+    unsafe {
+        glRotatef(angle, x, y, z);
+    }
     check_errors_gl("glRotatef");
 }
 
 pub(crate) fn gl_scale_f(x: f32, y: f32, z: f32) {
-    unsafe { glScalef(x, y, z); }
+    unsafe {
+        glScalef(x, y, z);
+    }
     check_errors_gl("glScalef");
 }
 

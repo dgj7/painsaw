@@ -48,19 +48,37 @@ impl Matrix3x3 {
         let cr = roll.cos();
 
         let rotx = Matrix3x3 {
-            c1r1: 1.0, c1r2: 0.0, c1r3: 0.0,
-            c2r1: 0.0, c2r2: cp,  c2r3: sp,
-            c3r1: 0.0, c3r2: -sp, c3r3: cp,
+            c1r1: 1.0,
+            c1r2: 0.0,
+            c1r3: 0.0,
+            c2r1: 0.0,
+            c2r2: cp,
+            c2r3: sp,
+            c3r1: 0.0,
+            c3r2: -sp,
+            c3r3: cp,
         };
         let roty = Matrix3x3 {
-            c1r1: cy,  c1r2: 0.0, c1r3: -sy,
-            c2r1: 0.0, c2r2: 1.0, c2r3: 0.0,
-            c3r1: sy,  c3r2: 0.0, c3r3: cy,
+            c1r1: cy,
+            c1r2: 0.0,
+            c1r3: -sy,
+            c2r1: 0.0,
+            c2r2: 1.0,
+            c2r3: 0.0,
+            c3r1: sy,
+            c3r2: 0.0,
+            c3r3: cy,
         };
         let rotz = Matrix3x3 {
-            c1r1: cr,  c1r2: sr,  c1r3: 0.0,
-            c2r1: -sr, c2r2: cr,  c2r3: 0.0,
-            c3r1: 0.0, c3r2: 0.0, c3r3: 1.0,
+            c1r1: cr,
+            c1r2: sr,
+            c1r3: 0.0,
+            c2r1: -sr,
+            c2r2: cr,
+            c2r3: 0.0,
+            c3r1: 0.0,
+            c3r2: 0.0,
+            c3r3: 1.0,
         };
 
         rotx.multiply(&roty).multiply(&rotz)
@@ -76,17 +94,17 @@ impl Matrix3x3 {
 ///
 pub fn multiply(left: &Matrix3x3, right: &Matrix3x3) -> Matrix3x3 {
     Matrix3x3 {
-        c1r1: left.c1r1* right.c1r1 + left.c2r1* right.c1r2 + left.c3r1* right.c1r3,
-        c1r2: left.c1r2* right.c1r1 + left.c2r2* right.c1r2 + left.c3r2* right.c1r3,
-        c1r3: left.c1r3* right.c1r1 + left.c2r3* right.c1r2 + left.c3r3* right.c1r3,
+        c1r1: left.c1r1 * right.c1r1 + left.c2r1 * right.c1r2 + left.c3r1 * right.c1r3,
+        c1r2: left.c1r2 * right.c1r1 + left.c2r2 * right.c1r2 + left.c3r2 * right.c1r3,
+        c1r3: left.c1r3 * right.c1r1 + left.c2r3 * right.c1r2 + left.c3r3 * right.c1r3,
 
-        c2r1: left.c1r1* right.c2r1 + left.c2r1* right.c2r2 + left.c3r1* right.c2r3,
-        c2r2: left.c1r2* right.c2r1 + left.c2r2* right.c2r2 + left.c3r2* right.c2r3,
-        c2r3: left.c1r3* right.c2r1 + left.c2r3* right.c2r2 + left.c3r3* right.c2r3,
+        c2r1: left.c1r1 * right.c2r1 + left.c2r1 * right.c2r2 + left.c3r1 * right.c2r3,
+        c2r2: left.c1r2 * right.c2r1 + left.c2r2 * right.c2r2 + left.c3r2 * right.c2r3,
+        c2r3: left.c1r3 * right.c2r1 + left.c2r3 * right.c2r2 + left.c3r3 * right.c2r3,
 
-        c3r1: left.c1r1* right.c3r1 + left.c2r1* right.c3r2 + left.c3r1* right.c3r3,
-        c3r2: left.c1r2* right.c3r1 + left.c2r2* right.c3r2 + left.c3r2* right.c3r3,
-        c3r3: left.c1r3* right.c3r1 + left.c2r3* right.c3r2 + left.c3r3* right.c3r3,
+        c3r1: left.c1r1 * right.c3r1 + left.c2r1 * right.c3r2 + left.c3r1 * right.c3r3,
+        c3r2: left.c1r2 * right.c3r1 + left.c2r2 * right.c3r2 + left.c3r2 * right.c3r3,
+        c3r3: left.c1r3 * right.c3r1 + left.c2r3 * right.c3r2 + left.c3r3 * right.c3r3,
     }
 }
 

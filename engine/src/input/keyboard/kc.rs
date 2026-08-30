@@ -21,7 +21,7 @@ impl KeyChange {
             KeyChange::Inactive { .. } => true,
         }
     }
-    
+
     pub fn is_handled(&self) -> bool {
         match self {
             KeyChange::Active { info } => info.handled,
@@ -31,8 +31,12 @@ impl KeyChange {
 
     pub fn set_handled(&mut self) {
         match *self {
-            KeyChange::Active { ref mut info } => {info.handled = true;}
-            KeyChange::Inactive { ref mut info } => {info.handled = true;}
+            KeyChange::Active { ref mut info } => {
+                info.handled = true;
+            }
+            KeyChange::Inactive { ref mut info } => {
+                info.handled = true;
+            }
         }
     }
 

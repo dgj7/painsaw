@@ -10,9 +10,7 @@ pub struct Model3DBuilder {
 
 impl Model3D {
     pub fn new(primitives: Vec<Primitive3D>) -> Model3D {
-        Model3D {
-            primitives,
-        }
+        Model3D { primitives }
     }
 }
 
