@@ -5,13 +5,7 @@
 use crate::geometry::primitive::prim2d::Primitive2D;
 use crate::graphics::camera::Camera;
 use crate::graphics::storage::g2d::Graph2D;
-use crate::graphics::subsystem::opengl::ffp::api::{
-    gl_begin, gl_begin_lines, gl_begin_points, gl_begin_quads, gl_bind_texture, gl_blend_func,
-    gl_color_4f, gl_disable, gl_enable, gl_end, gl_gen_textures, gl_line_width, gl_load_identity,
-    gl_matrix_mode, gl_ortho, gl_point_size, gl_pop_attrib, gl_pop_matrix, gl_push_attrib,
-    gl_push_matrix, gl_tex_coord_2f, gl_tex_env_f, gl_tex_image_2d, gl_tex_parameter_i,
-    gl_tex_sub_image_2d, gl_vertex_2f,
-};
+use crate::graphics::subsystem::opengl::ffp::api::{gl_begin, gl_begin_lines, gl_begin_points, gl_begin_quads, gl_bind_texture, gl_blend_func, gl_color_4f, gl_disable, gl_enable, gl_end, gl_gen_textures, gl_line_width, gl_load_identity, gl_matrix_mode, gl_ortho, gl_point_size, gl_polygon_mode, gl_pop_attrib, gl_pop_matrix, gl_push_attrib, gl_push_matrix, gl_tex_coord_2f, gl_tex_env_f, gl_tex_image_2d, gl_tex_parameter_i, gl_tex_sub_image_2d, gl_vertex_2f};
 use crate::graphics::texture::t2d::Texture2D;
 use crate::support::logger::log;
 use crate::support::logger::log_level::LogLevel;
@@ -125,6 +119,7 @@ pub(crate) fn ffp_render_2d_points(primitive: &Primitive2D, point_size: f32) {
 
     gl_color_4f(primitive.color.red, primitive.color.green, primitive.color.blue, primitive.color.alpha, );
     gl_point_size(point_size);
+    gl_polygon_mode(primitive.face.to_u32(), primitive.mode.to_u32());
 
     gl_begin_points();
     for point in primitive.vertices.iter() {
@@ -142,6 +137,7 @@ pub(crate) fn ffp_render_2d_lines(primitive: &Primitive2D, thickness: f32) {
 
     gl_color_4f(primitive.color.red, primitive.color.green, primitive.color.blue, primitive.color.alpha, );
     gl_line_width(thickness);
+    gl_polygon_mode(primitive.face.to_u32(), primitive.mode.to_u32());
 
     gl_begin_lines();
     for vertex in primitive.vertices.iter() {
@@ -159,6 +155,7 @@ pub(crate) fn ffp_render_2d_line_strip(primitive: &Primitive2D, thickness: f32) 
 
     gl_color_4f(primitive.color.red, primitive.color.green, primitive.color.blue, primitive.color.alpha, );
     gl_line_width(thickness);
+    gl_polygon_mode(primitive.face.to_u32(), primitive.mode.to_u32());
 
     gl_begin(GL_LINE_STRIP);
     for vertex in primitive.vertices.iter() {
@@ -175,6 +172,7 @@ pub(crate) fn ffp_render_2d_quads(primitive: &Primitive2D) {
     gl_push_attrib(GL_ALL_ATTRIB_BITS);
 
     gl_color_4f(primitive.color.red, primitive.color.green, primitive.color.blue, primitive.color.alpha, );
+    gl_polygon_mode(primitive.face.to_u32(), primitive.mode.to_u32());
 
     gl_begin_quads();
     for vertex in primitive.vertices.iter() {

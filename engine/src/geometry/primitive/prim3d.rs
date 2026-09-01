@@ -1,4 +1,6 @@
 use crate::geometry::orient::Orientation;
+use crate::geometry::primitive::face::PolygonFace;
+use crate::geometry::primitive::mode::PolygonMode;
 use crate::geometry::primitive::v3d::Vertex3D;
 use crate::geometry::primitive::PrimitiveType;
 use crate::graphics::color::Color;
@@ -13,6 +15,8 @@ pub struct Primitive3D {
     pub vertices: Vec<Vertex3D>,
     pub orientation: Orientation,
     pub color: Color,
+    pub mode: PolygonMode,
+    pub face: PolygonFace,
 }
 
 pub struct Primitive3DBuilder {
@@ -20,6 +24,8 @@ pub struct Primitive3DBuilder {
     the_vertices: Vec<Vertex3D>,
     the_orientation: Option<Orientation>,
     the_color: Option<Color>,
+    the_mode: Option<PolygonMode>,
+    the_face: Option<PolygonFace>,
 }
 
 impl Primitive3D {
@@ -28,6 +34,8 @@ impl Primitive3D {
         vertices: Vec<Vertex3D>,
         orientation: Orientation,
         color: Color,
+        mode: PolygonMode,
+        face: PolygonFace,
     ) -> Primitive3D {
         /* warn for no vertices */
         if vertices.len() == 0 {
@@ -52,6 +60,8 @@ impl Primitive3D {
             vertices,
             orientation,
             color,
+            mode,
+            face,
         }
     }
 }
@@ -63,6 +73,8 @@ impl Primitive3DBuilder {
             the_vertices: vec![],
             the_orientation: None,
             the_color: None,
+            the_mode: None,
+            the_face: None,
         }
     }
 
@@ -85,6 +97,16 @@ impl Primitive3DBuilder {
         self.the_color = Some(color);
         self
     }
+    
+    pub fn with_mode(mut self, mode: PolygonMode) -> Self {
+        self.the_mode = Some(mode);
+        self
+    }
+
+    pub fn with_face(mut self, face: PolygonFace) -> Self {
+        self.the_face = Some(face);
+        self
+    }
 
     pub fn build(self) -> Primitive3D {
         Primitive3D {
@@ -92,6 +114,8 @@ impl Primitive3DBuilder {
             vertices: self.the_vertices,
             orientation: self.the_orientation.unwrap_or_else(|| Orientation::default()),
             color: self.the_color.unwrap_or_else(|| Color::WHITE),
+            mode: self.the_mode.unwrap_or_else(|| PolygonMode::Line),
+            face: self.the_face.unwrap_or_else(|| PolygonFace::Front),
         }
     }
 }

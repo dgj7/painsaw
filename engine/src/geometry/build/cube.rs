@@ -1,4 +1,6 @@
 use crate::geometry::orient::Orientation;
+use crate::geometry::primitive::face::PolygonFace;
+use crate::geometry::primitive::mode::PolygonMode;
 use crate::geometry::primitive::prim3d::Primitive3D;
 use crate::geometry::primitive::v3d::Vertex3D;
 use crate::geometry::primitive::PrimitiveType;
@@ -10,6 +12,8 @@ pub struct CubeBuilder {
     the_height: Option<f32>,
     the_depth: Option<f32>,
     the_color: Option<Color>,
+    the_mode: Option<PolygonMode>,
+    the_face: Option<PolygonFace>,
 }
 
 impl CubeBuilder {
@@ -20,6 +24,8 @@ impl CubeBuilder {
             the_height: None,
             the_depth: None,
             the_color: None,
+            the_mode: None,
+            the_face: None,
         }
     }
 
@@ -47,6 +53,16 @@ impl CubeBuilder {
         self.the_color = Some(the_color);
         self
     }
+    
+    pub fn with_mode(mut self, mode: PolygonMode) -> CubeBuilder {
+        self.the_mode = Some(mode);
+        self
+    }
+
+    pub fn with_face(mut self, face: PolygonFace) -> CubeBuilder {
+        self.the_face = Some(face);
+        self
+    }
 
     pub fn build(self) -> Option<Primitive3D> {
         if self.the_width == None || self.the_height == None || self.the_depth == None {
@@ -60,6 +76,8 @@ impl CubeBuilder {
         let width = self.the_width.unwrap();
         let height = self.the_height.unwrap();
         let depth = self.the_depth.unwrap();
+        let mode = self.the_mode.unwrap_or_else(|| PolygonMode::Line);
+        let face = self.the_face.unwrap_or_else(|| PolygonFace::FrontAndBack);
         let mut vertices: Vec<Vertex3D> = vec![];
 
         /* top face */
@@ -98,6 +116,6 @@ impl CubeBuilder {
         vertices.push(Vertex3D::new(-width, -height, -depth));
         vertices.push(Vertex3D::new(0.0, -height, -depth));
 
-        Some(Primitive3D::new(PrimitiveType::Cube {}, vertices, orientation, color, ))
+        Some(Primitive3D::new(PrimitiveType::Cube {}, vertices, orientation, color, mode, face))
     }
 }

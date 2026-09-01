@@ -60,6 +60,7 @@ pub(crate) fn ffp_3d_points(primitive: &Primitive3D, point_size: f32) {
 
     gl_color_4f(primitive.color.red, primitive.color.green, primitive.color.blue, primitive.color.alpha, );
     gl_point_size(point_size);
+    gl_polygon_mode(primitive.face.to_u32(), primitive.mode.to_u32());
 
     gl_begin_points();
     for vert in &primitive.vertices {
@@ -79,6 +80,7 @@ pub(crate) fn ffp_3d_lines(primitive: &Primitive3D, thickness: f32) {
 
     gl_color_4f(primitive.color.red, primitive.color.green, primitive.color.blue, primitive.color.alpha, );
     gl_line_width(thickness);
+    gl_polygon_mode(primitive.face.to_u32(), primitive.mode.to_u32());
 
     gl_begin_lines();
     for vert in &primitive.vertices {
@@ -99,6 +101,7 @@ pub(crate) fn ffp_3d_cubes(primitive: &Primitive3D) {
 
     gl_color_4f(primitive.color.red, primitive.color.green, primitive.color.blue, primitive.color.alpha, );
     //gl_line_width(thickness.to_f32().unwrap());
+    gl_polygon_mode(primitive.face.to_u32(), primitive.mode.to_u32());
 
     gl_begin_quads();
     for vert in &primitive.vertices {
