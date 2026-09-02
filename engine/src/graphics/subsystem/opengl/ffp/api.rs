@@ -7,8 +7,8 @@ use windows::Win32::Graphics::OpenGL::{
     glEnd, glFrustum, glGenTextures, glGetString, glLineWidth, glLoadIdentity, glMatrixMode, glOrtho,
     glPointSize, glPolygonMode, glPopAttrib, glPopMatrix, glPushAttrib, glPushMatrix, glRotatef,
     glScalef, glTexCoord2f, glTexEnvf, glTexImage2D, glTexParameteri, glTexSubImage2D, glTranslatef,
-    glVertex2f, glVertex3f, glViewport, gluPerspective, GL_LINES, GL_POINTS,
-    GL_QUADS,
+    glVertex2f, glVertex3f, glViewport, gluPerspective
+    ,
 };
 
 pub(crate) fn gl_clear(mask: u32) {
@@ -31,21 +31,6 @@ pub(crate) fn gl_begin(mode: u32) {
     unsafe { glBegin(mode) }
 }
 
-// todo: remove and replace with gl_begin
-pub(crate) fn gl_begin_lines() {
-    unsafe { glBegin(GL_LINES); }
-}
-
-// todo: remove and replace with gl_begin
-pub(crate) fn gl_begin_points() {
-    unsafe { glBegin(GL_POINTS); }
-}
-
-// todo: remove and replace with gl_begin
-pub(crate) fn gl_begin_quads() {
-    unsafe { glBegin(GL_QUADS); }
-}
-
 pub(crate) fn gl_end() {
     unsafe { glEnd(); }
     check_errors_gl("glEnd");
@@ -61,13 +46,11 @@ pub(crate) fn gl_matrix_mode(mode: u32) {
     check_errors_gl("glMatrixMode");
 }
 
-#[allow(unused)] // todo: remove this
 pub(crate) fn gl_push_matrix() {
     unsafe { glPushMatrix(); }
     check_errors_gl("glPushMatrix");
 }
 
-#[allow(unused)] // todo: remove this
 pub(crate) fn gl_pop_matrix() {
     unsafe { glPopMatrix(); }
     check_errors_gl("glPopMatrix");
@@ -193,13 +176,11 @@ pub(crate) fn gl_tex_env_f(target: u32, pname: u32, param2: f32) {
     check_errors_gl("glTexEnvf");
 }
 
-#[allow(unused)] // todo: remove this
 pub(crate) fn gl_push_attrib(mask: u32) {
     unsafe { glPushAttrib(mask) }
     check_errors_gl("glPushAttrib");
 }
 
-#[allow(unused)] // todo: remove this
 pub(crate) fn gl_pop_attrib() {
     unsafe { glPopAttrib() }
     check_errors_gl("glPopAttrib");
@@ -215,13 +196,11 @@ pub(crate) fn glu_perspective(fovy: f64, aspect: f64, znear: f64, zfar: f64) {
     check_errors_gl("gluPerspective");
 }
 
-#[allow(unused)] // todo: remove this
 pub(crate) fn gl_translate_f(x: f32, y: f32, z: f32) {
     unsafe { glTranslatef(x, y, z) }
     check_errors_gl("glTranslatef");
 }
 
-#[allow(unused)] // todo: remove this
 pub(crate) fn gl_rotate_f(angle: f32, x: f32, y: f32, z: f32) {
     unsafe { glRotatef(angle, x, y, z); }
     check_errors_gl("glRotatef");

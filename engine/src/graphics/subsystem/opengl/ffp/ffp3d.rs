@@ -2,13 +2,13 @@ use crate::geometry::orient::Orientation;
 use crate::geometry::primitive::prim3d::Primitive3D;
 use crate::graphics::camera::Camera;
 use crate::graphics::subsystem::opengl::ffp::api::{
-    gl_begin_lines, gl_begin_points, gl_begin_quads, gl_color_4f, gl_disable, gl_enable, gl_end,
-    gl_line_width, gl_load_identity, gl_matrix_mode, gl_point_size, gl_polygon_mode, gl_pop_attrib,
+    gl_color_4f, gl_disable, gl_enable, gl_end
+    , gl_load_identity, gl_matrix_mode, gl_polygon_mode, gl_pop_attrib,
     gl_pop_matrix, gl_push_attrib, gl_push_matrix, gl_rotate_f, gl_scale_f, gl_translate_f,
     gl_vertex_3f, glu_perspective,
 };
 use windows::Win32::Graphics::OpenGL::{
-    GL_ALL_ATTRIB_BITS, GL_DEPTH_TEST, GL_FRONT_AND_BACK, GL_LINE, GL_MODELVIEW, GL_PROJECTION,
+    GL_ALL_ATTRIB_BITS, GL_DEPTH_TEST, GL_MODELVIEW, GL_PROJECTION,
 };
 
 pub(crate) fn ffp_3d_setup(camera: &Camera) {
@@ -52,58 +52,18 @@ fn ffp_3d_translate(orientation: &Orientation) {
     gl_scale_f(orientation.x_scale, orientation.y_scale, orientation.z_scale, );
 }
 
-pub(crate) fn ffp_3d_points(primitive: &Primitive3D, point_size: f32) {
+pub(crate) fn ffp_render_3d(primitive: &Primitive3D, preparation: impl Fn(), begin: impl Fn()) {
     gl_push_matrix();
     gl_push_attrib(GL_ALL_ATTRIB_BITS);
 
     ffp_3d_translate(&primitive.orientation);
 
     gl_color_4f(primitive.color.red, primitive.color.green, primitive.color.blue, primitive.color.alpha, );
-    gl_point_size(point_size);
     gl_polygon_mode(primitive.face.to_u32(), primitive.mode.to_u32());
 
-    gl_begin_points();
-    for vert in &primitive.vertices {
-        gl_vertex_3f(vert.x, vert.y, vert.z);
-    }
-    gl_end();
+    preparation();
 
-    gl_pop_attrib();
-    gl_pop_matrix();
-}
-
-pub(crate) fn ffp_3d_lines(primitive: &Primitive3D, thickness: f32) {
-    gl_push_matrix();
-    gl_push_attrib(GL_ALL_ATTRIB_BITS);
-
-    ffp_3d_translate(&primitive.orientation);
-
-    gl_color_4f(primitive.color.red, primitive.color.green, primitive.color.blue, primitive.color.alpha, );
-    gl_line_width(thickness);
-    gl_polygon_mode(primitive.face.to_u32(), primitive.mode.to_u32());
-
-    gl_begin_lines();
-    for vert in &primitive.vertices {
-        gl_vertex_3f(vert.x, vert.y, vert.z);
-    }
-    gl_end();
-
-    gl_pop_attrib();
-    gl_pop_matrix();
-}
-
-pub(crate) fn ffp_3d_cubes(primitive: &Primitive3D) {
-    gl_push_matrix();
-    gl_push_attrib(GL_ALL_ATTRIB_BITS);
-
-    ffp_3d_translate(&primitive.orientation);
-    gl_polygon_mode(GL_FRONT_AND_BACK, GL_LINE);
-
-    gl_color_4f(primitive.color.red, primitive.color.green, primitive.color.blue, primitive.color.alpha, );
-    //gl_line_width(thickness.to_f32().unwrap());
-    gl_polygon_mode(primitive.face.to_u32(), primitive.mode.to_u32());
-
-    gl_begin_quads();
+    begin();
     for vert in &primitive.vertices {
         gl_vertex_3f(vert.x, vert.y, vert.z);
     }

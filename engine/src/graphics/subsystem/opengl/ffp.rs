@@ -7,6 +7,7 @@ use windows::Win32::Graphics::OpenGL::{GL_COLOR_BUFFER_BIT, GL_DEPTH_BUFFER_BIT}
 pub(crate) mod api;
 pub mod ffp2d;
 pub mod ffp3d;
+pub mod util;
 
 pub(crate) fn ffp_before_scene() {
     gl_clear_color(0.0, 0.0, 0.0, 1.0);

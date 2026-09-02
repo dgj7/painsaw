@@ -12,6 +12,5 @@ pub enum PrimitiveType {
     Point { point_size: f32 },
     Line { thickness: f32 },
     LineStrip { thickness: f32 },
-    // todo: add quad
     Cube {},
 }
