@@ -5,17 +5,14 @@
 use crate::geometry::primitive::prim2d::Primitive2D;
 use crate::graphics::camera::Camera;
 use crate::graphics::storage::g2d::Graph2D;
-use crate::graphics::subsystem::opengl::ffp::api::{gl_bind_texture, gl_blend_func, gl_color_4f, gl_disable, gl_enable, gl_end, gl_gen_textures, gl_load_identity, gl_matrix_mode, gl_ortho, gl_polygon_mode, gl_pop_attrib, gl_pop_matrix, gl_push_attrib, gl_push_matrix, gl_tex_coord_2f, gl_tex_env_f, gl_tex_image_2d, gl_tex_parameter_i, gl_tex_sub_image_2d, gl_vertex_2f};
+use crate::graphics::subsystem::opengl::ffp::api::{gl_bind_texture, gl_blend_func, gl_color_4f, gl_disable, gl_enable, gl_end, gl_gen_textures, gl_hint, gl_load_identity, gl_matrix_mode, gl_ortho, gl_polygon_mode, gl_pop_attrib, gl_pop_matrix, gl_push_attrib, gl_push_matrix, gl_tex_coord_2f, gl_tex_env_f, gl_tex_image_2d, gl_tex_parameter_i, gl_tex_sub_image_2d, gl_vertex_2f};
 use crate::graphics::subsystem::opengl::ffp::util::gl_begin_quads;
 use crate::graphics::texture::t2d::Texture2D;
 use crate::support::logger::log;
 use crate::support::logger::log_level::LogLevel;
 use std::ffi::c_void;
-use windows::Win32::Graphics::OpenGL::{
-    GL_ALL_ATTRIB_BITS, GL_BLEND, GL_MODELVIEW, GL_NEAREST, GL_ONE_MINUS_SRC_ALPHA, GL_PROJECTION,
-    GL_REPLACE, GL_RGBA, GL_SRC_ALPHA, GL_TEXTURE_2D, GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE,
-    GL_TEXTURE_MAG_FILTER, GL_TEXTURE_MIN_FILTER, GL_UNSIGNED_BYTE,
-};
+use glcore::{GL_DEPTH_TEST, GL_LINE_SMOOTH, GL_LINE_SMOOTH_HINT, GL_NICEST};
+use windows::Win32::Graphics::OpenGL::{GL_ALL_ATTRIB_BITS, GL_BLEND, GL_LIGHTING, GL_MODELVIEW, GL_NEAREST, GL_ONE_MINUS_SRC_ALPHA, GL_PROJECTION, GL_REPLACE, GL_RGBA, GL_SRC_ALPHA, GL_TEXTURE_2D, GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_TEXTURE_MAG_FILTER, GL_TEXTURE_MIN_FILTER, GL_UNSIGNED_BYTE};
 
 pub(crate) fn ffp_2d_setup(camera: &Camera) {
     /* save prior state before 2d rendering */
@@ -42,7 +39,17 @@ pub(crate) fn ffp_render_2d(primitive: &Primitive2D, preparation: impl Fn(), beg
     gl_push_matrix();
     gl_push_attrib(GL_ALL_ATTRIB_BITS);
 
-    gl_color_4f(primitive.color.red, primitive.color.green, primitive.color.blue, primitive.color.alpha, );
+    gl_disable(GL_LIGHTING);
+    gl_disable(GL_TEXTURE_2D);
+    gl_disable(GL_DEPTH_TEST);
+
+    gl_enable(GL_BLEND);
+    gl_blend_func(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    gl_enable(GL_LINE_SMOOTH);
+    gl_hint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+
+    gl_color_4f(primitive.color.red, primitive.color.green, primitive.color.blue, primitive.color.alpha);
     gl_polygon_mode(primitive.face.to_u32(), primitive.mode.to_u32());
 
     preparation();
@@ -52,6 +59,8 @@ pub(crate) fn ffp_render_2d(primitive: &Primitive2D, preparation: impl Fn(), beg
         gl_vertex_2f(vertex.x, vertex.y);
     }
     gl_end();
+
+    gl_disable(GL_BLEND);
 
     gl_pop_attrib();
     gl_pop_matrix();
