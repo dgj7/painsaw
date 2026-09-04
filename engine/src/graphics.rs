@@ -3,9 +3,9 @@ use crate::config::input_config::mc::MouseHandler;
 use crate::config::EngineConfig;
 use crate::geometry::primitive::v2d::Vertex2D;
 use crate::graphics::camera::Camera;
+use crate::graphics::storage::gxd::Models;
 use crate::graphics::subsystem::{grss_factory, GraphicsSubSystem, RenderingSubSystemHandle};
 use crate::input::mouse::min::MouseInputName;
-use crate::input::screen::ScreenState;
 use crate::input::UserInput;
 use crate::support::logger::log;
 use crate::support::logger::log_level::LogLevel;
@@ -18,7 +18,6 @@ use std::sync::MutexGuard;
 use storage::g2d::Graph2D;
 use storage::g3d::Graph3D;
 use subsystem::RendererInfo;
-use crate::graphics::storage::gxd::Models;
 
 pub mod camera;
 pub mod color;
@@ -70,7 +69,6 @@ impl RendererWrapper {
         &mut self,
         config: &EngineConfig,
         input: MutexGuard<UserInput>,
-        screen: &ScreenState,
         camera: &Camera,
         timing: &EngineTiming,
         g2d: &mut Graph2D,
@@ -90,7 +88,7 @@ impl RendererWrapper {
         /* conditional display */
         show_fps(g2d, timing, config);
         show_cam_coords(g2d, config, camera);
-        show_screen_stats(g2d, config, &screen, &mouse_pos);
+        show_screen_stats(g2d, config, &camera, &mouse_pos);
     }
 
     pub(crate) fn after_2d(&self) {

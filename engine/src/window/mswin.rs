@@ -57,8 +57,7 @@ impl Window for MsWinWindow {
         let mut message: MSG = MSG::default();
 
         /* initialize data that stores the state of the engine */
-        let mut screen = ScreenState::from(&self.key);
-        let mut camera = Camera::new(&screen.current_client_dimensions);
+        let mut camera = Camera::new(ScreenState::from(&self.key));
         let mut timing = EngineTiming::new(&config.renderer);
         let mut renderer = RendererWrapper::new(self.grss.clone());
         let mut models = Models::new(Graph2D::new(), Graph3D::new());
@@ -82,8 +81,8 @@ impl Window for MsWinWindow {
                 timing.begin_frame();
 
                 /* update world info; graphics scene */
-                game.update_world(game, &config, self.input.clone(), &self.key, &mut screen, &mut camera, &mut timing, &renderer, &mut models);
-                game.display_world_scene(game, &config, self.input.clone(), &mut screen, &mut camera, &timing, &mut renderer, &mut models);
+                game.update_world(game, &config, self.input.clone(), &self.key, &mut camera, &mut timing, &renderer, &mut models);
+                game.display_world_scene(game, &config, self.input.clone(), &mut camera, &timing, &mut renderer, &mut models);
 
                 /* swap buffers after it's all done */
                 swap_buffers(self.key.hdc);

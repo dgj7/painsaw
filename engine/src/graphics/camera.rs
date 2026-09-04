@@ -1,17 +1,21 @@
-use crate::geometry::dim::Dimension2D;
 use crate::geometry::orient::Orientation;
 use crate::geometry::projection::Projection;
+use crate::input::screen::ScreenState;
 
 pub struct Camera {
+    pub screen: ScreenState,
     pub orientation: Orientation,
     pub projection: Projection,
 }
 
 impl Camera {
-    pub fn new(screen: &Dimension2D) -> Camera {
+    pub fn new(screen: ScreenState) -> Camera {
+        let width = screen.current_client_dimensions.width;
+        let height = screen.current_client_dimensions.height;
         Camera {
-            projection: Projection::new(screen),
-            ..Default::default()
+            screen,
+            orientation: Orientation::default(),
+            projection: Projection::new(width, height),
         }
     }
 }
@@ -21,16 +25,7 @@ impl Camera {
         self.projection.to_aspect()
     }
 
-    pub fn update_screen(&mut self, screen: &Dimension2D) {
-        self.projection.update_screen(screen)
-    }
-}
-
-impl Default for Camera {
-    fn default() -> Camera {
-        Camera {
-            orientation: Orientation::camera_default(),
-            projection: Projection::default(),
-        }
+    pub fn update_screen(&mut self) {
+        self.projection.update_screen(&self.screen.current_client_dimensions)
     }
 }

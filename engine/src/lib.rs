@@ -4,7 +4,6 @@ use crate::config::EngineConfig;
 use crate::graphics::camera::Camera;
 use crate::graphics::storage::gxd::Models;
 use crate::graphics::RendererWrapper;
-use crate::input::screen::ScreenState;
 use crate::input::UserInput;
 use crate::support::logger::log;
 use crate::support::logger::log_level::LogLevel;
@@ -62,7 +61,6 @@ pub trait WorldController {
         config: &EngineConfig,
         input: Arc<Mutex<UserInput>>,
         key: &WindowKey,
-        screen: &mut ScreenState,
         camera: &mut Camera,
         timing: &mut EngineTiming,
         renderer: &RendererWrapper,
@@ -85,8 +83,8 @@ pub trait WorldController {
 
                 /* handle screen resize */
                 if uin.screen_resized {
-                    screen.update(key);
-                    camera.update_screen(&screen.current_client_dimensions);
+                    camera.screen.update(key);
+                    camera.update_screen();
                     renderer.resize(camera);
                 }
 
@@ -95,21 +93,21 @@ pub trait WorldController {
                     let change = uin.mouse_changes.pop_front().unwrap();
                     let state = uin.mouse_states.get_mut(&change).unwrap();
                     if !state.current.handled {
-                        handle_mouse_change(&change, state, game, &config, screen, camera, &timing);
+                        handle_mouse_change(&change, state, game, &config, camera, &timing);
                         state.current.handled = true;
                     }
                 }
 
                 /* handle mouse deltas */
                 if !uin.mouse_deltas.is_empty() {
-                    game.handle_mouse_deltas(&mut uin.mouse_deltas, &config, screen, camera, &timing);
+                    game.handle_mouse_deltas(&mut uin.mouse_deltas, &config, camera, &timing);
                     uin.mouse_deltas.clear();
                 }
             }
             Err(_) => {}
         }
 
-        self.update_world_helper(input.clone(), screen, camera, timing, models);
+        self.update_world_helper(input.clone(), camera, timing, models);
 
         match input.lock() {
             Ok(mut uin) => { uin.screen_resized = false; }
@@ -120,7 +118,6 @@ pub trait WorldController {
     fn update_world_helper(
         &self,
         input: Arc<Mutex<UserInput>>,
-        screen: &ScreenState,
         camera: &Camera,
         timing: &mut EngineTiming,
         models: &mut Models
@@ -138,7 +135,6 @@ pub trait WorldController {
         _game: &T,
         config: &EngineConfig,
         input: Arc<Mutex<UserInput>>,
-        screen: &mut ScreenState,
         camera: &mut Camera,
         timing: &EngineTiming,
         renderer: &mut RendererWrapper,
@@ -157,7 +153,7 @@ pub trait WorldController {
 
         /* draw 2d, if desired */
         renderer.prepare_2d(&camera, &mut models.g2d);
-        renderer.render_2d::<T>(&config, uin, &screen, &camera, &timing, &mut models.g2d);
+        renderer.render_2d::<T>(&config, uin, &camera, &timing, &mut models.g2d);
         renderer.after_2d();
     }
 }

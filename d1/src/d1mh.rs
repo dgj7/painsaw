@@ -4,24 +4,22 @@ use engine::config::EngineConfig;
 use engine::geometry::orient::movement::spectator::SpectatorMovementStrategy;
 use engine::graphics::camera::Camera;
 use engine::input::mouse::md::MouseDelta;
-use engine::input::screen::ScreenState;
 use engine::support::timing::EngineTiming;
 use engine::window::api::mc::move_cursor;
 
 impl MouseHandler for Demo1 {
     fn handle_mouse_deltas(
         &self,
-        _deltas: &Vec<MouseDelta>,
-        _config: &EngineConfig,
-        _screen: &mut ScreenState,
-        _camera: &mut Camera,
+        deltas: &Vec<MouseDelta>,
+        config: &EngineConfig,
+        camera: &mut Camera,
         _timing: &EngineTiming,
     ) {
         /* update mouse look  */
-        <Demo1 as SpectatorMovementStrategy>::update_look(_deltas, _camera, _config);
+        <Demo1 as SpectatorMovementStrategy>::update_look(deltas, camera, config);
 
         /* compute center and move cursor */
-        let center = &_screen.window_center;
+        let center = &camera.screen.window_center;
         move_cursor(center);
     }
 }

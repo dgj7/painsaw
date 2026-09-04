@@ -1,7 +1,7 @@
 use crate::config::EngineConfig;
 use crate::geometry::primitive::v2d::Vertex2D;
+use crate::graphics::camera::Camera;
 use crate::graphics::storage::g2d::Graph2D;
-use crate::input::screen::ScreenState;
 use crate::support::stats::{
     create_rect2d_model, create_rect2d_text, create_vertex2d_model, create_vertex2d_text, HEIGHT, TC,
     X_POS,
@@ -23,7 +23,7 @@ static MOS_POS: &str = "mouse:   ";
 pub(crate) fn show_screen_stats(
     g2d: &mut Graph2D,
     config: &EngineConfig,
-    screen: &ScreenState,
+    camera: &Camera,
     mouse_position: &Vertex2D,
 ) {
     /* nothing to do if not enabled */
@@ -32,10 +32,10 @@ pub(crate) fn show_screen_stats(
     }
 
     /* gather variables */
-    let client_rect = &screen.current_client_rect;
-    let window_rect = &screen.current_window_rect;
-    let client_center = &screen.client_center;
-    let window_center = &screen.window_center;
+    let client_rect = &camera.screen.current_client_rect;
+    let window_rect = &camera.screen.current_window_rect;
+    let client_center = &camera.screen.client_center;
+    let window_center = &camera.screen.window_center;
 
     /* positioning variables */
     let y = 120.0;

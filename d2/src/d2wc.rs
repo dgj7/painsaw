@@ -2,7 +2,6 @@ use crate::d2::Demo2;
 use crate::d2m2d::{create_2d_bmp_24b, create_2d_tga_32b_b2t_l2r};
 use engine::graphics::camera::Camera;
 use engine::graphics::storage::gxd::Models;
-use engine::input::screen::ScreenState;
 use engine::input::UserInput;
 use engine::support::timing::EngineTiming;
 use engine::WorldController;
@@ -20,7 +19,6 @@ impl WorldController for Demo2 {
     fn update_world_helper(
         &self,
         _input: Arc<Mutex<UserInput>>,
-        _screen: &ScreenState,
         _camera: &Camera,
         timing: &mut EngineTiming,
         _models: &mut Models,

@@ -7,7 +7,6 @@ use crate::d1m3d::{
 };
 use engine::graphics::camera::Camera;
 use engine::graphics::storage::gxd::Models;
-use engine::input::screen::ScreenState;
 use engine::input::UserInput;
 use engine::support::logger::log;
 use engine::support::logger::log_level::LogLevel;
@@ -39,7 +38,6 @@ impl WorldController for Demo1 {
     fn update_world_helper(
         &self,
         input: Arc<Mutex<UserInput>>,
-        screen: &ScreenState,
         camera: &Camera,
         timing: &mut EngineTiming,
         models: &mut Models
@@ -47,7 +45,7 @@ impl WorldController for Demo1 {
         match input.clone().lock() {
             Ok(uin) => {
                 /* gather some variables */
-                let ccd = screen.current_client_dimensions.clone();
+                let ccd = camera.screen.current_client_dimensions.clone();
 
                 /* handle window resize for grid */
                 if uin.screen_resized {

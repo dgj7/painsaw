@@ -17,10 +17,10 @@ pub struct Projection {
 }
 
 impl Projection {
-    pub(crate) fn new(dimension: &Dimension2D) -> Projection {
+    pub(crate) fn new(width: f32, height: f32) -> Projection {
         Projection {
-            width: dimension.width,
-            height: dimension.height,
+            width,
+            height,
             ..Default::default()
         }
     }
