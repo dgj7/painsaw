@@ -18,6 +18,7 @@ use std::sync::MutexGuard;
 use storage::g2d::Graph2D;
 use storage::g3d::Graph3D;
 use subsystem::RendererInfo;
+use crate::graphics::storage::gxd::Models;
 
 pub mod camera;
 pub mod color;
@@ -45,8 +46,8 @@ impl RendererWrapper {
         }
     }
 
-    pub(crate) fn initialize(&mut self, g2d: &mut Graph2D, g3d: &mut Graph3D) {
-        self.subsystem.initialize(g2d, g3d);
+    pub(crate) fn initialize(&mut self, models: &mut Models) {
+        self.subsystem.initialize(models);
         self.info = self.subsystem.identify();
 
         log(LogLevel::Info, &|| String::from(format!("{:?}", self.info)));

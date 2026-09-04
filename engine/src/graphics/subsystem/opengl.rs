@@ -14,6 +14,7 @@ use ffp::ffp2d::{
     ffp_2d_setup, ffp_2d_teardown, ffp_render_2d_texture,
 };
 use windows::Win32::Graphics::OpenGL::{GL_RENDERER, GL_VENDOR, GL_VERSION};
+use crate::graphics::storage::gxd::Models;
 
 mod errors;
 pub mod ffp;
@@ -37,9 +38,9 @@ impl RenderingSubSystemHandle for OpenGLHandle {
         }
     }
 
-    fn initialize(&self, g2d: &mut Graph2D, _g3d: &mut Graph3D) {
+    fn initialize(&self, models: &mut Models) {
         match self.pipeline {
-            OpenGLPipeline::FixedFunction => ffp_2d_initialize_textures(g2d),
+            OpenGLPipeline::FixedFunction => ffp_2d_initialize_textures(&mut models.g2d),
             OpenGLPipeline::ProgrammableShader => {}
         }
     }

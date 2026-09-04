@@ -2,8 +2,7 @@ use crate::config::input_config::kc::{handle_key_change, KeyHandler};
 use crate::config::input_config::mc::{handle_mouse_change, MouseHandler};
 use crate::config::EngineConfig;
 use crate::graphics::camera::Camera;
-use crate::graphics::storage::g2d::Graph2D;
-use crate::graphics::storage::g3d::Graph3D;
+use crate::graphics::storage::gxd::Models;
 use crate::graphics::RendererWrapper;
 use crate::input::screen::ScreenState;
 use crate::input::UserInput;
@@ -40,12 +39,11 @@ pub trait WorldController {
         &self,
         camera: &Camera,
         renderer: &mut RendererWrapper,
-        g2d: &mut Graph2D,
-        g3d: &mut Graph3D,
+        models: &mut Models,
     ) {
-        self.initialize_world_helper(camera, g2d, g3d);
+        self.initialize_world_helper(camera, models);
 
-        renderer.initialize(g2d, g3d);
+        renderer.initialize(models);
 
         log(LogLevel::Debug, &|| String::from("initialization complete"));
     }
@@ -53,7 +51,7 @@ pub trait WorldController {
     ///
     /// initialize game world - customizer for client.
     ///
-    fn initialize_world_helper(&self, camera: &Camera, g2d: &mut Graph2D, g3d: &mut Graph3D);
+    fn initialize_world_helper(&self, camera: &Camera, models: &mut Models);
 
     ///
     /// update the game world state - fully controlled by client.
@@ -68,8 +66,7 @@ pub trait WorldController {
         camera: &mut Camera,
         timing: &mut EngineTiming,
         renderer: &RendererWrapper,
-        g2d: &mut Graph2D,
-        g3d: &mut Graph3D,
+        models: &mut Models,
     ) {
         match input.clone().lock() {
             Ok(mut uin) => {
@@ -112,7 +109,7 @@ pub trait WorldController {
             Err(_) => {}
         }
 
-        self.update_world_helper(input.clone(), screen, camera, timing, g2d, g3d);
+        self.update_world_helper(input.clone(), screen, camera, timing, models);
 
         match input.lock() {
             Ok(mut uin) => { uin.screen_resized = false; }
@@ -126,8 +123,7 @@ pub trait WorldController {
         screen: &ScreenState,
         camera: &Camera,
         timing: &mut EngineTiming,
-        g2d: &mut Graph2D,
-        g3d: &mut Graph3D,
+        models: &mut Models
     );
 
     ///
@@ -146,8 +142,7 @@ pub trait WorldController {
         camera: &mut Camera,
         timing: &EngineTiming,
         renderer: &mut RendererWrapper,
-        g2d: &mut Graph2D,
-        g3d: &mut Graph3D,
+        models: &mut Models
     ) {
         /* gather variables */
         let uin = input.lock().unwrap();
@@ -157,12 +152,12 @@ pub trait WorldController {
 
         /* draw 3d, if desired */
         renderer.prepare_3d(camera);
-        renderer.render_3d(g3d);
+        renderer.render_3d(&mut models.g3d);
         renderer.after_3d();
 
         /* draw 2d, if desired */
-        renderer.prepare_2d(&camera, g2d);
-        renderer.render_2d::<T>(&config, uin, &screen, &camera, &timing, g2d);
+        renderer.prepare_2d(&camera, &mut models.g2d);
+        renderer.render_2d::<T>(&config, uin, &screen, &camera, &timing, &mut models.g2d);
         renderer.after_2d();
     }
 }
