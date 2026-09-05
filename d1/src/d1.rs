@@ -1,9 +1,7 @@
-pub struct Demo1 {
-    pub display_menus: bool,
-}
+pub struct Demo1 {}
 
 impl Demo1 {
     pub(crate) fn new() -> Self {
-        Self { display_menus: false }
+        Self {}
     }
 }

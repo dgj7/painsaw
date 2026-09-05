@@ -144,15 +144,16 @@ pub(super) fn create_2d_crosshairs(camera: &Camera) -> Model2D {
         .build()
 }
 
-pub(super) fn create_2d_greyed_overlay(_camera: &Camera) -> Model2D {
+pub(super) fn create_2d_greyed_overlay(camera: &Camera) -> Model2D {
     Model2DBuilder::new()
+        .with_visible(false)
         .with_primitive(Primitive2DBuilder::new()
             .with_type(PrimitiveType::Cube {})
             .with_vertices(vec!(
                 Vertex2D::new(0.0, 0.0),
-                Vertex2D::new(960.0, 0.0),
-                Vertex2D::new(960.0, 540.0),
-                Vertex2D::new(0.0, 540.0),
+                Vertex2D::new(camera.screen.current_client_dimensions.width, 0.0),
+                Vertex2D::new(camera.screen.current_client_dimensions.width, camera.screen.current_client_dimensions.height),
+                Vertex2D::new(0.0, camera.screen.current_client_dimensions.height),
             ))
             .with_color(Color::GREY.adjust_alpha(0.5))
             .with_mode(PolygonMode::Fill)

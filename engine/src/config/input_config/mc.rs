@@ -18,7 +18,7 @@ pub fn handle_mouse_change<T: KeyHandler + MouseHandler + WorldController + 'sta
     config: &EngineConfig,
     camera: &mut Camera,
     timing: &EngineTiming,
-    models: &Models,
+    models: &mut Models,
 ) {
     match name {
         MouseInputName::MouseLeftButton => { game.handle_left_click(state, config, camera, timing, models) }
@@ -32,8 +32,8 @@ pub fn handle_mouse_change<T: KeyHandler + MouseHandler + WorldController + 'sta
 /// handle mouse changes.
 ///
 pub trait MouseHandler {
-    fn handle_mouse_move(&self, _state: &mut MouseState, _config: &EngineConfig, _camera: &mut Camera, _timing: &EngineTiming, _models: &Models) {}
-    fn handle_left_click(&self, _state: &MouseState, _config: &EngineConfig, _camera: &mut Camera, _timing: &EngineTiming, _models: &Models) {}
-    fn handle_right_click(&self, _state: &MouseState, _config: &EngineConfig, _camera: &mut Camera, _timing: &EngineTiming, _models: &Models) {}
-    fn handle_mouse_deltas(&self, _deltas: &Vec<MouseDelta>, _config: &EngineConfig, _camera: &mut Camera, _timing: &EngineTiming, _models: &Models) {}
+    fn handle_mouse_move(&self, _state: &mut MouseState, _config: &EngineConfig, _camera: &mut Camera, _timing: &EngineTiming, _models: &mut Models) {}
+    fn handle_left_click(&self, _state: &MouseState, _config: &EngineConfig, _camera: &mut Camera, _timing: &EngineTiming, _models: &mut Models) {}
+    fn handle_right_click(&self, _state: &MouseState, _config: &EngineConfig, _camera: &mut Camera, _timing: &EngineTiming, _models: &mut Models) {}
+    fn handle_mouse_deltas(&self, _deltas: &Vec<MouseDelta>, _config: &EngineConfig, _camera: &mut Camera, _timing: &EngineTiming, _models: &mut Models) {}
 }

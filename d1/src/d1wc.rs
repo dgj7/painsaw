@@ -16,17 +16,18 @@ static M2D_XY_PURPLE: &str = "1-2d-xy-purple";
 static M2D_X_HORIZ: &str = "2-2d-x-horizontal";
 static M2D_Y_VERT: &str = "2-2d-y-vertical";
 static M2D_CROSSHAIRS: &str = "999-2d-crosshairs";
-static M2D_OVERLAY: &str = "zzz-overlay";
+pub static M2D_OVERLAY: &str = "zzz-overlay";
 
 impl WorldController for Demo1 {
     fn initialize_world_helper(&self, camera: &Camera, models: &mut Models) {
         /* 2d */
         models.g2d.attach(M2D_XY_PURPLE, create_2d_axes(&camera));
+        models.g2d.attach(M2D_CROSSHAIRS, create_2d_crosshairs(&camera));
+        models.g2d.attach(M2D_OVERLAY, create_2d_greyed_overlay(&camera));
+
         //context.g2d.attach(M2D_X_HORIZ, create_2d_grid_x_lines(&context.camera));
         //context.g2d.attach(M2D_Y_VERT, create_2d_grid_y_lines(&context.camera));
         //context.g2d.attach("99-repeated", create_2d_repeated_texts(16, 0.0, 710.0));
-        models.g2d.attach(M2D_CROSSHAIRS, create_2d_crosshairs(&camera));
-        models.g2d.attach(M2D_OVERLAY, create_2d_greyed_overlay(&camera));
 
         /* 3d */
         models.g3d.attach("4-3d-axes", create_3d_axes());
@@ -53,6 +54,7 @@ impl WorldController for Demo1 {
                     models.g2d.update(M2D_X_HORIZ, |e| *e = create_2d_grid_x_lines(&camera));
                     models.g2d.update(M2D_Y_VERT, |e| *e = create_2d_grid_y_lines(&camera));
                     models.g2d.update(M2D_CROSSHAIRS, |e| *e = create_2d_crosshairs(&camera));
+                    models.g2d.update(M2D_OVERLAY, |e| *e = create_2d_greyed_overlay(&camera));
 
                     log(LogLevel::Debug, &|| { String::from(format!("window size changed ({}x{}); 2d storage count is [{}]", ccd.width, ccd.height, models.g2d.count())) });
                 }

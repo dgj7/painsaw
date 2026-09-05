@@ -15,6 +15,7 @@ use engine::support::timing::EngineTiming;
 use std::collections::HashMap;
 use std::sync::{LazyLock, Mutex};
 use engine::graphics::storage::gxd::Models;
+use crate::d1wc::M2D_OVERLAY;
 
 static KEYS: LazyLock<Mutex<HashMap<KeyInputName, Command>>> = LazyLock::new(|| {
     let mut map = HashMap::new();
@@ -32,7 +33,7 @@ impl KeyHandler for Demo1 {
         _config: &EngineConfig,
         _camera: &mut Camera,
         _timing: &EngineTiming,
-        _models: &Models,
+        _models: &mut Models,
     ) {
         _states
             .into_iter()
@@ -46,6 +47,15 @@ impl KeyHandler for Demo1 {
             });
     }
 
+    fn handle_escape_key_change(&self, _name: &KeyInputName, state: &mut KeyState, _config: &EngineConfig, _camera: &mut Camera, _timing: &EngineTiming, models: &mut Models) {
+        models.g2d.update(M2D_OVERLAY, |m| {
+            if !state.current.is_handled() && state.current.is_active() {
+                state.current.set_handled();
+                m.visible = !m.visible;
+            }
+        });
+    }
+
     fn handle_g_key_change(
         &self,
         _name: &KeyInputName,
@@ -53,7 +63,7 @@ impl KeyHandler for Demo1 {
         _config: &EngineConfig,
         _camera: &mut Camera,
         _timing: &EngineTiming,
-        _models: &Models,
+        _models: &mut Models,
     ) {
         let duration = _state.previous_key_state_duration();
         log(LogLevel::Debug, &|| {

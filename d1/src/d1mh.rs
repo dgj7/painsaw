@@ -15,7 +15,7 @@ impl MouseHandler for Demo1 {
         _config: &EngineConfig,
         _camera: &mut Camera,
         _timing: &EngineTiming,
-        _models: &Models,
+        _models: &mut Models,
     ) {
         /* update mouse look  */
         <Demo1 as SpectatorMovementStrategy>::update_look(_deltas, _camera, _config);
