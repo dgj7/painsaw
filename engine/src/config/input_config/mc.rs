@@ -1,6 +1,7 @@
 use crate::config::input_config::kc::KeyHandler;
 use crate::config::EngineConfig;
 use crate::graphics::camera::Camera;
+use crate::graphics::storage::gxd::Models;
 use crate::input::mouse::md::MouseDelta;
 use crate::input::mouse::min::MouseInputName;
 use crate::input::mouse::ms::MouseState;
@@ -17,12 +18,13 @@ pub fn handle_mouse_change<T: KeyHandler + MouseHandler + WorldController + 'sta
     config: &EngineConfig,
     camera: &mut Camera,
     timing: &EngineTiming,
+    models: &Models,
 ) {
     match name {
-        MouseInputName::MouseLeftButton => { game.handle_left_click(state, camera, config, timing) }
-        MouseInputName::MouseRightButton => { game.handle_right_click(state, camera, config, timing) }
+        MouseInputName::MouseLeftButton => { game.handle_left_click(state, config, camera, timing, models) }
+        MouseInputName::MouseRightButton => { game.handle_right_click(state, config, camera, timing, models) }
         MouseInputName::MouseScroll => {}
-        MouseInputName::MouseMove => game.handle_mouse_move(state, camera, config, timing),
+        MouseInputName::MouseMove => game.handle_mouse_move(state, config, camera, timing, models),
     }
 }
 
@@ -30,9 +32,8 @@ pub fn handle_mouse_change<T: KeyHandler + MouseHandler + WorldController + 'sta
 /// handle mouse changes.
 ///
 pub trait MouseHandler {
-    fn handle_mouse_move(&self, _state: &mut MouseState, _camera: &mut Camera, _config: &EngineConfig, _timing: &EngineTiming) {}
-    fn handle_left_click(&self, _state: &MouseState, _camera: &mut Camera, _config: &EngineConfig, _timing: &EngineTiming) {}
-    fn handle_right_click(&self, _state: &MouseState, _camera: &mut Camera, _config: &EngineConfig, _timing: &EngineTiming) {}
-    // todo: order of params here
-    fn handle_mouse_deltas(&self, _deltas: &Vec<MouseDelta>, _config: &EngineConfig, _camera: &mut Camera, _timing: &EngineTiming) {}
+    fn handle_mouse_move(&self, _state: &mut MouseState, _config: &EngineConfig, _camera: &mut Camera, _timing: &EngineTiming, _models: &Models) {}
+    fn handle_left_click(&self, _state: &MouseState, _config: &EngineConfig, _camera: &mut Camera, _timing: &EngineTiming, _models: &Models) {}
+    fn handle_right_click(&self, _state: &MouseState, _config: &EngineConfig, _camera: &mut Camera, _timing: &EngineTiming, _models: &Models) {}
+    fn handle_mouse_deltas(&self, _deltas: &Vec<MouseDelta>, _config: &EngineConfig, _camera: &mut Camera, _timing: &EngineTiming, _models: &Models) {}
 }

@@ -1,7 +1,5 @@
 use crate::d1::Demo1;
-use crate::d1m2d::{
-    create_2d_axes, create_2d_crosshairs, create_2d_grid_x_lines, create_2d_grid_y_lines,
-};
+use crate::d1m2d::{create_2d_axes, create_2d_crosshairs, create_2d_greyed_overlay, create_2d_grid_x_lines, create_2d_grid_y_lines};
 use crate::d1m3d::{
     create_3d_axes, create_3d_cuboid_1, create_3d_cuboid_wall_2, create_3d_enclosing_box,
 };
@@ -18,6 +16,7 @@ static M2D_XY_PURPLE: &str = "1-2d-xy-purple";
 static M2D_X_HORIZ: &str = "2-2d-x-horizontal";
 static M2D_Y_VERT: &str = "2-2d-y-vertical";
 static M2D_CROSSHAIRS: &str = "999-2d-crosshairs";
+static M2D_OVERLAY: &str = "zzz-overlay";
 
 impl WorldController for Demo1 {
     fn initialize_world_helper(&self, camera: &Camera, models: &mut Models) {
@@ -27,6 +26,7 @@ impl WorldController for Demo1 {
         //context.g2d.attach(M2D_Y_VERT, create_2d_grid_y_lines(&context.camera));
         //context.g2d.attach("99-repeated", create_2d_repeated_texts(16, 0.0, 710.0));
         models.g2d.attach(M2D_CROSSHAIRS, create_2d_crosshairs(&camera));
+        models.g2d.attach(M2D_OVERLAY, create_2d_greyed_overlay(&camera));
 
         /* 3d */
         models.g3d.attach("4-3d-axes", create_3d_axes());
@@ -40,7 +40,7 @@ impl WorldController for Demo1 {
         input: Arc<Mutex<UserInput>>,
         camera: &Camera,
         timing: &mut EngineTiming,
-        models: &mut Models
+        models: &mut Models,
     ) {
         match input.clone().lock() {
             Ok(uin) => {

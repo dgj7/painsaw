@@ -73,13 +73,13 @@ pub trait WorldController {
                     let change = uin.key_changes.pop_front().unwrap();
                     let state = uin.key_states.get_mut(&change).unwrap();
                     if !state.current.is_handled() {
-                        handle_key_change(&change, state, game, config, camera, timing);
+                        handle_key_change(&change, state, game, config, camera, timing, models);
                         state.current.set_handled();
                     }
                 }
 
                 /* check key states */
-                game.check_key_states(&uin.key_states, &config, camera, &timing);
+                game.check_key_states(&uin.key_states, &config, camera, &timing, models);
 
                 /* handle screen resize */
                 if uin.screen_resized {
@@ -93,14 +93,14 @@ pub trait WorldController {
                     let change = uin.mouse_changes.pop_front().unwrap();
                     let state = uin.mouse_states.get_mut(&change).unwrap();
                     if !state.current.handled {
-                        handle_mouse_change(&change, state, game, &config, camera, &timing);
+                        handle_mouse_change(&change, state, game, &config, camera, &timing, models);
                         state.current.handled = true;
                     }
                 }
 
                 /* handle mouse deltas */
                 if !uin.mouse_deltas.is_empty() {
-                    game.handle_mouse_deltas(&mut uin.mouse_deltas, &config, camera, &timing);
+                    game.handle_mouse_deltas(&mut uin.mouse_deltas, &config, camera, &timing, models);
                     uin.mouse_deltas.clear();
                 }
             }

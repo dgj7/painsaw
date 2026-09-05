@@ -14,6 +14,7 @@ use engine::support::logger::log_level::LogLevel;
 use engine::support::timing::EngineTiming;
 use std::collections::HashMap;
 use std::sync::{LazyLock, Mutex};
+use engine::graphics::storage::gxd::Models;
 
 static KEYS: LazyLock<Mutex<HashMap<KeyInputName, Command>>> = LazyLock::new(|| {
     let mut map = HashMap::new();
@@ -31,6 +32,7 @@ impl KeyHandler for Demo1 {
         _config: &EngineConfig,
         _camera: &mut Camera,
         _timing: &EngineTiming,
+        _models: &Models,
     ) {
         _states
             .into_iter()
@@ -46,19 +48,20 @@ impl KeyHandler for Demo1 {
 
     fn handle_g_key_change(
         &self,
-        name: &KeyInputName,
-        state: &mut KeyState,
-        _camera: &mut Camera,
+        _name: &KeyInputName,
+        _state: &mut KeyState,
         _config: &EngineConfig,
+        _camera: &mut Camera,
         _timing: &EngineTiming,
+        _models: &Models,
     ) {
-        let duration = state.previous_key_state_duration();
+        let duration = _state.previous_key_state_duration();
         log(LogLevel::Debug, &|| {
             String::from(format!(
                 "{}: {}    ({} for {}ms)",
-                name,
-                state.current,
-                state.previous,
+                _name,
+                _state.current,
+                _state.previous,
                 duration.as_millis()
             ))
         });

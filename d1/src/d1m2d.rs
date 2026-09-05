@@ -1,3 +1,5 @@
+use engine::geometry::primitive::face::PolygonFace;
+use engine::geometry::primitive::mode::PolygonMode;
 use engine::geometry::primitive::prim2d::Primitive2DBuilder;
 use engine::geometry::primitive::v2d::Vertex2D;
 use engine::geometry::primitive::PrimitiveType;
@@ -78,6 +80,9 @@ pub(super) fn create_2d_grid_y_lines(camera: &Camera) -> Model2D {
         .build()
 }
 
+static CROSSHAIR_COLOR: Color = Color::from_rgba(1.0, 1.0, 1.0, 0.95);
+static CROSSHAIR_THICCNESS: f32 = 2.0;
+
 pub(super) fn create_2d_crosshairs(camera: &Camera) -> Model2D {
     /* centering values */
     let center_x = camera.projection.width / 2.0;
@@ -105,8 +110,8 @@ pub(super) fn create_2d_crosshairs(camera: &Camera) -> Model2D {
         /* draw white cross */
         .with_primitive(
             Primitive2DBuilder::new()
-                .with_type(PrimitiveType::Line { thickness: 1.0 })
-                .with_color(Color::from_rgba(1.0, 1.0, 1.0, 0.99))
+                .with_type(PrimitiveType::Line { thickness: CROSSHAIR_THICCNESS })
+                .with_color(CROSSHAIR_COLOR)
                 .with_vertex(Vertex2D::new(center_x - crosshair_len / 2.0, center_y))
                 .with_vertex(Vertex2D::new(center_x + crosshair_len / 2.0, center_y))
                 .with_vertex(Vertex2D::new(center_x, center_y - crosshair_len / 2.0))
@@ -116,16 +121,16 @@ pub(super) fn create_2d_crosshairs(camera: &Camera) -> Model2D {
         /* draw circle */
         .with_primitive(
             Primitive2DBuilder::new()
-                .with_type(PrimitiveType::LineStrip { thickness: 1.0 })
-                .with_color(Color::from_rgba(1.0, 1.0, 1.0, 0.99))
+                .with_type(PrimitiveType::LineStrip { thickness: CROSSHAIR_THICCNESS })
+                .with_color(CROSSHAIR_COLOR)
                 .with_vertices(circle_vertices)
                 .build(),
         )
         /* draw hash marks */
         .with_primitive(
             Primitive2DBuilder::new()
-                .with_type(PrimitiveType::Line { thickness: 1.0 })
-                .with_color(Color::from_rgba(1.0, 1.0, 1.0, 0.99))
+                .with_type(PrimitiveType::Line { thickness: CROSSHAIR_THICCNESS })
+                .with_color(CROSSHAIR_COLOR)
                 .with_vertex(Vertex2D::new(center_x, center_y - radius - hmlen / 2.0))
                 .with_vertex(Vertex2D::new(center_x, center_y - radius + hmlen / 2.0))
                 .with_vertex(Vertex2D::new(center_x, center_y + radius - hmlen / 2.0))
@@ -136,5 +141,22 @@ pub(super) fn create_2d_crosshairs(camera: &Camera) -> Model2D {
                 .with_vertex(Vertex2D::new(center_x + radius + hmlen / 2.0, center_y))
                 .build(),
         )
+        .build()
+}
+
+pub(super) fn create_2d_greyed_overlay(_camera: &Camera) -> Model2D {
+    Model2DBuilder::new()
+        .with_primitive(Primitive2DBuilder::new()
+            .with_type(PrimitiveType::Cube {})
+            .with_vertices(vec!(
+                Vertex2D::new(0.0, 0.0),
+                Vertex2D::new(960.0, 0.0),
+                Vertex2D::new(960.0, 540.0),
+                Vertex2D::new(0.0, 540.0),
+            ))
+            .with_color(Color::GREY.adjust_alpha(0.5))
+            .with_mode(PolygonMode::Fill)
+            .with_face(PolygonFace::FrontAndBack)
+            .build())
         .build()
 }

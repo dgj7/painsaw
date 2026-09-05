@@ -16,7 +16,7 @@ use ffp::ffp2d::{
 use windows::Win32::Graphics::OpenGL::{GL_RENDERER, GL_VENDOR, GL_VERSION};
 use crate::graphics::storage::gxd::Models;
 
-mod errors;
+pub(crate) mod errors;
 pub mod ffp;
 pub mod msw;
 
@@ -73,6 +73,8 @@ impl RenderingSubSystemHandle for OpenGLHandle {
         match self.pipeline {
             OpenGLPipeline::FixedFunction => {
                 for (_, model) in g2d.iter() {
+                    if !model.visible { continue; }
+
                     for primitive in model.primitives.iter() {
                         match primitive.p_type {
                             PrimitiveType::Point { point_size } => { ffp_render_2d(primitive, || gl_point_size(point_size), gl_begin_points) }
