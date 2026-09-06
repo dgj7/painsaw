@@ -14,7 +14,7 @@ use crate::WorldController;
 pub fn handle_mouse_change<T: KeyHandler + MouseHandler + WorldController + 'static>(
     name: &MouseInputName,
     state: &mut MouseState,
-    game: &T,
+    game: &mut T,
     config: &EngineConfig,
     camera: &mut Camera,
     timing: &EngineTiming,
@@ -32,8 +32,8 @@ pub fn handle_mouse_change<T: KeyHandler + MouseHandler + WorldController + 'sta
 /// handle mouse changes.
 ///
 pub trait MouseHandler {
-    fn handle_mouse_move(&self, _state: &mut MouseState, _config: &EngineConfig, _camera: &mut Camera, _timing: &EngineTiming, _models: &mut Models) {}
-    fn handle_left_click(&self, _state: &MouseState, _config: &EngineConfig, _camera: &mut Camera, _timing: &EngineTiming, _models: &mut Models) {}
-    fn handle_right_click(&self, _state: &MouseState, _config: &EngineConfig, _camera: &mut Camera, _timing: &EngineTiming, _models: &mut Models) {}
-    fn handle_mouse_deltas(&self, _deltas: &Vec<MouseDelta>, _config: &EngineConfig, _camera: &mut Camera, _timing: &EngineTiming, _models: &mut Models) {}
+    fn handle_mouse_move(&mut self, _state: &mut MouseState, _config: &EngineConfig, _camera: &mut Camera, _timing: &EngineTiming, _models: &mut Models) {}
+    fn handle_left_click(&mut self, _state: &MouseState, _config: &EngineConfig, _camera: &mut Camera, _timing: &EngineTiming, _models: &mut Models) {}
+    fn handle_right_click(&mut self, _state: &MouseState, _config: &EngineConfig, _camera: &mut Camera, _timing: &EngineTiming, _models: &mut Models) {}
+    fn handle_mouse_deltas(&mut self, _deltas: &Vec<MouseDelta>, _config: &EngineConfig, _camera: &mut Camera, _timing: &EngineTiming, _models: &mut Models) {}
 }

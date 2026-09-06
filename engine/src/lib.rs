@@ -56,7 +56,7 @@ pub trait WorldController: KeyHandler + MouseHandler + Sized where Self: 'static
     /// update the game world state - fully controlled by client.
     ///
     fn update_world(
-        &self,
+        &mut self,
         config: &EngineConfig,
         input: Arc<Mutex<UserInput>>,
         key: &WindowKey,

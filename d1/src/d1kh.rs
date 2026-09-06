@@ -28,7 +28,7 @@ static KEYS: LazyLock<Mutex<HashMap<KeyInputName, Command>>> = LazyLock::new(|| 
 
 impl KeyHandler for Demo1 {
     fn check_key_states(
-        &self,
+        &mut self,
         _states: &HashMap<KeyInputName, KeyState>,
         _config: &EngineConfig,
         _camera: &mut Camera,
@@ -47,7 +47,7 @@ impl KeyHandler for Demo1 {
             });
     }
 
-    fn handle_escape_key_change(&self, _name: &KeyInputName, state: &mut KeyState, _config: &EngineConfig, _camera: &mut Camera, _timing: &EngineTiming, models: &mut Models) {
+    fn handle_escape_key_change(&mut self, _name: &KeyInputName, state: &mut KeyState, _config: &EngineConfig, _camera: &mut Camera, _timing: &EngineTiming, models: &mut Models) {
         models.g2d.update(M2D_OVERLAY, |m| {
             if !state.current.is_handled() && state.current.is_active() {
                 state.current.set_handled();
@@ -57,7 +57,7 @@ impl KeyHandler for Demo1 {
     }
 
     fn handle_g_key_change(
-        &self,
+        &mut self,
         _name: &KeyInputName,
         _state: &mut KeyState,
         _config: &EngineConfig,

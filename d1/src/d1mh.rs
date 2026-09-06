@@ -10,7 +10,7 @@ use engine::window::api::mc::move_cursor;
 
 impl MouseHandler for Demo1 {
     fn handle_mouse_deltas(
-        &self,
+        &mut self,
         _deltas: &Vec<MouseDelta>,
         _config: &EngineConfig,
         _camera: &mut Camera,

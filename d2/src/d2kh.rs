@@ -9,6 +9,6 @@ use std::collections::HashMap;
 use engine::graphics::storage::gxd::Models;
 
 impl KeyHandler for Demo2 {
-    fn check_key_states(&self, _states: &HashMap<KeyInputName, KeyState>, _config: &EngineConfig, _camera: &mut Camera, _timing: &EngineTiming, _models: &mut Models,) {}
-    fn handle_g_key_change(&self, _name: &KeyInputName, _state: &mut KeyState, _config: &EngineConfig, _camera: &mut Camera, _timing: &EngineTiming, _models: &mut Models,) {}
+    fn check_key_states(&mut self, _states: &HashMap<KeyInputName, KeyState>, _config: &EngineConfig, _camera: &mut Camera, _timing: &EngineTiming, _models: &mut Models,) {}
+    fn handle_g_key_change(&mut self, _name: &KeyInputName, _state: &mut KeyState, _config: &EngineConfig, _camera: &mut Camera, _timing: &EngineTiming, _models: &mut Models,) {}
 }

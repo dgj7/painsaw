@@ -14,7 +14,7 @@ use crate::graphics::storage::gxd::Models;
 pub(crate) fn handle_key_change<T: KeyHandler + MouseHandler + WorldController + 'static>(
     name: &KeyInputName,
     state: &mut KeyState,
-    game: &T,
+    game: &mut T,
     config: &EngineConfig,
     camera: &mut Camera,
     timing: &EngineTiming,
@@ -43,12 +43,12 @@ pub trait KeyHandler {
     /// this is useful for handling scenarios where holding a key down might not be a
     /// "new" change, but still needs to be handled as input for some games.
     ///
-    fn check_key_states(&self, _states: &HashMap<KeyInputName, KeyState>, _config: &EngineConfig, _camera: &mut Camera, _timing: &EngineTiming, _models: &mut Models) {}
-    fn handle_escape_key_change(&self, _name: &KeyInputName, _state: &mut KeyState, _config: &EngineConfig, _camera: &mut Camera, _timing: &EngineTiming, _models: &mut Models) {}
-    fn handle_a_key_change(&self, _name: &KeyInputName, _state: &mut KeyState, _config: &EngineConfig, _camera: &mut Camera, _timing: &EngineTiming, _models: &mut Models) {}
-    fn handle_d_key_change(&self, _name: &KeyInputName, _state: &mut KeyState, _config: &EngineConfig, _camera: &mut Camera, _timing: &EngineTiming, _models: &mut Models) {}
-    fn handle_g_key_change(&self, _name: &KeyInputName, _state: &mut KeyState, _config: &EngineConfig, _camera: &mut Camera, _timing: &EngineTiming, _models: &mut Models) {}
-    fn handle_m_key_change(&self, _name: &KeyInputName, _state: &mut KeyState, _config: &EngineConfig, _camera: &mut Camera, _timing: &EngineTiming, _models: &mut Models) {}
-    fn handle_s_key_change(&self, _name: &KeyInputName, _state: &mut KeyState, _config: &EngineConfig, _camera: &mut Camera, _timing: &EngineTiming, _models: &mut Models) {}
-    fn handle_w_key_change(&self, _name: &KeyInputName, _state: &mut KeyState, _config: &EngineConfig, _camera: &mut Camera, _timing: &EngineTiming, _models: &mut Models) {}
+    fn check_key_states(&mut self, _states: &HashMap<KeyInputName, KeyState>, _config: &EngineConfig, _camera: &mut Camera, _timing: &EngineTiming, _models: &mut Models) {}
+    fn handle_escape_key_change(&mut self, _name: &KeyInputName, _state: &mut KeyState, _config: &EngineConfig, _camera: &mut Camera, _timing: &EngineTiming, _models: &mut Models) {}
+    fn handle_a_key_change(&mut self, _name: &KeyInputName, _state: &mut KeyState, _config: &EngineConfig, _camera: &mut Camera, _timing: &EngineTiming, _models: &mut Models) {}
+    fn handle_d_key_change(&mut self, _name: &KeyInputName, _state: &mut KeyState, _config: &EngineConfig, _camera: &mut Camera, _timing: &EngineTiming, _models: &mut Models) {}
+    fn handle_g_key_change(&mut self, _name: &KeyInputName, _state: &mut KeyState, _config: &EngineConfig, _camera: &mut Camera, _timing: &EngineTiming, _models: &mut Models) {}
+    fn handle_m_key_change(&mut self, _name: &KeyInputName, _state: &mut KeyState, _config: &EngineConfig, _camera: &mut Camera, _timing: &EngineTiming, _models: &mut Models) {}
+    fn handle_s_key_change(&mut self, _name: &KeyInputName, _state: &mut KeyState, _config: &EngineConfig, _camera: &mut Camera, _timing: &EngineTiming, _models: &mut Models) {}
+    fn handle_w_key_change(&mut self, _name: &KeyInputName, _state: &mut KeyState, _config: &EngineConfig, _camera: &mut Camera, _timing: &EngineTiming, _models: &mut Models) {}
 }
