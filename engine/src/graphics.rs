@@ -18,7 +18,6 @@ use subsystem::RendererInfo;
 
 pub mod camera;
 pub mod color;
-pub mod scenegraph;
 pub mod storage;
 pub mod subsystem;
 pub mod texture;
