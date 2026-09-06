@@ -8,12 +8,7 @@ use windows::Win32::UI::Input::{
     GetRawInputData, RegisterRawInputDevices, HRAWINPUT, RAWINPUTDEVICE,
     RAW_INPUT_DATA_COMMAND_FLAGS,
 };
-use windows::Win32::UI::WindowsAndMessaging::{
-    CreateWindowExW, DefWindowProcW, DispatchMessageW, GetClientRect, GetCursorPos, GetWindowRect,
-    LoadCursorW, PeekMessageW, PostQuitMessage, RegisterClassW, SetCursorPos, ShowCursor, TranslateMessage,
-    HCURSOR, HMENU, MSG, PEEK_MESSAGE_REMOVE_TYPE, WINDOW_EX_STYLE, WINDOW_STYLE,
-    WNDCLASSW,
-};
+use windows::Win32::UI::WindowsAndMessaging::{CreateWindowExW, DefWindowProcW, DispatchMessageW, GetClientRect, GetCursorPos, GetWindowRect, LoadCursorW, PeekMessageW, PostQuitMessage, RegisterClassW, SetCursorPos, ShowCursor, TranslateMessage, HCURSOR, HMENU, MSG, PEEK_MESSAGE_REMOVE_TYPE, WINDOW_EX_STYLE, WINDOW_STYLE, WNDCLASSW};
 
 ///
 /// PeekMessageW()

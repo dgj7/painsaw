@@ -3,19 +3,21 @@ use crate::d1cmd::Command::{
     CameraMoveBackward, CameraMoveForward, CameraStrafeLeft, CameraStrafeRight,
 };
 use crate::d1cmd::{handle_command, Command};
+use crate::d1wc::M2D_OVERLAY;
 use engine::config::input_config::kc::KeyHandler;
 use engine::config::EngineConfig;
 use engine::graphics::camera::Camera;
+use engine::graphics::storage::gxd::Models;
 use engine::input::keyboard::kin::KeyInputName;
 use engine::input::keyboard::kin::KeyInputName::{KeyA, KeyD, KeyS, KeyW};
 use engine::input::keyboard::ks::KeyState;
 use engine::support::logger::log;
 use engine::support::logger::log_level::LogLevel;
 use engine::support::timing::EngineTiming;
+use engine::window::api::mouse::hide::hide_mouse;
+use engine::window::api::mouse::show::show_mouse;
 use std::collections::HashMap;
 use std::sync::{LazyLock, Mutex};
-use engine::graphics::storage::gxd::Models;
-use crate::d1wc::M2D_OVERLAY;
 
 static KEYS: LazyLock<Mutex<HashMap<KeyInputName, Command>>> = LazyLock::new(|| {
     let mut map = HashMap::new();
@@ -53,6 +55,12 @@ impl KeyHandler for Demo1 {
                 state.current.set_handled();
                 m.visible = !m.visible;
                 self.showing_main_menu = !self.showing_main_menu;
+
+                if self.showing_main_menu {
+                    show_mouse();
+                } else {
+                    hide_mouse();
+                }
             }
         });
     }

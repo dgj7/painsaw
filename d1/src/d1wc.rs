@@ -11,6 +11,7 @@ use engine::support::logger::log_level::LogLevel;
 use engine::support::timing::EngineTiming;
 use engine::WorldController;
 use std::sync::{Arc, Mutex};
+use engine::window::api::mouse::hide::hide_mouse;
 
 static M2D_XY_PURPLE: &str = "1-2d-xy-purple";
 static M2D_X_HORIZ: &str = "2-2d-x-horizontal";
@@ -20,6 +21,9 @@ pub static M2D_OVERLAY: &str = "zzz-overlay";
 
 impl WorldController for Demo1 {
     fn initialize_world_helper(&self, camera: &Camera, models: &mut Models) {
+        /* initial states */
+        hide_mouse();
+
         /* 2d */
         models.g2d.attach(M2D_XY_PURPLE, create_2d_axes(&camera));
         models.g2d.attach(M2D_CROSSHAIRS, create_2d_crosshairs(&camera));
