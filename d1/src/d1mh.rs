@@ -23,7 +23,7 @@ impl MouseHandler for Demo1 {
         }
 
         /* update mouse look  */
-        <Demo1 as SpectatorMovementStrategy>::update_look(_deltas, _camera, _config);
+        <Demo1 as SpectatorMovementStrategy>::update_look(_deltas, _config, _camera);
 
         /* compute center and move cursor */
         let center = &_camera.screen.window_center;

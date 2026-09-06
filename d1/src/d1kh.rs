@@ -43,7 +43,7 @@ impl KeyHandler for Demo1 {
             .for_each(|(key_name, _)| {
                 if let Ok(mutex) = KEYS.lock() {
                     if let Some(command) = mutex.get(&key_name) {
-                        handle_command::<Demo1>(&command, _camera, &_config, &_timing);
+                        handle_command::<Demo1>(&command, &_config, _camera, &_timing);
                     }
                 }
             });

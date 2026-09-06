@@ -11,7 +11,7 @@ use crate::support::timing::EngineTiming;
 ///
 // todo: this needs extensive unit testing
 pub trait SpectatorMovementStrategy {
-    fn move_forward(camera: &mut Camera, config: &EngineConfig, timing: &EngineTiming) {
+    fn move_forward(config: &EngineConfig, camera: &mut Camera, timing: &EngineTiming) {
         /* gather necessary variables */
         let forward = camera.orientation.position.column_major_z_forward();
         let position = camera.orientation.position.column_major_position();
@@ -24,7 +24,7 @@ pub trait SpectatorMovementStrategy {
         camera.orientation.position.column_major_update_position(&updated);
     }
 
-    fn move_backward(camera: &mut Camera, config: &EngineConfig, timing: &EngineTiming) {
+    fn move_backward(config: &EngineConfig, camera: &mut Camera, timing: &EngineTiming) {
         /* gather necessary variables */
         let forward = camera.orientation.position.column_major_z_forward();
         let position = camera.orientation.position.column_major_position();
@@ -37,7 +37,7 @@ pub trait SpectatorMovementStrategy {
         camera.orientation.position.column_major_update_position(&updated);
     }
 
-    fn move_left(camera: &mut Camera, config: &EngineConfig, timing: &EngineTiming) {
+    fn move_left(config: &EngineConfig, camera: &mut Camera, timing: &EngineTiming) {
         /* gather necessary variables */
         let right = camera.orientation.position.column_major_x_right();
         let position = camera.orientation.position.column_major_position();
@@ -50,7 +50,7 @@ pub trait SpectatorMovementStrategy {
         camera.orientation.position.column_major_update_position(&updated);
     }
 
-    fn move_right(camera: &mut Camera, config: &EngineConfig, timing: &EngineTiming) {
+    fn move_right(config: &EngineConfig, camera: &mut Camera, timing: &EngineTiming) {
         /* gather necessary variables */
         let right = camera.orientation.position.column_major_x_right();
         let position = camera.orientation.position.column_major_position();
@@ -66,7 +66,7 @@ pub trait SpectatorMovementStrategy {
     ///
     /// update mouse look based on dx/dy.
     ///
-    fn update_look(deltas: &Vec<MouseDelta>, camera: &mut Camera, config: &EngineConfig) {
+    fn update_look(deltas: &Vec<MouseDelta>, config: &EngineConfig, camera: &mut Camera) {
         /* get the collective delta x and y */
         let dx = deltas.iter().map(|d| d.dx).sum::<f32>();
         let dy = deltas.iter().map(|d| d.dy).sum::<f32>();

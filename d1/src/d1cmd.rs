@@ -18,14 +18,14 @@ impl SpectatorMovementStrategy for Demo1 {}
 
 pub(crate) fn handle_command<T: KeyHandler + MouseHandler + WorldController + 'static>(
     command: &Command,
-    camera: &mut Camera,
     ec: &EngineConfig,
+    camera: &mut Camera,
     et: &EngineTiming,
 ) {
     match command {
-        Command::CameraMoveForward => { <Demo1 as SpectatorMovementStrategy>::move_forward(camera, ec, et) }
-        Command::CameraStrafeLeft => { <Demo1 as SpectatorMovementStrategy>::move_left(camera, ec, et) }
-        Command::CameraMoveBackward => { <Demo1 as SpectatorMovementStrategy>::move_backward(camera, ec, et) }
-        Command::CameraStrafeRight => { <Demo1 as SpectatorMovementStrategy>::move_right(camera, ec, et) }
+        Command::CameraMoveForward => { <Demo1 as SpectatorMovementStrategy>::move_forward(ec, camera, et) }
+        Command::CameraStrafeLeft => { <Demo1 as SpectatorMovementStrategy>::move_left(ec, camera, et) }
+        Command::CameraMoveBackward => { <Demo1 as SpectatorMovementStrategy>::move_backward(ec, camera, et) }
+        Command::CameraStrafeRight => { <Demo1 as SpectatorMovementStrategy>::move_right(ec, camera, et) }
     }
 }
