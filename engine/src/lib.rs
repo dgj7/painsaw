@@ -30,7 +30,7 @@ pub mod window;
 /// Painsaw engine create their own world controller, implementing the abstract
 /// unimplemented functions below.
 ///
-pub trait WorldController {
+pub trait WorldController: KeyHandler + MouseHandler + Sized where Self: 'static {
     ///
     /// initialize the game world.
     ///
@@ -55,9 +55,8 @@ pub trait WorldController {
     ///
     /// update the game world state - fully controlled by client.
     ///
-    fn update_world<T: KeyHandler + MouseHandler + WorldController + 'static>(
+    fn update_world(
         &self,
-        game: &T,
         config: &EngineConfig,
         input: Arc<Mutex<UserInput>>,
         key: &WindowKey,
@@ -73,13 +72,13 @@ pub trait WorldController {
                     let change = uin.key_changes.pop_front().unwrap();
                     let state = uin.key_states.get_mut(&change).unwrap();
                     if !state.current.is_handled() {
-                        handle_key_change(&change, state, game, config, camera, timing, models);
+                        handle_key_change(&change, state, self, config, camera, timing, models);
                         state.current.set_handled();
                     }
                 }
 
                 /* check key states */
-                game.check_key_states(&uin.key_states, &config, camera, &timing, models);
+                self.check_key_states(&uin.key_states, &config, camera, &timing, models);
 
                 /* handle screen resize */
                 if uin.screen_resized {
@@ -93,14 +92,14 @@ pub trait WorldController {
                     let change = uin.mouse_changes.pop_front().unwrap();
                     let state = uin.mouse_states.get_mut(&change).unwrap();
                     if !state.current.handled {
-                        handle_mouse_change(&change, state, game, &config, camera, &timing, models);
+                        handle_mouse_change(&change, state, self, &config, camera, &timing, models);
                         state.current.handled = true;
                     }
                 }
 
                 /* handle mouse deltas */
                 if !uin.mouse_deltas.is_empty() {
-                    game.handle_mouse_deltas(&mut uin.mouse_deltas, &config, camera, &timing, models);
+                    self.handle_mouse_deltas(&mut uin.mouse_deltas, &config, camera, &timing, models);
                     uin.mouse_deltas.clear();
                 }
             }
@@ -130,9 +129,8 @@ pub trait WorldController {
     /// come from models supplied during initialization, along with changes to those models
     /// during the update world step.
     ///
-    fn display_world_scene<T: KeyHandler + MouseHandler + WorldController + 'static>(
+    fn display_world_scene(
         &self,
-        _game: &T,
         config: &EngineConfig,
         input: Arc<Mutex<UserInput>>,
         camera: &mut Camera,
@@ -153,7 +151,7 @@ pub trait WorldController {
 
         /* draw 2d, if desired */
         renderer.prepare_2d(&camera, &mut models.g2d);
-        renderer.render_2d::<T>(&config, uin, &camera, &timing, &mut models.g2d);
+        renderer.render_2d(&config, uin, &camera, &timing, &mut models.g2d);
         renderer.after_2d();
     }
 }

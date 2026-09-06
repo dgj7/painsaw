@@ -1,5 +1,3 @@
-use crate::config::input_config::kc::KeyHandler;
-use crate::config::input_config::mc::MouseHandler;
 use crate::config::EngineConfig;
 use crate::geometry::primitive::v2d::Vertex2D;
 use crate::graphics::camera::Camera;
@@ -13,7 +11,6 @@ use crate::support::stats::coords::show_cam_coords;
 use crate::support::stats::fps::show_fps;
 use crate::support::stats::screen::show_screen_stats;
 use crate::support::timing::EngineTiming;
-use crate::WorldController;
 use std::sync::MutexGuard;
 use storage::g2d::Graph2D;
 use storage::g3d::Graph3D;
@@ -65,7 +62,7 @@ impl RendererWrapper {
         self.subsystem.prepare_2d(camera, g2d);
     }
 
-    pub(crate) fn render_2d<T: KeyHandler + MouseHandler + WorldController + 'static>(
+    pub(crate) fn render_2d(
         &mut self,
         config: &EngineConfig,
         input: MutexGuard<UserInput>,

@@ -81,8 +81,8 @@ impl Window for MsWinWindow {
                 timing.begin_frame();
 
                 /* update world info; graphics scene */
-                game.update_world(game, &config, self.input.clone(), &self.key, &mut camera, &mut timing, &renderer, &mut models);
-                game.display_world_scene(game, &config, self.input.clone(), &mut camera, &timing, &mut renderer, &mut models);
+                game.update_world(&config, self.input.clone(), &self.key, &mut camera, &mut timing, &renderer, &mut models);
+                game.display_world_scene(&config, self.input.clone(), &mut camera, &timing, &mut renderer, &mut models);
 
                 /* swap buffers after it's all done */
                 swap_buffers(self.key.hdc);
