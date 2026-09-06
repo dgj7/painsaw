@@ -52,6 +52,7 @@ impl KeyHandler for Demo1 {
             if !state.current.is_handled() && state.current.is_active() {
                 state.current.set_handled();
                 m.visible = !m.visible;
+                self.showing_main_menu = !self.showing_main_menu;
             }
         });
     }

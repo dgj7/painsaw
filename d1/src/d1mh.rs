@@ -17,6 +17,11 @@ impl MouseHandler for Demo1 {
         _timing: &EngineTiming,
         _models: &mut Models,
     ) {
+        /* sc if we're displaying the menu */
+        if self.showing_main_menu {
+            return;
+        }
+
         /* update mouse look  */
         <Demo1 as SpectatorMovementStrategy>::update_look(_deltas, _camera, _config);
 
