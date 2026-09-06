@@ -50,19 +50,25 @@ impl KeyHandler for Demo1 {
     }
 
     fn handle_escape_key_change(&mut self, _name: &KeyInputName, state: &mut KeyState, _config: &EngineConfig, _camera: &mut Camera, _timing: &EngineTiming, models: &mut Models) {
-        models.g2d.update(M2D_OVERLAY, |m| {
-            if !state.current.is_handled() && state.current.is_active() {
-                state.current.set_handled();
-                m.visible = !m.visible;
-                self.showing_main_menu = !self.showing_main_menu;
+        /* if the escape key press hasn't been handled, and the key is down, we want to make the update to game state */
+        if !state.current.is_handled() && state.current.is_active() {
+            /* set the key state to handled so that this isn't repeated */
+            state.current.set_handled();
 
+            /* flip the main menu state */
+            self.showing_main_menu = !self.showing_main_menu;
+
+            /* other variables get set based on whether the main menu should be displayed */
+            models.g2d.update(M2D_OVERLAY, |m| {
                 if self.showing_main_menu {
                     show_mouse();
+                    m.visible = true;
                 } else {
                     hide_mouse();
+                    m.visible = false;
                 }
-            }
-        });
+            });
+        }
     }
 
     fn handle_g_key_change(

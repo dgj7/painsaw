@@ -32,6 +32,7 @@ pub(super) fn create_2d_axes(camera: &Camera) -> Model2D {
         .build()
 }
 
+#[allow(dead_code)]
 pub(super) fn create_2d_grid_x_lines(camera: &Camera) -> Model2D {
     /* storage for vertices */
     let mut vertices = vec![];
@@ -56,6 +57,7 @@ pub(super) fn create_2d_grid_x_lines(camera: &Camera) -> Model2D {
         .build()
 }
 
+#[allow(dead_code)]
 pub(super) fn create_2d_grid_y_lines(camera: &Camera) -> Model2D {
     /* storage for vertices */
     let mut vertices = vec![];
@@ -144,9 +146,9 @@ pub(super) fn create_2d_crosshairs(camera: &Camera) -> Model2D {
         .build()
 }
 
-pub(super) fn create_2d_greyed_overlay(camera: &Camera) -> Model2D {
+pub(super) fn create_2d_greyed_overlay(visibility: bool, camera: &Camera) -> Model2D {
     Model2DBuilder::new()
-        .with_visible(false)
+        .with_visible(visibility)
         .with_primitive(Primitive2DBuilder::new()
             .with_type(PrimitiveType::Cube {})
             .with_vertices(vec!(
