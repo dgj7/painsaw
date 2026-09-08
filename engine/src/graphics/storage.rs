@@ -4,3 +4,4 @@ pub mod m2d;
 pub mod m3d;
 pub mod gxd;
 pub mod scenegraph;
+pub mod qt;
