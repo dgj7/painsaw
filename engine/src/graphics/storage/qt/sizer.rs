@@ -1,4 +1,5 @@
 use crate::geometry::dim::Dimension2D;
+use crate::graphics::storage::m2d::Model2D;
 use crate::graphics::storage::qt::clickable::Clickable;
 use crate::graphics::storage::qt::control::Control;
 
@@ -27,4 +28,9 @@ pub trait Sizer: Clickable {
     /// likely called when the window is resized, but not necessarily.
     /// 
     fn resize(&mut self, dim: &Dimension2D);
+
+    ///
+    /// model the sizer and/or it's contents.
+    ///
+    fn model(&self) -> &[Model2D];
 }

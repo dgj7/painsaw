@@ -9,7 +9,7 @@ use crate::graphics::storage::qt::sizer::Sizer;
 
 pub mod sizer;
 pub mod control;
-mod clickable;
+pub mod clickable;
 
 ///
 /// manager for 2d ui screens.
@@ -22,6 +22,16 @@ pub struct UIManager<K: Eq + Hash> {
 }
 
 impl<K: Eq + Hash> UIManager<K> {
+    ///
+    /// create a new instance.
+    ///
+    pub fn new<K1: Eq + Hash>() -> UIManager<K1> {
+        UIManager {
+            active: None,
+            screens: HashMap::new(),
+        }
+    }
+
     ///
     /// activate a screen.
     ///
