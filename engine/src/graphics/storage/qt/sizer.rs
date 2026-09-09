@@ -2,6 +2,7 @@ use crate::geometry::dim::Dimension2D;
 use crate::graphics::storage::m2d::Model2D;
 use crate::graphics::storage::qt::clickable::Clickable;
 use crate::graphics::storage::qt::control::Control;
+use crate::graphics::storage::qt::padded::Padded;
 
 ///
 /// construct that dynamically stores the arrangement of other sizers and controls.
@@ -11,7 +12,7 @@ use crate::graphics::storage::qt::control::Control;
 /// * can produce an ui element that has had an interaction based on coordinates
 /// * can produce a list of 2d models for rendering
 ///
-pub trait Sizer: Clickable {
+pub trait Sizer: Clickable + Padded {
     ///
     /// add a [Sizer].
     /// 

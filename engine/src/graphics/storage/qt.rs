@@ -10,6 +10,7 @@ use crate::graphics::storage::qt::sizer::Sizer;
 pub mod sizer;
 pub mod control;
 pub mod clickable;
+pub mod padded;
 
 ///
 /// manager for 2d ui screens.
