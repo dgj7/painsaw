@@ -8,6 +8,7 @@ pub struct Model2D {
     pub visible: bool,
 }
 
+#[derive(Default)]
 pub struct Model2DBuilder {
     the_primitives: Vec<Primitive2D>,
     the_textures: Vec<Texture2D>,
