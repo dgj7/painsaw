@@ -14,12 +14,12 @@ use crate::graphics::storage::qt::support::padded::Padded;
 use crate::graphics::storage::qt::support::resizable::Resizable;
 
 pub struct HorizontalSizer {
-    pub sizers: Vec<Box<dyn Sizer>>,
-    pub controls: Vec<Box<dyn Control>>,
+    sizers: Vec<Box<dyn Sizer>>,
+    controls: Vec<Box<dyn Control>>,
 
     click_action: fn(pt: &Vertex2D),
 
-    pub padding: f32,
+    padding: f32,
 
     origin: Vertex2D,
     size: Dimension2D,
@@ -71,5 +71,7 @@ impl Assembled for HorizontalSizer {
                 .with_vertex(Vertex2D::new(self.origin.x + self.size.width, self.origin.y + self.size.height))
                 .with_vertex(Vertex2D::new(self.origin.x, self.origin.y + self.size.height))
                 .build());
+        self.sizers.iter().for_each(|s| s.reassemble(builder));
+        self.controls.iter().for_each(|c| c.reassemble(builder));
     }
 }
