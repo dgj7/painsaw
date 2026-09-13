@@ -5,11 +5,11 @@
 use std::collections::HashMap;
 use std::hash::Hash;
 use crate::geometry::dim::Dimension2D;
-use crate::graphics::storage::qt::sizer::Sizer;
+use crate::graphics::storage::qt::panel::Panel;
 
-pub mod sizer;
-pub mod control;
-pub mod support;
+mod panel;
+mod widget;
+mod layout;
 
 ///
 /// manager for 2d ui screens.
@@ -18,7 +18,7 @@ pub mod support;
 ///
 pub struct UIManager<K: Eq + Hash> {
     active: Option<K>,
-    screens: HashMap<K, Box<dyn Sizer>>,
+    screens: HashMap<K, Panel>,
 }
 
 impl<K: Eq + Hash> UIManager<K> {
@@ -62,7 +62,7 @@ impl<K: Eq + Hash> UIManager<K> {
     ///
     /// add an ui.
     ///
-    pub fn add(&mut self, key: K, sizer: Box<dyn Sizer>) {
-        self.screens.insert(key, sizer);
+    pub fn add(&mut self, key: K, panel: Panel) {
+        self.screens.insert(key, panel);
     }
 }
