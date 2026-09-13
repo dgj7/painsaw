@@ -1,8 +1,7 @@
-use crate::geometry::dim::Dimension2D;
 use crate::geometry::primitive::mode::PolygonMode;
 use crate::geometry::primitive::prim2d::Primitive2DBuilder;
-use crate::geometry::primitive::PrimitiveType;
 use crate::geometry::primitive::v2d::Vertex2D;
+use crate::geometry::primitive::PrimitiveType;
 use crate::graphics::color::Color;
 use crate::graphics::storage::m2d::Model2DBuilder;
 use crate::graphics::storage::qt::layout::Layout;
@@ -17,58 +16,33 @@ pub struct Panel {
     panels: Vec<Panel>,
     widgets: Vec<Widget>,
 
+    /* representation of the requested size by the user for this element */
+    vertical_sizing: Sizing,
+    horizontal_sizing: Sizing,
+
     /* how nested elements fit within this panel */
-    padding: f32,
+    padding: f32,                   // todo: change padding to use Sizing
     layout: Layout,
-    next: Vertex2D,
-
-    /* how this panel fits within it's parent area */
-    origin: Vertex2D,
-    external_vertical_sizing: Sizing,
-    external_horizontal_sizing: Sizing,
-    height: f32,
-    width: f32,
-
-    /* whether this panel (NOT it's nested panels or widgets) needs to be redrawn */
-    redraw_necessary: bool,
 }
 
 impl Panel {
     ///
-    /// reassemble the panel.
+    /// reassemble the panel's model via model builder.
     ///
-    pub fn reassemble(&self, builder: &mut Model2DBuilder) {
+    pub fn reassemble(&self, builder: &mut Model2DBuilder, origin: &Vertex2D, antipode: &Vertex2D) {
         std::mem::take(builder)
             .with_primitive(Primitive2DBuilder::new()
                 .with_mode(PolygonMode::Line)
                 .with_color(Color::YELLOW)
                 .with_type(PrimitiveType::Cube {})
-                .with_vertex(self.origin.clone())
-                .with_vertex(Vertex2D::new(self.origin.x + self.width, self.origin.y))
-                .with_vertex(Vertex2D::new(self.origin.x + self.width, self.origin.y + self.height))
-                .with_vertex(Vertex2D::new(self.origin.x, self.origin.y + self.height))
+                .with_vertex(origin.clone())
+                .with_vertex(Vertex2D::new(antipode.x, origin.y))
+                .with_vertex(antipode.clone())
+                .with_vertex(Vertex2D::new(origin.x, antipode.y))
                 .build());
-        self.panels.iter().for_each(|s| s.reassemble(builder));
-        self.widgets.iter().for_each(|w| w.reassemble(builder));
-    }
-
-    ///
-    /// determine if we need to redraw.
-    ///
-    pub fn is_redraw_necessary(&self) -> bool {
-        let redraw_panels = self.panels
-            .iter()
-            .filter(|p| p.is_redraw_necessary())
-            .map(|p| p.is_redraw_necessary())
-            .next()
-            .unwrap_or(false);
-        let redraw_widgets = self.widgets
-            .iter()
-            .filter(|w| w.redraw_necessary)
-            .map(|w| w.redraw_necessary)
-            .next()
-            .unwrap_or(false);
-        self.redraw_necessary || redraw_panels || redraw_widgets
+        // todo -----v
+        //self.panels.iter().for_each(|s| s.reassemble(builder));
+        //self.widgets.iter().for_each(|w| w.reassemble(builder));
     }
 
     ///
@@ -78,15 +52,6 @@ impl Panel {
         // todo: make this more efficient
         self.panels.iter().for_each(|p| p.handle_click(location));
         self.widgets.iter().for_each(|w| w.handle_click(location));
-    }
-
-    ///
-    /// resize the panel.
-    ///
-    pub fn resize(&mut self, dim: &Dimension2D) {
-        self.height = dim.height;
-        self.width = dim.width;
-        self.redraw_necessary = true;
     }
 }
 
@@ -103,10 +68,8 @@ pub struct PanelBuilder {
     the_layout: Option<Layout>,
 
     /* how this panel fits within it's parent area */
-    the_origin: Option<Vertex2D>,
-    the_external_vertical_sizing: Option<Sizing>,
-    the_external_horizontal_sizing: Option<Sizing>,
-    the_size: Option<Dimension2D>,
+    the_vertical_sizing: Option<Sizing>,
+    the_horizontal_sizing: Option<Sizing>,
 }
 
 impl PanelBuilder {
@@ -118,10 +81,8 @@ impl PanelBuilder {
             the_padding: None,
             the_layout: None,
 
-            the_origin: None,
-            the_external_vertical_sizing: None,
-            the_external_horizontal_sizing: None,
-            the_size: None,
+            the_vertical_sizing: None,
+            the_horizontal_sizing: None,
         }
     }
 
@@ -145,51 +106,33 @@ impl PanelBuilder {
         self
     }
 
-    pub fn with_origin(mut self, origin: Vertex2D) -> Self {
-        self.the_origin = Some(origin);
-        self
-    }
-
     pub fn with_vertical_sizing(mut self, sizing: Sizing) -> Self {
-        self.the_external_vertical_sizing = Some(sizing);
+        self.the_vertical_sizing = Some(sizing);
         self
     }
 
     pub fn with_horizontal_sizing(mut self, sizing: Sizing) -> Self {
-        self.the_external_horizontal_sizing = Some(sizing);
-        self
-    }
-
-    pub fn with_size(mut self, size: Dimension2D) -> Self {
-        self.the_size = Some(size);
+        self.the_horizontal_sizing = Some(sizing);
         self
     }
 
     pub fn build(self) -> Option<Panel> {
-        if self.the_origin.is_none() || self.the_size.is_none() {
+        if self.the_horizontal_sizing.is_none() || self.the_vertical_sizing.is_none() {
             return None;
         }
 
-        let origin = self.the_origin.unwrap();
-        let size = self.the_size.unwrap();
-        let external_vertical_sizing = self.the_external_horizontal_sizing.unwrap();
-        let external_horizontal_sizing = self.the_external_vertical_sizing.unwrap();
+        let vertical_sizing = self.the_horizontal_sizing.unwrap();
+        let horizontal_sizing = self.the_vertical_sizing.unwrap();
 
         let panel = Panel {
+            vertical_sizing,
+            horizontal_sizing,
+
             panels: self.the_panels,
             widgets: self.the_widgets,
 
             padding: self.the_padding.unwrap_or_else(|| 5.0),
             layout: self.the_layout.unwrap_or_else(|| Layout::Horizontal),
-            next: origin.clone(),
-
-            origin,
-            external_vertical_sizing,
-            external_horizontal_sizing,
-            width: size.width,
-            height: size.height,
-
-            redraw_necessary: true,
         };
 
         Some(panel)

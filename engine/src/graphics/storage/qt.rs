@@ -2,15 +2,15 @@
 //! this module represents the engine's implementation of a quadtree.
 //!
 
+use crate::graphics::storage::qt::screen::Screen;
 use std::collections::HashMap;
 use std::hash::Hash;
-use crate::geometry::dim::Dimension2D;
-use crate::graphics::storage::qt::panel::Panel;
 
 mod panel;
 mod widget;
 mod layout;
 mod sizing;
+mod screen;
 
 ///
 /// manager for 2d ui screens.
@@ -19,7 +19,7 @@ mod sizing;
 ///
 pub struct UIManager<K: Eq + Hash> {
     active: Option<K>,
-    screens: HashMap<K, Panel>,
+    screens: HashMap<K, Screen>,
 }
 
 impl<K: Eq + Hash> UIManager<K> {
@@ -52,18 +52,16 @@ impl<K: Eq + Hash> UIManager<K> {
     ///
     /// handle window/container resize.
     ///
-    pub fn resize(&mut self, dim: &Dimension2D) {
+    pub fn resize(&mut self) {
         self.screens
             .values_mut()
-            .for_each(|sizer| {
-                sizer.resize(dim);
-            });
+            .for_each(|screen| screen.resize());
     }
 
     ///
     /// add an ui.
     ///
-    pub fn add(&mut self, key: K, panel: Panel) {
-        self.screens.insert(key, panel);
+    pub fn add(&mut self, key: K, screen: Screen) {
+        self.screens.insert(key, screen);
     }
 }

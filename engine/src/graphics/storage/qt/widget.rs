@@ -1,36 +1,24 @@
-use crate::geometry::dim::Dimension2D;
 use crate::geometry::primitive::mode::PolygonMode;
 use crate::geometry::primitive::prim2d::Primitive2DBuilder;
-use crate::geometry::primitive::PrimitiveType;
 use crate::geometry::primitive::v2d::Vertex2D;
+use crate::geometry::primitive::PrimitiveType;
 use crate::graphics::color::Color;
 use crate::graphics::storage::m2d::Model2DBuilder;
+use crate::graphics::storage::qt::sizing::Sizing;
 
 ///
 /// a widget is any control that can be clicked on screen.
 ///
 pub struct Widget {
-    origin: Vertex2D,
-    size: Dimension2D,
+    /* representation of the requested size by the user for this element */
+    vertical_sizing: Sizing,
+    horizontal_sizing: Sizing,
 
+    /* how to handle when a click has registered */
     click_action: fn(pt: &Vertex2D),
-    
-    pub(super) redraw_necessary: bool,
 }
 
 impl Widget {
-    ///
-    /// create a new instance.
-    /// 
-    pub fn new(origin: Vertex2D, size: Dimension2D, click_action: fn(pt: &Vertex2D)) -> Self {
-        Widget {
-            origin,
-            size,
-            click_action,
-            redraw_necessary: true,
-        }
-    }
-
     ///
     /// handle click.
     ///
@@ -41,20 +29,16 @@ impl Widget {
     ///
     /// reassemble the control.
     ///
-    pub fn reassemble(&self, builder: &mut Model2DBuilder) {
-        if !self.redraw_necessary {
-            return;
-        }
-        
+    pub fn reassemble(&self, builder: &mut Model2DBuilder, origin: &Vertex2D, antipode: &Vertex2D) {
         std::mem::take(builder)
             .with_primitive(Primitive2DBuilder::new()
                 .with_mode(PolygonMode::Fill)
                 .with_color(Color::RED)
                 .with_type(PrimitiveType::Cube {})
-                .with_vertex(self.origin.clone())
-                .with_vertex(Vertex2D::new(self.origin.x + self.size.width, self.origin.y))
-                .with_vertex(Vertex2D::new(self.origin.x + self.size.width, self.origin.y + self.size.height))
-                .with_vertex(Vertex2D::new(self.origin.x, self.origin.y + self.size.height))
+                .with_vertex(origin.clone())
+                .with_vertex(Vertex2D::new(antipode.x, origin.y))
+                .with_vertex(antipode.clone())
+                .with_vertex(Vertex2D::new(origin.x, antipode.y))
                 .build());
     }
 }
@@ -63,27 +47,27 @@ impl Widget {
 /// fluent builder for easier creation of widgets.
 /// 
 pub struct WidgetBuilder {
-    the_origin: Option<Vertex2D>,
-    the_size: Option<Dimension2D>,
+    the_vertical_sizing: Option<Sizing>,
+    the_horizontal_sizing: Option<Sizing>,
     the_click_action: Option<fn(pt: &Vertex2D)>,
 }
 
 impl WidgetBuilder {
     pub fn new() -> Self {
         WidgetBuilder {
-            the_origin: None,
-            the_size: None,
+            the_vertical_sizing: None,
+            the_horizontal_sizing: None,
             the_click_action: None,
         }
     }
 
-    pub fn with_origin(mut self, origin: Vertex2D) -> Self {
-        self.the_origin = Some(origin);
+    pub fn with_vertical_sizing(mut self, sizing: Sizing) -> Self {
+        self.the_vertical_sizing = Some(sizing);
         self
     }
 
-    pub fn with_size(mut self, size: Dimension2D) -> Self {
-        self.the_size = Some(size);
+    pub fn with_horizontal_sizing(mut self, sizing: Sizing) -> Self {
+        self.the_horizontal_sizing = Some(sizing);
         self
     }
 
@@ -92,12 +76,21 @@ impl WidgetBuilder {
         self
     }
 
-    pub fn build(self) -> Widget {
-        Widget {
-            origin: self.the_origin.unwrap_or_else(|| Vertex2D::new(100.0, 100.0)),
-            size: self.the_size.unwrap_or_else(|| Dimension2D::new(100.0, 100.0)),
-            click_action: self.the_click_action.unwrap_or_else(|| |vertex|{}),
-            redraw_necessary: true,
+    pub fn build(self) -> Option<Widget> {
+        if self.the_horizontal_sizing.is_none() || self.the_vertical_sizing.is_none() {
+            return None;
         }
+
+        let vertical_sizing = self.the_horizontal_sizing.unwrap();
+        let horizontal_sizing = self.the_vertical_sizing.unwrap();
+
+        let widget = Widget {
+            vertical_sizing,
+            horizontal_sizing,
+
+            click_action: self.the_click_action.unwrap_or_else(|| |vertex|{}),
+        };
+
+        Some(widget)
     }
 }
