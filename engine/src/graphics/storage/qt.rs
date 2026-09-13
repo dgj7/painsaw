@@ -10,6 +10,7 @@ use crate::graphics::storage::qt::panel::Panel;
 mod panel;
 mod widget;
 mod layout;
+mod sizing;
 
 ///
 /// manager for 2d ui screens.

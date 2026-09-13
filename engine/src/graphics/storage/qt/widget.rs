@@ -15,7 +15,7 @@ pub struct Widget {
 
     click_action: fn(pt: &Vertex2D),
     
-    redraw_necessary: bool,
+    pub(super) redraw_necessary: bool,
 }
 
 impl Widget {
