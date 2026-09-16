@@ -21,14 +21,14 @@ impl Layout {
     }
 }
 
-fn horizontal(panel: &Panel) -> (Vertex2D, Dimension2D) {
+fn horizontal(_panel: &Panel) -> (Vertex2D, Dimension2D) {
     todo!()
 }
 
-fn vertical(panel: &Panel) -> (Vertex2D, Dimension2D) {
+fn vertical(_panel: &Panel) -> (Vertex2D, Dimension2D) {
     todo!()
 }
 
-fn grid(panel: &Panel) -> (Vertex2D, Dimension2D) {
+fn grid(_panel: &Panel) -> (Vertex2D, Dimension2D) {
     todo!()
 }

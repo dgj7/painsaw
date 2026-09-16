@@ -15,6 +15,7 @@ use std::sync::MutexGuard;
 use storage::g2d::Graph2D;
 use storage::g3d::Graph3D;
 use subsystem::RendererInfo;
+use crate::graphics::storage::qt::UIManager;
 
 pub mod camera;
 pub mod color;
@@ -68,6 +69,7 @@ impl RendererWrapper {
         camera: &Camera,
         timing: &EngineTiming,
         g2d: &mut Graph2D,
+        ui: &UIManager<u32>
     ) {
         /* track down the mouse position */
         let mouse_pos = input
@@ -79,7 +81,7 @@ impl RendererWrapper {
             .unwrap();
 
         /* render primitives */
-        self.subsystem.render_2d(g2d);
+        self.subsystem.render_2d(g2d, ui);
 
         /* conditional display */
         show_fps(g2d, timing, config);

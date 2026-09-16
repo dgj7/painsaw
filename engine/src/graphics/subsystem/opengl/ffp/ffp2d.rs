@@ -5,14 +5,15 @@
 use crate::geometry::primitive::prim2d::Primitive2D;
 use crate::graphics::camera::Camera;
 use crate::graphics::storage::g2d::Graph2D;
-use crate::graphics::subsystem::opengl::ffp::api::{gl_bind_texture, gl_blend_func, gl_color_4f, gl_disable, gl_enable, gl_end, gl_gen_textures, gl_hint, gl_load_identity, gl_matrix_mode, gl_ortho, gl_polygon_mode, gl_pop_attrib, gl_pop_matrix, gl_push_attrib, gl_push_matrix, gl_tex_coord_2f, gl_tex_env_f, gl_tex_image_2d, gl_tex_parameter_i, gl_tex_sub_image_2d, gl_vertex_2f};
-use crate::graphics::subsystem::opengl::ffp::util::gl_begin_quads;
+use crate::graphics::subsystem::opengl::ffp::api::{gl_bind_texture, gl_blend_func, gl_color_4f, gl_disable, gl_enable, gl_end, gl_gen_textures, gl_hint, gl_line_width, gl_load_identity, gl_matrix_mode, gl_ortho, gl_point_size, gl_polygon_mode, gl_pop_attrib, gl_pop_matrix, gl_push_attrib, gl_push_matrix, gl_tex_coord_2f, gl_tex_env_f, gl_tex_image_2d, gl_tex_parameter_i, gl_tex_sub_image_2d, gl_vertex_2f};
+use crate::graphics::subsystem::opengl::ffp::util::{gl_begin_line_strip, gl_begin_lines, gl_begin_points, gl_begin_quads};
 use crate::graphics::texture::t2d::Texture2D;
 use crate::support::logger::log;
 use crate::support::logger::log_level::LogLevel;
 use std::ffi::c_void;
 use glcore::{GL_DEPTH_TEST, GL_LINE_SMOOTH, GL_LINE_SMOOTH_HINT, GL_NICEST};
 use windows::Win32::Graphics::OpenGL::{GL_ALL_ATTRIB_BITS, GL_BLEND, GL_LIGHTING, GL_MODELVIEW, GL_NEAREST, GL_ONE_MINUS_SRC_ALPHA, GL_PROJECTION, GL_REPLACE, GL_RGBA, GL_SRC_ALPHA, GL_TEXTURE_2D, GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_TEXTURE_MAG_FILTER, GL_TEXTURE_MIN_FILTER, GL_UNSIGNED_BYTE};
+use crate::geometry::primitive::PrimitiveType;
 
 pub(crate) fn ffp_2d_setup(camera: &Camera) {
     /* save prior state before 2d rendering */
@@ -33,6 +34,15 @@ pub(crate) fn ffp_2d_teardown() {
     /* reset changes */
     gl_pop_attrib();
     gl_pop_matrix();
+}
+
+pub(crate) fn ffp_render_2d_primitive(primitive: &Primitive2D) {
+    match primitive.p_type {
+        PrimitiveType::Point { point_size } => { ffp_render_2d(primitive, || gl_point_size(point_size), gl_begin_points) }
+        PrimitiveType::Line { thickness } => { ffp_render_2d(primitive, || gl_line_width(thickness), gl_begin_lines) }
+        PrimitiveType::Cube {} => { ffp_render_2d(primitive, || {}, gl_begin_quads) }
+        PrimitiveType::LineStrip { thickness } => { ffp_render_2d(primitive, || gl_line_width(thickness), gl_begin_line_strip) }
+    }
 }
 
 pub(crate) fn ffp_render_2d(primitive: &Primitive2D, preparation: impl Fn(), begin: impl Fn()) {

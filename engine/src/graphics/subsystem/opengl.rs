@@ -2,10 +2,12 @@ use crate::geometry::primitive::PrimitiveType;
 use crate::graphics::camera::Camera;
 use crate::graphics::storage::g2d::Graph2D;
 use crate::graphics::storage::g3d::Graph3D;
+use crate::graphics::storage::gxd::Models;
+use crate::graphics::storage::qt::UIManager;
 use crate::graphics::subsystem::opengl::ffp::api::{gl_line_width, gl_point_size};
-use crate::graphics::subsystem::opengl::ffp::ffp2d::{ffp_2d_initialize_textures, ffp_2d_update_textures, ffp_render_2d};
+use crate::graphics::subsystem::opengl::ffp::ffp2d::{ffp_2d_initialize_textures, ffp_2d_update_textures, ffp_render_2d_primitive};
 use crate::graphics::subsystem::opengl::ffp::ffp3d::{ffp_3d_setup, ffp_3d_teardown, ffp_render_3d};
-use crate::graphics::subsystem::opengl::ffp::util::{gl_begin_line_strip, gl_begin_lines, gl_begin_points, gl_begin_quads};
+use crate::graphics::subsystem::opengl::ffp::util::{gl_begin_lines, gl_begin_points, gl_begin_quads};
 use crate::graphics::subsystem::opengl::ffp::{ffp_before_scene, ffp_resize};
 use crate::graphics::subsystem::RendererInfo;
 use crate::graphics::subsystem::{OpenGLPipeline, RenderingSubSystemHandle};
@@ -14,7 +16,6 @@ use ffp::ffp2d::{
     ffp_2d_setup, ffp_2d_teardown, ffp_render_2d_texture,
 };
 use windows::Win32::Graphics::OpenGL::{GL_RENDERER, GL_VENDOR, GL_VERSION};
-use crate::graphics::storage::gxd::Models;
 
 pub(crate) mod errors;
 pub mod ffp;
@@ -69,19 +70,15 @@ impl RenderingSubSystemHandle for OpenGLHandle {
         }
     }
 
-    fn render_2d(&self, g2d: &mut Graph2D) {
+    fn render_2d(&self, g2d: &mut Graph2D, ui: &UIManager<u32>) {
         match self.pipeline {
             OpenGLPipeline::FixedFunction => {
+                /* render any 2d objects, not including the ui */
                 for (_, model) in g2d.iter() {
                     if !model.visible { continue; }
 
                     for primitive in model.primitives.iter() {
-                        match primitive.p_type {
-                            PrimitiveType::Point { point_size } => { ffp_render_2d(primitive, || gl_point_size(point_size), gl_begin_points) }
-                            PrimitiveType::Line { thickness } => { ffp_render_2d(primitive, || gl_line_width(thickness), gl_begin_lines) }
-                            PrimitiveType::Cube {} => { ffp_render_2d(primitive, || {}, gl_begin_quads) }
-                            PrimitiveType::LineStrip { thickness } => { ffp_render_2d(primitive, || gl_line_width(thickness), gl_begin_line_strip) }
-                        }
+                        ffp_render_2d_primitive(primitive);
                     }
 
                     model
@@ -90,6 +87,15 @@ impl RenderingSubSystemHandle for OpenGLHandle {
                         .filter(|x| x.initialized)
                         .for_each(|x| ffp_render_2d_texture(x));
                 }
+
+                /* render the currently activated ui, if there is one */
+                ui.check()
+                    .inspect(|view| {
+                    view.model
+                        .primitives
+                        .iter()
+                        .for_each(|primitive| { ffp_render_2d_primitive(primitive) })
+                });
             }
             OpenGLPipeline::ProgrammableShader => {}
         }

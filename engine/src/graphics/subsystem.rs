@@ -8,6 +8,7 @@ use crate::graphics::camera::Camera;
 use crate::graphics::storage::g2d::Graph2D;
 use crate::graphics::storage::g3d::Graph3D;
 use crate::graphics::storage::gxd::Models;
+use crate::graphics::storage::qt::UIManager;
 use crate::graphics::subsystem::opengl::OpenGLHandle;
 
 pub mod opengl;
@@ -41,7 +42,7 @@ pub trait RenderingSubSystemHandle {
     fn before_scene(&self, camera: &Camera);
 
     fn prepare_2d(&self, camera: &Camera, g2d: &mut Graph2D);
-    fn render_2d(&self, g2d: &mut Graph2D);
+    fn render_2d(&self, g2d: &mut Graph2D, ui: &UIManager<u32>);
     fn after_2d(&self);
 
     fn prepare_3d(&self, camera: &Camera);

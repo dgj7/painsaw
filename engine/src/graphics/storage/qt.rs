@@ -5,13 +5,14 @@
 use crate::graphics::storage::qt::view::View;
 use std::collections::HashMap;
 use std::hash::Hash;
+use crate::graphics::storage::g2d::Graph2D;
 use crate::input::screen::ScreenState;
 
-mod panel;
-mod widget;
-mod layout;
-mod sizing;
-mod view;
+pub mod panel;
+pub mod widget;
+pub mod layout;
+pub mod sizing;
+pub mod view;
 
 ///
 /// manager for 2d ui screens.
@@ -53,7 +54,7 @@ impl<K: Eq + Hash> UIManager<K> {
     ///
     /// handle window/container resize.
     ///
-    pub fn resize(&mut self, screen: &ScreenState) {
+    pub fn resize(&mut self, screen: &ScreenState, _g2d: &mut Graph2D) {
         self.views
             .values_mut()
             .for_each(|view| view.resize(screen));
@@ -64,5 +65,17 @@ impl<K: Eq + Hash> UIManager<K> {
     ///
     pub fn add(&mut self, key: K, view: View) {
         self.views.insert(key, view);
+    }
+
+    ///
+    /// get the active ui, if one is available.
+    ///
+    pub fn check(&self) -> Option<&View> {
+        match self.active {
+            None => None,
+            Some(ref active) => {
+                self.views.get(active)
+            }
+        }
     }
 }

@@ -31,6 +31,7 @@ use windows::Win32::UI::WindowsAndMessaging::{
 };
 use windows_core::{HSTRING, PCWSTR};
 use crate::graphics::storage::gxd::Models;
+use crate::graphics::storage::qt::UIManager;
 
 pub mod errors;
 pub mod events;
@@ -60,7 +61,7 @@ impl Window for MsWinWindow {
         let mut camera = Camera::new(ScreenState::from(&self.key));
         let mut timing = EngineTiming::new(&config.renderer);
         let mut renderer = RendererWrapper::new(self.grss.clone());
-        let mut models = Models::new(Graph2D::new(), Graph3D::new());
+        let mut models = Models::new(UIManager::<u32>::new(), Graph2D::new(), Graph3D::new());
 
         /* initialize client renderer, if necessary */
         game.initialize_world(&camera, &mut renderer, &mut models);

@@ -3,7 +3,7 @@ use crate::geometry::primitive::prim2d::Primitive2DBuilder;
 use crate::geometry::primitive::v2d::Vertex2D;
 use crate::geometry::primitive::PrimitiveType;
 use crate::graphics::color::Color;
-use crate::graphics::storage::m2d::Model2DBuilder;
+use crate::graphics::storage::m2d::{Model2D, Model2DBuilder};
 use crate::graphics::storage::qt::sizing::Sizing;
 
 ///
@@ -29,17 +29,17 @@ impl Widget {
     ///
     /// reassemble the control.
     ///
-    pub fn reassemble(&self, builder: &mut Model2DBuilder, origin: &Vertex2D, antipode: &Vertex2D) {
-        std::mem::take(builder)
-            .with_primitive(Primitive2DBuilder::new()
-                .with_mode(PolygonMode::Fill)
-                .with_color(Color::RED)
-                .with_type(PrimitiveType::Cube {})
-                .with_vertex(origin.clone())
-                .with_vertex(Vertex2D::new(antipode.x, origin.y))
-                .with_vertex(antipode.clone())
-                .with_vertex(Vertex2D::new(origin.x, antipode.y))
-                .build());
+    pub fn reassemble(&self, model: &mut Model2D, origin: &Vertex2D, antipode: &Vertex2D) {
+        model.primitives
+            .push(Primitive2DBuilder::new()
+            .with_mode(PolygonMode::Fill)
+            .with_color(Color::RED)
+            .with_type(PrimitiveType::Cube {})
+            .with_vertex(origin.clone())
+            .with_vertex(Vertex2D::new(antipode.x, origin.y))
+            .with_vertex(antipode.clone())
+            .with_vertex(Vertex2D::new(origin.x, antipode.y))
+            .build());
     }
 }
 
@@ -88,7 +88,7 @@ impl WidgetBuilder {
             vertical_sizing,
             horizontal_sizing,
 
-            click_action: self.the_click_action.unwrap_or_else(|| |vertex|{}),
+            click_action: self.the_click_action.unwrap_or_else(|| |_vertex|{}),
         };
 
         Some(widget)
