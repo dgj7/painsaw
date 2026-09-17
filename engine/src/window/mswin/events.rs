@@ -14,9 +14,7 @@ use crate::window::mswin::winapi::{
 };
 use std::sync::{Arc, Mutex};
 use windows::Win32::Foundation::{HWND, LPARAM, LRESULT, WPARAM};
-use windows::Win32::UI::Input::KeyboardAndMouse::{
-    VIRTUAL_KEY, VK_A, VK_D, VK_ESCAPE, VK_G, VK_M, VK_S, VK_W,
-};
+use windows::Win32::UI::Input::KeyboardAndMouse::{VIRTUAL_KEY, VK_0, VK_1, VK_2, VK_3, VK_4, VK_5, VK_6, VK_7, VK_8, VK_9, VK_A, VK_B, VK_C, VK_D, VK_E, VK_ESCAPE, VK_F, VK_G, VK_H, VK_I, VK_J, VK_K, VK_L, VK_M, VK_N, VK_O, VK_OEM_3, VK_P, VK_Q, VK_R, VK_S, VK_T, VK_U, VK_V, VK_W, VK_X, VK_Y, VK_Z};
 use windows::Win32::UI::Input::{HRAWINPUT, RAWINPUT, RAWINPUTHEADER, RID_INPUT, RIM_TYPEMOUSE};
 use windows::Win32::UI::WindowsAndMessaging::{
     WM_CLOSE, WM_CREATE, WM_DESTROY, WM_INPUT, WM_KEYDOWN, WM_KEYUP, WM_KILLFOCUS, WM_LBUTTONDOWN,
@@ -118,72 +116,87 @@ fn handle_message_if_applicable(
     match message {
         WM_KEYDOWN => {
             match VIRTUAL_KEY(wparam.0 as u16) {
-                VK_ESCAPE => {
-                    input
-                        .lock()
-                        .expect("todo: esc: down")
-                        .record_keyboard_change(KeyInputName::KeyEscape, KeyChange::Active { info: KeyInputInfo::unhandled(), }, );
-                    HANDLED
-                }
-                VK_A => {
-                    input.lock().expect("todo: a: down").record_keyboard_change(KeyInputName::KeyA, KeyChange::Active { info: KeyInputInfo::unhandled(), }, );
-                    HANDLED
-                }
-                VK_D => {
-                    input.lock().expect("todo: d: down").record_keyboard_change(KeyInputName::KeyD, KeyChange::Active { info: KeyInputInfo::unhandled(), }, );
-                    HANDLED
-                }
-                VK_G => {
-                    input.lock().expect("todo: g: down").record_keyboard_change(KeyInputName::KeyG, KeyChange::Active { info: KeyInputInfo::unhandled(), }, );
-                    HANDLED
-                }
-                VK_M => {
-                    input.lock().expect("todo: m: down").record_keyboard_change(KeyInputName::KeyM, KeyChange::Active { info: KeyInputInfo::unhandled(), }, );
-                    HANDLED
-                }
-                VK_S => {
-                    input.lock().expect("todo: s: down").record_keyboard_change(KeyInputName::KeyS, KeyChange::Active { info: KeyInputInfo::unhandled(), }, );
-                    HANDLED
-                }
-                VK_W => {
-                    input.lock().expect("todo: w: down").record_keyboard_change(KeyInputName::KeyW, KeyChange::Active { info: KeyInputInfo::unhandled(), }, );
-                    HANDLED
-                }
-                // todo: add remaining keys down
+                VK_ESCAPE => { input.lock().expect("todo: esc: down").record_keyboard_change(KeyInputName::KeyEscape, KeyChange::Active { info: KeyInputInfo::unhandled(), }, );HANDLED }
+                VK_OEM_3 => { input.lock().expect("todo: tilde: down").record_keyboard_change(KeyInputName::KeyTilde, KeyChange::Active { info: KeyInputInfo::unhandled(), }, );HANDLED }
+                VK_A => { input.lock().expect("todo: a: down").record_keyboard_change(KeyInputName::KeyA, KeyChange::Active { info: KeyInputInfo::unhandled(), }, );HANDLED }
+                VK_B => { input.lock().expect("todo: b: down").record_keyboard_change(KeyInputName::KeyB, KeyChange::Active { info: KeyInputInfo::unhandled(), }, );HANDLED }
+                VK_C => { input.lock().expect("todo: c: down").record_keyboard_change(KeyInputName::KeyC, KeyChange::Active { info: KeyInputInfo::unhandled(), }, );HANDLED }
+                VK_D => { input.lock().expect("todo: d: down").record_keyboard_change(KeyInputName::KeyD, KeyChange::Active { info: KeyInputInfo::unhandled(), }, );HANDLED }
+                VK_E => { input.lock().expect("todo: e: down").record_keyboard_change(KeyInputName::KeyE, KeyChange::Active { info: KeyInputInfo::unhandled(), }, );HANDLED }
+                VK_F => { input.lock().expect("todo: f: down").record_keyboard_change(KeyInputName::KeyF, KeyChange::Active { info: KeyInputInfo::unhandled(), }, );HANDLED }
+                VK_G => { input.lock().expect("todo: g: down").record_keyboard_change(KeyInputName::KeyG, KeyChange::Active { info: KeyInputInfo::unhandled(), }, );HANDLED }
+                VK_H => { input.lock().expect("todo: h: down").record_keyboard_change(KeyInputName::KeyH, KeyChange::Active { info: KeyInputInfo::unhandled(), }, );HANDLED }
+                VK_I => { input.lock().expect("todo: i: down").record_keyboard_change(KeyInputName::KeyI, KeyChange::Active { info: KeyInputInfo::unhandled(), }, );HANDLED }
+                VK_J => { input.lock().expect("todo: j: down").record_keyboard_change(KeyInputName::KeyJ, KeyChange::Active { info: KeyInputInfo::unhandled(), }, );HANDLED }
+                VK_K => { input.lock().expect("todo: k: down").record_keyboard_change(KeyInputName::KeyK, KeyChange::Active { info: KeyInputInfo::unhandled(), }, );HANDLED }
+                VK_L => { input.lock().expect("todo: l: down").record_keyboard_change(KeyInputName::KeyL, KeyChange::Active { info: KeyInputInfo::unhandled(), }, );HANDLED }
+                VK_M => { input.lock().expect("todo: m: down").record_keyboard_change(KeyInputName::KeyM, KeyChange::Active { info: KeyInputInfo::unhandled(), }, );HANDLED }
+                VK_N => { input.lock().expect("todo: n: down").record_keyboard_change(KeyInputName::KeyN, KeyChange::Active { info: KeyInputInfo::unhandled(), }, );HANDLED }
+                VK_O => { input.lock().expect("todo: o: down").record_keyboard_change(KeyInputName::KeyO, KeyChange::Active { info: KeyInputInfo::unhandled(), }, );HANDLED }
+                VK_P => { input.lock().expect("todo: p: down").record_keyboard_change(KeyInputName::KeyP, KeyChange::Active { info: KeyInputInfo::unhandled(), }, );HANDLED }
+                VK_Q => { input.lock().expect("todo: q: down").record_keyboard_change(KeyInputName::KeyQ, KeyChange::Active { info: KeyInputInfo::unhandled(), }, );HANDLED }
+                VK_R => { input.lock().expect("todo: r: down").record_keyboard_change(KeyInputName::KeyR, KeyChange::Active { info: KeyInputInfo::unhandled(), }, );HANDLED }
+                VK_S => { input.lock().expect("todo: s: down").record_keyboard_change(KeyInputName::KeyS, KeyChange::Active { info: KeyInputInfo::unhandled(), }, );HANDLED }
+                VK_T => { input.lock().expect("todo: t: down").record_keyboard_change(KeyInputName::KeyT, KeyChange::Active { info: KeyInputInfo::unhandled(), }, );HANDLED }
+                VK_U => { input.lock().expect("todo: u: down").record_keyboard_change(KeyInputName::KeyU, KeyChange::Active { info: KeyInputInfo::unhandled(), }, );HANDLED }
+                VK_V => { input.lock().expect("todo: v: down").record_keyboard_change(KeyInputName::KeyV, KeyChange::Active { info: KeyInputInfo::unhandled(), }, );HANDLED }
+                VK_W => { input.lock().expect("todo: w: down").record_keyboard_change(KeyInputName::KeyW, KeyChange::Active { info: KeyInputInfo::unhandled(), }, );HANDLED }
+                VK_X => { input.lock().expect("todo: x: down").record_keyboard_change(KeyInputName::KeyX, KeyChange::Active { info: KeyInputInfo::unhandled(), }, );HANDLED }
+                VK_Y => { input.lock().expect("todo: y: down").record_keyboard_change(KeyInputName::KeyY, KeyChange::Active { info: KeyInputInfo::unhandled(), }, );HANDLED }
+                VK_Z => { input.lock().expect("todo: z: down").record_keyboard_change(KeyInputName::KeyZ, KeyChange::Active { info: KeyInputInfo::unhandled(), }, );HANDLED }
+                VK_1 => { input.lock().expect("todo: 1: down").record_keyboard_change(KeyInputName::Key1, KeyChange::Active { info: KeyInputInfo::unhandled(), }, );HANDLED }
+                VK_2 => { input.lock().expect("todo: 2: down").record_keyboard_change(KeyInputName::Key2, KeyChange::Active { info: KeyInputInfo::unhandled(), }, );HANDLED }
+                VK_3 => { input.lock().expect("todo: 3: down").record_keyboard_change(KeyInputName::Key3, KeyChange::Active { info: KeyInputInfo::unhandled(), }, );HANDLED }
+                VK_4 => { input.lock().expect("todo: 4: down").record_keyboard_change(KeyInputName::Key4, KeyChange::Active { info: KeyInputInfo::unhandled(), }, );HANDLED }
+                VK_5 => { input.lock().expect("todo: 5: down").record_keyboard_change(KeyInputName::Key5, KeyChange::Active { info: KeyInputInfo::unhandled(), }, );HANDLED }
+                VK_6 => { input.lock().expect("todo: 6: down").record_keyboard_change(KeyInputName::Key6, KeyChange::Active { info: KeyInputInfo::unhandled(), }, );HANDLED }
+                VK_7 => { input.lock().expect("todo: 7: down").record_keyboard_change(KeyInputName::Key7, KeyChange::Active { info: KeyInputInfo::unhandled(), }, );HANDLED }
+                VK_8 => { input.lock().expect("todo: 8: down").record_keyboard_change(KeyInputName::Key8, KeyChange::Active { info: KeyInputInfo::unhandled(), }, );HANDLED }
+                VK_9 => { input.lock().expect("todo: 9: down").record_keyboard_change(KeyInputName::Key9, KeyChange::Active { info: KeyInputInfo::unhandled(), }, );HANDLED }
+                VK_0 => { input.lock().expect("todo: 0: down").record_keyboard_change(KeyInputName::Key0, KeyChange::Active { info: KeyInputInfo::unhandled(), }, );HANDLED }
                 _ => NOT_HANDLED,
             }
         }
         WM_KEYUP => {
             match VIRTUAL_KEY(wparam.0 as u16) {
-                VK_ESCAPE => {
-                    input.lock().expect("todo: esc: up").record_keyboard_change(KeyInputName::KeyEscape, KeyChange::Inactive { info: KeyInputInfo::unhandled(), }, );
-                    HANDLED
-                }
-                VK_A => {
-                    input.lock().expect("todo: a: up").record_keyboard_change(KeyInputName::KeyA, KeyChange::Inactive { info: KeyInputInfo::unhandled(), }, );
-                    HANDLED
-                }
-                VK_D => {
-                    input.lock().expect("todo: d: up").record_keyboard_change(KeyInputName::KeyD, KeyChange::Inactive { info: KeyInputInfo::unhandled(), }, );
-                    HANDLED
-                }
-                VK_G => {
-                    input.lock().expect("todo: g: up").record_keyboard_change(KeyInputName::KeyG, KeyChange::Inactive { info: KeyInputInfo::unhandled(), }, );
-                    HANDLED
-                }
-                VK_M => {
-                    input.lock().expect("todo: m: up").record_keyboard_change(KeyInputName::KeyM, KeyChange::Inactive { info: KeyInputInfo::unhandled(), }, );
-                    HANDLED
-                }
-                VK_S => {
-                    input.lock().expect("todo: s: up").record_keyboard_change(KeyInputName::KeyS, KeyChange::Inactive { info: KeyInputInfo::unhandled(), }, );
-                    HANDLED
-                }
-                VK_W => {
-                    input.lock().expect("todo: w: up").record_keyboard_change(KeyInputName::KeyW, KeyChange::Inactive { info: KeyInputInfo::unhandled(), }, );
-                    HANDLED
-                }
-                // todo: add remaining keys up
+                VK_ESCAPE => { input.lock().expect("todo: esc: up").record_keyboard_change(KeyInputName::KeyEscape, KeyChange::Inactive { info: KeyInputInfo::unhandled(), }, );HANDLED }
+                VK_OEM_3 => { input.lock().expect("todo: tilde: up").record_keyboard_change(KeyInputName::KeyTilde, KeyChange::Inactive { info: KeyInputInfo::unhandled(), }, );HANDLED }
+                VK_A => { input.lock().expect("todo: a: up").record_keyboard_change(KeyInputName::KeyA, KeyChange::Inactive { info: KeyInputInfo::unhandled(), }, );HANDLED }
+                VK_B => { input.lock().expect("todo: b: up").record_keyboard_change(KeyInputName::KeyB, KeyChange::Inactive { info: KeyInputInfo::unhandled(), }, );HANDLED }
+                VK_C => { input.lock().expect("todo: c: up").record_keyboard_change(KeyInputName::KeyC, KeyChange::Inactive { info: KeyInputInfo::unhandled(), }, );HANDLED }
+                VK_D => { input.lock().expect("todo: d: up").record_keyboard_change(KeyInputName::KeyD, KeyChange::Inactive { info: KeyInputInfo::unhandled(), }, );HANDLED }
+                VK_E => { input.lock().expect("todo: e: up").record_keyboard_change(KeyInputName::KeyE, KeyChange::Inactive { info: KeyInputInfo::unhandled(), }, );HANDLED }
+                VK_F => { input.lock().expect("todo: f: up").record_keyboard_change(KeyInputName::KeyF, KeyChange::Inactive { info: KeyInputInfo::unhandled(), }, );HANDLED }
+                VK_G => { input.lock().expect("todo: g: up").record_keyboard_change(KeyInputName::KeyG, KeyChange::Inactive { info: KeyInputInfo::unhandled(), }, );HANDLED }
+                VK_H => { input.lock().expect("todo: h: up").record_keyboard_change(KeyInputName::KeyH, KeyChange::Inactive { info: KeyInputInfo::unhandled(), }, );HANDLED }
+                VK_I => { input.lock().expect("todo: i: up").record_keyboard_change(KeyInputName::KeyI, KeyChange::Inactive { info: KeyInputInfo::unhandled(), }, );HANDLED }
+                VK_J => { input.lock().expect("todo: j: up").record_keyboard_change(KeyInputName::KeyJ, KeyChange::Inactive { info: KeyInputInfo::unhandled(), }, );HANDLED }
+                VK_K => { input.lock().expect("todo: k: up").record_keyboard_change(KeyInputName::KeyK, KeyChange::Inactive { info: KeyInputInfo::unhandled(), }, );HANDLED }
+                VK_L => { input.lock().expect("todo: l: up").record_keyboard_change(KeyInputName::KeyL, KeyChange::Inactive { info: KeyInputInfo::unhandled(), }, );HANDLED }
+                VK_M => { input.lock().expect("todo: m: up").record_keyboard_change(KeyInputName::KeyM, KeyChange::Inactive { info: KeyInputInfo::unhandled(), }, );HANDLED }
+                VK_N => { input.lock().expect("todo: n: up").record_keyboard_change(KeyInputName::KeyN, KeyChange::Inactive { info: KeyInputInfo::unhandled(), }, );HANDLED }
+                VK_O => { input.lock().expect("todo: o: up").record_keyboard_change(KeyInputName::KeyO, KeyChange::Inactive { info: KeyInputInfo::unhandled(), }, );HANDLED }
+                VK_P => { input.lock().expect("todo: p: up").record_keyboard_change(KeyInputName::KeyP, KeyChange::Inactive { info: KeyInputInfo::unhandled(), }, );HANDLED }
+                VK_Q => { input.lock().expect("todo: q: up").record_keyboard_change(KeyInputName::KeyQ, KeyChange::Inactive { info: KeyInputInfo::unhandled(), }, );HANDLED }
+                VK_R => { input.lock().expect("todo: r: up").record_keyboard_change(KeyInputName::KeyR, KeyChange::Inactive { info: KeyInputInfo::unhandled(), }, );HANDLED }
+                VK_S => { input.lock().expect("todo: s: up").record_keyboard_change(KeyInputName::KeyS, KeyChange::Inactive { info: KeyInputInfo::unhandled(), }, );HANDLED }
+                VK_T => { input.lock().expect("todo: t: up").record_keyboard_change(KeyInputName::KeyT, KeyChange::Inactive { info: KeyInputInfo::unhandled(), }, );HANDLED }
+                VK_U => { input.lock().expect("todo: u: up").record_keyboard_change(KeyInputName::KeyU, KeyChange::Inactive { info: KeyInputInfo::unhandled(), }, );HANDLED }
+                VK_V => { input.lock().expect("todo: v: up").record_keyboard_change(KeyInputName::KeyV, KeyChange::Inactive { info: KeyInputInfo::unhandled(), }, );HANDLED }
+                VK_W => { input.lock().expect("todo: w: up").record_keyboard_change(KeyInputName::KeyW, KeyChange::Inactive { info: KeyInputInfo::unhandled(), }, );HANDLED }
+                VK_X => { input.lock().expect("todo: x: up").record_keyboard_change(KeyInputName::KeyX, KeyChange::Inactive { info: KeyInputInfo::unhandled(), }, );HANDLED }
+                VK_Y => { input.lock().expect("todo: y: up").record_keyboard_change(KeyInputName::KeyY, KeyChange::Inactive { info: KeyInputInfo::unhandled(), }, );HANDLED }
+                VK_Z => { input.lock().expect("todo: z: up").record_keyboard_change(KeyInputName::KeyZ, KeyChange::Inactive { info: KeyInputInfo::unhandled(), }, );HANDLED }
+                VK_1 => { input.lock().expect("todo: 1: up").record_keyboard_change(KeyInputName::Key1, KeyChange::Inactive { info: KeyInputInfo::unhandled(), }, );HANDLED }
+                VK_2 => { input.lock().expect("todo: 2: up").record_keyboard_change(KeyInputName::Key2, KeyChange::Inactive { info: KeyInputInfo::unhandled(), }, );HANDLED }
+                VK_3 => { input.lock().expect("todo: 3: up").record_keyboard_change(KeyInputName::Key3, KeyChange::Inactive { info: KeyInputInfo::unhandled(), }, );HANDLED }
+                VK_4 => { input.lock().expect("todo: 4: up").record_keyboard_change(KeyInputName::Key4, KeyChange::Inactive { info: KeyInputInfo::unhandled(), }, );HANDLED }
+                VK_5 => { input.lock().expect("todo: 5: up").record_keyboard_change(KeyInputName::Key5, KeyChange::Inactive { info: KeyInputInfo::unhandled(), }, );HANDLED }
+                VK_6 => { input.lock().expect("todo: 6: up").record_keyboard_change(KeyInputName::Key6, KeyChange::Inactive { info: KeyInputInfo::unhandled(), }, );HANDLED }
+                VK_7 => { input.lock().expect("todo: 7: up").record_keyboard_change(KeyInputName::Key7, KeyChange::Inactive { info: KeyInputInfo::unhandled(), }, );HANDLED }
+                VK_8 => { input.lock().expect("todo: 8: up").record_keyboard_change(KeyInputName::Key8, KeyChange::Inactive { info: KeyInputInfo::unhandled(), }, );HANDLED }
+                VK_9 => { input.lock().expect("todo: 9: up").record_keyboard_change(KeyInputName::Key9, KeyChange::Inactive { info: KeyInputInfo::unhandled(), }, );HANDLED }
+                VK_0 => { input.lock().expect("todo: 0: up").record_keyboard_change(KeyInputName::Key0, KeyChange::Inactive { info: KeyInputInfo::unhandled(), }, );HANDLED }
                 _ => NOT_HANDLED,
             }
         }
