@@ -11,6 +11,7 @@ pub struct CubeBuilder {
     the_width: Option<f32>,
     the_height: Option<f32>,
     the_depth: Option<f32>,
+    the_thickness: Option<f32>,
     the_color: Option<Color>,
     the_mode: Option<PolygonMode>,
     the_face: Option<PolygonFace>,
@@ -23,6 +24,7 @@ impl CubeBuilder {
             the_width: None,
             the_height: None,
             the_depth: None,
+            the_thickness: None,
             the_color: None,
             the_mode: None,
             the_face: None,
@@ -46,6 +48,11 @@ impl CubeBuilder {
 
     pub fn with_depth(mut self, the_depth: f32) -> CubeBuilder {
         self.the_depth = Some(the_depth);
+        self
+    }
+
+    pub fn with_thickness(mut self, the_thickness: f32) -> CubeBuilder {
+        self.the_thickness = Some(the_thickness);
         self
     }
 
@@ -76,6 +83,7 @@ impl CubeBuilder {
         let width = self.the_width.unwrap();
         let height = self.the_height.unwrap();
         let depth = self.the_depth.unwrap();
+        let thickness = self.the_thickness.unwrap_or_else(|| 1.0);
         let mode = self.the_mode.unwrap_or_else(|| PolygonMode::Line);
         let face = self.the_face.unwrap_or_else(|| PolygonFace::FrontAndBack);
         let mut vertices: Vec<Vertex3D> = vec![];
@@ -116,6 +124,6 @@ impl CubeBuilder {
         vertices.push(Vertex3D::new(-width, -height, -depth));
         vertices.push(Vertex3D::new(0.0, -height, -depth));
 
-        Some(Primitive3D::new(PrimitiveType::Cube {}, vertices, orientation, color, mode, face))
+        Some(Primitive3D::new(PrimitiveType::Cube { thickness }, vertices, orientation, color, mode, face))
     }
 }

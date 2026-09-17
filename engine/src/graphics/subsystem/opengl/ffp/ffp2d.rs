@@ -40,7 +40,7 @@ pub(crate) fn ffp_render_2d_primitive(primitive: &Primitive2D) {
     match primitive.p_type {
         PrimitiveType::Point { point_size } => { ffp_render_2d(primitive, || gl_point_size(point_size), gl_begin_points) }
         PrimitiveType::Line { thickness } => { ffp_render_2d(primitive, || gl_line_width(thickness), gl_begin_lines) }
-        PrimitiveType::Cube {} => { ffp_render_2d(primitive, || {}, gl_begin_quads) }
+        PrimitiveType::Cube { thickness } => { ffp_render_2d(primitive, || gl_line_width(thickness), gl_begin_quads) }
         PrimitiveType::LineStrip { thickness } => { ffp_render_2d(primitive, || gl_line_width(thickness), gl_begin_line_strip) }
     }
 }

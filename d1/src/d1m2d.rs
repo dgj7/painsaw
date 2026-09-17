@@ -150,7 +150,7 @@ pub(super) fn create_2d_greyed_overlay(visibility: bool, camera: &Camera) -> Mod
     Model2DBuilder::new()
         .with_visible(visibility)
         .with_primitive(Primitive2DBuilder::new()
-            .with_type(PrimitiveType::Cube {})
+            .with_type(PrimitiveType::Cube { thickness: 1.0 })
             .with_vertices(vec!(
                 Vertex2D::new(0.0, 0.0),
                 Vertex2D::new(camera.screen.current_client_dimensions.width, 0.0),

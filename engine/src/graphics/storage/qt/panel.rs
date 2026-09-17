@@ -38,7 +38,7 @@ impl Panel {
             .with_mode(PolygonMode::Line)
             .with_face(PolygonFace::FrontAndBack)
             .with_color(Color::YELLOW)
-            .with_type(PrimitiveType::Cube {})
+            .with_type(PrimitiveType::Cube { thickness: 3.0 })
             .with_vertex(origin.clone())
             .with_vertex(Vertex2D::new(antipode.x, origin.y))
             .with_vertex(antipode.clone())

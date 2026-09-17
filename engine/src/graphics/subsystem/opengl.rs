@@ -129,8 +129,8 @@ impl RenderingSubSystemHandle for OpenGLHandle {
                                 OpenGLPipeline::FixedFunction => ffp_render_3d(primitive, || gl_line_width(thickness), gl_begin_lines),
                                 OpenGLPipeline::ProgrammableShader => {}
                             },
-                            PrimitiveType::Cube {} => match self.pipeline {
-                                OpenGLPipeline::FixedFunction => ffp_render_3d(primitive, || {}, gl_begin_quads),
+                            PrimitiveType::Cube { thickness } => match self.pipeline {
+                                OpenGLPipeline::FixedFunction => ffp_render_3d(primitive, || gl_line_width(thickness), gl_begin_quads),
                                 OpenGLPipeline::ProgrammableShader => {}
                             },
                             PrimitiveType::LineStrip { .. } => {

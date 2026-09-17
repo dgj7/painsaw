@@ -34,7 +34,7 @@ impl Widget {
             .push(Primitive2DBuilder::new()
             .with_mode(PolygonMode::Fill)
             .with_color(Color::RED)
-            .with_type(PrimitiveType::Cube {})
+            .with_type(PrimitiveType::Cube { thickness: 1.0 })
             .with_vertex(origin.clone())
             .with_vertex(Vertex2D::new(antipode.x, origin.y))
             .with_vertex(antipode.clone())
