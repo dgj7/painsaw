@@ -5,7 +5,7 @@ use engine::graphics::storage::qt::attrib::sizing::Sizing;
 use engine::graphics::storage::qt::panel::PanelBuilder;
 use engine::graphics::storage::qt::view::{View, ViewBuilder};
 
-pub(crate) fn ui1(camera: &Camera) -> View {
+pub(super) fn ui1(camera: &Camera) -> View {
     ViewBuilder::new()
         .with_vertical_sizing(Sizing::Percentage { percent: 0.9 })
         .with_horizontal_sizing(Sizing::Percentage { percent: 0.9 })
