@@ -57,6 +57,17 @@ impl Panel {
         self.panels.iter().for_each(|p| p.handle_click(location));
         self.widgets.iter().for_each(|w| w.handle_click(location));
     }
+    
+    
+    pub fn compute_width(&self) -> f32 {
+        // todo: implement this
+        0.0
+    }
+    
+    pub fn compute_height(&self) -> f32 {
+        // todo: implement this
+        0.0 
+    }   
 }
 
 ///

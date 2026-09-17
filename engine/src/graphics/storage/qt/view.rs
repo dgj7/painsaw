@@ -1,7 +1,7 @@
-use std::fmt::Alignment;
 use crate::geometry::dim::Dimension2D;
 use crate::geometry::primitive::v2d::Vertex2D;
 use crate::graphics::storage::m2d::Model2D;
+use crate::graphics::storage::qt::attrib::align::Alignment;
 use crate::graphics::storage::qt::panel::Panel;
 use crate::graphics::storage::qt::attrib::sizing::Sizing;
 use crate::input::screen::ScreenState;
@@ -36,14 +36,36 @@ impl View {
     }
 }
 
-fn compute_origin(vertical_sizing: &Sizing, horizontal_sizing: &Sizing, vertical_alignment: &Alignment, horizontal_alignment: &Alignment, client: &Dimension2D) -> Vertex2D {
-    // todo: compute this correctly
-    Vertex2D { x: 100.0, y: 100.0 }
+fn compute_origin(vertical_sizing: &Sizing, horizontal_sizing: &Sizing, _vertical_alignment: &Alignment, horizontal_alignment: &Alignment, client: &Dimension2D) -> Vertex2D {
+    let width = horizontal_sizing.from_client_to_dimension(client.width);
+    let height = vertical_sizing.from_client_to_dimension(client.height);
+    let x = match horizontal_alignment {
+        Alignment::Minimum => 0.0,
+        Alignment::Center => (client.width / 2.0) - (width / 2.0),
+        Alignment::Maximum => client.width - width,
+    };
+    let y = match horizontal_alignment {
+        Alignment::Minimum => 0.0,
+        Alignment::Center => (client.height / 2.0) - (height / 2.0),
+        Alignment::Maximum => client.height - height,
+    };
+    Vertex2D { x, y }
 }
 
-fn compute_antipode(vertical_sizing: &Sizing, horizontal_sizing: &Sizing, vertical_alignment: &Alignment, horizontal_alignment: &Alignment, client: &Dimension2D) -> Vertex2D {
-    // todo: compute this correctly
-    Vertex2D { x: 300.0, y: 300.0 }
+fn compute_antipode(vertical_sizing: &Sizing, horizontal_sizing: &Sizing, vertical_alignment: &Alignment, _horizontal_alignment: &Alignment, client: &Dimension2D) -> Vertex2D {
+    let width = horizontal_sizing.from_client_to_dimension(client.width);
+    let height = vertical_sizing.from_client_to_dimension(client.height);
+    let x = match vertical_alignment {
+        Alignment::Minimum => width,
+        Alignment::Center => (client.width / 2.0) + (width / 2.0),
+        Alignment::Maximum => client.width,
+    };
+    let y = match vertical_alignment {
+        Alignment::Minimum => client.height - height,
+        Alignment::Center => (client.height / 2.0) + (height / 2.0),
+        Alignment::Maximum => client.height,
+    };
+    Vertex2D { x, y }
 }
 
 pub struct ViewBuilder {
