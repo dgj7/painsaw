@@ -4,7 +4,7 @@ use crate::geometry::primitive::v2d::Vertex2D;
 use crate::geometry::primitive::PrimitiveType;
 use crate::graphics::color::Color;
 use crate::graphics::storage::m2d::{Model2D, Model2DBuilder};
-use crate::graphics::storage::qt::sizing::Sizing;
+use crate::graphics::storage::qt::attrib::sizing::Sizing;
 
 ///
 /// a widget is any control that can be clicked on screen.

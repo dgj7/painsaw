@@ -3,7 +3,7 @@ use crate::geometry::dim::Dimension2D;
 use crate::geometry::primitive::v2d::Vertex2D;
 use crate::graphics::storage::m2d::Model2D;
 use crate::graphics::storage::qt::panel::Panel;
-use crate::graphics::storage::qt::sizing::Sizing;
+use crate::graphics::storage::qt::attrib::sizing::Sizing;
 use crate::input::screen::ScreenState;
 use crate::support::logger::log;
 use crate::support::logger::log_level::LogLevel;
