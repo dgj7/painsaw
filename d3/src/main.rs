@@ -8,6 +8,7 @@ mod d3ec;
 mod d3kh;
 mod d3mh;
 mod d3wc;
+mod d3ui;
 
 use engine::support::logger::{configure, log, LoggerConfig};
 use engine::support::logger::log_level::LogLevel;
