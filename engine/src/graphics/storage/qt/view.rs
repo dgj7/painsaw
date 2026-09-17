@@ -1,3 +1,4 @@
+use std::fmt::Alignment;
 use crate::geometry::dim::Dimension2D;
 use crate::geometry::primitive::v2d::Vertex2D;
 use crate::graphics::storage::m2d::Model2D;
@@ -15,33 +16,45 @@ pub struct View {
     pub model: Model2D,
 
     /* information relating to sizing of the screen and it's panel */
-    pub origin: Vertex2D,
-    pub vertical: Sizing,
-    pub horizontal: Sizing,
+    pub vertical_sizing: Sizing,
+    pub horizontal_sizing: Sizing,
+
+    pub vertical_alignment: Alignment,
+    pub horizontal_alignment: Alignment,
 }
 
 impl View {
     pub fn resize(&mut self, screen: &ScreenState) {
         let mut model = Model2D::new(vec!(), vec!(), true);
-        let antipode = compute_antipode(&self.vertical, &self.horizontal, &screen.current_client_dimensions);
+
+        let origin = compute_origin(&self.vertical_sizing, &self.horizontal_sizing, &self.vertical_alignment, &self.horizontal_alignment, &screen.current_client_dimensions);
+        let antipode = compute_antipode(&self.vertical_sizing, &self.horizontal_sizing, &self.vertical_alignment, &self.horizontal_alignment, &screen.current_client_dimensions);
         
-        self.panel.reassemble(&mut model, &self.origin, &antipode);
+        self.panel.reassemble(&mut model, &origin, &antipode);
         
         self.model = model;
     }
 }
 
-fn compute_antipode(vertical: &Sizing, horizontal: &Sizing, client: &Dimension2D) -> Vertex2D {
-    let x = horizontal.screen_dimension_to_actual(client.width);
-    let y = vertical.screen_dimension_to_actual(client.height);
-    Vertex2D { x, y }
+fn compute_origin(vertical_sizing: &Sizing, horizontal_sizing: &Sizing, vertical_alignment: &Alignment, horizontal_alignment: &Alignment, client: &Dimension2D) -> Vertex2D {
+    // todo: compute this correctly
+    Vertex2D { x: 100.0, y: 100.0 }
+}
+
+fn compute_antipode(vertical_sizing: &Sizing, horizontal_sizing: &Sizing, vertical_alignment: &Alignment, horizontal_alignment: &Alignment, client: &Dimension2D) -> Vertex2D {
+    // todo: compute this correctly
+    Vertex2D { x: 300.0, y: 300.0 }
 }
 
 pub struct ViewBuilder {
     the_panel: Option<Panel>,
-    the_origin: Option<Vertex2D>,
-    the_vertical: Option<Sizing>,
-    the_horizontal: Option<Sizing>,
+
+    the_vertical_sizing: Option<Sizing>,
+    the_horizontal_sizing: Option<Sizing>,
+
+    the_vertical_alignment: Option<Alignment>,
+    the_horizontal_alignment: Option<Alignment>,
+
     the_client_dimensions: Option<Dimension2D>,
 }
 
@@ -49,9 +62,13 @@ impl ViewBuilder {
     pub fn new() -> ViewBuilder {
         ViewBuilder {
             the_panel: None,
-            the_origin: None,
-            the_vertical: None,
-            the_horizontal: None,
+
+            the_vertical_sizing: None,
+            the_horizontal_sizing: None,
+
+            the_vertical_alignment: None,
+            the_horizontal_alignment: None,
+
             the_client_dimensions: None,
         }
     }
@@ -61,18 +78,23 @@ impl ViewBuilder {
         self
     }
 
-    pub fn with_origin(mut self, origin: Vertex2D) -> ViewBuilder {
-        self.the_origin = Some(origin);
+    pub fn with_vertical_sizing(mut self, vertical: Sizing) -> ViewBuilder {
+        self.the_vertical_sizing = Some(vertical);
         self
     }
 
-    pub fn with_vertical(mut self, vertical: Sizing) -> ViewBuilder {
-        self.the_vertical = Some(vertical);
+    pub fn with_horizontal_sizing(mut self, horizontal: Sizing) -> ViewBuilder {
+        self.the_horizontal_sizing = Some(horizontal);
         self
     }
 
-    pub fn with_horizontal(mut self, horizontal: Sizing) -> ViewBuilder {
-        self.the_horizontal = Some(horizontal);
+    pub fn with_vertical_alignment(mut self, alignment: Alignment) -> ViewBuilder {
+        self.the_vertical_alignment = Some(alignment);
+        self
+    }
+
+    pub fn with_horizontal_alignment(mut self, alignment: Alignment) -> ViewBuilder {
+        self.the_horizontal_alignment = Some(alignment);
         self
     }
     
@@ -84,7 +106,7 @@ impl ViewBuilder {
     pub fn build(self) -> Option<View> {
         /* none if required fields are missing */
         if self.the_panel.is_none() || self.the_client_dimensions.is_none() {
-            log(LogLevel::Warning, &|| String::from("panel or client dimensions not provided"));
+            log(LogLevel::Warning, &|| String::from("didn't provide panel or client"));
             return None;
         }
 
@@ -93,21 +115,24 @@ impl ViewBuilder {
         let client = self.the_client_dimensions.unwrap();
 
         /* pull optional fields, with replacements */
-        let origin = self.the_origin.unwrap_or_else(|| Vertex2D::origin());
-        let vertical = self.the_vertical.unwrap_or_else(|| Sizing::RemainingSpace {});
-        let horizontal = self.the_horizontal.unwrap_or_else(|| Sizing::RemainingSpace {});
+        let vertical_sizing = self.the_vertical_sizing.unwrap_or_else(|| Sizing::RemainingSpace {});
+        let horizontal_sizing = self.the_horizontal_sizing.unwrap_or_else(|| Sizing::RemainingSpace {});
+        let horizontal_alignment = self.the_horizontal_alignment.unwrap_or_else(|| Alignment::Center);
+        let vertical_alignment = self.the_vertical_alignment.unwrap_or_else(|| Alignment::Center);
 
         /* compute the model */
         let mut model = Model2D::new(vec!(), vec!(), true);
-        let antipode = compute_antipode(&vertical, &horizontal, &client);
+        let origin = compute_origin(&vertical_sizing, &horizontal_sizing, &vertical_alignment, &horizontal_alignment, &client);
+        let antipode = compute_antipode(&vertical_sizing, &horizontal_sizing, &vertical_alignment, &horizontal_alignment, &client);
         panel.reassemble(&mut model, &origin, &antipode);
 
         Some(View {
             panel,
             model,
-            origin,
-            vertical,
-            horizontal,
+            vertical_sizing,
+            horizontal_sizing,
+            horizontal_alignment,
+            vertical_alignment,
         })
     }
 }

@@ -15,9 +15,8 @@ impl WorldController for Demo3 {
     fn initialize_world_helper(&self, camera: &Camera, models: &mut Models) {
         /* 2d */
         models.ui.add(1, ViewBuilder::new()
-            .with_origin(Vertex2D::new(100.0, 100.0))
-            .with_vertical(Sizing::Exact { size: 300.0 })
-            .with_horizontal(Sizing::Exact { size: 300.0 })
+            .with_vertical_sizing(Sizing::Exact { size: 300.0 })
+            .with_horizontal_sizing(Sizing::Exact { size: 300.0 })
             .with_client_dimensions(camera.screen.current_client_dimensions.clone())
             .with_panel(PanelBuilder::new()
                 .with_padding(Sizing::Exact { size: 5.0 })
