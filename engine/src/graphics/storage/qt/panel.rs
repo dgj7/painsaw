@@ -7,21 +7,26 @@ use crate::graphics::color::Color;
 use crate::graphics::storage::m2d::Model2D;
 use crate::graphics::storage::qt::attrib::layout::Layout;
 use crate::graphics::storage::qt::attrib::sizing::Sizing;
+use crate::graphics::storage::qt::sr::SizingRequest;
 use crate::graphics::storage::qt::widget::Widget;
 use crate::support::logger::log;
 use crate::support::logger::log_level::LogLevel;
+use std::collections::HashMap;
 
 ///
 /// a panel is a container for other [Panel]s and [Control]s.
 ///
 pub struct Panel {
     /* nested panels and widgets */
-    panels: Vec<Panel>,
-    widgets: Vec<Widget>,
+    panels: HashMap<u32, Panel>,
+    widgets: HashMap<u32, Widget>,
 
-    /* representation of the requested size by the user for this element */
-    vertical_sizing: Sizing,
-    horizontal_sizing: Sizing,
+    /* store elements added to the panel; we need both of these so that we can support removal and addition of elements at runtime */
+    count: u32,
+    order: Vec<u32>,
+
+    /* requested size by the user for this panel */
+    sizing: SizingRequest,
 
     /* how nested elements fit within this panel */
     padding: Sizing,
@@ -44,8 +49,17 @@ impl Panel {
             .with_vertex(antipode.clone())
             .with_vertex(Vertex2D::new(origin.x, antipode.y));
         model.primitives.push(pb.build());
-        self.panels.iter().for_each(|panel| panel.reassemble(model, origin, antipode));
-        self.widgets.iter().for_each(|widget| widget.reassemble(model, origin, antipode));
+
+        for c in self.order.iter() {
+            if let Some(element) = self.element_at(*c) {
+                if let Some(panel) = element.0 {
+                    panel.reassemble(model, origin, antipode);
+                } else if let Some(widget) = element.1 {
+                    widget.reassemble(model, origin, antipode);
+                }
+            }
+        }
+
         log(LogLevel::Debug, &|| String::from("done reassembling panel"));
     }
 
@@ -54,20 +68,19 @@ impl Panel {
     ///
     pub fn handle_click(&self, location: &Vertex2D) {
         // todo: make this more efficient
-        self.panels.iter().for_each(|p| p.handle_click(location));
-        self.widgets.iter().for_each(|w| w.handle_click(location));
+        self.panels.iter().for_each(|(key, panel)| panel.handle_click(location));
+        self.widgets.iter().for_each(|(key, widget)| widget.handle_click(location));
     }
-    
-    
-    pub fn compute_width(&self) -> f32 {
-        // todo: implement this
-        0.0
+
+    fn element_at(&self, index: u32) -> Option<(Option<&Panel>, Option<&Widget>)> {
+        if self.panels.contains_key(&index) {
+            Some((self.panels.get(&index), None))
+        } else if self.widgets.contains_key(&index) {
+            Some((None, self.widgets.get(&index)))
+        } else {
+            None
+        }
     }
-    
-    pub fn compute_height(&self) -> f32 {
-        // todo: implement this
-        0.0 
-    }   
 }
 
 ///
@@ -75,39 +88,48 @@ impl Panel {
 ///
 pub struct PanelBuilder {
     /* nested panels and widgets */
-    the_panels: Vec<Panel>,
-    the_widgets: Vec<Widget>,
+    the_panels: HashMap<u32, Panel>,
+    the_widgets: HashMap<u32, Widget>,
+
+    /* elements added */
+    the_count: u32,
+    the_order: Vec<u32>,
 
     /* how nested elements fit within this panel */
     the_padding: Option<Sizing>,
     the_layout: Option<Layout>,
 
     /* how this panel fits within it's parent area */
-    the_vertical_sizing: Option<Sizing>,
-    the_horizontal_sizing: Option<Sizing>,
+    the_sizing: Option<SizingRequest>,
 }
 
 impl PanelBuilder {
     pub fn new() -> Self {
         PanelBuilder {
-            the_panels: vec!(),
-            the_widgets: vec!(),
+            the_panels: HashMap::new(),
+            the_widgets: HashMap::new(),
+
+            the_count: 0,
+            the_order: Vec::new(),
 
             the_padding: None,
             the_layout: None,
 
-            the_vertical_sizing: None,
-            the_horizontal_sizing: None,
+            the_sizing: None,
         }
     }
 
     pub fn with_panel(mut self, panel: Panel) -> Self {
-        self.the_panels.push(panel);
+        self.the_count = self.the_count + 1;
+        self.the_panels.insert(self.the_count, panel);
+        self.the_order.push(self.the_count);
         self
     }
 
     pub fn with_widget(mut self, widget: Widget) -> Self {
-        self.the_widgets.push(widget);
+        self.the_count = self.the_count + 1;
+        self.the_widgets.insert(self.the_count, widget);
+        self.the_order.push(self.the_count);
         self
     }
 
@@ -121,33 +143,22 @@ impl PanelBuilder {
         self
     }
 
-    pub fn with_vertical_sizing(mut self, sizing: Sizing) -> Self {
-        self.the_vertical_sizing = Some(sizing);
-        self
-    }
-
-    pub fn with_horizontal_sizing(mut self, sizing: Sizing) -> Self {
-        self.the_horizontal_sizing = Some(sizing);
+    pub fn with_sizing(mut self, sizing: SizingRequest) -> Self {
+        self.the_sizing = Some(sizing);
         self
     }
 
     pub fn build(self) -> Option<Panel> {
-        if self.the_horizontal_sizing.is_none() || self.the_vertical_sizing.is_none() {
-            return None;
-        }
-
-        let vertical_sizing = self.the_horizontal_sizing.unwrap();
-        let horizontal_sizing = self.the_vertical_sizing.unwrap();
-
         let panel = Panel {
-            vertical_sizing,
-            horizontal_sizing,
-
+            count: self.the_count,
+            order: self.the_order,
             panels: self.the_panels,
             widgets: self.the_widgets,
 
             padding: self.the_padding.unwrap_or_else(|| Sizing::Exact { size: 5.0 }),
             layout: self.the_layout.unwrap_or_else(|| Layout::Horizontal),
+
+            sizing: self.the_sizing.unwrap_or_else(|| SizingRequest::default()),
         };
 
         Some(panel)

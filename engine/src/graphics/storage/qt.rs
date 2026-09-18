@@ -12,6 +12,7 @@ pub mod panel;
 pub mod widget;
 pub mod view;
 pub mod attrib;
+pub mod sr;
 
 ///
 /// manager for 2d ui screens.
