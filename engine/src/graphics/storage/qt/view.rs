@@ -15,9 +15,8 @@ pub struct View {
 impl View {
     pub fn resize(&mut self, screen: &ScreenState) {
         let mut model = Model2D::new(vec!(), vec!(), true);
-        let origin = self.sizing.client_to_origin(&screen.current_client_dimensions);
-        let antipode = self.sizing.client_to_antipode(&screen.current_client_dimensions);
-        self.panel.reassemble(&mut model, &origin, &antipode);
+        let rectangle = self.sizing.client_to_sized_rectangle(&screen.current_client_dimensions);
+        self.panel.reassemble(&mut model, &rectangle);
         self.model = model;
     }
 }
@@ -68,9 +67,8 @@ impl ViewBuilder {
 
         /* compute the model */
         let mut model = Model2D::new(vec!(), vec!(), true);
-        let origin = sizing.client_to_origin(&client);
-        let antipode = sizing.client_to_antipode(&client);
-        panel.reassemble(&mut model, &origin, &antipode);
+        let rectangle = sizing.client_to_sized_rectangle(&client);
+        panel.reassemble(&mut model, &rectangle);
 
         Some(View {
             panel,

@@ -3,14 +3,13 @@ use crate::geometry::primitive::mode::PolygonMode;
 use crate::geometry::primitive::prim2d::Primitive2DBuilder;
 use crate::geometry::primitive::v2d::Vertex2D;
 use crate::geometry::primitive::PrimitiveType;
+use crate::geometry::rect::Rectangle2D;
 use crate::graphics::color::Color;
 use crate::graphics::storage::m2d::Model2D;
 use crate::graphics::storage::qt::attrib::layout::Layout;
 use crate::graphics::storage::qt::attrib::sizing::Sizing;
 use crate::graphics::storage::qt::sr::SizingRequest;
 use crate::graphics::storage::qt::widget::Widget;
-use crate::support::logger::log;
-use crate::support::logger::log_level::LogLevel;
 use std::collections::HashMap;
 
 ///
@@ -37,30 +36,30 @@ impl Panel {
     ///
     /// reassemble the panel's model via model builder.
     ///
-    pub fn reassemble(&self, model: &mut Model2D, origin: &Vertex2D, antipode: &Vertex2D) {
-        log(LogLevel::Debug, &|| format!("reassembling panel: ({},{}),({},{}),({},{}),({},{})", origin.x, origin.y, antipode.x, origin.y, antipode.x, antipode.y, origin.x, antipode.y));
+    pub fn reassemble(&self, model: &mut Model2D, rectangle: &Rectangle2D) {
         let pb = Primitive2DBuilder::new()
             .with_mode(PolygonMode::Line)
             .with_face(PolygonFace::FrontAndBack)
             .with_color(Color::YELLOW)
             .with_type(PrimitiveType::Cube { thickness: 3.0 })
-            .with_vertex(origin.clone())
-            .with_vertex(Vertex2D::new(antipode.x, origin.y))
-            .with_vertex(antipode.clone())
-            .with_vertex(Vertex2D::new(origin.x, antipode.y));
+            .with_vertex(rectangle.origin.clone())
+            .with_vertex(Vertex2D::new(rectangle.antipode.x, rectangle.origin.y))
+            .with_vertex(rectangle.antipode.clone())
+            .with_vertex(Vertex2D::new(rectangle.origin.x, rectangle.antipode.y));
         model.primitives.push(pb.build());
 
         for c in self.order.iter() {
             if let Some(element) = self.element_at(*c) {
+                // todo: create a (mut) rectangle here that has the *remaining* space in the container, NOT counting padding, so we can shrink it each time
                 if let Some(panel) = element.0 {
-                    panel.reassemble(model, origin, antipode);
+                    // todo: need to create NEW rectangle here
+                    panel.reassemble(model, rectangle);
                 } else if let Some(widget) = element.1 {
-                    widget.reassemble(model, origin, antipode);
+                    // todo: need to create NEW rectangle here
+                    widget.reassemble(model, rectangle);
                 }
             }
         }
-
-        log(LogLevel::Debug, &|| String::from("done reassembling panel"));
     }
 
     ///

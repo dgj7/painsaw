@@ -2,6 +2,7 @@ use crate::geometry::primitive::mode::PolygonMode;
 use crate::geometry::primitive::prim2d::Primitive2DBuilder;
 use crate::geometry::primitive::v2d::Vertex2D;
 use crate::geometry::primitive::PrimitiveType;
+use crate::geometry::rect::Rectangle2D;
 use crate::graphics::color::Color;
 use crate::graphics::storage::m2d::Model2D;
 use crate::graphics::storage::qt::sr::SizingRequest;
@@ -25,16 +26,16 @@ impl Widget {
     ///
     /// reassemble the control.
     ///
-    pub fn reassemble(&self, model: &mut Model2D, origin: &Vertex2D, antipode: &Vertex2D) {
+    pub fn reassemble(&self, model: &mut Model2D, rectangle: &Rectangle2D) {
         model.primitives
             .push(Primitive2DBuilder::new()
             .with_mode(PolygonMode::Fill)
             .with_color(Color::RED)
             .with_type(PrimitiveType::Cube { thickness: 1.0 })
-            .with_vertex(origin.clone())
-            .with_vertex(Vertex2D::new(antipode.x, origin.y))
-            .with_vertex(antipode.clone())
-            .with_vertex(Vertex2D::new(origin.x, antipode.y))
+            .with_vertex(rectangle.origin.clone())
+            .with_vertex(Vertex2D::new(rectangle.antipode.x, rectangle.origin.y))
+            .with_vertex(rectangle.antipode.clone())
+            .with_vertex(Vertex2D::new(rectangle.origin.x, rectangle.antipode.y))
             .build());
     }
 }

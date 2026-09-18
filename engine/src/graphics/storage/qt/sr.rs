@@ -1,5 +1,6 @@
 use crate::geometry::dim::Dimension2D;
 use crate::geometry::primitive::v2d::Vertex2D;
+use crate::geometry::rect::Rectangle2D;
 use crate::graphics::storage::qt::attrib::align::Alignment;
 use crate::graphics::storage::qt::attrib::sizing::Sizing;
 
@@ -15,7 +16,15 @@ pub struct SizingRequest {
 }
 
 impl SizingRequest {
-    pub(super) fn client_to_origin(&self, client: &Dimension2D) -> Vertex2D {
+    pub(super) fn diagonals_to_width(&self, origin: &Vertex2D, antipode: &Vertex2D) -> f32 {
+        antipode.x - origin.x
+    }
+
+    pub(super) fn diagonals_to_height(&self, origin: &Vertex2D, antipode: &Vertex2D) -> f32 {
+        antipode.y - origin.y
+    }
+    
+    fn client_to_origin(&self, client: &Dimension2D) -> Vertex2D {
         let width = self.horizontal_sizing.from_client_to_dimension(client.width);
         let height = self.vertical_sizing.from_client_to_dimension(client.height);
         let x = match self.horizontal_alignment {
@@ -31,7 +40,7 @@ impl SizingRequest {
         Vertex2D { x, y }
     }
 
-    pub(super) fn client_to_antipode(&self, client: &Dimension2D) -> Vertex2D {
+    fn client_to_antipode(&self, client: &Dimension2D) -> Vertex2D {
         let width = self.horizontal_sizing.from_client_to_dimension(client.width);
         let height = self.vertical_sizing.from_client_to_dimension(client.height);
         let x = match self.horizontal_alignment {
@@ -45,6 +54,12 @@ impl SizingRequest {
             Alignment::Maximum => client.height,
         };
         Vertex2D { x, y }
+    }
+    
+    pub(super) fn client_to_sized_rectangle(&self, client: &Dimension2D) -> Rectangle2D {
+        let origin = self.client_to_origin(client);
+        let antipode = self.client_to_antipode(client);
+        Rectangle2D { origin, antipode }
     }
 }
 
@@ -95,7 +110,7 @@ impl SizingRequestBuilder {
         self.the_horizontal_alignment = Some(alignment);
         self
     }
-    
+
     pub fn build(self) -> SizingRequest {
         SizingRequest {
             vertical_sizing: self.the_vertical_sizing.unwrap_or_else(|| Sizing::RemainingSpace {}),

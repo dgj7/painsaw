@@ -129,7 +129,7 @@ pub(crate) fn create_rect2d_text(
     Option::from(text_2d_image(config.clone(), || {
         String::from(format!(
             "{}: ({:+08.2},{:+08.2}),({:+08.2},{:+08.2})",
-            label, rect.top_left.x, rect.top_left.y, rect.bottom_right.x, rect.bottom_right.y,
+            label, rect.origin.x, rect.origin.y, rect.antipode.x, rect.antipode.y,
         ))
     }))
 }
