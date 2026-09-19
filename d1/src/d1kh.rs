@@ -59,15 +59,13 @@ impl KeyHandler for Demo1 {
             self.showing_main_menu = !self.showing_main_menu;
 
             /* other variables get set based on whether the main menu should be displayed */
-            models.g2d.update(M2D_OVERLAY, |m| {
-                if self.showing_main_menu {
-                    show_mouse();
-                    m.visible = true;
-                } else {
-                    hide_mouse();
-                    m.visible = false;
-                }
-            });
+            if self.showing_main_menu {
+                show_mouse();
+                models.ui.activate(1);
+            } else {
+                hide_mouse();
+                models.ui.deactivate();
+            }
         }
     }
 

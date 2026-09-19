@@ -59,7 +59,7 @@ impl Assembled for Panel {
             .with_mode(PolygonMode::Line)
             .with_face(PolygonFace::FrontAndBack)
             .with_color(Color::YELLOW)
-            .with_type(PrimitiveType::Cube { thickness: 5.0 })
+            .with_type(PrimitiveType::Cube { thickness: 1.0 })
             .with_vertex(rectangle.origin.clone())
             .with_vertex(Vertex2D::new(rectangle.antipode.x, rectangle.origin.y))
             .with_vertex(rectangle.antipode.clone())
@@ -67,7 +67,7 @@ impl Assembled for Panel {
             .build());
         model.primitives.push(Primitive2DBuilder::new()
             .with_color(Color::GREEN)
-            .with_type(PrimitiveType::Point { point_size: 7.0 })
+            .with_type(PrimitiveType::Point { point_size: 3.0 })
             .with_vertex(rectangle.origin.clone())
             .build());
 

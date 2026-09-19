@@ -16,6 +16,7 @@ mod d1m2d;
 mod d1m3d;
 mod d1mh;
 pub mod d1wc;
+mod d1ui;
 
 fn main() {
     configure(LoggerConfig {

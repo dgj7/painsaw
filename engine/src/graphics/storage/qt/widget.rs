@@ -1,3 +1,4 @@
+use crate::geometry::primitive::mode::PolygonMode;
 use crate::geometry::primitive::prim2d::Primitive2DBuilder;
 use crate::geometry::primitive::v2d::Vertex2D;
 use crate::geometry::primitive::PrimitiveType;
@@ -28,9 +29,9 @@ impl Assembled for Widget {
     fn reassemble(&self, model: &mut Model2D, rectangle: &Rectangle2D) {
         model.primitives
             .push(Primitive2DBuilder::new()
-                //.with_mode(PolygonMode::Fill)
+                .with_mode(PolygonMode::Fill)
                 .with_color(Color::RED)
-                .with_type(PrimitiveType::Cube { thickness: 3.0 })
+                .with_type(PrimitiveType::Cube { thickness: 1.0 })
                 .with_vertex(rectangle.origin.clone())
                 .with_vertex(Vertex2D::new(rectangle.antipode.x, rectangle.origin.y))
                 .with_vertex(rectangle.antipode.clone())

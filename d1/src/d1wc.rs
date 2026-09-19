@@ -12,6 +12,7 @@ use engine::support::timing::EngineTiming;
 use engine::window::api::mouse::hide::hide_mouse;
 use engine::WorldController;
 use std::sync::{Arc, Mutex};
+use crate::d1ui::main_menu;
 
 pub static M2D_XY_PURPLE: &str = "1-2d-xy-purple";
 pub static M2D_X_HORIZ: &str = "2-2d-x-horizontal";
@@ -33,6 +34,10 @@ impl WorldController for Demo1 {
         models.g2d.attach(M2D_XY_PURPLE, create_2d_axes(&camera));
         models.g2d.attach(M2D_CROSSHAIRS, create_2d_crosshairs(&camera));
         models.g2d.attach(M2D_OVERLAY, create_2d_greyed_overlay(false, &camera));
+        
+        /* add ui and disable them */
+        models.ui.add(1, main_menu(camera));
+        models.ui.deactivate();
 
         //context.g2d.attach(M2D_X_HORIZ, create_2d_grid_x_lines(&context.camera));
         //context.g2d.attach(M2D_Y_VERT, create_2d_grid_y_lines(&context.camera));
@@ -61,6 +66,8 @@ impl WorldController for Demo1 {
                     models.g2d.update(M2D_XY_PURPLE, |e| *e = create_2d_axes(&camera));
                     models.g2d.update(M2D_CROSSHAIRS, |e| *e = create_2d_crosshairs(&camera));
                     models.g2d.update(M2D_OVERLAY, |e| *e = create_2d_greyed_overlay(self.showing_main_menu, &camera));
+
+                    models.ui.resize(&camera.screen, &mut models.g2d);
 
                     //models.g2d.update(M2D_X_HORIZ, |e| *e = create_2d_grid_x_lines(&camera));
                     //models.g2d.update(M2D_Y_VERT, |e| *e = create_2d_grid_y_lines(&camera));
