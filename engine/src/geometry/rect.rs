@@ -41,4 +41,12 @@ impl Rectangle2D {
     pub fn contains_rect_exclusive(&self, rectangle: &Rectangle2D) -> bool {
         self.contains_pt_exclusive(&rectangle.origin) && self.contains_pt_exclusive(&rectangle.antipode)
     }
+
+    pub fn to_x_diff(&self) -> f32 {
+        self.antipode.x - self.origin.x
+    }
+
+    pub fn to_y_diff(&self) -> f32 {
+        self.antipode.y - self.origin.y
+    }
 }

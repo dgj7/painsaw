@@ -11,6 +11,8 @@ use crate::graphics::storage::qt::attrib::sizing::Sizing;
 use crate::graphics::storage::qt::sr::SizingRequest;
 use crate::graphics::storage::qt::widget::Widget;
 use std::collections::HashMap;
+use crate::support::logger::log;
+use crate::support::logger::log_level::LogLevel;
 
 ///
 /// a panel is a container for other [Panel]s and [Control]s.
@@ -37,26 +39,35 @@ impl Panel {
     /// reassemble the panel's model via model builder.
     ///
     pub fn reassemble(&self, model: &mut Model2D, rectangle: &Rectangle2D) {
-        let pb = Primitive2DBuilder::new()
+        model.primitives.push(Primitive2DBuilder::new()
             .with_mode(PolygonMode::Line)
             .with_face(PolygonFace::FrontAndBack)
             .with_color(Color::YELLOW)
-            .with_type(PrimitiveType::Cube { thickness: 3.0 })
+            .with_type(PrimitiveType::Cube { thickness: 7.0 })
             .with_vertex(rectangle.origin.clone())
             .with_vertex(Vertex2D::new(rectangle.antipode.x, rectangle.origin.y))
             .with_vertex(rectangle.antipode.clone())
-            .with_vertex(Vertex2D::new(rectangle.origin.x, rectangle.antipode.y));
-        model.primitives.push(pb.build());
+            .with_vertex(Vertex2D::new(rectangle.origin.x, rectangle.antipode.y))
+            .build());
+        model.primitives.push(Primitive2DBuilder::new()
+            .with_color(Color::GREEN)
+            .with_type(PrimitiveType::Point { point_size: 20.0 })
+            .with_vertex(rectangle.origin.clone())
+            .build());
 
+        log(LogLevel::Info, &|| format!("panel assembled: origin=({},{}),antipode=({},{})", rectangle.origin.x, rectangle.origin.y, rectangle.antipode.x, rectangle.antipode.y));
+
+        let mut remaining = rectangle.clone();
         for c in self.order.iter() {
             if let Some(element) = self.element_at(*c) {
-                // todo: create a (mut) rectangle here that has the *remaining* space in the container, NOT counting padding, so we can shrink it each time
                 if let Some(panel) = element.0 {
-                    // todo: need to create NEW rectangle here
-                    panel.reassemble(model, rectangle);
+                    let next = self.layout.determine_next(rectangle, &panel.sizing, &self.padding);
+                    self.layout.subtract(&mut remaining, &next);
+                    panel.reassemble(model, &next);
                 } else if let Some(widget) = element.1 {
-                    // todo: need to create NEW rectangle here
-                    widget.reassemble(model, rectangle);
+                    let next = self.layout.determine_next(rectangle, &widget.sizing, &self.padding);
+                    self.layout.subtract(&mut remaining, &next);
+                    widget.reassemble(model, &next);
                 }
             }
         }

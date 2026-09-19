@@ -5,6 +5,7 @@ use engine::graphics::storage::qt::attrib::sizing::Sizing;
 use engine::graphics::storage::qt::panel::PanelBuilder;
 use engine::graphics::storage::qt::sr::SizingRequestBuilder;
 use engine::graphics::storage::qt::view::{View, ViewBuilder};
+use engine::graphics::storage::qt::widget::WidgetBuilder;
 
 pub(super) fn ui1(camera: &Camera) -> View {
     ViewBuilder::new()
@@ -41,10 +42,16 @@ pub(super) fn ui2(camera: &Camera) -> View {
         .with_panel(PanelBuilder::new()
             .with_padding(Sizing::Exact { size: 5.0 })
             .with_sizing(SizingRequestBuilder::new()
-                .with_horizontal_sizing(Sizing::Exact { size: 200.0 })
-                .with_vertical_sizing(Sizing::Exact { size: 200.0 })
+                .with_horizontal_sizing(Sizing::Exact { size: 100.0 })
+                .with_vertical_sizing(Sizing::Exact { size: 100.0 })
                 .build())
             .with_layout(Layout::Horizontal)
+            .with_widget(WidgetBuilder::new()
+                .with_sizing(SizingRequestBuilder::new()
+                    .with_horizontal_sizing(Sizing::Percentage { percent: 0.25 })
+                    .with_vertical_sizing(Sizing::Percentage { percent: 0.25 })
+                    .build())
+                .build())
             .build()
             .expect("panel: failed"))
 

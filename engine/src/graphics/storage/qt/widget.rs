@@ -6,12 +6,14 @@ use crate::geometry::rect::Rectangle2D;
 use crate::graphics::color::Color;
 use crate::graphics::storage::m2d::Model2D;
 use crate::graphics::storage::qt::sr::SizingRequest;
+use crate::support::logger::log;
+use crate::support::logger::log_level::LogLevel;
 
 ///
 /// a widget is any control that can be clicked on screen.
 ///
 pub struct Widget {
-    sizing: SizingRequest,              /* requested size by the user for this widget */
+    pub sizing: SizingRequest,              /* requested size by the user for this widget */
     click_action: fn(pt: &Vertex2D),    /* how to handle when a click has registered */
 }
 
@@ -29,14 +31,15 @@ impl Widget {
     pub fn reassemble(&self, model: &mut Model2D, rectangle: &Rectangle2D) {
         model.primitives
             .push(Primitive2DBuilder::new()
-            .with_mode(PolygonMode::Fill)
+            //.with_mode(PolygonMode::Fill)
             .with_color(Color::RED)
-            .with_type(PrimitiveType::Cube { thickness: 1.0 })
+            .with_type(PrimitiveType::Cube { thickness: 3.0 })
             .with_vertex(rectangle.origin.clone())
             .with_vertex(Vertex2D::new(rectangle.antipode.x, rectangle.origin.y))
             .with_vertex(rectangle.antipode.clone())
             .with_vertex(Vertex2D::new(rectangle.origin.x, rectangle.antipode.y))
             .build());
+        log(LogLevel::Info, &|| format!("widget assembled: origin=({},{}),antipode=({},{})", rectangle.origin.x, rectangle.origin.y, rectangle.antipode.x, rectangle.antipode.y));
     }
 }
 
