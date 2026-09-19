@@ -8,28 +8,24 @@ use crate::graphics::color::Color;
 use crate::graphics::storage::m2d::Model2D;
 use crate::graphics::storage::qt::attrib::layout::Layout;
 use crate::graphics::storage::qt::attrib::sizing::Sizing;
-use crate::graphics::storage::qt::sr::SizingRequest;
 use crate::graphics::storage::qt::widget::Widget;
-use std::collections::HashMap;
 use crate::support::logger::log;
 use crate::support::logger::log_level::LogLevel;
+use std::collections::HashMap;
 
 ///
 /// a panel is a container for other [Panel]s and [Control]s.
 ///
 pub struct Panel {
     /* nested panels and widgets */
-    panels: HashMap<u32, Panel>,
-    widgets: HashMap<u32, Widget>,
+    panels: HashMap<u32, (Panel, Sizing)>,
+    widgets: HashMap<u32, (Widget, Sizing)>,
 
     /* store elements added to the panel; we need both of these so that we can support removal and addition of elements at runtime */
     count: u32,
     order: Vec<u32>,
 
-    /* requested size by the user for this panel */
-    sizing: SizingRequest,
-
-    /* how nested elements fit within this panel */
+    /* how nested elements are rendered onto this panel */
     padding: Sizing,
     layout: Layout,
 }
@@ -59,13 +55,14 @@ impl Panel {
 
         let mut remaining = rectangle.clone();
         for c in self.order.iter() {
+            log(LogLevel::Info, &|| format!("remaining: o=({},{}),a=({},{})", remaining.origin.x, remaining.origin.y, remaining.antipode.x, remaining.antipode.y));
             if let Some(element) = self.element_at(*c) {
-                if let Some(panel) = element.0 {
-                    let next = self.layout.determine_next(rectangle, &panel.sizing, &self.padding);
+                if let Some((panel, sizing)) = element.0 {
+                    let next = self.layout.determine_next(rectangle, &remaining, sizing);
                     self.layout.subtract(&mut remaining, &next);
                     panel.reassemble(model, &next);
-                } else if let Some(widget) = element.1 {
-                    let next = self.layout.determine_next(rectangle, &widget.sizing, &self.padding);
+                } else if let Some((widget, sizing)) = element.1 {
+                    let next = self.layout.determine_next(rectangle, &remaining, sizing);
                     self.layout.subtract(&mut remaining, &next);
                     widget.reassemble(model, &next);
                 }
@@ -78,11 +75,11 @@ impl Panel {
     ///
     pub fn handle_click(&self, location: &Vertex2D) {
         // todo: make this more efficient
-        self.panels.iter().for_each(|(key, panel)| panel.handle_click(location));
-        self.widgets.iter().for_each(|(key, widget)| widget.handle_click(location));
+        self.panels.iter().for_each(|(key, (panel, _sizing))| panel.handle_click(location));
+        self.widgets.iter().for_each(|(key, (widget, _sizing))| widget.handle_click(location));
     }
 
-    fn element_at(&self, index: u32) -> Option<(Option<&Panel>, Option<&Widget>)> {
+    fn element_at(&self, index: u32) -> Option<(Option<&(Panel, Sizing)>, Option<&(Widget, Sizing)>)> {
         if self.panels.contains_key(&index) {
             Some((self.panels.get(&index), None))
         } else if self.widgets.contains_key(&index) {
@@ -98,8 +95,8 @@ impl Panel {
 ///
 pub struct PanelBuilder {
     /* nested panels and widgets */
-    the_panels: HashMap<u32, Panel>,
-    the_widgets: HashMap<u32, Widget>,
+    the_panels: HashMap<u32, (Panel, Sizing)>,
+    the_widgets: HashMap<u32, (Widget, Sizing)>,
 
     /* elements added */
     the_count: u32,
@@ -108,9 +105,6 @@ pub struct PanelBuilder {
     /* how nested elements fit within this panel */
     the_padding: Option<Sizing>,
     the_layout: Option<Layout>,
-
-    /* how this panel fits within it's parent area */
-    the_sizing: Option<SizingRequest>,
 }
 
 impl PanelBuilder {
@@ -124,21 +118,19 @@ impl PanelBuilder {
 
             the_padding: None,
             the_layout: None,
-
-            the_sizing: None,
         }
     }
 
-    pub fn with_panel(mut self, panel: Panel) -> Self {
+    pub fn with_panel(mut self, panel: Panel, sizing: Sizing) -> Self {
         self.the_count = self.the_count + 1;
-        self.the_panels.insert(self.the_count, panel);
+        self.the_panels.insert(self.the_count, (panel, sizing));
         self.the_order.push(self.the_count);
         self
     }
 
-    pub fn with_widget(mut self, widget: Widget) -> Self {
+    pub fn with_widget(mut self, widget: Widget, sizing: Sizing) -> Self {
         self.the_count = self.the_count + 1;
-        self.the_widgets.insert(self.the_count, widget);
+        self.the_widgets.insert(self.the_count, (widget, sizing));
         self.the_order.push(self.the_count);
         self
     }
@@ -153,12 +145,11 @@ impl PanelBuilder {
         self
     }
 
-    pub fn with_sizing(mut self, sizing: SizingRequest) -> Self {
-        self.the_sizing = Some(sizing);
-        self
-    }
-
     pub fn build(self) -> Option<Panel> {
+        if self.the_layout.is_none() {
+            return None;
+        }
+
         let panel = Panel {
             count: self.the_count,
             order: self.the_order,
@@ -166,9 +157,7 @@ impl PanelBuilder {
             widgets: self.the_widgets,
 
             padding: self.the_padding.unwrap_or_else(|| Sizing::Exact { size: 5.0 }),
-            layout: self.the_layout.unwrap_or_else(|| Layout::Horizontal),
-
-            sizing: self.the_sizing.unwrap_or_else(|| SizingRequest::default()),
+            layout: self.the_layout.unwrap(),
         };
 
         Some(panel)

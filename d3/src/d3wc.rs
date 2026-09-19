@@ -1,5 +1,5 @@
 use crate::d3::Demo3;
-use crate::d3ui::{ui1, ui2, ui3};
+use crate::d3ui::{ui1, ui2, ui3, ui4, ui5};
 use engine::graphics::camera::Camera;
 use engine::graphics::storage::gxd::Models;
 use engine::input::UserInput;
@@ -10,9 +10,11 @@ use std::sync::{Arc, Mutex};
 impl WorldController for Demo3 {
     fn initialize_world_helper(&self, camera: &Camera, models: &mut Models) {
         /* 2d */
-        //models.ui.add(1, ui1(camera));
+        models.ui.add(1, ui1(camera));
         models.ui.add(2, ui2(camera));
-        //models.ui.add(3, ui3(camera));
+        models.ui.add(3, ui3(camera));
+        models.ui.add(4, ui4(camera));
+        models.ui.add(5, ui5(camera));
 
         /* enable the first ui */
         models.ui.activate(1);

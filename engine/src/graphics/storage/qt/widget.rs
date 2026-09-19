@@ -1,11 +1,9 @@
-use crate::geometry::primitive::mode::PolygonMode;
 use crate::geometry::primitive::prim2d::Primitive2DBuilder;
 use crate::geometry::primitive::v2d::Vertex2D;
 use crate::geometry::primitive::PrimitiveType;
 use crate::geometry::rect::Rectangle2D;
 use crate::graphics::color::Color;
 use crate::graphics::storage::m2d::Model2D;
-use crate::graphics::storage::qt::sr::SizingRequest;
 use crate::support::logger::log;
 use crate::support::logger::log_level::LogLevel;
 
@@ -13,7 +11,6 @@ use crate::support::logger::log_level::LogLevel;
 /// a widget is any control that can be clicked on screen.
 ///
 pub struct Widget {
-    pub sizing: SizingRequest,              /* requested size by the user for this widget */
     click_action: fn(pt: &Vertex2D),    /* how to handle when a click has registered */
 }
 
@@ -47,21 +44,14 @@ impl Widget {
 /// fluent builder for easier creation of widgets.
 /// 
 pub struct WidgetBuilder {
-    the_sizing: Option<SizingRequest>,
     the_click_action: Option<fn(pt: &Vertex2D)>,
 }
 
 impl WidgetBuilder {
     pub fn new() -> Self {
         WidgetBuilder {
-            the_sizing: None,
             the_click_action: None,
         }
-    }
-
-    pub fn with_sizing(mut self, sizing: SizingRequest) -> Self {
-        self.the_sizing = Some(sizing);
-        self
     }
 
     pub fn with_click_action(mut self, click_action: fn(pt: &Vertex2D)) -> Self {
@@ -71,7 +61,6 @@ impl WidgetBuilder {
 
     pub fn build(self) -> Widget {
         Widget {
-            sizing: self.the_sizing.unwrap_or_else(|| SizingRequest::default()),
             click_action: self.the_click_action.unwrap_or_else(|| |_vertex|{}),
         }
     }

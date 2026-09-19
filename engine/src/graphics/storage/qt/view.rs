@@ -1,21 +1,29 @@
 use crate::geometry::dim::Dimension2D;
+use crate::geometry::primitive::v2d::Vertex2D;
+use crate::geometry::rect::Rectangle2D;
 use crate::graphics::storage::m2d::Model2D;
+use crate::graphics::storage::qt::attrib::align::Alignment;
+use crate::graphics::storage::qt::attrib::sizing::Sizing;
 use crate::graphics::storage::qt::panel::Panel;
-use crate::graphics::storage::qt::sr::SizingRequest;
 use crate::input::screen::ScreenState;
 use crate::support::logger::log;
 use crate::support::logger::log_level::LogLevel;
 
 pub struct View {
-    pub panel: Panel,           /* the main panel */
-    pub model: Model2D,         /* a renderable representation of the screen and it's main panel */
-    pub sizing: SizingRequest,  /* information relating to sizing of this view */
+    pub panel: Panel,                       /* the main panel */
+    pub model: Model2D,                     /* a renderable representation of the screen and it's main panel */
+
+    pub vertical_sizing: Sizing,            /* size of the view on screen, in both directions */
+    pub horizontal_sizing: Sizing,
+
+    pub vertical_alignment: Alignment,      /* alignment of the view on screen, in both directions */
+    pub horizontal_alignment: Alignment,
 }
 
 impl View {
     pub fn resize(&mut self, screen: &ScreenState) {
         let mut model = Model2D::new(vec!(), vec!(), true);
-        let rectangle = self.sizing.client_to_sized_rectangle(&screen.current_client_dimensions);
+        let rectangle = client_to_sized_rectangle(&screen.current_client_dimensions, &self.vertical_sizing, &self.horizontal_sizing, &self.vertical_alignment, &self.horizontal_alignment);
         self.panel.reassemble(&mut model, &rectangle);
         self.model = model;
     }
@@ -23,16 +31,28 @@ impl View {
 
 pub struct ViewBuilder {
     the_panel: Option<Panel>,
-    the_sizing: Option<SizingRequest>,
-    the_client_dimensions: Option<Dimension2D>,
+
+    the_vertical_sizing: Option<Sizing>,
+    the_horizontal_sizing: Option<Sizing>,
+
+    the_vertical_alignment: Option<Alignment>,
+    the_horizontal_alignment: Option<Alignment>,
+
+    the_window_dimensions: Option<Dimension2D>,
 }
 
 impl ViewBuilder {
     pub fn new() -> ViewBuilder {
         ViewBuilder {
             the_panel: None,
-            the_sizing: None,
-            the_client_dimensions: None,
+
+            the_vertical_sizing: None,
+            the_horizontal_sizing: None,
+
+            the_vertical_alignment: None,
+            the_horizontal_alignment: None,
+
+            the_window_dimensions: None,
         }
     }
 
@@ -41,39 +61,98 @@ impl ViewBuilder {
         self
     }
 
-    pub fn with_sizing_request(mut self, sizing_request: SizingRequest) -> ViewBuilder {
-        self.the_sizing = Some(sizing_request);
+    pub fn with_vertical_sizing(mut self, sizing: Sizing) -> ViewBuilder {
+        self.the_vertical_sizing = Some(sizing);
+        self
+    }
+
+    pub fn with_horizontal_sizing(mut self, sizing: Sizing) -> ViewBuilder {
+        self.the_horizontal_sizing = Some(sizing);
+        self
+    }
+
+    pub fn with_vertical_alignment(mut self, alignment: Alignment) -> ViewBuilder {
+        self.the_vertical_alignment = Some(alignment);
+        self
+    }
+
+    pub fn with_horizontal_alignment(mut self, alignment: Alignment) -> ViewBuilder {
+        self.the_horizontal_alignment = Some(alignment);
         self
     }
     
-    pub fn with_client_dimensions(mut self, dimensions: Dimension2D) -> ViewBuilder {
-        self.the_client_dimensions = Some(dimensions);
+    pub fn with_window_dimensions(mut self, dimensions: Dimension2D) -> ViewBuilder {
+        self.the_window_dimensions = Some(dimensions);
         self
     }
 
     pub fn build(self) -> Option<View> {
         /* none if required fields are missing */
-        if self.the_panel.is_none() || self.the_client_dimensions.is_none() {
+        if self.the_panel.is_none() || self.the_window_dimensions.is_none() {
             log(LogLevel::Warning, &|| String::from("didn't provide panel or client"));
             return None;
         }
 
         /* required fields */
         let panel = self.the_panel.unwrap();
-        let client = self.the_client_dimensions.unwrap();
+        let window = self.the_window_dimensions.unwrap();
 
         /* pull optional fields, with replacements */
-        let sizing = self.the_sizing.unwrap_or_else(|| SizingRequest::default());
+        let vertical_sizing = self.the_vertical_sizing.unwrap_or_else(|| Sizing::RemainingSpace {});
+        let horizontal_sizing = self.the_horizontal_sizing.unwrap_or_else(|| Sizing::RemainingSpace {});
+        let vertical_alignment = self.the_vertical_alignment.unwrap_or_else(|| Alignment::Center);
+        let horizontal_alignment = self.the_horizontal_alignment.unwrap_or_else(|| Alignment::Center);
 
         /* compute the model */
         let mut model = Model2D::new(vec!(), vec!(), true);
-        let rectangle = sizing.client_to_sized_rectangle(&client);
+        let rectangle = client_to_sized_rectangle(&window, &vertical_sizing, &horizontal_sizing, &vertical_alignment, &horizontal_alignment);
         panel.reassemble(&mut model, &rectangle);
 
         Some(View {
             panel,
             model,
-            sizing,
+            vertical_sizing,
+            horizontal_sizing,
+            vertical_alignment,
+            horizontal_alignment,
         })
     }
+}
+
+fn client_to_origin(window: &Dimension2D, vertical_sizing: &Sizing, horizontal_sizing: &Sizing, vertical_alignment: &Alignment, horizontal_alignment: &Alignment) -> Vertex2D {
+    let width = horizontal_sizing.container_to_dimension(window.width);
+    let height = vertical_sizing.container_to_dimension(window.height);
+    let x = match horizontal_alignment {
+        Alignment::Minimum => 0.0,
+        Alignment::Center => (window.width / 2.0) - (width / 2.0),
+        Alignment::Maximum => window.width - width,
+    };
+    let y = match vertical_alignment {
+        Alignment::Minimum => 0.0,
+        Alignment::Center => (window.height / 2.0) - (height / 2.0),
+        Alignment::Maximum => window.height - height,
+    };
+    Vertex2D { x, y }
+}
+
+fn client_to_antipode(window: &Dimension2D, vertical_sizing: &Sizing, horizontal_sizing: &Sizing, vertical_alignment: &Alignment, horizontal_alignment: &Alignment) -> Vertex2D {
+    let width = horizontal_sizing.container_to_dimension(window.width);
+    let height = vertical_sizing.container_to_dimension(window.height);
+    let x = match horizontal_alignment {
+        Alignment::Minimum => width,
+        Alignment::Center => (window.width / 2.0) + (width / 2.0),
+        Alignment::Maximum => window.width,
+    };
+    let y = match vertical_alignment {
+        Alignment::Minimum => window.height - height,
+        Alignment::Center => (window.height / 2.0) + (height / 2.0),
+        Alignment::Maximum => window.height,
+    };
+    Vertex2D { x, y }
+}
+
+fn client_to_sized_rectangle(window: &Dimension2D, vertical_sizing: &Sizing, horizontal_sizing: &Sizing, vertical_alignment: &Alignment, horizontal_alignment: &Alignment) -> Rectangle2D {
+    let origin = client_to_origin(window, vertical_sizing, horizontal_sizing, vertical_alignment, horizontal_alignment);
+    let antipode = client_to_antipode(window, vertical_sizing, horizontal_sizing, vertical_alignment, horizontal_alignment);
+    Rectangle2D { origin, antipode }
 }

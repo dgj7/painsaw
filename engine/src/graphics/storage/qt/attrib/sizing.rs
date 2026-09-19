@@ -7,11 +7,11 @@ pub enum Sizing {
 }
 
 impl Sizing {
-    pub fn from_client_to_dimension(&self, client_dimension: f32) -> f32 {
+    pub fn container_to_dimension(&self, container_dimension: f32) -> f32 {
         match self {
             Sizing::Exact { size } => { *size },
-            Sizing::Percentage { percent } => {client_dimension * percent },
-            Sizing::RemainingSpace {} => {client_dimension },
+            Sizing::Percentage { percent } => { container_dimension * percent },
+            Sizing::RemainingSpace {} => { container_dimension },
         }
     }
 }

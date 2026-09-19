@@ -1,5 +1,6 @@
 use crate::geometry::primitive::v2d::Vertex2D;
 use windows::Win32::Foundation::RECT;
+use crate::graphics::storage::qt::attrib::layout::Layout;
 
 #[derive(Clone, Debug)]
 pub struct Rectangle2D {
@@ -42,11 +43,27 @@ impl Rectangle2D {
         self.contains_pt_exclusive(&rectangle.origin) && self.contains_pt_exclusive(&rectangle.antipode)
     }
 
-    pub fn to_x_diff(&self) -> f32 {
+    pub fn to_width(&self) -> f32 {
         self.antipode.x - self.origin.x
     }
 
-    pub fn to_y_diff(&self) -> f32 {
+    pub fn to_height(&self) -> f32 {
         self.antipode.y - self.origin.y
+    }
+
+    ///
+    /// get the "other" dimension for a layout.
+    ///
+    /// vertical layouts always consume all the vertical space; we only
+    /// need to know how much width it consumes.
+    ///
+    /// horizontal layouts always consume all the horizontal space; we only
+    /// need to know how much height it consumes.
+    ///
+    pub fn to_other_dimension(&self, layout: &Layout) -> f32 {
+        match layout {
+            Layout::Horizontal { .. } => self.to_height(),
+            Layout::Vertical { .. } => self.to_width(),
+        }
     }
 }

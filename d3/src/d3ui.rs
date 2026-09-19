@@ -3,55 +3,126 @@ use engine::graphics::storage::qt::attrib::align::Alignment;
 use engine::graphics::storage::qt::attrib::layout::Layout;
 use engine::graphics::storage::qt::attrib::sizing::Sizing;
 use engine::graphics::storage::qt::panel::PanelBuilder;
-use engine::graphics::storage::qt::sr::SizingRequestBuilder;
 use engine::graphics::storage::qt::view::{View, ViewBuilder};
 use engine::graphics::storage::qt::widget::WidgetBuilder;
 
 pub(super) fn ui1(camera: &Camera) -> View {
     ViewBuilder::new()
-        .with_sizing_request(SizingRequestBuilder::new()
-            .with_vertical_sizing(Sizing::Percentage { percent: 0.9 })
-            .with_horizontal_sizing(Sizing::Percentage { percent: 0.9 })
-            .with_vertical_alignment(Alignment::Center)
-            .with_horizontal_alignment(Alignment::Center)
-            .build())
-        .with_client_dimensions(camera.screen.current_client_dimensions.clone())
+        .with_window_dimensions(camera.screen.current_client_dimensions.clone())
+        .with_vertical_sizing(Sizing::Percentage { percent: 0.6 })
+        .with_horizontal_sizing(Sizing::Percentage { percent: 0.2 })
+        .with_vertical_alignment(Alignment::Center)
+        .with_horizontal_alignment(Alignment::Center)
         .with_panel(PanelBuilder::new()
-            .with_padding(Sizing::Exact { size: 5.0 })
-            .with_sizing(SizingRequestBuilder::new()
-                .with_horizontal_sizing(Sizing::Exact { size: 200.0 })
-                .with_vertical_sizing(Sizing::Exact { size: 200.0 })
-                .build())
             .with_layout(Layout::Vertical)
+            .with_widget(WidgetBuilder::new()
+                             .build(),
+                         Sizing::Percentage { percent: 0.2 })
+            .with_widget(WidgetBuilder::new()
+                             .build(),
+                         Sizing::Percentage { percent: 0.2 })
+            .with_widget(WidgetBuilder::new()
+                             .build(),
+                         Sizing::Percentage { percent: 0.2 })
+            .with_widget(WidgetBuilder::new()
+                             .build(),
+                         Sizing::Percentage { percent: 0.2 })
+            .with_widget(WidgetBuilder::new()
+                             .build(),
+                         Sizing::Percentage { percent: 0.2 })
             .build()
-            .expect("panel: failed"))
-
+            .expect("V1P1: failed"))
         .build()
         .expect("view: failed")
 }
 
 pub(super) fn ui2(camera: &Camera) -> View {
     ViewBuilder::new()
-        .with_sizing_request(SizingRequestBuilder::new()
-            .with_vertical_sizing(Sizing::Exact { size: 350.0 })
-            .with_horizontal_sizing(Sizing::Exact { size: 600.0 })
-            .with_vertical_alignment(Alignment::Minimum)
-            .with_horizontal_alignment(Alignment::Minimum)
-            .build())
-        .with_client_dimensions(camera.screen.current_client_dimensions.clone())
+        .with_window_dimensions(camera.screen.current_client_dimensions.clone())
+        .with_vertical_sizing(Sizing::Percentage { percent: 0.9 })
+        .with_horizontal_sizing(Sizing::Percentage { percent: 0.9 })
+        .with_vertical_alignment(Alignment::Center)
+        .with_horizontal_alignment(Alignment::Center)
+        .with_panel(PanelBuilder::new()
+            .with_layout(Layout::Vertical)
+            .with_padding(Sizing::Exact { size: 5.0 })
+            .with_panel(PanelBuilder::new()
+                            .with_layout(Layout::Horizontal)
+                            .build()
+                            .expect("VP1P1: failed"),
+                        Sizing::Percentage { percent: 0.25 })
+            .with_panel(PanelBuilder::new()
+                            .with_layout(Layout::Horizontal)
+                            .build()
+                            .expect("VP1P2: failed"),
+                        Sizing::Percentage { percent: 0.25 })
+            .with_panel(PanelBuilder::new()
+                            .with_layout(Layout::Horizontal)
+                            .build()
+                            .expect("VP1P3: failed"),
+                        Sizing::Percentage { percent: 0.25 })
+            .with_panel(PanelBuilder::new()
+                            .with_layout(Layout::Horizontal)
+                            .build()
+                            .expect("VP1P4: failed"),
+                        Sizing::Percentage { percent: 0.25 })
+            .build()
+            .expect("VP1: failed"))
+
+        .build()
+        .expect("view failed")
+}
+
+pub(super) fn ui3(camera: &Camera) -> View {
+    ViewBuilder::new()
+        .with_window_dimensions(camera.screen.current_client_dimensions.clone())
+        .with_vertical_sizing(Sizing::Percentage { percent: 0.9 })
+        .with_horizontal_sizing(Sizing::Percentage { percent: 0.9 })
+        .with_vertical_alignment(Alignment::Center)
+        .with_horizontal_alignment(Alignment::Center)
+        .with_panel(PanelBuilder::new()
+            .with_layout(Layout::Horizontal)
+            .with_padding(Sizing::Exact { size: 5.0 })
+            .with_panel(PanelBuilder::new()
+                            .with_layout(Layout::Horizontal)
+                            .build()
+                            .expect("VP1P1: failed"),
+                        Sizing::Percentage { percent: 0.25 })
+            .with_panel(PanelBuilder::new()
+                            .with_layout(Layout::Horizontal)
+                            .build()
+                            .expect("VP1P2: failed"),
+                        Sizing::Percentage { percent: 0.25 })
+            .with_panel(PanelBuilder::new()
+                            .with_layout(Layout::Horizontal)
+                            .build()
+                            .expect("VP1P3: failed"),
+                        Sizing::Percentage { percent: 0.25 })
+            .with_panel(PanelBuilder::new()
+                            .with_layout(Layout::Horizontal)
+                            .build()
+                            .expect("VP1P4: failed"),
+                        Sizing::Percentage { percent: 0.25 })
+            .build()
+            .expect("VP1: failed"))
+
+        .build()
+        .expect("view failed")
+}
+
+pub(super) fn ui4(camera: &Camera) -> View {
+    ViewBuilder::new()
+        .with_window_dimensions(camera.screen.current_client_dimensions.clone())
+        .with_vertical_sizing(Sizing::Exact { size: 350.0 })
+        .with_horizontal_sizing(Sizing::Exact { size: 600.0 })
+        .with_vertical_alignment(Alignment::Minimum)
+        .with_horizontal_alignment(Alignment::Minimum)
         .with_panel(PanelBuilder::new()
             .with_padding(Sizing::Exact { size: 5.0 })
-            .with_sizing(SizingRequestBuilder::new()
-                .with_horizontal_sizing(Sizing::Exact { size: 100.0 })
-                .with_vertical_sizing(Sizing::Exact { size: 100.0 })
-                .build())
             .with_layout(Layout::Horizontal)
             .with_widget(WidgetBuilder::new()
-                .with_sizing(SizingRequestBuilder::new()
-                    .with_horizontal_sizing(Sizing::Percentage { percent: 0.25 })
-                    .with_vertical_sizing(Sizing::Percentage { percent: 0.25 })
-                    .build())
-                .build())
+                .build(),
+                Sizing::Percentage { percent: 0.25 })
             .build()
             .expect("panel: failed"))
 
@@ -59,21 +130,15 @@ pub(super) fn ui2(camera: &Camera) -> View {
         .expect("view: failed")
 }
 
-pub(super) fn ui3(camera: &Camera) -> View {
+pub(super) fn ui5(camera: &Camera) -> View {
     ViewBuilder::new()
-        .with_sizing_request(SizingRequestBuilder::new()
-            .with_vertical_sizing(Sizing::Percentage { percent: 0.36 })
-            .with_horizontal_sizing(Sizing::RemainingSpace {})
-            .with_vertical_alignment(Alignment::Maximum)
-            .with_horizontal_alignment(Alignment::Maximum)
-            .build())
-        .with_client_dimensions(camera.screen.current_client_dimensions.clone())
+        .with_window_dimensions(camera.screen.current_client_dimensions.clone())
+        .with_vertical_sizing(Sizing::Percentage { percent: 0.36 })
+        .with_horizontal_sizing(Sizing::RemainingSpace {})
+        .with_vertical_alignment(Alignment::Maximum)
+        .with_horizontal_alignment(Alignment::Maximum)
         .with_panel(PanelBuilder::new()
             .with_padding(Sizing::Exact { size: 5.0 })
-            .with_sizing(SizingRequestBuilder::new()
-                .with_horizontal_sizing(Sizing::Exact { size: 200.0 })
-                .with_vertical_sizing(Sizing::Exact { size: 200.0 })
-                .build())
             .with_layout(Layout::Vertical)
             .build()
             .expect("panel: failed"))
