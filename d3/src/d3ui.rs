@@ -14,24 +14,28 @@ pub(super) fn ui1(camera: &Camera) -> View {
         .with_vertical_alignment(Alignment::Center)
         .with_horizontal_alignment(Alignment::Center)
         .with_panel(PanelBuilder::new()
-            .with_layout(Layout::Vertical)
-            .with_widget(WidgetBuilder::new()
-                             .build(),
-                         Sizing::Percentage { percent: 0.2 })
-            .with_widget(WidgetBuilder::new()
-                             .build(),
-                         Sizing::Percentage { percent: 0.2 })
-            .with_widget(WidgetBuilder::new()
-                             .build(),
-                         Sizing::Percentage { percent: 0.2 })
-            .with_widget(WidgetBuilder::new()
-                             .build(),
-                         Sizing::Percentage { percent: 0.2 })
-            .with_widget(WidgetBuilder::new()
-                             .build(),
-                         Sizing::Percentage { percent: 0.2 })
+            .with_layout(Layout::Horizontal)
+            .with_panel(PanelBuilder::new()
+                .with_layout(Layout::Vertical)
+                .build()
+                .expect("VP1P1: failed"),
+            Sizing::Percentage { percent: 0.1 })
+            .with_panel(PanelBuilder::new()
+                .with_layout(Layout::Vertical)
+                .build()
+                .expect("VP1P2: failed"),
+            Sizing::Percentage { percent: 0.8 })
+            .with_panel(PanelBuilder::new()
+                .with_layout(Layout::Horizontal)
+                .build()
+                .expect("VP1P3: failed"),
+            Sizing::Percentage { percent: 0.1 })
             .build()
             .expect("V1P1: failed"))
+
+
+
+
         .build()
         .expect("view: failed")
 }

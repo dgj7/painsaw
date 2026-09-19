@@ -4,6 +4,7 @@ use crate::geometry::primitive::PrimitiveType;
 use crate::geometry::rect::Rectangle2D;
 use crate::graphics::color::Color;
 use crate::graphics::storage::m2d::Model2D;
+use crate::graphics::storage::qt::assembled::Assembled;
 use crate::support::logger::log;
 use crate::support::logger::log_level::LogLevel;
 
@@ -21,21 +22,20 @@ impl Widget {
     pub fn handle_click(&self, pt: &Vertex2D) {
         (self.click_action)(pt);
     }
-    
-    ///
-    /// reassemble the control.
-    ///
-    pub fn reassemble(&self, model: &mut Model2D, rectangle: &Rectangle2D) {
+}
+
+impl Assembled for Widget {
+    fn reassemble(&self, model: &mut Model2D, rectangle: &Rectangle2D) {
         model.primitives
             .push(Primitive2DBuilder::new()
-            //.with_mode(PolygonMode::Fill)
-            .with_color(Color::RED)
-            .with_type(PrimitiveType::Cube { thickness: 3.0 })
-            .with_vertex(rectangle.origin.clone())
-            .with_vertex(Vertex2D::new(rectangle.antipode.x, rectangle.origin.y))
-            .with_vertex(rectangle.antipode.clone())
-            .with_vertex(Vertex2D::new(rectangle.origin.x, rectangle.antipode.y))
-            .build());
+                //.with_mode(PolygonMode::Fill)
+                .with_color(Color::RED)
+                .with_type(PrimitiveType::Cube { thickness: 3.0 })
+                .with_vertex(rectangle.origin.clone())
+                .with_vertex(Vertex2D::new(rectangle.antipode.x, rectangle.origin.y))
+                .with_vertex(rectangle.antipode.clone())
+                .with_vertex(Vertex2D::new(rectangle.origin.x, rectangle.antipode.y))
+                .build());
         log(LogLevel::Info, &|| format!("widget assembled: origin=({},{}),antipode=({},{})", rectangle.origin.x, rectangle.origin.y, rectangle.antipode.x, rectangle.antipode.y));
     }
 }

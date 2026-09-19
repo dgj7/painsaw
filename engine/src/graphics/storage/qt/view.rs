@@ -2,6 +2,7 @@ use crate::geometry::dim::Dimension2D;
 use crate::geometry::primitive::v2d::Vertex2D;
 use crate::geometry::rect::Rectangle2D;
 use crate::graphics::storage::m2d::Model2D;
+use crate::graphics::storage::qt::assembled::Assembled;
 use crate::graphics::storage::qt::attrib::align::Alignment;
 use crate::graphics::storage::qt::attrib::sizing::Sizing;
 use crate::graphics::storage::qt::panel::Panel;

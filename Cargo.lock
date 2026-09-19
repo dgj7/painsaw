@@ -83,14 +83,14 @@ dependencies = [
 
 [[package]]
 name = "d3"
-version = "0.0.11"
+version = "0.0.12"
 dependencies = [
  "engine",
 ]
 
 [[package]]
 name = "engine"
-version = "0.2.32"
+version = "0.2.33"
 dependencies = [
  "chrono",
  "colored",
