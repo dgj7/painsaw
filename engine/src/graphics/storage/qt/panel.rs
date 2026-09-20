@@ -53,29 +53,31 @@ impl Panel {
 }
 
 impl Assembled for Panel {
-    fn reassemble(&self, model: &mut Model2D, rectangle: &Rectangle2D) {
-        model.primitives.push(Primitive2DBuilder::new()
-            .with_mode(PolygonMode::Line)
-            .with_face(PolygonFace::FrontAndBack)
-            .with_color(Color::YELLOW)
-            .with_type(PrimitiveType::Cube { thickness: 1.0 })
-            .with_vertex(rectangle.origin.clone())
-            .with_vertex(Vertex2D::new(rectangle.antipode.x, rectangle.origin.y))
-            .with_vertex(rectangle.antipode.clone())
-            .with_vertex(Vertex2D::new(rectangle.origin.x, rectangle.antipode.y))
-            .build());
-        model.primitives.push(Primitive2DBuilder::new()
-            .with_color(Color::GREEN)
-            .with_type(PrimitiveType::Point { point_size: 3.0 })
-            .with_vertex(rectangle.origin.clone())
-            .build());
+    fn reassemble(&self, debug: bool, model: &mut Model2D, rectangle: &Rectangle2D) {
+        if debug {
+            model.primitives.push(Primitive2DBuilder::new()
+                .with_mode(PolygonMode::Line)
+                .with_face(PolygonFace::FrontAndBack)
+                .with_color(Color::YELLOW)
+                .with_type(PrimitiveType::Cube { thickness: 1.0 })
+                .with_vertex(rectangle.origin.clone())
+                .with_vertex(Vertex2D::new(rectangle.antipode.x, rectangle.origin.y))
+                .with_vertex(rectangle.antipode.clone())
+                .with_vertex(Vertex2D::new(rectangle.origin.x, rectangle.antipode.y))
+                .build());
+            model.primitives.push(Primitive2DBuilder::new()
+                .with_color(Color::GREEN)
+                .with_type(PrimitiveType::Point { point_size: 3.0 })
+                .with_vertex(rectangle.origin.clone())
+                .build());
+        }
 
         log(LogLevel::Info, &|| format!("panel assembled: origin=({},{}),antipode=({},{})", rectangle.origin.x, rectangle.origin.y, rectangle.antipode.x, rectangle.antipode.y));
 
         let mut remaining = rectangle.clone();
         for c in self.order.iter() {
             log(LogLevel::Info, &|| format!("remaining: o=({},{}),a=({},{})", remaining.origin.x, remaining.origin.y, remaining.antipode.x, remaining.antipode.y));
-            if !reassemble_element(&self, *c, &self.layout, rectangle, &mut remaining, model) {
+            if !reassemble_element(debug, &self, *c, &self.layout, rectangle, &mut remaining, model) {
                 break
             }
         }
@@ -83,6 +85,7 @@ impl Assembled for Panel {
 }
 
 fn reassemble_element(
+    debug: bool,
     panel: &Panel,
     c: u32,
     layout: &Layout,
@@ -92,9 +95,9 @@ fn reassemble_element(
 ) -> bool {
     if let Some(element) = panel.element_at(c) {
         return if let Some((panel, sizing)) = element.0 {
-            reassemble_concrete_element(panel, layout, rectangle, remaining, sizing, model)
+            reassemble_concrete_element(debug, panel, layout, rectangle, remaining, sizing, model)
         } else if let Some((widget, sizing)) = element.1 {
-            reassemble_concrete_element(widget, layout, rectangle, remaining, sizing, model)
+            reassemble_concrete_element(debug, widget, layout, rectangle, remaining, sizing, model)
         } else {
             false
         }
@@ -102,11 +105,11 @@ fn reassemble_element(
     false
 }
 
-fn reassemble_concrete_element<T: Assembled>(assembled: &T, layout: &Layout, rectangle: &Rectangle2D, remaining: &mut Rectangle2D, sizing: &Sizing, model: &mut Model2D) -> bool {
+fn reassemble_concrete_element<T: Assembled>(debug: bool, assembled: &T, layout: &Layout, rectangle: &Rectangle2D, remaining: &mut Rectangle2D, sizing: &Sizing, model: &mut Model2D) -> bool {
     let next = layout.determine_next(rectangle, &remaining, sizing);
     if rectangle.contains_rect_inclusive(&next) {
         layout.subtract(remaining, &next);
-        assembled.reassemble(model, &next);
+        assembled.reassemble(debug, model, &next);
         true
     } else {
         log(LogLevel::Warning, &|| format!("next (({},{}),({},{})) doesn't fit in (({},{}),({},{}))", next.origin.x, next.origin.y, next.antipode.x, next.antipode.y, rectangle.origin.x, rectangle.origin.y, rectangle.antipode.x, rectangle.antipode.y));
@@ -170,7 +173,7 @@ impl PanelBuilder {
         let panel = Panel {
             count: self.the_count,
             order: self.the_order,
-            
+
             panels: self.the_panels,
             widgets: self.the_widgets,
 

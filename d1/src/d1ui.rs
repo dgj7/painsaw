@@ -15,7 +15,7 @@ pub(super) fn main_menu(camera: &Camera) -> View {
         .with_vertical_alignment(Alignment::Center)
         .with_horizontal_alignment(Alignment::Center)
         .with_background(Color::GREY.adjust_alpha(0.35))
-        .with_border(Color::RED, 6.0)
+        .with_border(Color::RED, 4.5)
         .with_panel(PanelBuilder::new()
             .with_layout(Layout::Horizontal)
             .with_panel(PanelBuilder::new()

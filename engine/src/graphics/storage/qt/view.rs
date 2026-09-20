@@ -26,6 +26,7 @@ pub struct View {
     pub horizontal_alignment: Alignment,
 
     /* optional rendering choices */
+    debug_enabled: bool,
     background: Option<Color>,
     border: Option<(Color, f32)>,
 }
@@ -58,7 +59,7 @@ impl View {
         }
 
         /* reassemble the model */
-        self.panel.reassemble(&mut model, &rectangle);
+        self.panel.reassemble(self.debug_enabled, &mut model, &rectangle);
         self.model = model;
     }
 }
@@ -72,6 +73,7 @@ pub struct ViewBuilder {
     the_vertical_alignment: Option<Alignment>,
     the_horizontal_alignment: Option<Alignment>,
 
+    the_debug_enabled: Option<bool>,
     the_background: Option<Color>,
     the_border: Option<(Color, f32)>,
 
@@ -89,6 +91,7 @@ impl ViewBuilder {
             the_vertical_alignment: None,
             the_horizontal_alignment: None,
 
+            the_debug_enabled: None,
             the_background: None,
             the_border: None,
 
@@ -118,6 +121,11 @@ impl ViewBuilder {
 
     pub fn with_horizontal_alignment(mut self, alignment: Alignment) -> ViewBuilder {
         self.the_horizontal_alignment = Some(alignment);
+        self
+    }
+
+    pub fn with_debug_enabled(mut self, debug: bool) -> ViewBuilder {
+        self.the_debug_enabled = Some(debug);
         self
     }
 
@@ -156,15 +164,20 @@ impl ViewBuilder {
         /* compute the model */
         let mut model = Model2D::new(vec!(), vec!(), true);
         let rectangle = client_to_sized_rectangle(&window, &vertical_sizing, &horizontal_sizing, &vertical_alignment, &horizontal_alignment);
-        panel.reassemble(&mut model, &rectangle);
+        let debug = self.the_debug_enabled.unwrap_or_else(|| false);
+        panel.reassemble(debug, &mut model, &rectangle);
 
         Some(View {
             panel,
             model,
+
             vertical_sizing,
             horizontal_sizing,
+
             vertical_alignment,
             horizontal_alignment,
+
+            debug_enabled: debug,
             background: self.the_background,
             border: self.the_border,
         })

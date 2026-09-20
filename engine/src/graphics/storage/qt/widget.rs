@@ -31,7 +31,7 @@ impl Widget {
 }
 
 impl Assembled for Widget {
-    fn reassemble(&self, model: &mut Model2D, rectangle: &Rectangle2D) {
+    fn reassemble(&self, _debug: bool, model: &mut Model2D, rectangle: &Rectangle2D) {
         /* draw the button's outline and filling */
         model.primitives
             .push(Primitive2DBuilder::new()
