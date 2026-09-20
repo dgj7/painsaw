@@ -16,16 +16,33 @@ pub(crate) enum Command {
 
 impl SpectatorMovementStrategy for Demo1 {}
 
-pub(crate) fn handle_command<T: KeyHandler + MouseHandler + WorldController + 'static>(
+pub(crate) fn handle_command(
+    game: &Demo1,
     command: &Command,
     ec: &EngineConfig,
     camera: &mut Camera,
     et: &EngineTiming,
 ) {
     match command {
-        Command::CameraMoveForward => { <Demo1 as SpectatorMovementStrategy>::move_forward(ec, camera, et) }
-        Command::CameraStrafeLeft => { <Demo1 as SpectatorMovementStrategy>::move_left(ec, camera, et) }
-        Command::CameraMoveBackward => { <Demo1 as SpectatorMovementStrategy>::move_backward(ec, camera, et) }
-        Command::CameraStrafeRight => { <Demo1 as SpectatorMovementStrategy>::move_right(ec, camera, et) }
+        Command::CameraMoveForward => {
+            if !game.showing_main_menu {
+                <Demo1 as SpectatorMovementStrategy>::move_forward(ec, camera, et)
+            }
+        }
+        Command::CameraStrafeLeft => {
+            if !game.showing_main_menu {
+                <Demo1 as SpectatorMovementStrategy>::move_left(ec, camera, et)
+            }
+        }
+        Command::CameraMoveBackward => {
+            if !game.showing_main_menu {
+                <Demo1 as SpectatorMovementStrategy>::move_backward(ec, camera, et)
+            }
+        }
+        Command::CameraStrafeRight => {
+            if !game.showing_main_menu {
+                <Demo1 as SpectatorMovementStrategy>::move_right(ec, camera, et)
+            }
+        }
     }
 }
