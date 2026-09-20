@@ -28,7 +28,6 @@ pub struct Panel {
     order: Vec<u32>,
 
     /* how nested elements are rendered onto this panel */
-    padding: Sizing,
     layout: Layout,
 }
 
@@ -128,7 +127,6 @@ pub struct PanelBuilder {
     the_order: Vec<u32>,
 
     /* how nested elements fit within this panel */
-    the_padding: Option<Sizing>,
     the_layout: Option<Layout>,
 }
 
@@ -141,7 +139,6 @@ impl PanelBuilder {
             the_count: 0,
             the_order: Vec::new(),
 
-            the_padding: None,
             the_layout: None,
         }
     }
@@ -160,11 +157,6 @@ impl PanelBuilder {
         self
     }
 
-    pub fn with_padding(mut self, padding: Sizing) -> Self {
-        self.the_padding = Some(padding);
-        self
-    }
-
     pub fn with_layout(mut self, layout: Layout) -> Self {
         self.the_layout = Some(layout);
         self
@@ -178,10 +170,10 @@ impl PanelBuilder {
         let panel = Panel {
             count: self.the_count,
             order: self.the_order,
+            
             panels: self.the_panels,
             widgets: self.the_widgets,
 
-            padding: self.the_padding.unwrap_or_else(|| Sizing::Exact { size: 5.0 }),
             layout: self.the_layout.unwrap(),
         };
 

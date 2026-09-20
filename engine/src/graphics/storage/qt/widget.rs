@@ -14,6 +14,8 @@ use crate::support::logger::log_level::LogLevel;
 ///
 pub struct Widget {
     click_action: fn(pt: &Vertex2D),    /* how to handle when a click has registered */
+
+    padding: f32,
 }
 
 impl Widget {
@@ -32,10 +34,10 @@ impl Assembled for Widget {
                 .with_mode(PolygonMode::Fill)
                 .with_color(Color::RED)
                 .with_type(PrimitiveType::Cube { thickness: 1.0 })
-                .with_vertex(rectangle.origin.clone())
-                .with_vertex(Vertex2D::new(rectangle.antipode.x, rectangle.origin.y))
-                .with_vertex(rectangle.antipode.clone())
-                .with_vertex(Vertex2D::new(rectangle.origin.x, rectangle.antipode.y))
+                .with_vertex(Vertex2D::new(rectangle.origin.x + self.padding, rectangle.origin.y + self.padding))         // top left (origin)
+                .with_vertex(Vertex2D::new(rectangle.antipode.x - self.padding, rectangle.origin.y + self.padding))       // top right
+                .with_vertex(Vertex2D::new(rectangle.antipode.x - self.padding, rectangle.antipode.y - self.padding))     // bottom right (antipode)
+                .with_vertex(Vertex2D::new(rectangle.origin.x + self.padding, rectangle.antipode.y-self.padding))       // bottom left
                 .build());
         log(LogLevel::Info, &|| format!("widget assembled: origin=({},{}),antipode=({},{})", rectangle.origin.x, rectangle.origin.y, rectangle.antipode.x, rectangle.antipode.y));
     }
@@ -46,12 +48,16 @@ impl Assembled for Widget {
 /// 
 pub struct WidgetBuilder {
     the_click_action: Option<fn(pt: &Vertex2D)>,
+
+    the_padding: Option<f32>,
 }
 
 impl WidgetBuilder {
     pub fn new() -> Self {
         WidgetBuilder {
             the_click_action: None,
+
+            the_padding: None,
         }
     }
 
@@ -60,9 +66,16 @@ impl WidgetBuilder {
         self
     }
 
+    pub fn with_padding(mut self, padding: f32) -> Self {
+        self.the_padding = Some(padding);
+        self
+    }
+
     pub fn build(self) -> Widget {
         Widget {
             click_action: self.the_click_action.unwrap_or_else(|| |_vertex|{}),
+
+            padding: self.the_padding.unwrap_or_else(|| 10.0),
         }
     }
 }
