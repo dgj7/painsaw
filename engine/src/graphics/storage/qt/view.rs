@@ -1,6 +1,11 @@
 use crate::geometry::dim::Dimension2D;
+use crate::geometry::primitive::face::PolygonFace;
+use crate::geometry::primitive::mode::PolygonMode;
+use crate::geometry::primitive::prim2d::Primitive2DBuilder;
 use crate::geometry::primitive::v2d::Vertex2D;
+use crate::geometry::primitive::PrimitiveType;
 use crate::geometry::rect::Rectangle2D;
+use crate::graphics::color::Color;
 use crate::graphics::storage::m2d::Model2D;
 use crate::graphics::storage::qt::assembled::Assembled;
 use crate::graphics::storage::qt::attrib::align::Alignment;
@@ -19,12 +24,40 @@ pub struct View {
 
     pub vertical_alignment: Alignment,      /* alignment of the view on screen, in both directions */
     pub horizontal_alignment: Alignment,
+
+    /* optional rendering choices */
+    background: Option<Color>,
+    border: Option<(Color, f32)>,
 }
 
 impl View {
     pub fn resize(&mut self, screen: &ScreenState) {
+        /* create a new model, and determine the view rectangle */
         let mut model = Model2D::new(vec!(), vec!(), true);
         let rectangle = client_to_sized_rectangle(&screen.current_client_dimensions, &self.vertical_sizing, &self.horizontal_sizing, &self.vertical_alignment, &self.horizontal_alignment);
+
+        /* render the background, if requested */
+        if let Some(bg) = self.background {
+            model.primitives.push(Primitive2DBuilder::new()
+                .with_type(PrimitiveType::Cube { thickness: 1.0 })
+                .with_face(PolygonFace::Front)
+                .with_mode(PolygonMode::Fill)
+                .with_color(bg)
+                .with_vertices(rectangle.to_vertices())
+                .build());
+        }
+
+        /* render the border, if requested */
+        if let Some((color, thickness)) = self.border {
+            model.primitives.push(Primitive2DBuilder::new()
+                .with_type(PrimitiveType::Cube { thickness })
+                .with_mode(PolygonMode::Line)
+                .with_color(color)
+                .with_vertices(rectangle.to_vertices())
+                .build());
+        }
+
+        /* reassemble the model */
         self.panel.reassemble(&mut model, &rectangle);
         self.model = model;
     }
@@ -39,6 +72,9 @@ pub struct ViewBuilder {
     the_vertical_alignment: Option<Alignment>,
     the_horizontal_alignment: Option<Alignment>,
 
+    the_background: Option<Color>,
+    the_border: Option<(Color, f32)>,
+
     the_window_dimensions: Option<Dimension2D>,
 }
 
@@ -52,6 +88,9 @@ impl ViewBuilder {
 
             the_vertical_alignment: None,
             the_horizontal_alignment: None,
+
+            the_background: None,
+            the_border: None,
 
             the_window_dimensions: None,
         }
@@ -79,6 +118,16 @@ impl ViewBuilder {
 
     pub fn with_horizontal_alignment(mut self, alignment: Alignment) -> ViewBuilder {
         self.the_horizontal_alignment = Some(alignment);
+        self
+    }
+
+    pub fn with_background(mut self, color: Color) -> ViewBuilder {
+        self.the_background = Some(color);
+        self
+    }
+
+    pub fn with_border(mut self, color: Color, thickness: f32) -> ViewBuilder {
+        self.the_border = Some((color, thickness));
         self
     }
     
@@ -116,6 +165,8 @@ impl ViewBuilder {
             horizontal_sizing,
             vertical_alignment,
             horizontal_alignment,
+            background: self.the_background,
+            border: self.the_border,
         })
     }
 }

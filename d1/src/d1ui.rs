@@ -1,4 +1,5 @@
 use engine::graphics::camera::Camera;
+use engine::graphics::color::Color;
 use engine::graphics::storage::qt::attrib::align::Alignment;
 use engine::graphics::storage::qt::attrib::layout::Layout;
 use engine::graphics::storage::qt::attrib::sizing::Sizing;
@@ -13,6 +14,8 @@ pub(super) fn main_menu(camera: &Camera) -> View {
         .with_horizontal_sizing(Sizing::Percentage { percent: 0.2 })
         .with_vertical_alignment(Alignment::Center)
         .with_horizontal_alignment(Alignment::Center)
+        .with_background(Color::GREY.adjust_alpha(0.35))
+        .with_border(Color::RED, 6.0)
         .with_panel(PanelBuilder::new()
             .with_layout(Layout::Horizontal)
             .with_panel(PanelBuilder::new()
@@ -27,14 +30,23 @@ pub(super) fn main_menu(camera: &Camera) -> View {
                                             .build()
                                             .expect("x"),
                                         Sizing::Percentage { percent: 0.1 })
-                            .with_widget(WidgetBuilder::new().build(), Sizing::Percentage { percent: 0.2 })
-                            .with_widget(WidgetBuilder::new().build(), Sizing::Percentage { percent: 0.2 })
+                            .with_widget(WidgetBuilder::new()
+                                             .with_text("options")
+                                             .build(),
+                                         Sizing::Percentage { percent: 0.2 })
+                            .with_widget(WidgetBuilder::new()
+                                             .with_text("exit")
+                                             .build(),
+                                         Sizing::Percentage { percent: 0.2 })
                             .with_panel(PanelBuilder::new()
                                             .with_layout(Layout::Horizontal)
                                             .build()
                                             .expect("x"),
                                         Sizing::Percentage { percent: 0.20 })
-                            .with_widget(WidgetBuilder::new().build(), Sizing::Percentage { percent: 0.2 })
+                            .with_widget(WidgetBuilder::new()
+                                             .with_text("return")
+                                             .build(),
+                                         Sizing::Percentage { percent: 0.2 })
                             .with_panel(PanelBuilder::new()
                                             .with_layout(Layout::Horizontal)
                                             .build()

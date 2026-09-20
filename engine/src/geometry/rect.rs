@@ -66,4 +66,16 @@ impl Rectangle2D {
             Layout::Vertical { .. } => self.to_width(),
         }
     }
+
+    ///
+    /// convert to four vertices.
+    ///
+    pub fn to_vertices(&self) -> Vec<Vertex2D> {
+        vec!(
+            self.origin.clone(),
+            Vertex2D::new(self.antipode.x, self.origin.y),
+            self.antipode.clone(),
+            Vertex2D::new(self.origin.x, self.antipode.y),
+        )
+    }
 }
