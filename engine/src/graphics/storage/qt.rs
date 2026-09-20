@@ -70,11 +70,11 @@ impl<K: Eq + Hash> UIManager<K> {
     ///
     /// get the active ui, if one is available.
     ///
-    pub fn check(&self) -> Option<&View> {
+    pub fn check(&mut self) -> Option<&mut View> {
         match self.active {
             None => None,
             Some(ref active) => {
-                self.views.get(active)
+                self.views.get_mut(active)
             }
         }
     }

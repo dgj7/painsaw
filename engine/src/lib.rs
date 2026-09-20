@@ -150,8 +150,8 @@ pub trait WorldController: KeyHandler + MouseHandler + Sized where Self: 'static
         renderer.after_3d();
 
         /* draw 2d, if desired */
-        renderer.prepare_2d(&camera, &mut models.g2d);
-        renderer.render_2d(&config, uin, &camera, &timing, &mut models.g2d, &models.ui);
+        renderer.prepare_2d(&camera, &mut models.g2d, &mut models.ui);
+        renderer.render_2d(&config, uin, &camera, &timing, &mut models.g2d, &mut models.ui);
         renderer.after_2d();
     }
 }

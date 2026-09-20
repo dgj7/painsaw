@@ -58,8 +58,8 @@ impl RendererWrapper {
         self.subsystem.before_scene(camera);
     }
 
-    pub(crate) fn prepare_2d(&self, camera: &Camera, g2d: &mut Graph2D) {
-        self.subsystem.prepare_2d(camera, g2d);
+    pub(crate) fn prepare_2d(&self, camera: &Camera, g2d: &mut Graph2D, ui: &mut UIManager<u32>) {
+        self.subsystem.prepare_2d(camera, g2d, ui);
     }
 
     pub(crate) fn render_2d(
@@ -69,9 +69,10 @@ impl RendererWrapper {
         camera: &Camera,
         timing: &EngineTiming,
         g2d: &mut Graph2D,
-        ui: &UIManager<u32>
+        ui: &mut UIManager<u32>
     ) {
         /* track down the mouse position */
+        // todo: can this just be moved into the show_screen_stats method, so that we can skip this if we're not displaying stats
         let mouse_pos = input
             .mouse_states
             .get(&MouseInputName::MouseMove)

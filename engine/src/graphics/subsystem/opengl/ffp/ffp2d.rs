@@ -14,6 +14,7 @@ use std::ffi::c_void;
 use glcore::{GL_DEPTH_TEST, GL_LINE_SMOOTH, GL_LINE_SMOOTH_HINT, GL_NICEST};
 use windows::Win32::Graphics::OpenGL::{GL_ALL_ATTRIB_BITS, GL_BLEND, GL_LIGHTING, GL_MODELVIEW, GL_NEAREST, GL_ONE_MINUS_SRC_ALPHA, GL_PROJECTION, GL_REPLACE, GL_RGBA, GL_SRC_ALPHA, GL_TEXTURE_2D, GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_TEXTURE_MAG_FILTER, GL_TEXTURE_MIN_FILTER, GL_UNSIGNED_BYTE};
 use crate::geometry::primitive::PrimitiveType;
+use crate::graphics::storage::qt::UIManager;
 
 pub(crate) fn ffp_2d_setup(camera: &Camera) {
     /* save prior state before 2d rendering */
@@ -76,20 +77,27 @@ pub(crate) fn ffp_render_2d(primitive: &Primitive2D, preparation: impl Fn(), beg
     gl_pop_matrix();
 }
 
-pub(crate) fn ffp_2d_initialize_textures(g2d: &mut Graph2D) {
-    /* initialize textures */
+pub(crate) fn ffp_2d_initialize_textures(g2d: &mut Graph2D, ui: &mut UIManager<u32>) {
+    /* enable texturing in opengl */
     gl_enable(GL_TEXTURE_2D);
+
+    /* initialize 2d model textures */
     for (_, value) in g2d.iter_mut() {
         for tex in &mut value.textures {
             ffp_2d_initialize_texture(tex);
         }
     }
 
+    /* initialize ui textures */
+    if let Some(view) = ui.check() {
+        view.model.textures.iter_mut().for_each(|texture| {ffp_2d_initialize_texture(texture)});
+    }
+
     /* done */
     log(LogLevel::Debug, &|| String::from("initialization complete"));
 }
 
-pub(crate) fn ffp_2d_update_textures(g2d: &mut Graph2D) {
+pub(crate) fn ffp_2d_update_textures(g2d: &mut Graph2D, ui: &mut UIManager<u32>) {
     for (_, model) in &mut g2d.iter_mut() {
         for texture in &mut model.textures {
             if !texture.initialized {
@@ -97,6 +105,18 @@ pub(crate) fn ffp_2d_update_textures(g2d: &mut Graph2D) {
             }
             ffp_2d_update_texture(texture);
         }
+    }
+
+    if let Some(view) = ui.check() {
+        view.model
+            .textures
+            .iter_mut().for_each(|texture| {
+                if !texture.initialized {
+                    ffp_2d_initialize_texture(texture);
+                }
+                ffp_2d_update_texture(texture)
+            }
+        );
     }
 }
 

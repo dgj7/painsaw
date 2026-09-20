@@ -41,7 +41,7 @@ impl RenderingSubSystemHandle for OpenGLHandle {
 
     fn initialize(&self, models: &mut Models) {
         match self.pipeline {
-            OpenGLPipeline::FixedFunction => ffp_2d_initialize_textures(&mut models.g2d),
+            OpenGLPipeline::FixedFunction => ffp_2d_initialize_textures(&mut models.g2d, &mut models.ui),
             OpenGLPipeline::ProgrammableShader => {}
         }
     }
@@ -60,17 +60,17 @@ impl RenderingSubSystemHandle for OpenGLHandle {
         }
     }
 
-    fn prepare_2d(&self, camera: &Camera, g2d: &mut Graph2D) {
+    fn prepare_2d(&self, camera: &Camera, g2d: &mut Graph2D, ui: &mut UIManager<u32>) {
         match self.pipeline {
             OpenGLPipeline::FixedFunction => {
                 ffp_2d_setup(camera);
-                ffp_2d_update_textures(g2d);
+                ffp_2d_update_textures(g2d, ui);
             }
             OpenGLPipeline::ProgrammableShader => {}
         }
     }
 
-    fn render_2d(&self, g2d: &mut Graph2D, ui: &UIManager<u32>) {
+    fn render_2d(&self, g2d: &mut Graph2D, ui: &mut UIManager<u32>) {
         match self.pipeline {
             OpenGLPipeline::FixedFunction => {
                 /* render any 2d objects, not including the ui */
@@ -81,8 +81,7 @@ impl RenderingSubSystemHandle for OpenGLHandle {
                         ffp_render_2d_primitive(primitive);
                     }
 
-                    model
-                        .textures
+                    model.textures
                         .iter()
                         .filter(|x| x.initialized)
                         .for_each(|x| ffp_render_2d_texture(x));
@@ -94,7 +93,12 @@ impl RenderingSubSystemHandle for OpenGLHandle {
                     view.model
                         .primitives
                         .iter()
-                        .for_each(|primitive| { ffp_render_2d_primitive(primitive) })
+                        .for_each(|primitive| { ffp_render_2d_primitive(primitive) });
+                    view.model
+                        .textures
+                        .iter()
+                        .filter(|x| x.initialized)
+                        .for_each(|x| ffp_render_2d_texture(x));
                 });
             }
             OpenGLPipeline::ProgrammableShader => {}

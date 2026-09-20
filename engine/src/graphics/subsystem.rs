@@ -41,8 +41,8 @@ pub trait RenderingSubSystemHandle {
 
     fn before_scene(&self, camera: &Camera);
 
-    fn prepare_2d(&self, camera: &Camera, g2d: &mut Graph2D);
-    fn render_2d(&self, g2d: &mut Graph2D, ui: &UIManager<u32>);
+    fn prepare_2d(&self, camera: &Camera, g2d: &mut Graph2D, ui: &mut UIManager<u32>);
+    fn render_2d(&self, g2d: &mut Graph2D, ui: &mut UIManager<u32>);
     fn after_2d(&self);
 
     fn prepare_3d(&self, camera: &Camera);
