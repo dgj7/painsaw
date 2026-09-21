@@ -7,13 +7,17 @@ use crate::geometry::primitive::PrimitiveType;
 use crate::geometry::rect::Rectangle2D;
 use crate::graphics::color::Color;
 use crate::graphics::storage::m2d::Model2D;
-use crate::graphics::storage::qt::assembled::Assembled;
-use crate::graphics::storage::qt::attrib::align::Alignment;
-use crate::graphics::storage::qt::attrib::sizing::Sizing;
-use crate::graphics::storage::qt::panel::Panel;
+use attrib::assembled::Assembled;
+use attrib::align::Alignment;
+use attrib::sizing::Sizing;
+use panel::Panel;
 use crate::input::screen::ScreenState;
 use crate::support::logger::log;
 use crate::support::logger::log_level::LogLevel;
+
+pub mod attrib;
+pub mod panel;
+pub mod widget;
 
 pub struct View {
     pub panel: Panel,                       /* the main panel */

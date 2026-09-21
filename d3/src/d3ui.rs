@@ -1,10 +1,10 @@
 use engine::graphics::camera::Camera;
-use engine::graphics::storage::qt::attrib::align::Alignment;
-use engine::graphics::storage::qt::attrib::layout::Layout;
-use engine::graphics::storage::qt::attrib::sizing::Sizing;
-use engine::graphics::storage::qt::panel::PanelBuilder;
+use engine::graphics::storage::qt::view::attrib::align::Alignment;
+use engine::graphics::storage::qt::view::attrib::layout::Layout;
+use engine::graphics::storage::qt::view::attrib::sizing::Sizing;
+use engine::graphics::storage::qt::view::panel::PanelBuilder;
 use engine::graphics::storage::qt::view::{View, ViewBuilder};
-use engine::graphics::storage::qt::widget::WidgetBuilder;
+use engine::graphics::storage::qt::view::widget::WidgetBuilder;
 
 pub(super) fn ui1(camera: &Camera) -> View {
     ViewBuilder::new()

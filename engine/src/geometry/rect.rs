@@ -1,6 +1,6 @@
 use crate::geometry::primitive::v2d::Vertex2D;
 use windows::Win32::Foundation::RECT;
-use crate::graphics::storage::qt::attrib::layout::Layout;
+use crate::graphics::storage::qt::view::attrib::layout::Layout;
 
 #[derive(Clone, Debug)]
 pub struct Rectangle2D {

@@ -8,11 +8,7 @@ use std::hash::Hash;
 use crate::graphics::storage::g2d::Graph2D;
 use crate::input::screen::ScreenState;
 
-pub mod panel;
-pub mod widget;
 pub mod view;
-pub mod attrib;
-mod assembled;
 
 ///
 /// manager for 2d ui screens.
