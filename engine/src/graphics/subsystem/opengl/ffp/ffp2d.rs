@@ -14,7 +14,7 @@ use std::ffi::c_void;
 use glcore::{GL_DEPTH_TEST, GL_LINE_SMOOTH, GL_LINE_SMOOTH_HINT, GL_NICEST};
 use windows::Win32::Graphics::OpenGL::{GL_ALL_ATTRIB_BITS, GL_BLEND, GL_LIGHTING, GL_MODELVIEW, GL_NEAREST, GL_ONE_MINUS_SRC_ALPHA, GL_PROJECTION, GL_REPLACE, GL_RGBA, GL_SRC_ALPHA, GL_TEXTURE_2D, GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_TEXTURE_MAG_FILTER, GL_TEXTURE_MIN_FILTER, GL_UNSIGNED_BYTE};
 use crate::geometry::primitive::PrimitiveType;
-use crate::graphics::storage::qt::UIManager;
+use crate::graphics::storage::ui::UIManager;
 
 pub(crate) fn ffp_2d_setup(camera: &Camera) {
     /* save prior state before 2d rendering */

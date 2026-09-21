@@ -1,11 +1,11 @@
 use engine::graphics::camera::Camera;
 use engine::graphics::color::Color;
-use engine::graphics::storage::qt::view::attrib::align::Alignment;
-use engine::graphics::storage::qt::view::attrib::layout::Layout;
-use engine::graphics::storage::qt::view::attrib::sizing::Sizing;
-use engine::graphics::storage::qt::view::panel::PanelBuilder;
-use engine::graphics::storage::qt::view::{View, ViewBuilder};
-use engine::graphics::storage::qt::view::widget::WidgetBuilder;
+use engine::graphics::storage::ui::view::attrib::align::Alignment;
+use engine::graphics::storage::ui::view::attrib::layout::Layout;
+use engine::graphics::storage::ui::view::attrib::sizing::Sizing;
+use engine::graphics::storage::ui::view::panel::PanelBuilder;
+use engine::graphics::storage::ui::view::{View, ViewBuilder};
+use engine::graphics::storage::ui::view::widget::WidgetBuilder;
 
 pub(super) fn main_menu(camera: &Camera) -> View {
     ViewBuilder::new()

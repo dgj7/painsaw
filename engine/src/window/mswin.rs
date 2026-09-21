@@ -31,7 +31,7 @@ use windows::Win32::UI::WindowsAndMessaging::{
 };
 use windows_core::{HSTRING, PCWSTR};
 use crate::graphics::storage::gxd::Models;
-use crate::graphics::storage::qt::UIManager;
+use crate::graphics::storage::ui::UIManager;
 
 pub mod errors;
 pub mod events;

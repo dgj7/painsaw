@@ -5,7 +5,7 @@ use crate::geometry::primitive::PrimitiveType;
 use crate::geometry::rect::Rectangle2D;
 use crate::graphics::color::Color;
 use crate::graphics::storage::m2d::Model2D;
-use crate::graphics::storage::qt::view::attrib::assembled::Assembled;
+use crate::graphics::storage::ui::view::attrib::assembled::Assembled;
 use crate::graphics::texture::t2d::Texture2DBuilder;
 use crate::support::logger::log;
 use crate::support::logger::log_level::LogLevel;

@@ -15,7 +15,7 @@ use std::sync::MutexGuard;
 use storage::g2d::Graph2D;
 use storage::g3d::Graph3D;
 use subsystem::RendererInfo;
-use crate::graphics::storage::qt::UIManager;
+use crate::graphics::storage::ui::UIManager;
 
 pub mod camera;
 pub mod color;

@@ -6,14 +6,14 @@ use crate::geometry::primitive::PrimitiveType;
 use crate::geometry::rect::Rectangle2D;
 use crate::graphics::color::Color;
 use crate::graphics::storage::m2d::Model2D;
-use crate::graphics::storage::qt::view::attrib::layout::Layout;
-use crate::graphics::storage::qt::view::attrib::sizing::Sizing;
-use crate::graphics::storage::qt::view::widget::Widget;
+use crate::graphics::storage::ui::view::attrib::layout::Layout;
+use crate::graphics::storage::ui::view::attrib::sizing::Sizing;
+use crate::graphics::storage::ui::view::widget::Widget;
 use crate::support::logger::log;
 use crate::support::logger::log_level::LogLevel;
 use std::collections::HashMap;
 use windows::Win32::Foundation::RECT;
-use crate::graphics::storage::qt::view::attrib::assembled::Assembled;
+use crate::graphics::storage::ui::view::attrib::assembled::Assembled;
 
 ///
 /// a panel is a container for other [Panel]s and [Control]s.

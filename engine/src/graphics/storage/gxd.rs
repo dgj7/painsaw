@@ -1,6 +1,6 @@
 use crate::graphics::storage::g2d::Graph2D;
 use crate::graphics::storage::g3d::Graph3D;
-use crate::graphics::storage::qt::UIManager;
+use crate::graphics::storage::ui::UIManager;
 
 pub struct Models {
     pub ui: UIManager<u32>,

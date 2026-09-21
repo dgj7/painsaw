@@ -2,7 +2,7 @@
 //! this module represents the engine's implementation of a quadtree.
 //!
 
-use crate::graphics::storage::qt::view::View;
+use crate::graphics::storage::ui::view::View;
 use std::collections::HashMap;
 use std::hash::Hash;
 use crate::graphics::storage::g2d::Graph2D;

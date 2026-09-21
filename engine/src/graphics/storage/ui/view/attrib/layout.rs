@@ -1,6 +1,6 @@
 use crate::geometry::primitive::v2d::Vertex2D;
 use crate::geometry::rect::Rectangle2D;
-use crate::graphics::storage::qt::view::attrib::sizing::Sizing;
+use crate::graphics::storage::ui::view::attrib::sizing::Sizing;
 use crate::support::logger::log;
 use crate::support::logger::log_level::LogLevel;
 
