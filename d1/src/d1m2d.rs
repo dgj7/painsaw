@@ -5,7 +5,7 @@ use engine::geometry::primitive::v2d::Vertex2D;
 use engine::geometry::primitive::PrimitiveType;
 use engine::graphics::camera::Camera;
 use engine::graphics::color::Color;
-use engine::graphics::storage::m2d::{Model2D, Model2DBuilder};
+use engine::graphics::storage::g2d::m2d::{Model2D, Model2DBuilder};
 use std::f32::consts::PI;
 
 pub(super) fn create_2d_axes(camera: &Camera) -> Model2D {

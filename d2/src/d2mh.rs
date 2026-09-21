@@ -2,7 +2,7 @@ use crate::d2::Demo2;
 use engine::config::input_config::mc::MouseHandler;
 use engine::config::EngineConfig;
 use engine::graphics::camera::Camera;
-use engine::graphics::storage::gxd::Models;
+use engine::graphics::storage::Models;
 use engine::input::mouse::ms::MouseState;
 use engine::support::timing::EngineTiming;
 

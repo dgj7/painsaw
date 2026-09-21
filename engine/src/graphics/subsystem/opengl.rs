@@ -2,7 +2,7 @@ use crate::geometry::primitive::PrimitiveType;
 use crate::graphics::camera::Camera;
 use crate::graphics::storage::g2d::Graph2D;
 use crate::graphics::storage::g3d::Graph3D;
-use crate::graphics::storage::gxd::Models;
+use crate::graphics::storage::Models;
 use crate::graphics::storage::ui::UIManager;
 use crate::graphics::subsystem::opengl::ffp::api::{gl_line_width, gl_point_size};
 use crate::graphics::subsystem::opengl::ffp::ffp2d::{ffp_2d_initialize_textures, ffp_2d_update_textures, ffp_render_2d_primitive};

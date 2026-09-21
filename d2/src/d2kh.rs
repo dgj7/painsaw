@@ -6,7 +6,7 @@ use engine::input::keyboard::kin::KeyInputName;
 use engine::input::keyboard::ks::KeyState;
 use engine::support::timing::EngineTiming;
 use std::collections::HashMap;
-use engine::graphics::storage::gxd::Models;
+use engine::graphics::storage::Models;
 
 impl KeyHandler for Demo2 {
     fn check_key_states(&mut self, _states: &HashMap<KeyInputName, KeyState>, _config: &EngineConfig, _camera: &mut Camera, _timing: &EngineTiming, _models: &mut Models,) {}

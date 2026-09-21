@@ -1,7 +1,7 @@
 use crate::d3::Demo3;
 use crate::d3ui::{ui1, ui2, ui3, ui4, ui5};
 use engine::graphics::camera::Camera;
-use engine::graphics::storage::gxd::Models;
+use engine::graphics::storage::Models;
 use engine::input::UserInput;
 use engine::support::timing::EngineTiming;
 use engine::WorldController;

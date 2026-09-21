@@ -6,7 +6,7 @@ use crate::geometry::primitive::v2d::Vertex2D;
 use crate::geometry::primitive::PrimitiveType;
 use crate::geometry::rect::Rectangle2D;
 use crate::graphics::color::Color;
-use crate::graphics::storage::m2d::Model2D;
+use crate::graphics::storage::g2d::m2d::Model2D;
 use attrib::assembled::Assembled;
 use attrib::align::Alignment;
 use attrib::sizing::Sizing;

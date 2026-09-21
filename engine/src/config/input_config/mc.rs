@@ -1,7 +1,7 @@
 use crate::config::input_config::kc::KeyHandler;
 use crate::config::EngineConfig;
 use crate::graphics::camera::Camera;
-use crate::graphics::storage::gxd::Models;
+use crate::graphics::storage::Models;
 use crate::input::mouse::md::MouseDelta;
 use crate::input::mouse::min::MouseInputName;
 use crate::input::mouse::ms::MouseState;

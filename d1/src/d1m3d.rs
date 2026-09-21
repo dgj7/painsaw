@@ -5,7 +5,7 @@ use engine::geometry::primitive::prim3d::Primitive3DBuilder;
 use engine::geometry::primitive::v3d::Vertex3D;
 use engine::geometry::primitive::PrimitiveType;
 use engine::graphics::color::Color;
-use engine::graphics::storage::m3d::{Model3D, Model3DBuilder};
+use engine::graphics::storage::g3d::m3d::{Model3D, Model3DBuilder};
 
 static AXIS_LENGTH: f32 = 0.5;
 

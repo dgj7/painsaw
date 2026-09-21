@@ -6,7 +6,7 @@ use crate::input::keyboard::ks::KeyState;
 use crate::support::timing::EngineTiming;
 use crate::WorldController;
 use std::collections::HashMap;
-use crate::graphics::storage::gxd::Models;
+use crate::graphics::storage::Models;
 
 ///
 /// handle keys via the configured key handler.

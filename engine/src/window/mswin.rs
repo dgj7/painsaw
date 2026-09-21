@@ -30,7 +30,7 @@ use windows::Win32::UI::WindowsAndMessaging::{
     WM_QUIT, WNDCLASSW, WS_OVERLAPPEDWINDOW, WS_THICKFRAME, WS_VISIBLE,
 };
 use windows_core::{HSTRING, PCWSTR};
-use crate::graphics::storage::gxd::Models;
+use crate::graphics::storage::Models;
 use crate::graphics::storage::ui::UIManager;
 
 pub mod errors;

@@ -1,5 +1,5 @@
 use crate::geometry::orient::Orientation;
-use crate::graphics::storage::scenegraph::id::NodeId;
+use crate::graphics::storage::g3d::id::NodeId;
 
 pub struct SceneNode {
     /* attachments */

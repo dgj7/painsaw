@@ -1,7 +1,7 @@
 use crate::d2::Demo2;
 use crate::d2m2d::{create_2d_bmp_24b, create_2d_tga_32b_b2t_l2r};
 use engine::graphics::camera::Camera;
-use engine::graphics::storage::gxd::Models;
+use engine::graphics::storage::Models;
 use engine::input::UserInput;
 use engine::support::timing::EngineTiming;
 use engine::WorldController;

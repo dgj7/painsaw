@@ -1,7 +1,7 @@
 use crate::config::EngineConfig;
 use crate::geometry::primitive::v2d::Vertex2D;
 use crate::graphics::camera::Camera;
-use crate::graphics::storage::gxd::Models;
+use storage::Models;
 use crate::graphics::subsystem::{grss_factory, GraphicsSubSystem, RenderingSubSystemHandle};
 use crate::input::mouse::min::MouseInputName;
 use crate::input::UserInput;

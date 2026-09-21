@@ -4,7 +4,7 @@ use crate::d1m3d::{
     create_3d_axes, create_3d_cuboid_1, create_3d_cuboid_wall_2, create_3d_enclosing_box,
 };
 use engine::graphics::camera::Camera;
-use engine::graphics::storage::gxd::Models;
+use engine::graphics::storage::Models;
 use engine::input::UserInput;
 use engine::support::logger::log;
 use engine::support::logger::log_level::LogLevel;

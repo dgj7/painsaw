@@ -1,5 +1,5 @@
-use crate::graphics::storage::scenegraph::id::NodeId;
-use crate::graphics::storage::scenegraph::node::SceneNode;
+use crate::graphics::storage::g3d::id::NodeId;
+use crate::graphics::storage::g3d::node::SceneNode;
 use std::collections::HashMap;
 
 ///

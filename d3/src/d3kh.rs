@@ -1,7 +1,7 @@
 use engine::config::EngineConfig;
 use engine::config::input_config::kc::KeyHandler;
 use engine::graphics::camera::Camera;
-use engine::graphics::storage::gxd::Models;
+use engine::graphics::storage::Models;
 use engine::input::keyboard::kin::KeyInputName;
 use engine::input::keyboard::ks::KeyState;
 use engine::support::timing::EngineTiming;

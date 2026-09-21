@@ -2,7 +2,7 @@ use crate::geometry::primitive::v2d::Vertex2D;
 use crate::geometry::primitive::v3d::Vertex3D;
 use crate::geometry::rect::Rectangle2D;
 use crate::graphics::color::Color;
-use crate::graphics::storage::m2d::{Model2D, Model2DBuilder};
+use crate::graphics::storage::g2d::m2d::{Model2D, Model2DBuilder};
 use crate::graphics::texture::t2d::Texture2DBuilder;
 use crate::support::image::RawImage;
 use crate::support::text::{text_2d_image, TextConfig, Typeface};

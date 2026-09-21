@@ -3,7 +3,7 @@ use engine::config::input_config::mc::MouseHandler;
 use engine::config::EngineConfig;
 use engine::geometry::orient::movement::spectator::SpectatorMovementStrategy;
 use engine::graphics::camera::Camera;
-use engine::graphics::storage::gxd::Models;
+use engine::graphics::storage::Models;
 use engine::input::mouse::md::MouseDelta;
 use engine::support::timing::EngineTiming;
 use engine::window::api::mc::move_cursor;

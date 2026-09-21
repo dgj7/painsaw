@@ -2,7 +2,7 @@ use crate::config::input_config::kc::{handle_key_change, KeyHandler};
 use crate::config::input_config::mc::{handle_mouse_change, MouseHandler};
 use crate::config::EngineConfig;
 use crate::graphics::camera::Camera;
-use crate::graphics::storage::gxd::Models;
+use graphics::storage::Models;
 use crate::graphics::RendererWrapper;
 use crate::input::UserInput;
 use crate::support::logger::log;
