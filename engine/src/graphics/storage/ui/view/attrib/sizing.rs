@@ -1,5 +1,3 @@
-use crate::geometry::dim::Dimension2D;
-
 pub enum Sizing {
     Exact { size: f32 },
     Percentage { percent: f32 },

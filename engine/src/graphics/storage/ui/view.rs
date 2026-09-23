@@ -66,6 +66,10 @@ impl View {
         self.panel.reassemble(self.debug_enabled, &mut model, &rectangle);
         self.model = model;
     }
+    
+    pub fn click(&self, location: &Vertex2D) {
+        self.panel.click(location);
+    }
 }
 
 pub struct ViewBuilder {

@@ -6,14 +6,13 @@ use crate::geometry::primitive::PrimitiveType;
 use crate::geometry::rect::Rectangle2D;
 use crate::graphics::color::Color;
 use crate::graphics::storage::g2d::m2d::Model2D;
+use crate::graphics::storage::ui::view::attrib::assembled::Assembled;
 use crate::graphics::storage::ui::view::attrib::layout::Layout;
 use crate::graphics::storage::ui::view::attrib::sizing::Sizing;
 use crate::graphics::storage::ui::view::widget::Widget;
 use crate::support::logger::log;
 use crate::support::logger::log_level::LogLevel;
 use std::collections::HashMap;
-use windows::Win32::Foundation::RECT;
-use crate::graphics::storage::ui::view::attrib::assembled::Assembled;
 
 ///
 /// a panel is a container for other [Panel]s and [Control]s.
@@ -24,7 +23,6 @@ pub struct Panel {
     widgets: HashMap<u32, (Widget, Sizing)>,
 
     /* store elements added to the panel; we need both of these so that we can support removal and addition of elements at runtime */
-    count: u32,
     order: Vec<u32>,
 
     /* how nested elements are rendered onto this panel */
@@ -35,12 +33,15 @@ impl Panel {
     ///
     /// handle a click if it's vertex is within this panel's area.
     ///
-    pub fn handle_click(&self, location: &Vertex2D) {
+    pub fn click(&self, location: &Vertex2D) {
         // todo: make this more efficient
-        self.panels.iter().for_each(|(key, (panel, _sizing))| panel.handle_click(location));
-        self.widgets.iter().for_each(|(key, (widget, _sizing))| widget.handle_click(location));
+        self.panels.iter().for_each(|(_key, (panel, _sizing))| panel.click(location));
+        self.widgets.iter().for_each(|(_key, (widget, _sizing))| widget.handle_click(location));
     }
 
+    ///
+    /// get the element with the given id.
+    ///
     fn element_at(&self, index: u32) -> Option<(Option<&(Panel, Sizing)>, Option<&(Widget, Sizing)>)> {
         if self.panels.contains_key(&index) {
             Some((self.panels.get(&index), None))
@@ -171,7 +172,6 @@ impl PanelBuilder {
         }
 
         let panel = Panel {
-            count: self.the_count,
             order: self.the_order,
 
             panels: self.the_panels,
