@@ -6,7 +6,9 @@ use crate::geometry::rect::Rectangle2D;
 use crate::graphics::color::Color;
 use crate::graphics::storage::g2d::m2d::Model2D;
 use crate::graphics::storage::ui::view::attrib::assembled::Assembled;
+use crate::graphics::storage::ui::view::qt::QuadTree;
 use crate::graphics::texture::t2d::Texture2DBuilder;
+use crate::support::id::IdentifierFactory;
 use crate::support::logger::log;
 use crate::support::logger::log_level::LogLevel;
 use crate::support::text::{text_2d_image, TextConfig, Typeface};
@@ -31,18 +33,30 @@ impl Widget {
 }
 
 impl Assembled for Widget {
-    fn reassemble(&self, _debug: bool, model: &mut Model2D, rectangle: &Rectangle2D) {
+    fn reassemble(&self, _debug: bool, model: &mut Model2D, rectangle: &Rectangle2D, qt: &QuadTree) {
+        /* assemble the widget's rectangle */
+        let outline = Rectangle2D {
+            origin: Vertex2D {
+                x: rectangle.origin.x + self.padding,
+                y: rectangle.origin.y + self.padding,
+            },
+            antipode: Vertex2D {
+                x: rectangle.antipode.x - self.padding,
+                y: rectangle.antipode.y - self.padding,
+            },
+        };
+
         /* draw the button's outline and filling */
         model.primitives
             .push(Primitive2DBuilder::new()
                 .with_mode(PolygonMode::Fill)
                 .with_color(Color::RED)
                 .with_type(PrimitiveType::Cube { thickness: 1.0 })
-                .with_vertex(Vertex2D::new(rectangle.origin.x + self.padding, rectangle.origin.y + self.padding))         // top left (origin)
-                .with_vertex(Vertex2D::new(rectangle.antipode.x - self.padding, rectangle.origin.y + self.padding))       // top right
-                .with_vertex(Vertex2D::new(rectangle.antipode.x - self.padding, rectangle.antipode.y - self.padding))     // bottom right (antipode)
-                .with_vertex(Vertex2D::new(rectangle.origin.x + self.padding, rectangle.antipode.y-self.padding))         // bottom left
+                .with_vertices(outline.to_vertices())
                 .build());
+
+        /* update internal mappings */
+        // todo: update the qt with the outline rectangle; to do that, we need access to the identifier
 
         /* potentially render text if any has been provided */
         if let Some(t) = &self.text {

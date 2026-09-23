@@ -2,12 +2,15 @@ use std::collections::HashMap;
 use crate::geometry::primitive::v2d::Vertex2D;
 use crate::geometry::rect::Rectangle2D;
 use crate::support::id::Identifier;
+use crate::support::logger::log;
+use crate::support::logger::log_level::LogLevel;
 
 pub struct QuadTree {
     boundary: Rectangle2D,
     capacity: usize,
     items: HashMap<Identifier, Rectangle2D>,
     nested: Option<Box<[QuadTree; 4]>>,
+    level: usize,
 }
 
 impl QuadTree {
@@ -17,17 +20,20 @@ impl QuadTree {
             capacity: 4,
             items: HashMap::new(),
             nested: None,
+            level: 1,
         }
     }
 
     pub fn insert(&mut self, id: &Identifier, rectangle: &Rectangle2D) -> bool {
         /* if this qt boundary doesn't contain any part of the rectangle, no work to do */
         if !self.boundary.contains_rect_inclusive(&rectangle) {
+            log(LogLevel::Trace, &|| format!("insert(): skipping because {:?} is not contained in {:?}", rectangle, self.boundary));
             return false;
         }
 
         /* insert here if there's capacity */
         if self.items.len() < self.capacity && self.nested.is_none() {
+            log(LogLevel::Trace, &|| format!("insert(): id={:?}, rectangle={:?}, level={}", id, rectangle, self.level));
             self.items.insert(id.clone(), rectangle.clone());
             return true;
         }
@@ -53,22 +59,46 @@ impl QuadTree {
         let hw = self.boundary.antipode.x;
         let hh = self.boundary.antipode.y;
 
-        let nw = QuadTree::new(Rectangle2D {
-            origin: Vertex2D { x, y, },
-            antipode: Vertex2D { x: hw, y: hh }
-        });
-        let ne = QuadTree::new(Rectangle2D {
-            origin: Vertex2D { x: x + hw, y, },
-            antipode: Vertex2D { x: hw, y: hh }
-        });
-        let sw = QuadTree::new(Rectangle2D {
-            origin: Vertex2D { x, y: y + hh },
-            antipode: Vertex2D { x: hw, y: hh }
-        });
-        let se = QuadTree::new(Rectangle2D {
-            origin: Vertex2D { x: x + hw, y: y + hh, },
-            antipode: Vertex2D { x: hw, y: hh }
-        });
+        let nw = QuadTree {
+            boundary: Rectangle2D {
+                origin: Vertex2D { x, y, },
+                antipode: Vertex2D { x: hw, y: hh }
+            },
+            capacity: 4,
+            items: HashMap::new(),
+            nested: None,
+            level: self.level + 1,
+        };
+        let ne = QuadTree {
+            boundary: Rectangle2D {
+                origin: Vertex2D { x: x + hw, y, },
+                antipode: Vertex2D { x: hw, y: hh }
+            },
+            capacity: 4,
+            items: HashMap::new(),
+            nested: None,
+            level: self.level + 1,
+        };
+        let sw = QuadTree {
+            boundary: Rectangle2D {
+                origin: Vertex2D { x, y: y + hh },
+                antipode: Vertex2D { x: hw, y: hh }
+                },
+            capacity: 4,
+            items: HashMap::new(),
+            nested: None,
+            level: self.level + 1,
+        };
+        let se = QuadTree {
+            boundary: Rectangle2D {
+                origin: Vertex2D { x: x + hw, y: y + hh, },
+                antipode: Vertex2D { x: hw, y: hh }
+            },
+            capacity: 4,
+            items: HashMap::new(),
+            nested: None,
+            level: self.level + 1,
+        };
 
         self.nested = Some(Box::new([nw, ne, sw, se]));
 
@@ -89,8 +119,6 @@ impl QuadTree {
     }
 
     fn query_helper(&self, point: &Vertex2D, results: &mut Vec<Identifier>) {
-        let mut results = Vec::new();
-
         if !self.boundary.contains_pt_inclusive(point) {
             return;
         }
@@ -106,7 +134,7 @@ impl QuadTree {
         if let Some(ref nested) = self.nested {
             for tree in nested.iter() {
                 if tree.boundary.contains_pt_inclusive(point) {
-                    tree.query_helper(point, &mut results);
+                    tree.query_helper(point, results);
                     break;
                 }
             }

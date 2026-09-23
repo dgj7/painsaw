@@ -11,7 +11,9 @@ use attrib::assembled::Assembled;
 use attrib::align::Alignment;
 use attrib::sizing::Sizing;
 use panel::Panel;
+use crate::graphics::storage::ui::view::qt::QuadTree;
 use crate::input::screen::ScreenState;
+use crate::support::id::IdentifierFactory;
 use crate::support::logger::log;
 use crate::support::logger::log_level::LogLevel;
 
@@ -30,6 +32,10 @@ pub struct View {
     pub vertical_alignment: Alignment,      /* alignment of the view on screen, in both directions */
     pub horizontal_alignment: Alignment,
 
+    /* storage for rectangle collisions */
+    qt: QuadTree,
+    idf: IdentifierFactory,
+
     /* optional rendering choices */
     debug_enabled: bool,
     background: Option<Color>,
@@ -41,6 +47,10 @@ impl View {
         /* create a new model, and determine the view rectangle */
         let mut model = Model2D::new(vec!(), vec!(), true);
         let rectangle = client_to_sized_rectangle(&screen.current_client_dimensions, &self.vertical_sizing, &self.horizontal_sizing, &self.vertical_alignment, &self.horizontal_alignment);
+
+        /* re-initialize quadtree */
+        self.qt = QuadTree::new(rectangle.clone());
+        self.idf = IdentifierFactory::new();
 
         /* render the background, if requested */
         if let Some(bg) = self.background {
@@ -64,7 +74,7 @@ impl View {
         }
 
         /* reassemble the model */
-        self.panel.reassemble(self.debug_enabled, &mut model, &rectangle);
+        self.panel.reassemble(self.debug_enabled, &mut model, &rectangle, &self.qt);
         self.model = model;
     }
     
@@ -174,7 +184,9 @@ impl ViewBuilder {
         let mut model = Model2D::new(vec!(), vec!(), true);
         let rectangle = client_to_sized_rectangle(&window, &vertical_sizing, &horizontal_sizing, &vertical_alignment, &horizontal_alignment);
         let debug = self.the_debug_enabled.unwrap_or_else(|| false);
-        panel.reassemble(debug, &mut model, &rectangle);
+        let qt = QuadTree::new(rectangle.clone());
+        let idf = IdentifierFactory::new();
+        panel.reassemble(debug, &mut model, &rectangle, &qt);
 
         Some(View {
             panel,
@@ -185,6 +197,9 @@ impl ViewBuilder {
 
             vertical_alignment,
             horizontal_alignment,
+
+            qt,
+            idf,
 
             debug_enabled: debug,
             background: self.the_background,

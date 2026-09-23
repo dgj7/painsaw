@@ -9,6 +9,7 @@ use crate::graphics::storage::g2d::m2d::Model2D;
 use crate::graphics::storage::ui::view::attrib::assembled::Assembled;
 use crate::graphics::storage::ui::view::attrib::layout::Layout;
 use crate::graphics::storage::ui::view::attrib::sizing::Sizing;
+use crate::graphics::storage::ui::view::qt::QuadTree;
 use crate::graphics::storage::ui::view::widget::Widget;
 use crate::support::logger::log;
 use crate::support::logger::log_level::LogLevel;
@@ -54,7 +55,7 @@ impl Panel {
 }
 
 impl Assembled for Panel {
-    fn reassemble(&self, debug: bool, model: &mut Model2D, rectangle: &Rectangle2D) {
+    fn reassemble(&self, debug: bool, model: &mut Model2D, rectangle: &Rectangle2D, qt: &QuadTree) {
         if debug {
             model.primitives.push(Primitive2DBuilder::new()
                 .with_mode(PolygonMode::Line)
@@ -78,7 +79,7 @@ impl Assembled for Panel {
         let mut remaining = rectangle.clone();
         for c in self.order.iter() {
             log(LogLevel::Info, &|| format!("remaining: o=({},{}),a=({},{})", remaining.origin.x, remaining.origin.y, remaining.antipode.x, remaining.antipode.y));
-            if !reassemble_element(debug, &self, *c, &self.layout, rectangle, &mut remaining, model) {
+            if !reassemble_element(debug, &self, *c, &self.layout, rectangle, &mut remaining, model, qt) {
                 break
             }
         }
@@ -93,12 +94,13 @@ fn reassemble_element(
     rectangle: &Rectangle2D,
     remaining: &mut Rectangle2D,
     model: &mut Model2D,
+    qt: &QuadTree,
 ) -> bool {
     if let Some(element) = panel.element_at(c) {
         return if let Some((panel, sizing)) = element.0 {
-            reassemble_concrete_element(debug, panel, layout, rectangle, remaining, sizing, model)
+            reassemble_concrete_element(debug, panel, layout, rectangle, remaining, sizing, model, qt)
         } else if let Some((widget, sizing)) = element.1 {
-            reassemble_concrete_element(debug, widget, layout, rectangle, remaining, sizing, model)
+            reassemble_concrete_element(debug, widget, layout, rectangle, remaining, sizing, model, qt)
         } else {
             false
         }
@@ -106,11 +108,11 @@ fn reassemble_element(
     false
 }
 
-fn reassemble_concrete_element<T: Assembled>(debug: bool, assembled: &T, layout: &Layout, rectangle: &Rectangle2D, remaining: &mut Rectangle2D, sizing: &Sizing, model: &mut Model2D) -> bool {
+fn reassemble_concrete_element<T: Assembled>(debug: bool, assembled: &T, layout: &Layout, rectangle: &Rectangle2D, remaining: &mut Rectangle2D, sizing: &Sizing, model: &mut Model2D, qt: &QuadTree) -> bool {
     let next = layout.determine_next(rectangle, &remaining, sizing);
     if rectangle.contains_rect_inclusive(&next) {
         layout.subtract(remaining, &next);
-        assembled.reassemble(debug, model, &next);
+        assembled.reassemble(debug, model, &next, qt);
         true
     } else {
         log(LogLevel::Warning, &|| format!("next (({},{}),({},{})) doesn't fit in (({},{}),({},{}))", next.origin.x, next.origin.y, next.antipode.x, next.antipode.y, rectangle.origin.x, rectangle.origin.y, rectangle.antipode.x, rectangle.antipode.y));
