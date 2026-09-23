@@ -18,6 +18,7 @@ use crate::support::logger::log_level::LogLevel;
 pub mod attrib;
 pub mod panel;
 pub mod widget;
+pub(crate) mod qt;
 
 pub struct View {
     pub panel: Panel,                       /* the main panel */
