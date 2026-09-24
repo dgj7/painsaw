@@ -7,15 +7,14 @@ use crate::geometry::primitive::PrimitiveType;
 use crate::geometry::rect::Rectangle2D;
 use crate::graphics::color::Color;
 use crate::graphics::storage::g2d::m2d::Model2D;
-use attrib::assembled::Assembled;
-use attrib::align::Alignment;
-use attrib::sizing::Sizing;
-use panel::Panel;
 use crate::graphics::storage::ui::view::qt::QuadTree;
 use crate::input::screen::ScreenState;
-use crate::support::id::IdentifierFactory;
 use crate::support::logger::log;
 use crate::support::logger::log_level::LogLevel;
+use attrib::align::Alignment;
+use attrib::assembled::Assembled;
+use attrib::sizing::Sizing;
+use panel::Panel;
 
 pub mod attrib;
 pub mod panel;
@@ -34,7 +33,6 @@ pub struct View {
 
     /* storage for rectangle collisions */
     qt: QuadTree,
-    idf: IdentifierFactory,
 
     /* optional rendering choices */
     debug_enabled: bool,
@@ -50,7 +48,6 @@ impl View {
 
         /* re-initialize quadtree */
         self.qt = QuadTree::new(rectangle.clone());
-        self.idf = IdentifierFactory::new();
 
         /* render the background, if requested */
         if let Some(bg) = self.background {
@@ -74,7 +71,7 @@ impl View {
         }
 
         /* reassemble the model */
-        self.panel.reassemble(self.debug_enabled, &mut model, &rectangle, &self.qt);
+        self.panel.reassemble(self.debug_enabled, &mut model, &rectangle, &mut self.qt);
         self.model = model;
     }
     
@@ -184,9 +181,8 @@ impl ViewBuilder {
         let mut model = Model2D::new(vec!(), vec!(), true);
         let rectangle = client_to_sized_rectangle(&window, &vertical_sizing, &horizontal_sizing, &vertical_alignment, &horizontal_alignment);
         let debug = self.the_debug_enabled.unwrap_or_else(|| false);
-        let qt = QuadTree::new(rectangle.clone());
-        let idf = IdentifierFactory::new();
-        panel.reassemble(debug, &mut model, &rectangle, &qt);
+        let mut qt = QuadTree::new(rectangle.clone());
+        panel.reassemble(debug, &mut model, &rectangle, &mut qt);
 
         Some(View {
             panel,
@@ -199,7 +195,6 @@ impl ViewBuilder {
             horizontal_alignment,
 
             qt,
-            idf,
 
             debug_enabled: debug,
             background: self.the_background,

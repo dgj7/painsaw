@@ -19,7 +19,7 @@ use crate::d3::Demo3;
 use crate::d3ec::create_engine_config;
 
 fn main() {
-    configure(LoggerConfig { level: LogLevel::Debug, target: LogTarget::StdOut, });
+    configure(LoggerConfig { level: LogLevel::Trace, target: LogTarget::StdOut, });
     log(LogLevel::Info, &|| "main(): begin".parse().unwrap());
 
     let mut game = Demo3::new();

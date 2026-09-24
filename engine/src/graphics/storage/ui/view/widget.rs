@@ -8,7 +8,7 @@ use crate::graphics::storage::g2d::m2d::Model2D;
 use crate::graphics::storage::ui::view::attrib::assembled::Assembled;
 use crate::graphics::storage::ui::view::qt::QuadTree;
 use crate::graphics::texture::t2d::Texture2DBuilder;
-use crate::support::id::IdentifierFactory;
+use crate::support::id::{next_id, Identifier};
 use crate::support::logger::log;
 use crate::support::logger::log_level::LogLevel;
 use crate::support::text::{text_2d_image, TextConfig, Typeface};
@@ -17,6 +17,8 @@ use crate::support::text::{text_2d_image, TextConfig, Typeface};
 /// a widget is any control that can be clicked on screen.
 ///
 pub struct Widget {
+    identifier: Identifier,
+    
     click_action: fn(pt: &Vertex2D),    /* how to handle when a click has registered */
     text: Option<String>,
 
@@ -33,7 +35,7 @@ impl Widget {
 }
 
 impl Assembled for Widget {
-    fn reassemble(&self, _debug: bool, model: &mut Model2D, rectangle: &Rectangle2D, qt: &QuadTree) {
+    fn reassemble(&self, _debug: bool, model: &mut Model2D, rectangle: &Rectangle2D, qt: &mut QuadTree) {
         /* assemble the widget's rectangle */
         let outline = Rectangle2D {
             origin: Vertex2D {
@@ -56,7 +58,7 @@ impl Assembled for Widget {
                 .build());
 
         /* update internal mappings */
-        // todo: update the qt with the outline rectangle; to do that, we need access to the identifier
+        qt.insert(&self.identifier, &outline);
 
         /* potentially render text if any has been provided */
         if let Some(t) = &self.text {
@@ -118,6 +120,8 @@ impl WidgetBuilder {
 
     pub fn build(self) -> Widget {
         Widget {
+            identifier: next_id(),
+            
             click_action: self.the_click_action.unwrap_or_else(|| |_vertex|{}),
             text: self.the_text,
 

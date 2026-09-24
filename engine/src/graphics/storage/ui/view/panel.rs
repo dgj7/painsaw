@@ -55,7 +55,7 @@ impl Panel {
 }
 
 impl Assembled for Panel {
-    fn reassemble(&self, debug: bool, model: &mut Model2D, rectangle: &Rectangle2D, qt: &QuadTree) {
+    fn reassemble(&self, debug: bool, model: &mut Model2D, rectangle: &Rectangle2D, qt: &mut QuadTree) {
         if debug {
             model.primitives.push(Primitive2DBuilder::new()
                 .with_mode(PolygonMode::Line)
@@ -94,7 +94,7 @@ fn reassemble_element(
     rectangle: &Rectangle2D,
     remaining: &mut Rectangle2D,
     model: &mut Model2D,
-    qt: &QuadTree,
+    qt: &mut QuadTree,
 ) -> bool {
     if let Some(element) = panel.element_at(c) {
         return if let Some((panel, sizing)) = element.0 {
@@ -108,7 +108,7 @@ fn reassemble_element(
     false
 }
 
-fn reassemble_concrete_element<T: Assembled>(debug: bool, assembled: &T, layout: &Layout, rectangle: &Rectangle2D, remaining: &mut Rectangle2D, sizing: &Sizing, model: &mut Model2D, qt: &QuadTree) -> bool {
+fn reassemble_concrete_element<T: Assembled>(debug: bool, assembled: &T, layout: &Layout, rectangle: &Rectangle2D, remaining: &mut Rectangle2D, sizing: &Sizing, model: &mut Model2D, qt: &mut QuadTree) -> bool {
     let next = layout.determine_next(rectangle, &remaining, sizing);
     if rectangle.contains_rect_inclusive(&next) {
         layout.subtract(remaining, &next);
