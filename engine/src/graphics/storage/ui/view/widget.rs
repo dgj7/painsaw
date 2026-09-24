@@ -14,13 +14,15 @@ use crate::support::logger::log;
 use crate::support::logger::log_level::LogLevel;
 use crate::support::text::{text_2d_image, TextConfig, Typeface};
 
+pub type ClickHandler = Box<dyn Fn(&Vertex2D)>;
+
 ///
 /// a widget is any control that can be clicked on screen.
 ///
 pub struct Widget {
     identifier: Identifier,
 
-    click_action: Option<fn(pt: &Vertex2D)>,    /* how to handle when a click has registered */
+    click_action: Option<ClickHandler>,    /* how to handle when a click has registered */
     text: Option<String>,
 
     padding: f32,
@@ -30,9 +32,9 @@ impl Widget {
     ///
     /// load click handlers from widgets.
     ///
-    pub(super) fn load_click_handlers(&self, clicks: &mut HashMap<Identifier, fn(pt: &Vertex2D)>) {
-        if let Some(ch) = self.click_action {
-            clicks.insert(self.identifier.clone(), ch);
+    pub(super) fn load_click_handlers(&mut self, clicks: &mut HashMap<Identifier, ClickHandler>) {
+        if let Some(ca) = self.click_action.take() {
+            clicks.insert(self.identifier.clone(), ca);
         }
     }
 }
@@ -90,7 +92,7 @@ impl Assembled for Widget {
 /// fluent builder for easier creation of widgets.
 /// 
 pub struct WidgetBuilder {
-    the_click_action: Option<fn(pt: &Vertex2D)>,
+    the_click_action: Option<ClickHandler>,
     the_text: Option<String>,
 
     the_padding: Option<f32>,
@@ -106,7 +108,7 @@ impl WidgetBuilder {
         }
     }
 
-    pub fn with_click_action(mut self, click_action: fn(pt: &Vertex2D)) -> Self {
+    pub fn with_click_action(mut self, click_action: ClickHandler) -> Self {
         self.the_click_action = Some(click_action);
         self
     }

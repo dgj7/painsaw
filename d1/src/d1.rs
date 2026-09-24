@@ -1,3 +1,4 @@
+#[derive(Clone)]
 pub struct Demo1 {
     pub exit: bool,
     pub showing_main_menu: bool,

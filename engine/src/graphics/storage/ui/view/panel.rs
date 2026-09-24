@@ -10,7 +10,7 @@ use crate::graphics::storage::ui::view::attrib::assembled::Assembled;
 use crate::graphics::storage::ui::view::attrib::layout::Layout;
 use crate::graphics::storage::ui::view::attrib::sizing::Sizing;
 use crate::graphics::storage::ui::view::qt::QuadTree;
-use crate::graphics::storage::ui::view::widget::Widget;
+use crate::graphics::storage::ui::view::widget::{ClickHandler, Widget};
 use crate::support::logger::log;
 use crate::support::logger::log_level::LogLevel;
 use std::collections::HashMap;
@@ -48,9 +48,9 @@ impl Panel {
     ///
     /// populate the click handler mapping.
     ///
-    pub(super) fn load_click_handlers(&self, clicks: &mut HashMap<Identifier, fn(pt: &Vertex2D)>) {
-        self.panels.iter().for_each(|(_key, (panel, _sizing))| {panel.load_click_handlers(clicks);});
-        self.widgets.iter().for_each(|(_key, (widget, _sizing)) | {widget.load_click_handlers(clicks)});
+    pub(super) fn load_click_handlers(&mut self, clicks: &mut HashMap<Identifier, ClickHandler>) {
+        self.panels.iter_mut().for_each(|(_key, (panel, _sizing))| {panel.load_click_handlers(clicks);});
+        self.widgets.iter_mut().for_each(|(_key, (widget, _sizing)) | {widget.load_click_handlers(clicks)});
     }
 }
 

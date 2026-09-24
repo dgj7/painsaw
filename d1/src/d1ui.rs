@@ -4,8 +4,8 @@ use engine::graphics::storage::ui::view::attrib::align::Alignment;
 use engine::graphics::storage::ui::view::attrib::layout::Layout;
 use engine::graphics::storage::ui::view::attrib::sizing::Sizing;
 use engine::graphics::storage::ui::view::panel::PanelBuilder;
-use engine::graphics::storage::ui::view::{View, ViewBuilder};
 use engine::graphics::storage::ui::view::widget::WidgetBuilder;
+use engine::graphics::storage::ui::view::{View, ViewBuilder};
 
 pub(super) fn main_menu(camera: &Camera) -> View {
     ViewBuilder::new()
@@ -36,7 +36,7 @@ pub(super) fn main_menu(camera: &Camera) -> View {
                                          Sizing::Percentage { percent: 0.2 })
                             .with_widget(WidgetBuilder::new()
                                              .with_text("exit")
-                                             .with_click_action(|v| {})
+                                             .with_click_action(Box::new(|_v|{}))
                                              .build(),
                                          Sizing::Percentage { percent: 0.2 })
                             .with_panel(PanelBuilder::new()

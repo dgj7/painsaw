@@ -16,6 +16,7 @@ use attrib::align::Alignment;
 use attrib::assembled::Assembled;
 use attrib::sizing::Sizing;
 use panel::Panel;
+use crate::graphics::storage::ui::view::widget::ClickHandler;
 use crate::support::id::Identifier;
 
 pub mod attrib;
@@ -35,7 +36,7 @@ pub struct View {
 
     /* storage for rectangle collisions */
     qt: QuadTree,
-    clicks: HashMap<Identifier, fn(pt: &Vertex2D)>,
+    clicks: HashMap<Identifier, ClickHandler>,
 
     /* optional rendering choices */
     debug_enabled: bool,
