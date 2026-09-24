@@ -41,7 +41,6 @@ pub mod winapi;
 
 pub struct MsWinWindow {
     pub input: Arc<Mutex<UserInput>>,
-    pub quit: bool,
 
     pub grss: GraphicsSubSystem,
 
@@ -66,11 +65,11 @@ impl Window for MsWinWindow {
         /* initialize client renderer, if necessary */
         game.initialize_world(&camera, &mut renderer, &mut models);
 
-        while !self.quit {
+        while !game.is_exit() {
             if peek_message(&mut message, Default::default(), 0, 0, PM_REMOVE) {
                 if message.message == WM_QUIT {
                     log(LogLevel::Debug, &|| String::from("WM_QUIT"));
-                    self.quit = true;
+                    game.set_exit();
                     opengl_cleanup(self.key.hwnd);
                     break;
                 }
@@ -175,7 +174,6 @@ impl MsWinWindow {
         /* done; returning handles to window */
         Ok(Box::new(MsWinWindow {
             input,
-            quit: false,
 
             grss,
 

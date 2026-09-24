@@ -8,6 +8,14 @@ use engine::WorldController;
 use std::sync::{Arc, Mutex};
 
 impl WorldController for Demo3 {
+    fn is_exit(&self) -> bool {
+        self.exit
+    }
+
+    fn set_exit(&mut self) {
+        self.exit = true;
+    }
+    
     fn initialize_world_helper(&self, camera: &Camera, models: &mut Models) {
         /* 2d */
         models.ui.add(1, ui1(camera));

@@ -34,6 +34,16 @@ pub mod window;
 ///
 pub trait WorldController: KeyHandler + MouseHandler + Sized where Self: 'static {
     ///
+    /// determine if the application should close.
+    /// 
+    fn is_exit(&self) -> bool;
+    
+    ///
+    /// ask the application to close.
+    /// 
+    fn set_exit(&mut self);
+    
+    ///
     /// initialize the game world.
     ///
     fn initialize_world(

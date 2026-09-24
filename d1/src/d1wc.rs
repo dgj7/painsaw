@@ -23,6 +23,14 @@ pub static M3D_3D_CUBOID_WALL: &str = "6-3d-cuboid-wall-2";
 pub static M3D_3D_CUBOID_ENCLOSING: &str= "6-3d-cuboid-enclosing";
 
 impl WorldController for Demo1 {
+    fn is_exit(&self) -> bool {
+        self.exit
+    }
+
+    fn set_exit(&mut self) {
+        self.exit = true;
+    }
+
     fn initialize_world_helper(&self, camera: &Camera, models: &mut Models) {
         /* initial states */
         hide_mouse();
