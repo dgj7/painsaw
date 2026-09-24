@@ -36,6 +36,7 @@ pub(super) fn main_menu(camera: &Camera) -> View {
                                          Sizing::Percentage { percent: 0.2 })
                             .with_widget(WidgetBuilder::new()
                                              .with_text("exit")
+                                             .with_click_action(|v| {})
                                              .build(),
                                          Sizing::Percentage { percent: 0.2 })
                             .with_panel(PanelBuilder::new()

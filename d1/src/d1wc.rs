@@ -1,8 +1,6 @@
 use crate::d1::Demo1;
-use crate::d1m2d::{create_2d_axes, create_2d_crosshairs, create_2d_greyed_overlay};
-use crate::d1m3d::{
-    create_3d_axes, create_3d_cuboid_1, create_3d_cuboid_wall_2, create_3d_enclosing_box,
-};
+use crate::d1m2d::{create_2d_axes, create_2d_crosshairs};
+use crate::d1m3d::{create_3d_axes, create_3d_cuboid_1, create_3d_cuboid_wall_2, create_3d_enclosing_box, };
 use engine::graphics::camera::Camera;
 use engine::graphics::storage::Models;
 use engine::input::UserInput;
@@ -18,7 +16,6 @@ pub static M2D_XY_PURPLE: &str = "1-2d-xy-purple";
 pub static M2D_X_HORIZ: &str = "2-2d-x-horizontal";
 pub static M2D_Y_VERT: &str = "2-2d-y-vertical";
 pub static M2D_CROSSHAIRS: &str = "999-2d-crosshairs";
-pub static M2D_OVERLAY: &str = "zzz-overlay";
 
 pub static M3D_3D_AXES: &str = "4-3d-axes";
 pub static M3D_3D_CUBOID_1: &str = "6-3d-cuboid-1";
@@ -33,7 +30,6 @@ impl WorldController for Demo1 {
         /* 2d */
         models.g2d.attach(M2D_XY_PURPLE, create_2d_axes(&camera));
         models.g2d.attach(M2D_CROSSHAIRS, create_2d_crosshairs(&camera));
-        models.g2d.attach(M2D_OVERLAY, create_2d_greyed_overlay(false, &camera));
         
         /* add ui and disable them */
         models.ui.add(1, main_menu(camera));
@@ -65,7 +61,6 @@ impl WorldController for Demo1 {
                 if uin.screen_resized {
                     models.g2d.update(M2D_XY_PURPLE, |e| *e = create_2d_axes(&camera));
                     models.g2d.update(M2D_CROSSHAIRS, |e| *e = create_2d_crosshairs(&camera));
-                    models.g2d.update(M2D_OVERLAY, |e| *e = create_2d_greyed_overlay(self.showing_main_menu, &camera));
 
                     models.ui.resize(&camera.screen, &mut models.g2d);
 

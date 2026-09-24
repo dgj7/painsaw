@@ -1,5 +1,3 @@
-use engine::geometry::primitive::face::PolygonFace;
-use engine::geometry::primitive::mode::PolygonMode;
 use engine::geometry::primitive::prim2d::Primitive2DBuilder;
 use engine::geometry::primitive::v2d::Vertex2D;
 use engine::geometry::primitive::PrimitiveType;
@@ -27,56 +25,6 @@ pub(super) fn create_2d_axes(camera: &Camera) -> Model2D {
                 .with_vertex(Vertex2D::origin())
                 .with_vertex(Vertex2D::new(0.0, camera.projection.height))
                 .with_vertex(Vertex2D::new(camera.projection.width, 0.0))
-                .build(),
-        )
-        .build()
-}
-
-#[allow(dead_code)]
-pub(super) fn create_2d_grid_x_lines(camera: &Camera) -> Model2D {
-    /* storage for vertices */
-    let mut vertices = vec![];
-
-    /* define line vertices */
-    let hgap = 10;
-    let hiters = ((camera.projection.height + (hgap as f32)) / (hgap as f32)) as u16;
-    for h in 0..hiters {
-        vertices.push(Vertex2D::new(0.0, (h * hgap) as f32));
-        vertices.push(Vertex2D::new(camera.projection.width, (h * hgap) as f32));
-    }
-
-    /* done */
-    Model2DBuilder::new()
-        .with_primitive(
-            Primitive2DBuilder::new()
-                .with_type(PrimitiveType::Line { thickness: 1.0 })
-                .with_color(Color::from_rgba(0.2, 0.2, 0.2, 0.5))
-                .with_vertices(vertices)
-                .build(),
-        )
-        .build()
-}
-
-#[allow(dead_code)]
-pub(super) fn create_2d_grid_y_lines(camera: &Camera) -> Model2D {
-    /* storage for vertices */
-    let mut vertices = vec![];
-
-    /* define line vertices */
-    let vgap = 10;
-    let viters = ((camera.projection.width + (vgap as f32)) / (vgap as f32)) as u16;
-    for v in 0..viters {
-        vertices.push(Vertex2D::new((v * vgap) as f32, 0.0));
-        vertices.push(Vertex2D::new((v * vgap) as f32, camera.projection.height));
-    }
-
-    /* done */
-    Model2DBuilder::new()
-        .with_primitive(
-            Primitive2DBuilder::new()
-                .with_type(PrimitiveType::Line { thickness: 1.0 })
-                .with_color(Color::from_rgba(0.2, 0.2, 0.2, 1.0))
-                .with_vertices(vertices)
                 .build(),
         )
         .build()
@@ -146,20 +94,52 @@ pub(super) fn create_2d_crosshairs(camera: &Camera) -> Model2D {
         .build()
 }
 
-pub(super) fn create_2d_greyed_overlay(visibility: bool, camera: &Camera) -> Model2D {
+/*
+pub(super) fn create_2d_grid_x_lines(camera: &Camera) -> Model2D {
+    /* storage for vertices */
+    let mut vertices = vec![];
+
+    /* define line vertices */
+    let hgap = 10;
+    let hiters = ((camera.projection.height + (hgap as f32)) / (hgap as f32)) as u16;
+    for h in 0..hiters {
+        vertices.push(Vertex2D::new(0.0, (h * hgap) as f32));
+        vertices.push(Vertex2D::new(camera.projection.width, (h * hgap) as f32));
+    }
+
+    /* done */
     Model2DBuilder::new()
-        .with_visible(visibility)
-        .with_primitive(Primitive2DBuilder::new()
-            .with_type(PrimitiveType::Cube { thickness: 1.0 })
-            .with_vertices(vec!(
-                Vertex2D::new(0.0, 0.0),
-                Vertex2D::new(camera.screen.current_client_dimensions.width, 0.0),
-                Vertex2D::new(camera.screen.current_client_dimensions.width, camera.screen.current_client_dimensions.height),
-                Vertex2D::new(0.0, camera.screen.current_client_dimensions.height),
-            ))
-            .with_color(Color::GREY.adjust_alpha(0.5))
-            .with_mode(PolygonMode::Fill)
-            .with_face(PolygonFace::FrontAndBack)
-            .build())
+        .with_primitive(
+            Primitive2DBuilder::new()
+                .with_type(PrimitiveType::Line { thickness: 1.0 })
+                .with_color(Color::from_rgba(0.2, 0.2, 0.2, 0.5))
+                .with_vertices(vertices)
+                .build(),
+        )
         .build()
 }
+
+pub(super) fn create_2d_grid_y_lines(camera: &Camera) -> Model2D {
+    /* storage for vertices */
+    let mut vertices = vec![];
+
+    /* define line vertices */
+    let vgap = 10;
+    let viters = ((camera.projection.width + (vgap as f32)) / (vgap as f32)) as u16;
+    for v in 0..viters {
+        vertices.push(Vertex2D::new((v * vgap) as f32, 0.0));
+        vertices.push(Vertex2D::new((v * vgap) as f32, camera.projection.height));
+    }
+
+    /* done */
+    Model2DBuilder::new()
+        .with_primitive(
+            Primitive2DBuilder::new()
+                .with_type(PrimitiveType::Line { thickness: 1.0 })
+                .with_color(Color::from_rgba(0.2, 0.2, 0.2, 1.0))
+                .with_vertices(vertices)
+                .build(),
+        )
+        .build()
+}
+*/
