@@ -5,6 +5,8 @@ use engine::graphics::storage::ui::view::attrib::sizing::Sizing;
 use engine::graphics::storage::ui::view::panel::PanelBuilder;
 use engine::graphics::storage::ui::view::{View, ViewBuilder};
 use engine::graphics::storage::ui::view::widget::WidgetBuilder;
+use engine::support::logger::log;
+use engine::support::logger::log_level::LogLevel;
 
 pub(super) fn ui1(camera: &Camera) -> View {
     ViewBuilder::new()
@@ -30,9 +32,11 @@ pub(super) fn ui1(camera: &Camera) -> View {
                             Sizing::Percentage { percent: 0.1 })
                 .with_widget(WidgetBuilder::new()
                                  .with_text("options")
+                                 .with_click_action(|_pt| log(LogLevel::Info, &|| String::from("clicked options button")))
                                  .build(), Sizing::Percentage { percent: 0.2 })
                 .with_widget(WidgetBuilder::new()
                                  .with_text("exit game")
+                                 .with_click_action(|_pt| log(LogLevel::Info, &|| String::from("clicked exit button")))
                                  .build(), Sizing::Percentage { percent: 0.2 })
                             .with_panel(PanelBuilder::new()
                                             .with_layout(Layout::Horizontal)
@@ -41,6 +45,7 @@ pub(super) fn ui1(camera: &Camera) -> View {
                                         Sizing::Percentage { percent: 0.20 })
                 .with_widget(WidgetBuilder::new()
                                  .with_text("return to game")
+                                 .with_click_action(|_pt| log(LogLevel::Info, &|| String::from("clicked return button")))
                                  .build(), Sizing::Percentage { percent: 0.2 })
                 .with_panel(PanelBuilder::new()
                                 .with_layout(Layout::Horizontal)

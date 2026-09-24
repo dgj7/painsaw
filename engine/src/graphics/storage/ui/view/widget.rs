@@ -1,3 +1,4 @@
+use std::collections::HashMap;
 use crate::geometry::primitive::mode::PolygonMode;
 use crate::geometry::primitive::prim2d::Primitive2DBuilder;
 use crate::geometry::primitive::v2d::Vertex2D;
@@ -18,8 +19,8 @@ use crate::support::text::{text_2d_image, TextConfig, Typeface};
 ///
 pub struct Widget {
     identifier: Identifier,
-    
-    click_action: fn(pt: &Vertex2D),    /* how to handle when a click has registered */
+
+    click_action: Option<fn(pt: &Vertex2D)>,    /* how to handle when a click has registered */
     text: Option<String>,
 
     padding: f32,
@@ -27,10 +28,12 @@ pub struct Widget {
 
 impl Widget {
     ///
-    /// handle click.
+    /// load click handlers from widgets.
     ///
-    pub fn handle_click(&self, pt: &Vertex2D) {
-        (self.click_action)(pt);
+    pub(super) fn load_click_handlers(&self, clicks: &mut HashMap<Identifier, fn(pt: &Vertex2D)>) {
+        if let Some(ch) = self.click_action {
+            clicks.insert(self.identifier.clone(), ch);
+        }
     }
 }
 
@@ -121,8 +124,8 @@ impl WidgetBuilder {
     pub fn build(self) -> Widget {
         Widget {
             identifier: next_id(),
-            
-            click_action: self.the_click_action.unwrap_or_else(|| |_vertex|{}),
+
+            click_action: self.the_click_action,
             text: self.the_text,
 
             padding: self.the_padding.unwrap_or_else(|| 10.0),

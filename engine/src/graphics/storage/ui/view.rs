@@ -1,3 +1,4 @@
+use std::collections::HashMap;
 use crate::geometry::dim::Dimension2D;
 use crate::geometry::primitive::face::PolygonFace;
 use crate::geometry::primitive::mode::PolygonMode;
@@ -15,6 +16,7 @@ use attrib::align::Alignment;
 use attrib::assembled::Assembled;
 use attrib::sizing::Sizing;
 use panel::Panel;
+use crate::support::id::Identifier;
 
 pub mod attrib;
 pub mod panel;
@@ -33,6 +35,7 @@ pub struct View {
 
     /* storage for rectangle collisions */
     qt: QuadTree,
+    clicks: HashMap<Identifier, fn(pt: &Vertex2D)>,
 
     /* optional rendering choices */
     debug_enabled: bool,
@@ -74,9 +77,24 @@ impl View {
         self.panel.reassemble(self.debug_enabled, &mut model, &rectangle, &mut self.qt);
         self.model = model;
     }
-    
+
+    ///
+    /// handle a click at the given location.
+    ///
     pub fn click(&self, location: &Vertex2D) {
-        self.panel.click(location);
+        let ids = self.qt.query(location);
+        for id in ids {
+            if let Some(click) = self.clicks.get(&id) {
+                (click)(location);
+            }
+        }
+    }
+
+    ///
+    /// load click handlers into a map.
+    ///
+    pub(super) fn load_click_handlers(&mut self) {
+        self.panel.load_click_handlers(&mut self.clicks);
     }
 }
 
@@ -184,7 +202,8 @@ impl ViewBuilder {
         let mut qt = QuadTree::new(rectangle.clone());
         panel.reassemble(debug, &mut model, &rectangle, &mut qt);
 
-        Some(View {
+        /* now we need to assign click handlers */
+        let mut view = View {
             panel,
             model,
 
@@ -195,11 +214,16 @@ impl ViewBuilder {
             horizontal_alignment,
 
             qt,
+            clicks: HashMap::new(),
 
             debug_enabled: debug,
             background: self.the_background,
             border: self.the_border,
-        })
+        };
+        view.load_click_handlers();
+
+        /* done */
+        Some(view)
     }
 }
 

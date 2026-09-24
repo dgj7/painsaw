@@ -1,5 +1,6 @@
 use crate::config::input_config::kc::KeyHandler;
 use crate::config::EngineConfig;
+use crate::geometry::primitive::v2d::Vertex2D;
 use crate::graphics::camera::Camera;
 use crate::graphics::storage::Models;
 use crate::input::mouse::md::MouseDelta;
@@ -11,6 +12,7 @@ use crate::WorldController;
 ///
 /// handle mouse inputs.
 ///
+// todo: can we get rid of some of these T extensions?  it ideally only needs KeyHandler here
 pub fn handle_mouse_change<T: KeyHandler + MouseHandler + WorldController + 'static>(
     name: &MouseInputName,
     state: &mut MouseState,
@@ -21,7 +23,10 @@ pub fn handle_mouse_change<T: KeyHandler + MouseHandler + WorldController + 'sta
     models: &mut Models,
 ) {
     match name {
-        MouseInputName::MouseLeftButton => { game.handle_left_click(state, config, camera, timing, models) }
+        MouseInputName::MouseLeftButton => {
+            models.ui.click(&Vertex2D { x: state.current.x as f32, y: state.current.y as f32 });
+            game.handle_left_click(state, config, camera, timing, models);
+        }
         MouseInputName::MouseRightButton => { game.handle_right_click(state, config, camera, timing, models) }
         MouseInputName::MouseScroll => {}
         MouseInputName::MouseMove => game.handle_mouse_move(state, config, camera, timing, models),

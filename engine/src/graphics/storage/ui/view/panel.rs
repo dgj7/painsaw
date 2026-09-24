@@ -14,6 +14,7 @@ use crate::graphics::storage::ui::view::widget::Widget;
 use crate::support::logger::log;
 use crate::support::logger::log_level::LogLevel;
 use std::collections::HashMap;
+use crate::support::id::Identifier;
 
 ///
 /// a panel is a container for other [Panel]s and [Control]s.
@@ -32,15 +33,6 @@ pub struct Panel {
 
 impl Panel {
     ///
-    /// handle a click if it's vertex is within this panel's area.
-    ///
-    pub fn click(&self, location: &Vertex2D) {
-        // todo: make this more efficient
-        self.panels.iter().for_each(|(_key, (panel, _sizing))| panel.click(location));
-        self.widgets.iter().for_each(|(_key, (widget, _sizing))| widget.handle_click(location));
-    }
-
-    ///
     /// get the element with the given id.
     ///
     fn element_at(&self, index: u32) -> Option<(Option<&(Panel, Sizing)>, Option<&(Widget, Sizing)>)> {
@@ -51,6 +43,14 @@ impl Panel {
         } else {
             None
         }
+    }
+
+    ///
+    /// populate the click handler mapping.
+    ///
+    pub(super) fn load_click_handlers(&self, clicks: &mut HashMap<Identifier, fn(pt: &Vertex2D)>) {
+        self.panels.iter().for_each(|(_key, (panel, _sizing))| {panel.load_click_handlers(clicks);});
+        self.widgets.iter().for_each(|(_key, (widget, _sizing)) | {widget.load_click_handlers(clicks)});
     }
 }
 
