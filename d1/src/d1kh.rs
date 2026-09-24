@@ -17,6 +17,7 @@ use engine::window::api::mouse::hide::hide_mouse;
 use engine::window::api::mouse::show::show_mouse;
 use std::collections::HashMap;
 use std::sync::{LazyLock, Mutex};
+use engine::game::Game;
 use crate::d1wc::M2D_CROSSHAIRS;
 
 static KEYS: LazyLock<Mutex<HashMap<KeyInputName, Command>>> = LazyLock::new(|| {
@@ -56,10 +57,10 @@ impl KeyHandler for Demo1 {
             state.current.set_handled();
 
             /* flip the main menu state */
-            self.showing_main_menu = !self.showing_main_menu;
+            self.toggle_menu();
 
             /* other variables get set based on whether the main menu should be displayed */
-            if self.showing_main_menu {
+            if self.is_menu() {
                 show_mouse();
                 models.ui.activate(1);
                 models.g2d.update(M2D_CROSSHAIRS, |m| m.visible = false);

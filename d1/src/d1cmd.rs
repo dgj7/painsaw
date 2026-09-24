@@ -1,5 +1,6 @@
 use crate::d1::Demo1;
 use engine::config::EngineConfig;
+use engine::game::Game;
 use engine::geometry::orient::movement::spectator::SpectatorMovementStrategy;
 use engine::graphics::camera::Camera;
 use engine::support::timing::EngineTiming;
@@ -22,22 +23,22 @@ pub(crate) fn handle_command(
 ) {
     match command {
         Command::CameraMoveForward => {
-            if !game.showing_main_menu {
+            if !game.is_menu() {
                 <Demo1 as SpectatorMovementStrategy>::move_forward(ec, camera, et)
             }
         }
         Command::CameraStrafeLeft => {
-            if !game.showing_main_menu {
+            if !game.is_menu() {
                 <Demo1 as SpectatorMovementStrategy>::move_left(ec, camera, et)
             }
         }
         Command::CameraMoveBackward => {
-            if !game.showing_main_menu {
+            if !game.is_menu() {
                 <Demo1 as SpectatorMovementStrategy>::move_backward(ec, camera, et)
             }
         }
         Command::CameraStrafeRight => {
-            if !game.showing_main_menu {
+            if !game.is_menu() {
                 <Demo1 as SpectatorMovementStrategy>::move_right(ec, camera, et)
             }
         }

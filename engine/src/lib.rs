@@ -12,6 +12,7 @@ use crate::support::logger::log_level::LogLevel;
 use crate::support::timing::EngineTiming;
 use crate::window::key::WindowKey;
 use std::sync::{Arc, Mutex};
+use crate::game::Game;
 
 pub mod config;
 pub mod geometry;
@@ -19,6 +20,7 @@ pub mod graphics;
 pub mod input;
 pub mod support;
 pub mod window;
+pub mod game;
 
 ///
 /// Control various aspects of the world, as called by the windowing system.
@@ -32,17 +34,7 @@ pub mod window;
 /// Painsaw engine create their own world controller, implementing the abstract
 /// unimplemented functions below.
 ///
-pub trait WorldController: KeyHandler + MouseHandler + Sized where Self: 'static {
-    ///
-    /// determine if the application should close.
-    /// 
-    fn is_exit(&self) -> bool;
-    
-    ///
-    /// ask the application to close.
-    /// 
-    fn set_exit(&mut self);
-    
+pub trait WorldController: KeyHandler + MouseHandler + Game + Sized where Self: 'static {
     ///
     /// initialize the game world.
     ///

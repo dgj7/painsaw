@@ -11,14 +11,6 @@ static M2D_BMP_24B: &str = "bmp-24b";
 static M2D_TGA_32B_B2T_L2R: &str = "tga-32b-b2t-l2r";
 
 impl WorldController for Demo2 {
-    fn is_exit(&self) -> bool {
-        self.exit
-    }
-
-    fn set_exit(&mut self) {
-        self.exit = true;
-    }
-    
     fn initialize_world_helper(&self, _camera: &Camera, models: &mut Models) {
         models.g2d.attach(M2D_BMP_24B, create_2d_bmp_24b());
         models.g2d.attach(M2D_TGA_32B_B2T_L2R, create_2d_tga_32b_b2t_l2r());

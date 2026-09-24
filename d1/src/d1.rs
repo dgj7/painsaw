@@ -1,14 +1,14 @@
+use engine::game::GameState;
+
 #[derive(Clone)]
 pub struct Demo1 {
-    pub exit: bool,
-    pub showing_main_menu: bool,
+    pub state: GameState,
 }
 
 impl Demo1 {
     pub(crate) fn new() -> Self {
         Self {
-            exit: false,
-            showing_main_menu: false,
+            state: GameState::new(),
         }
     }
 }

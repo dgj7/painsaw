@@ -10,6 +10,7 @@ mod d2kh;
 mod d2m2d;
 mod d2mh;
 mod d2wc;
+mod d2gs;
 
 use crate::d2::Demo2;
 use crate::d2ec::create_engine_config;

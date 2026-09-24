@@ -1,11 +1,13 @@
+use engine::game::GameState;
+
 pub struct Demo3 {
-    pub exit: bool
+    pub state: GameState,
 }
 
 impl Demo3 {
     pub(crate) fn new() -> Self {
         Self {
-            exit: false
+            state: GameState::new(),
         }
     }
 }

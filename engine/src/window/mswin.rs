@@ -69,7 +69,7 @@ impl Window for MsWinWindow {
             if peek_message(&mut message, Default::default(), 0, 0, PM_REMOVE) {
                 if message.message == WM_QUIT {
                     log(LogLevel::Debug, &|| String::from("WM_QUIT"));
-                    game.set_exit();
+                    game.set_exit(true);
                     opengl_cleanup(self.key.hwnd);
                     break;
                 }
