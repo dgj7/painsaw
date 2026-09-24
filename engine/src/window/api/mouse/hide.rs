@@ -1,6 +1,5 @@
 use crate::window::mswin::winapi::show_cursor;
 
-#[allow(unused)] // todo
 pub fn hide_mouse() {
     hide_mouse_os()
 }

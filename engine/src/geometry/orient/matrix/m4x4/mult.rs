@@ -3,7 +3,6 @@ use crate::geometry::orient::matrix::m4x4::Matrix4x4;
 ///
 /// multiply two matrices.
 ///
-#[allow(unused)] // todo: remove this
 pub fn multiply(left: &Matrix4x4, right: &Matrix4x4) -> Matrix4x4 {
     Matrix4x4 {
         c1r1: left.c1r1 * right.c1r1

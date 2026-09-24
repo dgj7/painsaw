@@ -1,17 +1,15 @@
-use crate::config::input_config::mc::MouseHandler;
 use crate::config::EngineConfig;
 use crate::graphics::camera::Camera;
+use crate::graphics::storage::Models;
 use crate::input::keyboard::kin::KeyInputName;
 use crate::input::keyboard::ks::KeyState;
 use crate::support::timing::EngineTiming;
-use crate::WorldController;
 use std::collections::HashMap;
-use crate::graphics::storage::Models;
 
 ///
 /// handle keys via the configured key handler.
 ///
-pub(crate) fn handle_key_change<T: KeyHandler + MouseHandler + WorldController + 'static>(
+pub(crate) fn handle_key_change<T: KeyHandler>(
     name: &KeyInputName,
     state: &mut KeyState,
     game: &mut T,

@@ -1,6 +1,4 @@
-pub struct Demo2 {
-    // todo: add fields specific to demo2
-}
+pub struct Demo2 {}
 
 impl Demo2 {
     pub(crate) fn new() -> Self {

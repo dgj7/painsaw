@@ -1,3 +1,5 @@
+#![allow(dead_code)]// todo: remove this, eventually
+
 use crate::config::input_config::kc::{handle_key_change, KeyHandler};
 use crate::config::input_config::mc::{handle_mouse_change, MouseHandler};
 use crate::config::EngineConfig;

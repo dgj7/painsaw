@@ -14,7 +14,6 @@ pub(crate) fn gl_clear_color(red: f32, green: f32, blue: f32, alpha: f32) {
     check_errors_gl("glClearColor");
 }
 
-#[allow(unused)] // todo: remove this
 pub(crate) fn gl_frustum(left: f64, right: f64, bottom: f64, top: f64, znear: f64, zfar: f64) {
     unsafe { glFrustum(left, right, bottom, top, znear, zfar); }
     check_errors_gl(&format!("glFrustum({},{},{},{},{},{})", left, right, bottom, top, znear, zfar));
@@ -168,7 +167,6 @@ pub(crate) fn gl_tex_coord_2f(s: f32, t: f32) {
     //check_errors_gl("glTexCoord2f");
 }
 
-#[allow(unused)] // todo: remove this
 pub(crate) fn gl_tex_env_f(target: u32, pname: u32, param2: f32) {
     unsafe { glTexEnvf(target, pname, param2) }
     check_errors_gl("glTexEnvf");

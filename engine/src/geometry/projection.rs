@@ -37,7 +37,6 @@ impl Projection {
         self.width / self.height
     }
 
-    #[allow(unused)] // todo: remove
     pub(crate) fn to_matrix(&self) -> Matrix4x4 {
         let f = 1.0 / (self.fov / 2.0).tan();
         let aspect = self.to_aspect();

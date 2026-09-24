@@ -238,7 +238,6 @@ pub(crate) fn get_raw_input_data(
 ///
 /// GetActiveWindow()
 ///
-#[allow(unused)] // todo: remove this
 pub(crate) fn get_active_window() -> HWND {
     unsafe { GetActiveWindow() }
 }
@@ -246,7 +245,6 @@ pub(crate) fn get_active_window() -> HWND {
 ///
 /// SetCursorPos()
 ///
-#[allow(unused)] // todo: remove this
 pub(crate) fn set_cursor_pos(x: i32, y: i32) {
     let result = unsafe { SetCursorPos(x, y) };
     match result {
