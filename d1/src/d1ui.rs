@@ -1,3 +1,4 @@
+use crate::d1api::toggle_main_menu;
 use engine::graphics::camera::Camera;
 use engine::graphics::color::Color;
 use engine::graphics::storage::ui::view::attrib::align::Alignment;
@@ -34,12 +35,12 @@ pub(super) fn main_menu(camera: &Camera) -> View {
                                         Sizing::Percentage { percent: 0.1 })
                             .with_widget(WidgetBuilder::new()
                                              .with_text("options")
-                                             .with_click_action(Box::new(|_,_| log(LogLevel::Info, &|| String::from("clicked options button"))))
+                                             .with_click_action(Box::new(|_,_,_,_,_| log(LogLevel::Info, &|| String::from("clicked options button"))))
                                              .build(),
                                          Sizing::Percentage { percent: 0.2 })
                             .with_widget(WidgetBuilder::new()
                                              .with_text("exit")
-                                             .with_click_action(Box::new(|state, _|{state.exiting = true}))
+                                             .with_click_action(Box::new(|state,_,_,_,_|{state.exiting = true}))
                                              .build(),
                                          Sizing::Percentage { percent: 0.2 })
                             .with_panel(PanelBuilder::new()
@@ -49,7 +50,7 @@ pub(super) fn main_menu(camera: &Camera) -> View {
                                         Sizing::Percentage { percent: 0.20 })
                             .with_widget(WidgetBuilder::new()
                                              .with_text("return")
-                                             .with_click_action(Box::new(|_,_| log(LogLevel::Info, &|| String::from("clicked returned button"))))
+                                             .with_click_action(Box::new(|game,_,ui,g2d,_| toggle_main_menu(game, ui, g2d)))
                                              .build(),
                                          Sizing::Percentage { percent: 0.2 })
                             .with_panel(PanelBuilder::new()

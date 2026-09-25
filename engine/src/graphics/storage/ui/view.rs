@@ -17,6 +17,9 @@ use attrib::assembled::Assembled;
 use attrib::sizing::Sizing;
 use panel::Panel;
 use crate::game::GameState;
+use crate::graphics::storage::g2d::Graph2D;
+use crate::graphics::storage::g3d::Graph3D;
+use crate::graphics::storage::ui::UIManager;
 use crate::graphics::storage::ui::view::widget::ClickHandler;
 use crate::support::id::Identifier;
 
@@ -83,11 +86,11 @@ impl View {
     ///
     /// handle a click at the given location.
     ///
-    pub fn click(&self, state: &mut GameState, location: &Vertex2D) {
-        let ids = self.qt.query(location);
+    pub fn click(&self, state: &mut GameState, point: &Vertex2D, ui: &mut UIManager, g2d: &mut Graph2D, g3d: &mut Graph3D) {
+        let ids = self.qt.query(point);
         for id in ids {
             if let Some(click) = self.clicks.get(&id) {
-                (click)(state, location);
+                (click)(state, point, ui, g2d, g3d);
             }
         }
     }

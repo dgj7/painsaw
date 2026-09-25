@@ -4,10 +4,10 @@
 
 use crate::graphics::storage::ui::view::View;
 use std::collections::HashMap;
-use std::hash::Hash;
 use crate::game::GameState;
 use crate::geometry::primitive::v2d::Vertex2D;
 use crate::graphics::storage::g2d::Graph2D;
+use crate::graphics::storage::g3d::Graph3D;
 use crate::input::screen::ScreenState;
 
 pub mod view;
@@ -17,16 +17,16 @@ pub mod view;
 ///
 /// allows for a maximum of one screen to be "active" at any one time.
 ///
-pub struct UIManager<K: Eq + Hash> {
-    active: Option<K>,
-    views: HashMap<K, View>,
+pub struct UIManager {
+    active: Option<u32>,
+    views: HashMap<u32, View>,
 }
 
-impl<K: Eq + Hash> UIManager<K> {
+impl UIManager {
     ///
     /// create a new instance.
     ///
-    pub fn new<K1: Eq + Hash>() -> UIManager<K1> {
+    pub fn new() -> UIManager {
         UIManager {
             active: None,
             views: HashMap::new(),
@@ -38,7 +38,7 @@ impl<K: Eq + Hash> UIManager<K> {
     ///
     /// automatically deactivates any currently activated screen.
     ///
-    pub fn activate(&mut self, key: K) {
+    pub fn activate(&mut self, key: u32) {
         self.active = Some(key);
     }
 
@@ -61,7 +61,7 @@ impl<K: Eq + Hash> UIManager<K> {
     ///
     /// add an ui.
     ///
-    pub fn add(&mut self, key: K, view: View) {
+    pub fn add(&mut self, key: u32, view: View) {
         self.views.insert(key, view);
     }
 
@@ -80,7 +80,12 @@ impl<K: Eq + Hash> UIManager<K> {
     ///
     /// handle click.
     ///
-    pub fn click(&mut self, state: &mut GameState, location: &Vertex2D) {
-        self.check().inspect(|v| v.click(state, location));
+    pub fn click(&mut self, state: &mut GameState, point: &Vertex2D, g2d: &mut Graph2D, g3d: &mut Graph3D) {
+        if let Some(key) = self.active {
+            if let Some(view) = self.views.remove(&key) {
+                view.click(state, point, self, g2d, g3d);
+                self.views.insert(key, view);
+            }
+        }
     }
 }

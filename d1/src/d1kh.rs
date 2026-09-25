@@ -1,4 +1,5 @@
 use crate::d1::Demo1;
+use crate::d1api::toggle_main_menu;
 use crate::d1cmd::Command::{
     CameraMoveBackward, CameraMoveForward, CameraStrafeLeft, CameraStrafeRight,
 };
@@ -13,12 +14,8 @@ use engine::input::keyboard::ks::KeyState;
 use engine::support::logger::log;
 use engine::support::logger::log_level::LogLevel;
 use engine::support::timing::EngineTiming;
-use engine::window::api::mouse::hide::hide_mouse;
-use engine::window::api::mouse::show::show_mouse;
 use std::collections::HashMap;
 use std::sync::{LazyLock, Mutex};
-use engine::game::Game;
-use crate::d1wc::M2D_CROSSHAIRS;
 
 static KEYS: LazyLock<Mutex<HashMap<KeyInputName, Command>>> = LazyLock::new(|| {
     let mut map = HashMap::new();
@@ -57,18 +54,7 @@ impl KeyHandler for Demo1 {
             state.current.set_handled();
 
             /* flip the main menu state */
-            self.toggle_menu();
-
-            /* other variables get set based on whether the main menu should be displayed */
-            if self.is_menu() {
-                show_mouse();
-                models.ui.activate(1);
-                models.g2d.update(M2D_CROSSHAIRS, |m| m.visible = false);
-            } else {
-                hide_mouse();
-                models.ui.deactivate();
-                models.g2d.update(M2D_CROSSHAIRS, |m| m.visible = true);
-            }
+            toggle_main_menu(&mut self.state, &mut models.ui, &mut models.g2d);
         }
     }
 

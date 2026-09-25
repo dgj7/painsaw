@@ -6,7 +6,10 @@ use crate::geometry::primitive::v2d::Vertex2D;
 use crate::geometry::primitive::PrimitiveType;
 use crate::geometry::rect::Rectangle2D;
 use crate::graphics::color::Color;
+use crate::graphics::storage::g2d::Graph2D;
 use crate::graphics::storage::g2d::m2d::Model2D;
+use crate::graphics::storage::g3d::Graph3D;
+use crate::graphics::storage::ui::UIManager;
 use crate::graphics::storage::ui::view::attrib::assembled::Assembled;
 use crate::graphics::storage::ui::view::qt::QuadTree;
 use crate::graphics::texture::t2d::Texture2DBuilder;
@@ -15,7 +18,7 @@ use crate::support::logger::log;
 use crate::support::logger::log_level::LogLevel;
 use crate::support::text::{text_2d_image, TextConfig, Typeface};
 
-pub type ClickHandler = Box<dyn Fn(&mut GameState, &Vertex2D)>;
+pub type ClickHandler = Box<dyn Fn(&mut GameState, &Vertex2D, &mut UIManager, &mut Graph2D, &mut Graph3D)>;
 
 ///
 /// a widget is any control that can be clicked on screen.

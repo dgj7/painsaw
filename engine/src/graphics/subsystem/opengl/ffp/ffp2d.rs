@@ -77,7 +77,7 @@ pub(crate) fn ffp_render_2d(primitive: &Primitive2D, preparation: impl Fn(), beg
     gl_pop_matrix();
 }
 
-pub(crate) fn ffp_2d_initialize_textures(g2d: &mut Graph2D, ui: &mut UIManager<u32>) {
+pub(crate) fn ffp_2d_initialize_textures(g2d: &mut Graph2D, ui: &mut UIManager) {
     /* enable texturing in opengl */
     gl_enable(GL_TEXTURE_2D);
 
@@ -97,7 +97,7 @@ pub(crate) fn ffp_2d_initialize_textures(g2d: &mut Graph2D, ui: &mut UIManager<u
     log(LogLevel::Debug, &|| String::from("initialization complete"));
 }
 
-pub(crate) fn ffp_2d_update_textures(g2d: &mut Graph2D, ui: &mut UIManager<u32>) {
+pub(crate) fn ffp_2d_update_textures(g2d: &mut Graph2D, ui: &mut UIManager) {
     for (_, model) in &mut g2d.iter_mut() {
         for texture in &mut model.textures {
             if !texture.initialized {

@@ -60,7 +60,7 @@ impl RenderingSubSystemHandle for OpenGLHandle {
         }
     }
 
-    fn prepare_2d(&self, camera: &Camera, g2d: &mut Graph2D, ui: &mut UIManager<u32>) {
+    fn prepare_2d(&self, camera: &Camera, g2d: &mut Graph2D, ui: &mut UIManager) {
         match self.pipeline {
             OpenGLPipeline::FixedFunction => {
                 ffp_2d_setup(camera);
@@ -70,7 +70,7 @@ impl RenderingSubSystemHandle for OpenGLHandle {
         }
     }
 
-    fn render_2d(&self, g2d: &mut Graph2D, ui: &mut UIManager<u32>) {
+    fn render_2d(&self, g2d: &mut Graph2D, ui: &mut UIManager) {
         match self.pipeline {
             OpenGLPipeline::FixedFunction => {
                 /* render any 2d objects, not including the ui */

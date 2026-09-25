@@ -22,7 +22,8 @@ pub fn handle_mouse_change<T: MouseHandler + Game>(
 ) {
     match name {
         MouseInputName::MouseLeftButton => {
-            models.ui.click(game.game_state_mut(), &Vertex2D { x: state.current.x as f32, y: state.current.y as f32 });
+            let point = &Vertex2D { x: state.current.x as f32, y: state.current.y as f32 };
+            models.ui.click(game.game_state_mut(), point, &mut models.g2d, &mut models.g3d);
             game.handle_left_click(state, config, camera, timing, models);
         }
         MouseInputName::MouseRightButton => { game.handle_right_click(state, config, camera, timing, models) }
