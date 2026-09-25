@@ -17,7 +17,7 @@ pub fn create_engine_config() -> EngineConfig {
             show_fps: true,
             show_cam_coords: true,
             show_screen_stats: true,
-            fps_cap: Some(60),
+            fps_cap: Some(240),
         },
         InputConfig {
             mouse_sensitivity: 0.2,
