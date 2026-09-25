@@ -1,4 +1,6 @@
 use crate::config::EngineConfig;
+use crate::geometry::orient::matrix::m3x3::Matrix3x3;
+use crate::geometry::orient::matrix::rotate;
 use crate::geometry::primitive::v3d::Vertex3D;
 use crate::graphics::camera::Camera;
 use crate::input::mouse::md::MouseDelta;
@@ -84,8 +86,7 @@ pub trait SpectatorMovementStrategy {
         if camera.orientation.pitch < -89.0 { camera.orientation.pitch = -89.0; }
 
         /* finally, update orientation */
-        // todo: complete this
-        //let rotation = Matrix3x3::from_pitch_yaw_roll(camera.orientation.pitch, camera.orientation.yaw, camera.orientation.roll);
-        //camera.orientation.position = rotate(&camera.orientation.position, &rotation);
+        let rotation = Matrix3x3::from_pitch_yaw_roll(camera.orientation.pitch, camera.orientation.yaw, camera.orientation.roll);
+        camera.orientation.position = rotate(&camera.orientation.position, &rotation);
     }
 }

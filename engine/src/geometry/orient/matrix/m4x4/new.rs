@@ -9,49 +9,34 @@ impl Matrix4x4 {
         position: Vertex3D,
     ) -> Matrix4x4 {
         Matrix4x4 {
-            c1r1: x_right.x,
-            c1r2: x_right.y,
-            c1r3: x_right.z,
-            c1r4: 0.0,
+            r1c1: x_right.x,
+            r2c1: x_right.y,
+            r3c1: x_right.z,
+            r4c1: 0.0,
 
-            c2r1: y_up.x,
-            c2r2: y_up.y,
-            c2r3: y_up.z,
-            c2r4: 0.0,
+            r1c2: y_up.x,
+            r2c2: y_up.y,
+            r3c2: y_up.z,
+            r4c2: 0.0,
 
-            c3r1: z_forward.x,
-            c3r2: z_forward.y,
-            c3r3: z_forward.z,
-            c3r4: 0.0,
+            r1c3: z_forward.x,
+            r2c3: z_forward.y,
+            r3c3: z_forward.z,
+            r4c3: 0.0,
 
-            c4r1: position.x,
-            c4r2: position.y,
-            c4r3: position.z,
-            c4r4: 0.0, // todo: i think this should be 1.0
+            r1c4: position.x,
+            r2c4: position.y,
+            r3c4: position.z,
+            r4c4: 0.0, // todo: i think this should be 1.0
         }
     }
 
     pub fn identity() -> Matrix4x4 {
         Matrix4x4 {
-            c1r1: 1.0,
-            c1r2: 0.0,
-            c1r3: 0.0,
-            c1r4: 0.0,
-
-            c2r1: 0.0,
-            c2r2: 1.0,
-            c2r3: 0.0,
-            c2r4: 0.0,
-
-            c3r1: 0.0,
-            c3r2: 0.0,
-            c3r3: 1.0,
-            c3r4: 0.0,
-
-            c4r1: 0.0,
-            c4r2: 0.0,
-            c4r3: 0.0,
-            c4r4: 1.0,
+            r1c1: 1.0, r1c2: 0.0, r1c3: 0.0, r1c4: 0.0,
+            r2c1: 0.0, r2c2: 1.0, r2c3: 0.0, r2c4: 0.0,
+            r3c1: 0.0, r3c2: 0.0, r3c3: 1.0, r3c4: 0.0,
+            r4c1: 0.0, r4c2: 0.0, r4c3: 0.0, r4c4: 1.0,
         }
     }
 }

@@ -18,26 +18,35 @@
 ///
 /// row-major (directx/unreal): each row represents 3 (basis) vectors.
 ///
+#[derive(Debug, PartialEq)]
 pub struct Matrix3x3 {
-    /* column 1 */
-    pub c1r1: f32,
-    pub c1r2: f32,
-    pub c1r3: f32,
+    /* row 1 */
+    pub r1c1: f32,
+    pub r1c2: f32,
+    pub r1c3: f32,
 
-    /* column 2 */
-    pub c2r1: f32,
-    pub c2r2: f32,
-    pub c2r3: f32,
+    /* row 2 */
+    pub r2c1: f32,
+    pub r2c2: f32,
+    pub r2c3: f32,
 
-    /* column 3 */
-    pub c3r1: f32,
-    pub c3r2: f32,
-    pub c3r3: f32,
+    /* row 3 */
+    pub r3c1: f32,
+    pub r3c2: f32,
+    pub r3c3: f32,
 }
 
 type RotationMatrix = Matrix3x3;
 
 impl Matrix3x3 {
+    pub fn identity() -> Matrix3x3 {
+        Matrix3x3 {
+            r1c1: 1.0, r1c2: 0.0, r1c3: 0.0,
+            r2c1: 0.0, r2c2: 1.0, r2c3: 0.0,
+            r3c1: 0.0, r3c2: 0.0, r3c3: 1.0,
+        }
+    }
+
     pub fn from_pitch_yaw_roll(pitch: f32, yaw: f32, roll: f32) -> Matrix3x3 {
         let sp = pitch.sin();
         let sy = yaw.sin();
@@ -47,19 +56,19 @@ impl Matrix3x3 {
         let cr = roll.cos();
 
         let rotx = Matrix3x3 {
-            c1r1: 1.0, c1r2: 0.0, c1r3: 0.0,
-            c2r1: 0.0, c2r2: cp, c2r3: sp,
-            c3r1: 0.0, c3r2: -sp, c3r3: cp,
+            r1c1: 1.0, r2c1: 0.0, r3c1: 0.0,
+            r1c2: 0.0, r2c2: cp, r3c2: sp,
+            r1c3: 0.0, r2c3: -sp, r3c3: cp,
         };
         let roty = Matrix3x3 {
-            c1r1: cy, c1r2: 0.0, c1r3: -sy,
-            c2r1: 0.0, c2r2: 1.0, c2r3: 0.0,
-            c3r1: sy, c3r2: 0.0, c3r3: cy,
+            r1c1: cy, r2c1: 0.0, r3c1: -sy,
+            r1c2: 0.0, r2c2: 1.0, r3c2: 0.0,
+            r1c3: sy, r2c3: 0.0, r3c3: cy,
         };
         let rotz = Matrix3x3 {
-            c1r1: cr, c1r2: sr, c1r3: 0.0,
-            c2r1: -sr, c2r2: cr, c2r3: 0.0,
-            c3r1: 0.0, c3r2: 0.0, c3r3: 1.0,
+            r1c1: cr, r2c1: sr, r3c1: 0.0,
+            r1c2: -sr, r2c2: cr, r3c2: 0.0,
+            r1c3: 0.0, r2c3: 0.0, r3c3: 1.0,
         };
 
         rotx.multiply(&roty).multiply(&rotz)
@@ -75,17 +84,17 @@ impl Matrix3x3 {
 ///
 pub fn multiply(left: &Matrix3x3, right: &Matrix3x3) -> Matrix3x3 {
     Matrix3x3 {
-        c1r1: left.c1r1 * right.c1r1 + left.c2r1 * right.c1r2 + left.c3r1 * right.c1r3,
-        c1r2: left.c1r2 * right.c1r1 + left.c2r2 * right.c1r2 + left.c3r2 * right.c1r3,
-        c1r3: left.c1r3 * right.c1r1 + left.c2r3 * right.c1r2 + left.c3r3 * right.c1r3,
+        r1c1: left.r1c1 * right.r1c1 + left.r1c2 * right.r2c1 + left.r1c3 * right.r3c1,
+        r2c1: left.r2c1 * right.r1c1 + left.r2c2 * right.r2c1 + left.r2c3 * right.r3c1,
+        r3c1: left.r3c1 * right.r1c1 + left.r3c2 * right.r2c1 + left.r3c3 * right.r3c1,
 
-        c2r1: left.c1r1 * right.c2r1 + left.c2r1 * right.c2r2 + left.c3r1 * right.c2r3,
-        c2r2: left.c1r2 * right.c2r1 + left.c2r2 * right.c2r2 + left.c3r2 * right.c2r3,
-        c2r3: left.c1r3 * right.c2r1 + left.c2r3 * right.c2r2 + left.c3r3 * right.c2r3,
+        r1c2: left.r1c1 * right.r1c2 + left.r1c2 * right.r2c2 + left.r1c3 * right.r3c2,
+        r2c2: left.r2c1 * right.r1c2 + left.r2c2 * right.r2c2 + left.r2c3 * right.r3c2,
+        r3c2: left.r3c1 * right.r1c2 + left.r3c2 * right.r2c2 + left.r3c3 * right.r3c2,
 
-        c3r1: left.c1r1 * right.c3r1 + left.c2r1 * right.c3r2 + left.c3r1 * right.c3r3,
-        c3r2: left.c1r2 * right.c3r1 + left.c2r2 * right.c3r2 + left.c3r2 * right.c3r3,
-        c3r3: left.c1r3 * right.c3r1 + left.c2r3 * right.c3r2 + left.c3r3 * right.c3r3,
+        r1c3: left.r1c1 * right.r1c3 + left.r1c2 * right.r2c3 + left.r1c3 * right.r3c3,
+        r2c3: left.r2c1 * right.r1c3 + left.r2c2 * right.r2c3 + left.r2c3 * right.r3c3,
+        r3c3: left.r3c1 * right.r1c3 + left.r3c2 * right.r2c3 + left.r3c3 * right.r3c3,
     }
 }
 
@@ -94,16 +103,81 @@ pub fn multiply(left: &Matrix3x3, right: &Matrix3x3) -> Matrix3x3 {
 ///
 pub fn multiply_scalar(matrix: &Matrix3x3, scalar: f32) -> Matrix3x3 {
     Matrix3x3 {
-        c1r1: matrix.c1r1 * scalar,
-        c1r2: matrix.c1r2 * scalar,
-        c1r3: matrix.c1r3 * scalar,
+        r1c1: matrix.r1c1 * scalar,
+        r2c1: matrix.r2c1 * scalar,
+        r3c1: matrix.r3c1 * scalar,
 
-        c2r1: matrix.c2r1 * scalar,
-        c2r2: matrix.c2r2 * scalar,
-        c2r3: matrix.c2r3 * scalar,
+        r1c2: matrix.r1c2 * scalar,
+        r2c2: matrix.r2c2 * scalar,
+        r3c2: matrix.r3c2 * scalar,
 
-        c3r1: matrix.c3r1 * scalar,
-        c3r2: matrix.c3r2 * scalar,
-        c3r3: matrix.c3r3 * scalar,
+        r1c3: matrix.r1c3 * scalar,
+        r2c3: matrix.r2c3 * scalar,
+        r3c3: matrix.r3c3 * scalar,
+    }
+}
+
+#[cfg(test)]
+mod test_multiply {
+    use crate::geometry::orient::matrix::m3x3::{multiply, Matrix3x3};
+
+    #[test]
+    fn test_identity() {
+        let m1 = Matrix3x3 {
+            r1c1: 1.0, r1c2: 2.0, r1c3: 3.0,
+            r2c1: 4.0, r2c2: 5.0, r2c3: 6.0,
+            r3c1: 7.0, r3c2: 8.0, r3c3: 9.0,
+        };
+        let id = Matrix3x3::identity();
+
+        let result = multiply(&m1, &id);
+
+        assert_eq!(m1, result);
+    }
+
+    #[test]
+    fn test_scenario1() {
+        let m1 = Matrix3x3 {
+            r1c1: 1.0, r1c2: 2.0, r1c3: 3.0,
+            r2c1: 4.0, r2c2: 5.0, r2c3: 6.0,
+            r3c1: 7.0, r3c2: 8.0, r3c3: 9.0,
+        };
+        let m2 = Matrix3x3 {
+            r1c1: 9.0, r1c2: 8.0, r1c3: 7.0,
+            r2c1: 6.0, r2c2: 5.0, r2c3: 4.0,
+            r3c1: 3.0, r3c2: 2.0, r3c3: 1.0,
+        };
+        let expected = Matrix3x3 {
+            r1c1: 30.0, r1c2: 24.0, r1c3: 18.0,
+            r2c1: 84.0, r2c2: 69.0, r2c3: 54.0,
+            r3c1: 138.0, r3c2: 114.0, r3c3: 90.0,
+        };
+
+        let result = multiply(&m1, &m2);
+
+        assert_eq!(expected, result);
+    }
+
+    #[test]
+    fn test_scenario2() {
+        let m1 = Matrix3x3 {
+            r1c1: 1.0, r1c2: 2.0, r1c3: 3.0,
+            r2c1: 4.0, r2c2: 5.0, r2c3: 6.0,
+            r3c1: 7.0, r3c2: 8.0, r3c3: 9.0,
+        };
+        let m2 = Matrix3x3 {
+            r1c1: 10.0, r1c2: 11.0, r1c3: 12.0,
+            r2c1: 13.0, r2c2: 14.0, r2c3: 15.0,
+            r3c1: 16.0, r3c2: 17.0, r3c3: 18.0,
+        };
+        let expected = Matrix3x3 {
+            r1c1: 84.0, r1c2: 90.0, r1c3: 96.0,
+            r2c1: 201.0, r2c2: 216.0, r2c3: 231.0,
+            r3c1: 318.0, r3c2: 342.0, r3c3: 366.0,
+        };
+
+        let result = multiply(&m1, &m2);
+
+        assert_eq!(expected, result);
     }
 }

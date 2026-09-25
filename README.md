@@ -22,5 +22,21 @@ Changes that have occurred over time on the engine, demos, and games.
 |  0.0.x  | abstractions for window, renderer, rendering api, primitives, keyboard/mouse input |
 |  0.1.x  | introduce game-specific data; consolidate traits; make parameter lists consistent  |
 |  0.2.x  | adds a user interface layer                                                        |
+|  0.3.x  | finish spectator movement strategy implementation                                  |
+
+## Planning
+| Status | Version |                         Change                         |
+|:------:|:-------:|:------------------------------------------------------:|
+|   ✔️   |  0.2.x  |                 implement ui framework                 |
+|   ❌    |  0.3.x  |   finish spectator movement strategy implementation    |
+|   ❌    |    ?    |              animations for ui, g2d, g3d               |
+|   ❌    |    ?    |                      3d texturing                      |
+|   ❌    |    ?    |                        lighting                        |
+|   ❌    |    ?    |                        shadows                         |
+|   ❌    |    ?    | reorganize keyboard traits into a single unified trait |
+|   ❌    |    ?    |                       particles                        |
+|   ❌    |    ?    |                         sounds                         |
+|   ❌    |    ?    |                        physics                         |
+
 
 ---

@@ -41,9 +41,9 @@ impl Orientation {
     pub fn camera_default() -> Orientation {
         Orientation {
             position: Matrix4x4 {
-                c4r1: 0.0,
-                c4r2: 0.0,
-                c4r3: 1.5,
+                r1c4: 0.0,
+                r2c4: 0.0,
+                r3c4: 1.5,
                 ..Default::default()
             },
             x_scale: 1.0,
