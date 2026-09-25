@@ -16,6 +16,7 @@ use attrib::align::Alignment;
 use attrib::assembled::Assembled;
 use attrib::sizing::Sizing;
 use panel::Panel;
+use crate::game::GameState;
 use crate::graphics::storage::ui::view::widget::ClickHandler;
 use crate::support::id::Identifier;
 
@@ -82,11 +83,11 @@ impl View {
     ///
     /// handle a click at the given location.
     ///
-    pub fn click(&self, location: &Vertex2D) {
+    pub fn click(&self, state: &mut GameState, location: &Vertex2D) {
         let ids = self.qt.query(location);
         for id in ids {
             if let Some(click) = self.clicks.get(&id) {
-                (click)(location);
+                (click)(state, location);
             }
         }
     }

@@ -69,28 +69,28 @@ checksum = "773648b94d0e5d620f64f280777445740e61fe701025087ec8b57f45c791888b"
 
 [[package]]
 name = "d1"
-version = "0.0.129"
+version = "0.0.130"
 dependencies = [
  "engine",
 ]
 
 [[package]]
 name = "d2"
-version = "0.0.38"
+version = "0.0.39"
 dependencies = [
  "engine",
 ]
 
 [[package]]
 name = "d3"
-version = "0.0.23"
+version = "0.0.24"
 dependencies = [
  "engine",
 ]
 
 [[package]]
 name = "engine"
-version = "0.2.46"
+version = "0.2.47"
 dependencies = [
  "chrono",
  "colored",

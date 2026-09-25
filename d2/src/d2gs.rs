@@ -6,6 +6,10 @@ impl Game for Demo2 {
         &self.state
     }
 
+    fn game_state_mut(&mut self) -> &mut GameState {
+        &mut self.state
+    }
+
     fn set_exit(&mut self, value: bool) {
         self.state.exiting = value;
     }

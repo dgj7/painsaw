@@ -6,6 +6,11 @@ pub trait Game {
     /// get the game state.
     ///
     fn game_state(&self) -> &GameState;
+    
+    ///
+    /// get the game state, mutable.
+    /// 
+    fn game_state_mut(&mut self) -> &mut GameState;
 
     ///
     /// determine if the application should close.

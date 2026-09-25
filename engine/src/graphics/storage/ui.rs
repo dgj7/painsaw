@@ -5,6 +5,7 @@
 use crate::graphics::storage::ui::view::View;
 use std::collections::HashMap;
 use std::hash::Hash;
+use crate::game::GameState;
 use crate::geometry::primitive::v2d::Vertex2D;
 use crate::graphics::storage::g2d::Graph2D;
 use crate::input::screen::ScreenState;
@@ -79,7 +80,7 @@ impl<K: Eq + Hash> UIManager<K> {
     ///
     /// handle click.
     ///
-    pub fn click(&mut self, location: &Vertex2D) {
-        self.check().inspect(|v| v.click(location));
+    pub fn click(&mut self, state: &mut GameState, location: &Vertex2D) {
+        self.check().inspect(|v| v.click(state, location));
     }
 }

@@ -1,4 +1,5 @@
 use crate::config::EngineConfig;
+use crate::game::Game;
 use crate::geometry::primitive::v2d::Vertex2D;
 use crate::graphics::camera::Camera;
 use crate::graphics::storage::Models;
@@ -10,7 +11,7 @@ use crate::support::timing::EngineTiming;
 ///
 /// handle mouse inputs.
 ///
-pub fn handle_mouse_change<T: MouseHandler>(
+pub fn handle_mouse_change<T: MouseHandler + Game>(
     name: &MouseInputName,
     state: &mut MouseState,
     game: &mut T,
@@ -21,7 +22,7 @@ pub fn handle_mouse_change<T: MouseHandler>(
 ) {
     match name {
         MouseInputName::MouseLeftButton => {
-            models.ui.click(&Vertex2D { x: state.current.x as f32, y: state.current.y as f32 });
+            models.ui.click(game.game_state_mut(), &Vertex2D { x: state.current.x as f32, y: state.current.y as f32 });
             game.handle_left_click(state, config, camera, timing, models);
         }
         MouseInputName::MouseRightButton => { game.handle_right_click(state, config, camera, timing, models) }
