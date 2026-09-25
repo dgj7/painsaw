@@ -3,7 +3,6 @@ use crate::geometry::orient::matrix::m4x4::Matrix4x4;
 ///
 /// invert the given matrix, as long as it's invertible (having determinant > 0).
 ///
-#[allow(dead_code)] // todo: remove this
 fn invert(m: &Matrix4x4) -> Option<Matrix4x4> {
     /* calculate cofactors */
     let c11 = m.c2r2 * (m.c3r3 * m.c4r4 - m.c4r3 * m.c3r4)

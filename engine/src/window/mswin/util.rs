@@ -19,7 +19,6 @@ pub(crate) fn is_mouse_over_window(hwnd: HWND) -> bool {
 ///
 /// not really reliable unless there's only a single window.  otherwise, you get the top one.
 ///
-#[allow(unused)] // todo: remove this
 pub(crate) fn find_hwnd() -> HWND {
     get_active_window()
 }

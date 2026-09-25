@@ -1,17 +1,18 @@
+#![allow(dead_code)]// todo: remove this, eventually
+
 use crate::config::input_config::kc::{handle_key_change, KeyHandler};
 use crate::config::input_config::mc::{handle_mouse_change, MouseHandler};
 use crate::config::EngineConfig;
 use crate::graphics::camera::Camera;
-use crate::graphics::storage::g2d::Graph2D;
-use crate::graphics::storage::g3d::Graph3D;
+use graphics::storage::Models;
 use crate::graphics::RendererWrapper;
-use crate::input::screen::ScreenState;
 use crate::input::UserInput;
 use crate::support::logger::log;
 use crate::support::logger::log_level::LogLevel;
 use crate::support::timing::EngineTiming;
 use crate::window::key::WindowKey;
 use std::sync::{Arc, Mutex};
+use crate::game::Game;
 
 pub mod config;
 pub mod geometry;
@@ -19,6 +20,7 @@ pub mod graphics;
 pub mod input;
 pub mod support;
 pub mod window;
+pub mod game;
 
 ///
 /// Control various aspects of the world, as called by the windowing system.
@@ -32,7 +34,7 @@ pub mod window;
 /// Painsaw engine create their own world controller, implementing the abstract
 /// unimplemented functions below.
 ///
-pub trait WorldController {
+pub trait WorldController: KeyHandler + MouseHandler + Game + Sized where Self: 'static {
     ///
     /// initialize the game world.
     ///
@@ -40,12 +42,11 @@ pub trait WorldController {
         &self,
         camera: &Camera,
         renderer: &mut RendererWrapper,
-        g2d: &mut Graph2D,
-        g3d: &mut Graph3D,
+        models: &mut Models,
     ) {
-        self.initialize_world_helper(camera, g2d, g3d);
+        self.initialize_world_helper(camera, models);
 
-        renderer.initialize(g2d, g3d);
+        renderer.initialize(models);
 
         log(LogLevel::Debug, &|| String::from("initialization complete"));
     }
@@ -53,23 +54,20 @@ pub trait WorldController {
     ///
     /// initialize game world - customizer for client.
     ///
-    fn initialize_world_helper(&self, camera: &Camera, g2d: &mut Graph2D, g3d: &mut Graph3D);
+    fn initialize_world_helper(&self, camera: &Camera, models: &mut Models);
 
     ///
     /// update the game world state - fully controlled by client.
     ///
-    fn update_world<T: KeyHandler + MouseHandler + WorldController + 'static>(
-        &self,
-        game: &T,
+    fn update_world(
+        &mut self,
         config: &EngineConfig,
         input: Arc<Mutex<UserInput>>,
         key: &WindowKey,
-        screen: &mut ScreenState,
         camera: &mut Camera,
         timing: &mut EngineTiming,
         renderer: &RendererWrapper,
-        g2d: &mut Graph2D,
-        g3d: &mut Graph3D,
+        models: &mut Models,
     ) {
         match input.clone().lock() {
             Ok(mut uin) => {
@@ -78,18 +76,18 @@ pub trait WorldController {
                     let change = uin.key_changes.pop_front().unwrap();
                     let state = uin.key_states.get_mut(&change).unwrap();
                     if !state.current.is_handled() {
-                        handle_key_change(&change, state, game, config, camera, timing);
+                        handle_key_change(&change, state, self, config, camera, timing, models);
                         state.current.set_handled();
                     }
                 }
 
                 /* check key states */
-                game.check_key_states(&uin.key_states, &config, camera, &timing);
+                self.check_key_states(&uin.key_states, &config, camera, &timing, models);
 
                 /* handle screen resize */
                 if uin.screen_resized {
-                    screen.update(key);
-                    camera.update_screen(&screen.current_client_dimensions);
+                    camera.screen.update(key);
+                    camera.update_screen();
                     renderer.resize(camera);
                 }
 
@@ -98,21 +96,21 @@ pub trait WorldController {
                     let change = uin.mouse_changes.pop_front().unwrap();
                     let state = uin.mouse_states.get_mut(&change).unwrap();
                     if !state.current.handled {
-                        handle_mouse_change(&change, state, game, &config, screen, camera, &timing);
+                        handle_mouse_change(&change, state, self, &config, camera, &timing, models);
                         state.current.handled = true;
                     }
                 }
 
                 /* handle mouse deltas */
                 if !uin.mouse_deltas.is_empty() {
-                    game.handle_mouse_deltas(&mut uin.mouse_deltas, &config, screen, camera, &timing);
+                    self.handle_mouse_deltas(&mut uin.mouse_deltas, &config, camera, &timing, models);
                     uin.mouse_deltas.clear();
                 }
             }
             Err(_) => {}
         }
 
-        self.update_world_helper(input.clone(), screen, camera, timing, g2d, g3d);
+        self.update_world_helper(input.clone(), camera, timing, models);
 
         match input.lock() {
             Ok(mut uin) => { uin.screen_resized = false; }
@@ -123,11 +121,9 @@ pub trait WorldController {
     fn update_world_helper(
         &self,
         input: Arc<Mutex<UserInput>>,
-        screen: &ScreenState,
         camera: &Camera,
         timing: &mut EngineTiming,
-        g2d: &mut Graph2D,
-        g3d: &mut Graph3D,
+        models: &mut Models
     );
 
     ///
@@ -137,17 +133,14 @@ pub trait WorldController {
     /// come from models supplied during initialization, along with changes to those models
     /// during the update world step.
     ///
-    fn display_world_scene<T: KeyHandler + MouseHandler + WorldController + 'static>(
+    fn display_world_scene(
         &self,
-        _game: &T,
         config: &EngineConfig,
         input: Arc<Mutex<UserInput>>,
-        screen: &mut ScreenState,
         camera: &mut Camera,
         timing: &EngineTiming,
         renderer: &mut RendererWrapper,
-        g2d: &mut Graph2D,
-        g3d: &mut Graph3D,
+        models: &mut Models
     ) {
         /* gather variables */
         let uin = input.lock().unwrap();
@@ -157,12 +150,12 @@ pub trait WorldController {
 
         /* draw 3d, if desired */
         renderer.prepare_3d(camera);
-        renderer.render_3d(g3d);
+        renderer.render_3d(&mut models.g3d);
         renderer.after_3d();
 
         /* draw 2d, if desired */
-        renderer.prepare_2d(&camera, g2d);
-        renderer.render_2d::<T>(&config, uin, &screen, &camera, &timing, g2d);
+        renderer.prepare_2d(&camera, &mut models.g2d, &mut models.ui);
+        renderer.render_2d(&config, uin, &camera, &timing, &mut models.g2d, &mut models.ui);
         renderer.after_2d();
     }
 }

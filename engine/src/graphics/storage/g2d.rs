@@ -1,5 +1,7 @@
-use crate::graphics::storage::m2d::Model2D;
+use m2d::Model2D;
 use std::collections::BTreeMap;
+
+pub mod m2d;
 
 // todo: better organization; quad tree?
 pub struct Graph2D {

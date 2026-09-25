@@ -1,0 +1,73 @@
+use crate::d1api::toggle_main_menu;
+use engine::graphics::camera::Camera;
+use engine::graphics::color::Color;
+use engine::graphics::storage::ui::view::attrib::align::Alignment;
+use engine::graphics::storage::ui::view::attrib::layout::Layout;
+use engine::graphics::storage::ui::view::attrib::sizing::Sizing;
+use engine::graphics::storage::ui::view::panel::PanelBuilder;
+use engine::graphics::storage::ui::view::widget::WidgetBuilder;
+use engine::graphics::storage::ui::view::{View, ViewBuilder};
+use engine::support::logger::log;
+use engine::support::logger::log_level::LogLevel;
+
+pub(super) fn main_menu(camera: &Camera) -> View {
+    ViewBuilder::new()
+        .with_window_dimensions(camera.screen.current_client_dimensions.clone())
+        .with_vertical_sizing(Sizing::Percentage { percent: 0.5 })
+        .with_horizontal_sizing(Sizing::Percentage { percent: 0.2 })
+        .with_vertical_alignment(Alignment::Center)
+        .with_horizontal_alignment(Alignment::Center)
+        .with_background(Color::GREY.adjust_alpha(0.35))
+        .with_border(Color::RED, 4.5)
+        .with_panel(PanelBuilder::new()
+            .with_layout(Layout::Horizontal)
+            .with_panel(PanelBuilder::new()
+                            .with_layout(Layout::Vertical)
+                            .build()
+                            .expect("VP1P1: failed"),
+                        Sizing::Percentage { percent: 0.1 })
+            .with_panel(PanelBuilder::new()
+                            .with_layout(Layout::Vertical)
+                            .with_panel(PanelBuilder::new()
+                                            .with_layout(Layout::Horizontal)
+                                            .build()
+                                            .expect("x"),
+                                        Sizing::Percentage { percent: 0.1 })
+                            .with_widget(WidgetBuilder::new()
+                                             .with_text("options")
+                                             .with_click_action(Box::new(|_,_,_,_,_| log(LogLevel::Info, &|| String::from("clicked options button"))))
+                                             .build(),
+                                         Sizing::Percentage { percent: 0.2 })
+                            .with_widget(WidgetBuilder::new()
+                                             .with_text("exit")
+                                             .with_click_action(Box::new(|state,_,_,_,_|{state.exiting = true}))
+                                             .build(),
+                                         Sizing::Percentage { percent: 0.2 })
+                            .with_panel(PanelBuilder::new()
+                                            .with_layout(Layout::Horizontal)
+                                            .build()
+                                            .expect("x"),
+                                        Sizing::Percentage { percent: 0.20 })
+                            .with_widget(WidgetBuilder::new()
+                                             .with_text("return")
+                                             .with_click_action(Box::new(|game,_,ui,g2d,_| toggle_main_menu(game, ui, g2d)))
+                                             .build(),
+                                         Sizing::Percentage { percent: 0.2 })
+                            .with_panel(PanelBuilder::new()
+                                            .with_layout(Layout::Horizontal)
+                                            .build()
+                                            .expect("x"),
+                                        Sizing::Percentage { percent: 0.095 })
+                            .build()
+                            .expect("VP1P2: failed"),
+                        Sizing::Percentage { percent: 0.8 })
+            .with_panel(PanelBuilder::new()
+                            .with_layout(Layout::Horizontal)
+                            .build()
+                            .expect("VP1P3: failed"),
+                        Sizing::Percentage { percent: 0.1 })
+            .build()
+            .expect("V1P1: failed"))
+        .build()
+        .expect("view: failed")
+}

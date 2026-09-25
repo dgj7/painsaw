@@ -2,14 +2,7 @@ use crate::graphics::subsystem::opengl::errors::check_errors_gl;
 use crate::support::logger::log;
 use crate::support::logger::log_level::LogLevel;
 use std::ffi::{c_char, CStr};
-use windows::Win32::Graphics::OpenGL::{
-    glBegin, glBindTexture, glBlendFunc, glClear, glClearColor, glColor4f, glDisable, glEnable,
-    glEnd, glFrustum, glGenTextures, glGetString, glLineWidth, glLoadIdentity, glMatrixMode, glOrtho,
-    glPointSize, glPolygonMode, glPopAttrib, glPopMatrix, glPushAttrib, glPushMatrix, glRotatef,
-    glScalef, glTexCoord2f, glTexEnvf, glTexImage2D, glTexParameteri, glTexSubImage2D, glTranslatef,
-    glVertex2f, glVertex3f, glViewport, gluPerspective, GL_LINES, GL_POINTS,
-    GL_QUADS,
-};
+use windows::Win32::Graphics::OpenGL::{glBegin, glBindTexture, glBlendFunc, glClear, glClearColor, glColor4f, glDisable, glEnable, glEnd, glFrustum, glGenTextures, glGetString, glHint, glLineWidth, glLoadIdentity, glMatrixMode, glOrtho, glPointSize, glPolygonMode, glPopAttrib, glPopMatrix, glPushAttrib, glPushMatrix, glRotatef, glScalef, glTexCoord2f, glTexEnvf, glTexImage2D, glTexParameteri, glTexSubImage2D, glTranslatef, glVertex2f, glVertex3f, glViewport, gluPerspective};
 
 pub(crate) fn gl_clear(mask: u32) {
     unsafe { glClear(mask); }
@@ -21,7 +14,6 @@ pub(crate) fn gl_clear_color(red: f32, green: f32, blue: f32, alpha: f32) {
     check_errors_gl("glClearColor");
 }
 
-#[allow(unused)] // todo: remove this
 pub(crate) fn gl_frustum(left: f64, right: f64, bottom: f64, top: f64, znear: f64, zfar: f64) {
     unsafe { glFrustum(left, right, bottom, top, znear, zfar); }
     check_errors_gl(&format!("glFrustum({},{},{},{},{},{})", left, right, bottom, top, znear, zfar));
@@ -29,21 +21,6 @@ pub(crate) fn gl_frustum(left: f64, right: f64, bottom: f64, top: f64, znear: f6
 
 pub(crate) fn gl_begin(mode: u32) {
     unsafe { glBegin(mode) }
-}
-
-// todo: remove and replace with gl_begin
-pub(crate) fn gl_begin_lines() {
-    unsafe { glBegin(GL_LINES); }
-}
-
-// todo: remove and replace with gl_begin
-pub(crate) fn gl_begin_points() {
-    unsafe { glBegin(GL_POINTS); }
-}
-
-// todo: remove and replace with gl_begin
-pub(crate) fn gl_begin_quads() {
-    unsafe { glBegin(GL_QUADS); }
 }
 
 pub(crate) fn gl_end() {
@@ -61,13 +38,11 @@ pub(crate) fn gl_matrix_mode(mode: u32) {
     check_errors_gl("glMatrixMode");
 }
 
-#[allow(unused)] // todo: remove this
 pub(crate) fn gl_push_matrix() {
     unsafe { glPushMatrix(); }
     check_errors_gl("glPushMatrix");
 }
 
-#[allow(unused)] // todo: remove this
 pub(crate) fn gl_pop_matrix() {
     unsafe { glPopMatrix(); }
     check_errors_gl("glPopMatrix");
@@ -109,6 +84,11 @@ pub(crate) fn gl_enable(cap: u32) {
 pub(crate) fn gl_disable(cap: u32) {
     unsafe { glDisable(cap); }
     check_errors_gl("glDisable");
+}
+
+pub(crate) fn gl_hint(target: u32, mode: u32) {
+    unsafe { glHint(target, mode); }
+    check_errors_gl("glHint");
 }
 
 pub(crate) fn gl_line_width(width_pixels: f32) {
@@ -187,19 +167,16 @@ pub(crate) fn gl_tex_coord_2f(s: f32, t: f32) {
     //check_errors_gl("glTexCoord2f");
 }
 
-#[allow(unused)] // todo: remove this
 pub(crate) fn gl_tex_env_f(target: u32, pname: u32, param2: f32) {
     unsafe { glTexEnvf(target, pname, param2) }
     check_errors_gl("glTexEnvf");
 }
 
-#[allow(unused)] // todo: remove this
 pub(crate) fn gl_push_attrib(mask: u32) {
     unsafe { glPushAttrib(mask) }
     check_errors_gl("glPushAttrib");
 }
 
-#[allow(unused)] // todo: remove this
 pub(crate) fn gl_pop_attrib() {
     unsafe { glPopAttrib() }
     check_errors_gl("glPopAttrib");
@@ -215,13 +192,11 @@ pub(crate) fn glu_perspective(fovy: f64, aspect: f64, znear: f64, zfar: f64) {
     check_errors_gl("gluPerspective");
 }
 
-#[allow(unused)] // todo: remove this
 pub(crate) fn gl_translate_f(x: f32, y: f32, z: f32) {
     unsafe { glTranslatef(x, y, z) }
     check_errors_gl("glTranslatef");
 }
 
-#[allow(unused)] // todo: remove this
 pub(crate) fn gl_rotate_f(angle: f32, x: f32, y: f32, z: f32) {
     unsafe { glRotatef(angle, x, y, z); }
     check_errors_gl("glRotatef");

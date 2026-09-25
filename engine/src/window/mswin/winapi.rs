@@ -8,12 +8,7 @@ use windows::Win32::UI::Input::{
     GetRawInputData, RegisterRawInputDevices, HRAWINPUT, RAWINPUTDEVICE,
     RAW_INPUT_DATA_COMMAND_FLAGS,
 };
-use windows::Win32::UI::WindowsAndMessaging::{
-    CreateWindowExW, DefWindowProcW, DispatchMessageW, GetClientRect, GetCursorPos, GetWindowRect,
-    LoadCursorW, PeekMessageW, PostQuitMessage, RegisterClassW, SetCursorPos, ShowCursor, TranslateMessage,
-    HCURSOR, HMENU, MSG, PEEK_MESSAGE_REMOVE_TYPE, WINDOW_EX_STYLE, WINDOW_STYLE,
-    WNDCLASSW,
-};
+use windows::Win32::UI::WindowsAndMessaging::{CreateWindowExW, DefWindowProcW, DispatchMessageW, GetClientRect, GetCursorPos, GetWindowRect, LoadCursorW, PeekMessageW, PostQuitMessage, RegisterClassW, SetCursorPos, ShowCursor, TranslateMessage, HCURSOR, HMENU, MSG, PEEK_MESSAGE_REMOVE_TYPE, WINDOW_EX_STYLE, WINDOW_STYLE, WNDCLASSW};
 
 ///
 /// PeekMessageW()
@@ -243,7 +238,6 @@ pub(crate) fn get_raw_input_data(
 ///
 /// GetActiveWindow()
 ///
-#[allow(unused)] // todo: remove this
 pub(crate) fn get_active_window() -> HWND {
     unsafe { GetActiveWindow() }
 }
@@ -251,7 +245,6 @@ pub(crate) fn get_active_window() -> HWND {
 ///
 /// SetCursorPos()
 ///
-#[allow(unused)] // todo: remove this
 pub(crate) fn set_cursor_pos(x: i32, y: i32) {
     let result = unsafe { SetCursorPos(x, y) };
     match result {

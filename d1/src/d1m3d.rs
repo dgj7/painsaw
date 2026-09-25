@@ -1,11 +1,11 @@
-use engine::geometry::build::quad::QuadBuilder;
+use engine::geometry::build::cube::CubeBuilder;
 use engine::geometry::orient::matrix::m4x4::Matrix4x4;
 use engine::geometry::orient::Orientation;
 use engine::geometry::primitive::prim3d::Primitive3DBuilder;
 use engine::geometry::primitive::v3d::Vertex3D;
 use engine::geometry::primitive::PrimitiveType;
 use engine::graphics::color::Color;
-use engine::graphics::storage::m3d::{Model3D, Model3DBuilder};
+use engine::graphics::storage::g3d::m3d::{Model3D, Model3DBuilder};
 
 static AXIS_LENGTH: f32 = 0.5;
 
@@ -91,7 +91,7 @@ pub(super) fn create_3d_cuboid_1() -> Model3D {
                 .build(),
         )
         .with_primitive(
-            QuadBuilder::new()
+            CubeBuilder::new()
                 .with_orientation(orientation)
                 .with_width(0.25)
                 .with_height(0.25)
@@ -121,7 +121,7 @@ pub(super) fn create_3d_cuboid_wall_2() -> Model3D {
                 .build(),
         )
         .with_primitive(
-            QuadBuilder::new()
+            CubeBuilder::new()
                 .with_orientation(orientation)
                 .with_width(1.0)
                 .with_height(1.0)
@@ -151,7 +151,7 @@ pub(super) fn create_3d_enclosing_box() -> Model3D {
                 .build(),
         )
         .with_primitive(
-            QuadBuilder::new()
+            CubeBuilder::new()
                 .with_orientation(orientation)
                 .with_width(20.0)
                 .with_height(12.0)

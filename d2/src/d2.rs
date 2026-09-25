@@ -1,9 +1,13 @@
+use engine::game::GameState;
+
 pub struct Demo2 {
-    // todo: add fields specific to demo2
+    pub state: GameState,
 }
 
 impl Demo2 {
     pub(crate) fn new() -> Self {
-        Self {}
+        Self {
+            state: GameState::new(),
+        }
     }
 }

@@ -30,6 +30,8 @@ use windows::Win32::UI::WindowsAndMessaging::{
     WM_QUIT, WNDCLASSW, WS_OVERLAPPEDWINDOW, WS_THICKFRAME, WS_VISIBLE,
 };
 use windows_core::{HSTRING, PCWSTR};
+use crate::graphics::storage::Models;
+use crate::graphics::storage::ui::UIManager;
 
 pub mod errors;
 pub mod events;
@@ -39,7 +41,6 @@ pub mod winapi;
 
 pub struct MsWinWindow {
     pub input: Arc<Mutex<UserInput>>,
-    pub quit: bool,
 
     pub grss: GraphicsSubSystem,
 
@@ -49,28 +50,26 @@ pub struct MsWinWindow {
 impl Window for MsWinWindow {
     fn begin_event_handling<T: KeyHandler + MouseHandler + WorldController + 'static>(
         &mut self,
-        game: &T,
+        game: &mut T,
         config: EngineConfig,
     ) -> Result<(), Box<dyn std::error::Error>> {
         log(LogLevel::Info, &|| "begin event handling".parse().unwrap());
         let mut message: MSG = MSG::default();
 
         /* initialize data that stores the state of the engine */
-        let mut screen = ScreenState::from(&self.key);
-        let mut camera = Camera::new(&screen.current_client_dimensions);
+        let mut camera = Camera::new(ScreenState::from(&self.key));
         let mut timing = EngineTiming::new(&config.renderer);
         let mut renderer = RendererWrapper::new(self.grss.clone());
-        let mut g2d = Graph2D::new();
-        let mut g3d = Graph3D::new();
+        let mut models = Models::new(UIManager::new(), Graph2D::new(), Graph3D::new());
 
         /* initialize client renderer, if necessary */
-        game.initialize_world(&camera, &mut renderer, &mut g2d, &mut g3d);
+        game.initialize_world(&camera, &mut renderer, &mut models);
 
-        while !self.quit {
+        while !game.is_exit() {
             if peek_message(&mut message, Default::default(), 0, 0, PM_REMOVE) {
                 if message.message == WM_QUIT {
                     log(LogLevel::Debug, &|| String::from("WM_QUIT"));
-                    self.quit = true;
+                    game.set_exit(true);
                     opengl_cleanup(self.key.hwnd);
                     break;
                 }
@@ -82,8 +81,8 @@ impl Window for MsWinWindow {
                 timing.begin_frame();
 
                 /* update world info; graphics scene */
-                game.update_world(game, &config, self.input.clone(), &self.key, &mut screen, &mut camera, &mut timing, &renderer, &mut g2d, &mut g3d);
-                game.display_world_scene(game, &config, self.input.clone(), &mut screen, &mut camera, &timing, &mut renderer, &mut g2d, &mut g3d);
+                game.update_world(&config, self.input.clone(), &self.key, &mut camera, &mut timing, &renderer, &mut models);
+                game.display_world_scene(&config, self.input.clone(), &mut camera, &timing, &mut renderer, &mut models);
 
                 /* swap buffers after it's all done */
                 swap_buffers(self.key.hdc);
@@ -175,7 +174,6 @@ impl MsWinWindow {
         /* done; returning handles to window */
         Ok(Box::new(MsWinWindow {
             input,
-            quit: false,
 
             grss,
 

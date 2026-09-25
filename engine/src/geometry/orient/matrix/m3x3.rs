@@ -35,7 +35,6 @@ pub struct Matrix3x3 {
     pub c3r3: f32,
 }
 
-#[allow(dead_code)] // todo: remove this
 type RotationMatrix = Matrix3x3;
 
 impl Matrix3x3 {

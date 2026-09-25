@@ -1,64 +1,73 @@
 use crate::d1::Demo1;
-use crate::d1m2d::{
-    create_2d_axes, create_2d_crosshairs, create_2d_grid_x_lines, create_2d_grid_y_lines,
-};
-use crate::d1m3d::{
-    create_3d_axes, create_3d_cuboid_1, create_3d_cuboid_wall_2, create_3d_enclosing_box,
-};
+use crate::d1m2d::{create_2d_axes, create_2d_crosshairs};
+use crate::d1m3d::{create_3d_axes, create_3d_cuboid_1, create_3d_cuboid_wall_2, create_3d_enclosing_box, };
 use engine::graphics::camera::Camera;
-use engine::graphics::storage::g2d::Graph2D;
-use engine::graphics::storage::g3d::Graph3D;
-use engine::input::screen::ScreenState;
+use engine::graphics::storage::Models;
 use engine::input::UserInput;
 use engine::support::logger::log;
 use engine::support::logger::log_level::LogLevel;
 use engine::support::timing::EngineTiming;
+use engine::window::api::mouse::hide::hide_mouse;
 use engine::WorldController;
 use std::sync::{Arc, Mutex};
+use crate::d1ui::main_menu;
 
-static M2D_XY_PURPLE: &str = "1-2d-xy-purple";
-static M2D_X_HORIZ: &str = "2-2d-x-horizontal";
-static M2D_Y_VERT: &str = "2-2d-y-vertical";
-static M2D_CROSSHAIRS: &str = "999-2d-crosshairs";
+pub static M2D_XY_PURPLE: &str = "1-2d-xy-purple";
+pub static M2D_X_HORIZ: &str = "2-2d-x-horizontal";
+pub static M2D_Y_VERT: &str = "2-2d-y-vertical";
+pub static M2D_CROSSHAIRS: &str = "999-2d-crosshairs";
+
+pub static M3D_3D_AXES: &str = "4-3d-axes";
+pub static M3D_3D_CUBOID_1: &str = "6-3d-cuboid-1";
+pub static M3D_3D_CUBOID_WALL: &str = "6-3d-cuboid-wall-2";
+pub static M3D_3D_CUBOID_ENCLOSING: &str= "6-3d-cuboid-enclosing";
 
 impl WorldController for Demo1 {
-    fn initialize_world_helper(&self, camera: &Camera, g2d: &mut Graph2D, g3d: &mut Graph3D) {
+    fn initialize_world_helper(&self, camera: &Camera, models: &mut Models) {
+        /* initial states */
+        hide_mouse();
+
         /* 2d */
-        g2d.attach(M2D_XY_PURPLE, create_2d_axes(&camera));
+        models.g2d.attach(M2D_XY_PURPLE, create_2d_axes(&camera));
+        models.g2d.attach(M2D_CROSSHAIRS, create_2d_crosshairs(&camera));
+        
+        /* add ui and disable them */
+        models.ui.add(1, main_menu(camera));
+        models.ui.deactivate();
+
         //context.g2d.attach(M2D_X_HORIZ, create_2d_grid_x_lines(&context.camera));
         //context.g2d.attach(M2D_Y_VERT, create_2d_grid_y_lines(&context.camera));
-        //context.g2d.attach("99-repeated", create_2d_repeated_texts(16, 0.0, 710.0));
-        g2d.attach(M2D_CROSSHAIRS, create_2d_crosshairs(&camera));
 
         /* 3d */
-        g3d.attach("4-3d-axes", create_3d_axes());
-        g3d.attach("6-3d-cuboid-1", create_3d_cuboid_1());
-        g3d.attach("6-3d-cuboid-wall-2", create_3d_cuboid_wall_2());
-        g3d.attach("6-3d-cuboid-enclosing", create_3d_enclosing_box());
+        models.g3d.attach(M3D_3D_AXES, create_3d_axes());
+        models.g3d.attach(M3D_3D_CUBOID_1, create_3d_cuboid_1());
+        models.g3d.attach(M3D_3D_CUBOID_WALL, create_3d_cuboid_wall_2());
+        models.g3d.attach(M3D_3D_CUBOID_ENCLOSING, create_3d_enclosing_box());
     }
 
     fn update_world_helper(
         &self,
         input: Arc<Mutex<UserInput>>,
-        screen: &ScreenState,
         camera: &Camera,
         timing: &mut EngineTiming,
-        g2d: &mut Graph2D,
-        _g3d: &mut Graph3D,
+        models: &mut Models,
     ) {
         match input.clone().lock() {
             Ok(uin) => {
                 /* gather some variables */
-                let ccd = screen.current_client_dimensions.clone();
+                let ccd = camera.screen.current_client_dimensions.clone();
 
                 /* handle window resize for grid */
                 if uin.screen_resized {
-                    g2d.update(M2D_XY_PURPLE, |e| *e = create_2d_axes(&camera));
-                    g2d.update(M2D_X_HORIZ, |e| *e = create_2d_grid_x_lines(&camera));
-                    g2d.update(M2D_Y_VERT, |e| *e = create_2d_grid_y_lines(&camera));
-                    g2d.update(M2D_CROSSHAIRS, |e| *e = create_2d_crosshairs(&camera));
+                    models.g2d.update(M2D_XY_PURPLE, |e| *e = create_2d_axes(&camera));
+                    models.g2d.update(M2D_CROSSHAIRS, |e| *e = create_2d_crosshairs(&camera));
 
-                    log(LogLevel::Debug, &|| { String::from(format!("window size changed ({}x{}); 2d storage count is [{}]", ccd.width, ccd.height, g2d.count())) });
+                    models.ui.resize(&camera.screen, &mut models.g2d);
+
+                    //models.g2d.update(M2D_X_HORIZ, |e| *e = create_2d_grid_x_lines(&camera));
+                    //models.g2d.update(M2D_Y_VERT, |e| *e = create_2d_grid_y_lines(&camera));
+
+                    log(LogLevel::Debug, &|| { String::from(format!("window size changed ({}x{}); 2d storage count is [{}]", ccd.width, ccd.height, models.g2d.count())) });
                 }
             }
             Err(_) => {

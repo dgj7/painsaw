@@ -9,3 +9,4 @@ pub mod resource;
 pub(crate) mod stats;
 pub mod text;
 pub mod timing;
+pub(crate) mod id;

@@ -6,7 +6,6 @@ pub struct MoveConfig {
     pub up_speed: f32,
 }
 
-// todo: this will probably have to change; we need a config that is based on whatever game type is chosen
 impl Default for MoveConfig {
     fn default() -> MoveConfig {
         MoveConfig {

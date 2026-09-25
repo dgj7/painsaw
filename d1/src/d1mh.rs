@@ -1,27 +1,33 @@
 use crate::d1::Demo1;
 use engine::config::input_config::mc::MouseHandler;
 use engine::config::EngineConfig;
+use engine::game::Game;
 use engine::geometry::orient::movement::spectator::SpectatorMovementStrategy;
 use engine::graphics::camera::Camera;
+use engine::graphics::storage::Models;
 use engine::input::mouse::md::MouseDelta;
-use engine::input::screen::ScreenState;
 use engine::support::timing::EngineTiming;
 use engine::window::api::mc::move_cursor;
 
 impl MouseHandler for Demo1 {
     fn handle_mouse_deltas(
-        &self,
+        &mut self,
         _deltas: &Vec<MouseDelta>,
         _config: &EngineConfig,
-        _screen: &mut ScreenState,
         _camera: &mut Camera,
         _timing: &EngineTiming,
+        _models: &mut Models,
     ) {
+        /* sc if we're displaying the menu */
+        if self.is_menu() {
+            return;
+        }
+
         /* update mouse look  */
-        <Demo1 as SpectatorMovementStrategy>::update_look(_deltas, _camera, _config);
+        <Demo1 as SpectatorMovementStrategy>::update_look(_deltas, _config, _camera);
 
         /* compute center and move cursor */
-        let center = &_screen.window_center;
+        let center = &_camera.screen.window_center;
         move_cursor(center);
     }
 }

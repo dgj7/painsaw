@@ -10,9 +10,7 @@ pub mod rect;
 
 pub(crate) static C_PI: f32 = PI as f32;
 pub(crate) static C_2_PI: f32 = C_PI * 2.0;
-#[allow(unused)] // todo: remove
 pub(crate) static C_PI_OVER_2: f32 = C_PI / 2.0;
-#[allow(unused)] // todo: remove
 pub(crate) static C_1_OVER_PI: f32 = 1.0 / C_PI;
 pub(crate) static C_1_OVER_2PI: f32 = 1.0 / C_2_PI;
 

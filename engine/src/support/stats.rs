@@ -2,7 +2,7 @@ use crate::geometry::primitive::v2d::Vertex2D;
 use crate::geometry::primitive::v3d::Vertex3D;
 use crate::geometry::rect::Rectangle2D;
 use crate::graphics::color::Color;
-use crate::graphics::storage::m2d::{Model2D, Model2DBuilder};
+use crate::graphics::storage::g2d::m2d::{Model2D, Model2DBuilder};
 use crate::graphics::texture::t2d::Texture2DBuilder;
 use crate::support::image::RawImage;
 use crate::support::text::{text_2d_image, TextConfig, Typeface};
@@ -129,7 +129,7 @@ pub(crate) fn create_rect2d_text(
     Option::from(text_2d_image(config.clone(), || {
         String::from(format!(
             "{}: ({:+08.2},{:+08.2}),({:+08.2},{:+08.2})",
-            label, rect.top_left.x, rect.top_left.y, rect.bottom_right.x, rect.bottom_right.y,
+            label, rect.origin.x, rect.origin.y, rect.antipode.x, rect.antipode.y,
         ))
     }))
 }

@@ -9,15 +9,34 @@ pub struct Color {
     pub alpha: f32,
 }
 
-// todo: should these float values be clamped?  what to do if they're above an expected value?  panic??
-
 impl Color {
     pub const fn from_rgba(red: f32, green: f32, blue: f32, alpha: f32) -> Color {
+        assert!(red >= 0.0 && red <= 1.0);
+        assert!(green >= 0.0 && green <= 1.0);
+        assert!(blue >= 0.0 && blue <= 1.0);
+        assert!(alpha >= 0.0 && alpha <= 1.0);
+
         Color { red, green, blue, alpha, }
     }
 
     pub const fn from_rgb(red: f32, green: f32, blue: f32) -> Color {
         Self::from_rgba(red, green, blue, ALPHA_OPAQUE)
+    }
+
+    pub const fn adjust_red(&self, value: f32) -> Color {
+        Self::from_rgba(value, self.green, self.blue, self.alpha)
+    }
+
+    pub const fn adjust_green(&self, value: f32) -> Color {
+        Self::from_rgba(self.red, value, self.blue, self.alpha)
+    }
+
+    pub const fn adjust_blue(&self, value: f32) -> Color {
+        Self::from_rgba(self.red, self.green, value, self.alpha)
+    }
+
+    pub const fn adjust_alpha(&self, value: f32) -> Color {
+        Self::from_rgba(self.red, self.green, self.blue, value)
     }
 
     pub fn to_u8(&self) -> (u8, u8, u8, u8) {
@@ -34,6 +53,7 @@ impl Color {
 
     pub const WHITE: Color = Color::from_rgb(1.0, 1.0, 1.0);
     pub const BLACK: Color = Color::from_rgb(0.0, 0.0, 0.0);
+    pub const GREY: Color = Color::from_rgb(0.5, 0.5, 0.5);
 
     pub const YELLOW: Color = Color::from_rgb(1.0, 1.0, 0.0);
 

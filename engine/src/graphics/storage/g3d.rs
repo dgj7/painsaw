@@ -1,5 +1,10 @@
-use crate::graphics::storage::m3d::Model3D;
+use m3d::Model3D;
 use std::collections::BTreeMap;
+
+pub mod m3d;
+pub mod id;
+pub mod node;
+pub mod tree;
 
 // todo: better organization; scene graph?
 pub struct Graph3D {

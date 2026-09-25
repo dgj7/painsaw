@@ -1,6 +1,6 @@
 use crate::config::EngineConfig;
 use crate::graphics::storage::g2d::Graph2D;
-use crate::graphics::storage::m2d::{Model2D, Model2DBuilder};
+use crate::graphics::storage::g2d::m2d::{Model2D, Model2DBuilder};
 use crate::graphics::texture::t2d::Texture2DBuilder;
 use crate::support::image::RawImage;
 use crate::support::stats::{TC, X_POS};

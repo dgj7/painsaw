@@ -1,11 +1,9 @@
 use crate::d1::Demo1;
-use engine::config::input_config::kc::KeyHandler;
-use engine::config::input_config::mc::MouseHandler;
 use engine::config::EngineConfig;
+use engine::game::Game;
 use engine::geometry::orient::movement::spectator::SpectatorMovementStrategy;
 use engine::graphics::camera::Camera;
 use engine::support::timing::EngineTiming;
-use engine::WorldController;
 
 pub(crate) enum Command {
     CameraMoveForward,
@@ -16,16 +14,33 @@ pub(crate) enum Command {
 
 impl SpectatorMovementStrategy for Demo1 {}
 
-pub(crate) fn handle_command<T: KeyHandler + MouseHandler + WorldController + 'static>(
+pub(crate) fn handle_command(
+    game: &Demo1,
     command: &Command,
-    camera: &mut Camera,
     ec: &EngineConfig,
+    camera: &mut Camera,
     et: &EngineTiming,
 ) {
     match command {
-        Command::CameraMoveForward => { <Demo1 as SpectatorMovementStrategy>::move_forward(camera, ec, et) }
-        Command::CameraStrafeLeft => { <Demo1 as SpectatorMovementStrategy>::move_left(camera, ec, et) }
-        Command::CameraMoveBackward => { <Demo1 as SpectatorMovementStrategy>::move_backward(camera, ec, et) }
-        Command::CameraStrafeRight => { <Demo1 as SpectatorMovementStrategy>::move_right(camera, ec, et) }
+        Command::CameraMoveForward => {
+            if !game.is_menu() {
+                <Demo1 as SpectatorMovementStrategy>::move_forward(ec, camera, et)
+            }
+        }
+        Command::CameraStrafeLeft => {
+            if !game.is_menu() {
+                <Demo1 as SpectatorMovementStrategy>::move_left(ec, camera, et)
+            }
+        }
+        Command::CameraMoveBackward => {
+            if !game.is_menu() {
+                <Demo1 as SpectatorMovementStrategy>::move_backward(ec, camera, et)
+            }
+        }
+        Command::CameraStrafeRight => {
+            if !game.is_menu() {
+                <Demo1 as SpectatorMovementStrategy>::move_right(ec, camera, et)
+            }
+        }
     }
 }

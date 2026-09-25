@@ -35,20 +35,20 @@ impl ScreenState {
 
             /* rects */
             previous_client_rect: Rectangle2D {
-                top_left: Vertex2D { x: 0.0, y: 0.0 },
-                bottom_right: Vertex2D { x: 0.0, y: 0.0 },
+                origin: Vertex2D { x: 0.0, y: 0.0 },
+                antipode: Vertex2D { x: 0.0, y: 0.0 },
             },
             current_client_rect: Rectangle2D {
-                top_left: Vertex2D { x: 0.0, y: 0.0 },
-                bottom_right: Vertex2D { x: 0.0, y: 0.0 },
+                origin: Vertex2D { x: 0.0, y: 0.0 },
+                antipode: Vertex2D { x: 0.0, y: 0.0 },
             },
             previous_window_rect: Rectangle2D {
-                top_left: Vertex2D { x: 0.0, y: 0.0 },
-                bottom_right: Vertex2D { x: 0.0, y: 0.0 },
+                origin: Vertex2D { x: 0.0, y: 0.0 },
+                antipode: Vertex2D { x: 0.0, y: 0.0 },
             },
             current_window_rect: Rectangle2D {
-                top_left: Vertex2D { x: 0.0, y: 0.0 },
-                bottom_right: Vertex2D { x: 0.0, y: 0.0 },
+                origin: Vertex2D { x: 0.0, y: 0.0 },
+                antipode: Vertex2D { x: 0.0, y: 0.0 },
             },
 
             /* locations */
@@ -106,37 +106,37 @@ impl ScreenState {
     }
 
     fn update_client_rectangle(&mut self, current: Rectangle2D) {
-        self.previous_client_rect.top_left.x = self.current_client_rect.top_left.x;
-        self.previous_client_rect.top_left.y = self.current_client_rect.top_left.y;
-        self.previous_client_rect.bottom_right.x = self.current_client_rect.bottom_right.x;
-        self.previous_client_rect.bottom_right.y = self.current_client_rect.bottom_right.y;
+        self.previous_client_rect.origin.x = self.current_client_rect.origin.x;
+        self.previous_client_rect.origin.y = self.current_client_rect.origin.y;
+        self.previous_client_rect.antipode.x = self.current_client_rect.antipode.x;
+        self.previous_client_rect.antipode.y = self.current_client_rect.antipode.y;
 
-        self.current_client_rect.top_left.x = current.top_left.x;
-        self.current_client_rect.top_left.y = current.top_left.y;
-        self.current_client_rect.bottom_right.x = current.bottom_right.x;
-        self.current_client_rect.bottom_right.y = current.bottom_right.y;
+        self.current_client_rect.origin.x = current.origin.x;
+        self.current_client_rect.origin.y = current.origin.y;
+        self.current_client_rect.antipode.x = current.antipode.x;
+        self.current_client_rect.antipode.y = current.antipode.y;
     }
 
     fn update_window_rectangle(&mut self, current: Rectangle2D) {
-        self.previous_window_rect.top_left.x = self.current_window_rect.top_left.x;
-        self.previous_window_rect.top_left.y = self.current_window_rect.top_left.y;
-        self.previous_window_rect.bottom_right.x = self.current_window_rect.bottom_right.x;
-        self.previous_window_rect.bottom_right.y = self.current_window_rect.bottom_right.y;
+        self.previous_window_rect.origin.x = self.current_window_rect.origin.x;
+        self.previous_window_rect.origin.y = self.current_window_rect.origin.y;
+        self.previous_window_rect.antipode.x = self.current_window_rect.antipode.x;
+        self.previous_window_rect.antipode.y = self.current_window_rect.antipode.y;
 
-        self.current_window_rect.top_left.x = current.top_left.x;
-        self.current_window_rect.top_left.y = current.top_left.y;
-        self.current_window_rect.bottom_right.x = current.bottom_right.x;
-        self.current_window_rect.bottom_right.y = current.bottom_right.y;
+        self.current_window_rect.origin.x = current.origin.x;
+        self.current_window_rect.origin.y = current.origin.y;
+        self.current_window_rect.antipode.x = current.antipode.x;
+        self.current_window_rect.antipode.y = current.antipode.y;
     }
 
     fn update_screen_center(&mut self) {
-        let wx = (self.current_window_rect.top_left.x + self.current_window_rect.bottom_right.x) / 2.0;
-        let wy = (self.current_window_rect.top_left.y + self.current_window_rect.bottom_right.y) / 2.0;
+        let wx = (self.current_window_rect.origin.x + self.current_window_rect.antipode.x) / 2.0;
+        let wy = (self.current_window_rect.origin.y + self.current_window_rect.antipode.y) / 2.0;
         self.window_center.x = wx;
         self.window_center.y = wy;
 
-        let cx = (self.current_client_rect.top_left.x + self.current_client_rect.bottom_right.x) / 2.0;
-        let cy = (self.current_client_rect.top_left.y + self.current_client_rect.bottom_right.y) / 2.0;
+        let cx = (self.current_client_rect.origin.x + self.current_client_rect.antipode.x) / 2.0;
+        let cy = (self.current_client_rect.origin.y + self.current_client_rect.antipode.y) / 2.0;
         self.client_center.x = cx;
         self.client_center.y = cy;
     }

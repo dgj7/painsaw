@@ -7,6 +7,8 @@
 use crate::graphics::camera::Camera;
 use crate::graphics::storage::g2d::Graph2D;
 use crate::graphics::storage::g3d::Graph3D;
+use crate::graphics::storage::Models;
+use crate::graphics::storage::ui::UIManager;
 use crate::graphics::subsystem::opengl::OpenGLHandle;
 
 pub mod opengl;
@@ -33,14 +35,14 @@ pub struct RendererInfo {
 pub trait RenderingSubSystemHandle {
     fn identify(&self) -> Option<RendererInfo>;
 
-    fn initialize(&self, g2d: &mut Graph2D, g3d: &mut Graph3D);
+    fn initialize(&self, models: &mut Models);
 
     fn resize(&self, camera: &Camera);
 
     fn before_scene(&self, camera: &Camera);
 
-    fn prepare_2d(&self, camera: &Camera, g2d: &mut Graph2D);
-    fn render_2d(&self, g2d: &mut Graph2D);
+    fn prepare_2d(&self, camera: &Camera, g2d: &mut Graph2D, ui: &mut UIManager);
+    fn render_2d(&self, g2d: &mut Graph2D, ui: &mut UIManager);
     fn after_2d(&self);
 
     fn prepare_3d(&self, camera: &Camera);
