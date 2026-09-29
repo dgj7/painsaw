@@ -13,6 +13,9 @@ pub struct Orientation {
     pub pitch: f32, // up/down, about x
     pub yaw: f32,   // left/right; about y
     pub roll: f32,  // side/side, about z
+    pub pitch_delta: f32,
+    pub yaw_delta: f32,
+    pub roll_delta: f32,
 }
 
 pub struct OrientationBuilder {
@@ -35,7 +38,7 @@ impl Orientation {
         yaw: f32,
         roll: f32,
     ) -> Orientation {
-        Orientation { position, x_scale, y_scale, z_scale, pitch, yaw, roll,}
+        Orientation { position, x_scale, y_scale, z_scale, pitch, yaw, roll, pitch_delta: 0.0, yaw_delta: 0.0, roll_delta: 0.0,}
     }
 
     pub fn camera_default() -> Orientation {
@@ -52,6 +55,9 @@ impl Orientation {
             pitch: 0.0,
             yaw: 0.0,
             roll: 0.0,
+            pitch_delta: 0.0,
+            yaw_delta: 0.0,
+            roll_delta: 0.0,
         }
     }
 }
@@ -66,6 +72,9 @@ impl Default for Orientation {
             pitch: 0.0,
             yaw: 0.0,
             roll: 0.0,
+            pitch_delta: 0.0,
+            yaw_delta: 0.0,
+            roll_delta: 0.0,
         }
     }
 }
@@ -112,6 +121,9 @@ impl OrientationBuilder {
             pitch: self.the_pitch.unwrap_or_else(|| 0.0),
             yaw: self.the_yaw.unwrap_or_else(|| 0.0),
             roll: self.the_roll.unwrap_or_else(|| 0.0),
+            pitch_delta: 0.0,
+            yaw_delta: 0.0,
+            roll_delta: 0.0,
         }
     }
 }

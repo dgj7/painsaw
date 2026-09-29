@@ -1,5 +1,6 @@
 use crate::config::EngineConfig;
-use crate::geometry::orient::matrix::m3x3::Matrix3x3;
+use crate::geometry::angle::radians::Radians;
+use crate::geometry::orient::matrix::m3x3::rot::from_pitch_yaw_roll;
 use crate::geometry::orient::matrix::rotate;
 use crate::geometry::primitive::v3d::Vertex3D;
 use crate::graphics::camera::Camera;
@@ -80,13 +81,21 @@ pub trait SpectatorMovementStrategy {
         /* update the yaw and pitch */
         camera.orientation.yaw = camera.orientation.yaw + delta_yaw;
         camera.orientation.pitch = camera.orientation.pitch + delta_pitch;
+        camera.orientation.roll = 0.0;
+        camera.orientation.pitch_delta = delta_pitch;
+        camera.orientation.yaw_delta = delta_yaw;
+        camera.orientation.roll_delta = 0.0;
 
         /* clamp to prevent flip */
         if camera.orientation.pitch > 89.0 { camera.orientation.pitch = 89.0; }
         if camera.orientation.pitch < -89.0 { camera.orientation.pitch = -89.0; }
 
         /* finally, update orientation */
-        let rotation = Matrix3x3::from_pitch_yaw_roll(camera.orientation.pitch, camera.orientation.yaw, camera.orientation.roll);
+        let rotation = from_pitch_yaw_roll(
+            &Radians { radians: camera.orientation.pitch_delta },
+            &Radians { radians: camera.orientation.yaw_delta },
+            &Radians { radians: camera.orientation.roll_delta },
+        );
         camera.orientation.position = rotate(&camera.orientation.position, &rotation);
     }
 }

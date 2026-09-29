@@ -1,3 +1,5 @@
+pub mod rot;
+
 ///
 /// store a 3x3 matrix, containing rotation and scaling of an object or camera.
 /// a matrix could be interpreted as column-major or row-major.
@@ -45,33 +47,6 @@ impl Matrix3x3 {
             r2c1: 0.0, r2c2: 1.0, r2c3: 0.0,
             r3c1: 0.0, r3c2: 0.0, r3c3: 1.0,
         }
-    }
-
-    pub fn from_pitch_yaw_roll(pitch: f32, yaw: f32, roll: f32) -> Matrix3x3 {
-        let sp = pitch.sin();
-        let sy = yaw.sin();
-        let sr = roll.sin();
-        let cp = pitch.cos();
-        let cy = yaw.cos();
-        let cr = roll.cos();
-
-        let rotx = Matrix3x3 {
-            r1c1: 1.0, r2c1: 0.0, r3c1: 0.0,
-            r1c2: 0.0, r2c2: cp, r3c2: sp,
-            r1c3: 0.0, r2c3: -sp, r3c3: cp,
-        };
-        let roty = Matrix3x3 {
-            r1c1: cy, r2c1: 0.0, r3c1: -sy,
-            r1c2: 0.0, r2c2: 1.0, r3c2: 0.0,
-            r1c3: sy, r2c3: 0.0, r3c3: cy,
-        };
-        let rotz = Matrix3x3 {
-            r1c1: cr, r2c1: sr, r3c1: 0.0,
-            r1c2: -sr, r2c2: cr, r3c2: 0.0,
-            r1c3: 0.0, r2c3: 0.0, r3c3: 1.0,
-        };
-
-        rotx.multiply(&roty).multiply(&rotz)
     }
 
     pub fn multiply(&self, other: &Matrix3x3) -> Matrix3x3 {
