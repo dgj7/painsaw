@@ -1,6 +1,8 @@
 use crate::geometry::angle::radians::Radians;
-use crate::geometry::orient::matrix::m3x3::{multiply, Matrix3x3};
+use crate::geometry::orient::matrix::m3x3::Matrix3x3;
+use crate::geometry::orient::matrix::m3x3::mult::multiply;
 
+// todo: rename this to specify column_major
 pub fn from_pitch_yaw_roll(pitch: &Radians, yaw: &Radians, roll: &Radians) -> Matrix3x3 {
     let rx = Matrix3x3::rotation_x(&pitch);
     let ry = Matrix3x3::rotation_y(&yaw);
@@ -12,6 +14,7 @@ pub fn from_pitch_yaw_roll(pitch: &Radians, yaw: &Radians, roll: &Radians) -> Ma
 /// rotation functions
 ///
 impl Matrix3x3 {
+    // todo: rename this to specify column_major
     pub fn rotation_x(radians: &Radians) -> Matrix3x3 {
         let (sin,cos) = radians.radians.sin_cos();
         Matrix3x3 {
@@ -21,6 +24,7 @@ impl Matrix3x3 {
         }
     }
 
+    // todo: rename this to specify column_major
     pub fn rotation_y(radians: &Radians) -> Matrix3x3 {
         let (sin,cos) = radians.radians.sin_cos();
         Matrix3x3 {
@@ -30,6 +34,7 @@ impl Matrix3x3 {
         }
     }
 
+    // todo: rename this to specify column_major
     pub fn rotation_z(radians: &Radians) -> Matrix3x3 {
         let (sin,cos) = radians.radians.sin_cos();
         Matrix3x3 {

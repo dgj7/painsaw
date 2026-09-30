@@ -1,6 +1,6 @@
 use crate::config::EngineConfig;
 use crate::geometry::angle::radians::Radians;
-use crate::geometry::orient::matrix::m3x3::rot::from_pitch_yaw_roll;
+use crate::geometry::orient::matrix::m3x3::column_major::from_pitch_yaw_roll;
 use crate::geometry::orient::matrix::rotate;
 use crate::geometry::primitive::v3d::Vertex3D;
 use crate::graphics::camera::Camera;

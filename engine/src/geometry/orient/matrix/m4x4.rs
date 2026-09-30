@@ -1,7 +1,10 @@
-mod eq;
-pub(crate) mod invert;
-mod mult;
-pub mod new;
+pub mod eq;
+pub mod invert;
+pub mod mult;
+pub mod mult_scalar;
+pub mod scale;
+pub mod column_major;
+pub mod norm;
 
 use crate::geometry::primitive::v3d::Vertex3D;
 
@@ -55,144 +58,48 @@ pub struct Matrix4x4 {
     pub r4c4: f32,
 }
 
-///
-/// vector retrieval functions
-///
 impl Matrix4x4 {
-    pub fn column_major_x_right(&self) -> Vertex3D {
-        Vertex3D {
-            x: self.r1c1,
-            y: self.r2c1,
-            z: self.r3c1,
+    pub fn from(
+        x_right: Vertex3D,
+        y_up: Vertex3D,
+        z_forward: Vertex3D,
+        position: Vertex3D,
+    ) -> Matrix4x4 {
+        Matrix4x4 {
+            r1c1: x_right.x,
+            r2c1: x_right.y,
+            r3c1: x_right.z,
+            r4c1: 0.0,
+
+            r1c2: y_up.x,
+            r2c2: y_up.y,
+            r3c2: y_up.z,
+            r4c2: 0.0,
+
+            r1c3: z_forward.x,
+            r2c3: z_forward.y,
+            r3c3: z_forward.z,
+            r4c3: 0.0,
+
+            r1c4: position.x,
+            r2c4: position.y,
+            r3c4: position.z,
+            r4c4: 0.0, // todo: i think this should be 1.0
         }
     }
 
-    pub fn column_major_y_up(&self) -> Vertex3D {
-        Vertex3D {
-            x: self.r1c2,
-            y: self.r2c2,
-            z: self.r3c2,
+    pub fn identity() -> Matrix4x4 {
+        Matrix4x4 {
+            r1c1: 1.0, r1c2: 0.0, r1c3: 0.0, r1c4: 0.0,
+            r2c1: 0.0, r2c2: 1.0, r2c3: 0.0, r2c4: 0.0,
+            r3c1: 0.0, r3c2: 0.0, r3c3: 1.0, r3c4: 0.0,
+            r4c1: 0.0, r4c2: 0.0, r4c3: 0.0, r4c4: 1.0,
         }
-    }
-
-    pub fn column_major_z_forward(&self) -> Vertex3D {
-        Vertex3D {
-            x: self.r1c3,
-            y: self.r2c3,
-            z: self.r3c3,
-        }
-    }
-
-    pub fn column_major_position(&self) -> Vertex3D {
-        Vertex3D {
-            x: self.r1c4,
-            y: self.r2c4,
-            z: self.r3c4,
-        }
-    }
-
-    pub fn column_major_x_scale(&self) -> f32 {
-        scale(self.column_major_x_right())
-    }
-
-    pub fn column_major_y_scale(&self) -> f32 {
-        scale(self.column_major_y_up())
-    }
-
-    pub fn column_major_z_scale(&self) -> f32 {
-        scale(self.column_major_z_forward())
-    }
-}
-
-///
-/// vector update functions
-///
-impl Matrix4x4 {
-    pub fn column_major_update_right(&mut self, right: &Vertex3D) {
-        self.r1c1 = right.x;
-        self.r2c1 = right.y;
-        self.r3c1 = right.z;
-    }
-
-    pub fn column_major_update_up(&mut self, up: &Vertex3D) {
-        self.r1c2 = up.x;
-        self.r2c2 = up.y;
-        self.r3c2 = up.z;
-    }
-
-    pub fn column_major_update_forward(&mut self, forward: &Vertex3D) {
-        self.r1c3 = forward.x;
-        self.r2c3 = forward.y;
-        self.r3c3 = forward.z;
-    }
-
-    pub fn column_major_update_position(&mut self, position: &Vertex3D) {
-        self.r1c4 = position.x;
-        self.r2c4 = position.y;
-        self.r3c4 = position.z;
-    }
-
-    pub fn normalize(&mut self) {
-        let mut forward = self.column_major_z_forward();
-        forward.normalize();
-        self.column_major_update_forward(&forward);
-
-        let mut right = self.column_major_x_right();
-        right.normalize();
-        self.column_major_update_right(&right);
-
-        let mut up = self.column_major_y_up();
-        up.normalize();
-        self.column_major_update_up(&up);
     }
 }
 
 impl Default for Matrix4x4 {
     fn default() -> Matrix4x4 {
         Matrix4x4::from(Vertex3D::create_x_unit(), Vertex3D::create_y_unit(), Vertex3D::create_z_unit(), Vertex3D::origin(), )
-    }
-}
-
-///
-/// multiply matrix by scalar.
-///
-pub fn multiply_scalar(matrix: &Matrix4x4, scalar: f32) -> Matrix4x4 {
-    Matrix4x4 {
-        r1c1: matrix.r1c1 * scalar,
-        r2c1: matrix.r2c1 * scalar,
-        r3c1: matrix.r3c1 * scalar,
-        r4c1: matrix.r4c1 * scalar,
-
-        r1c2: matrix.r1c2 * scalar,
-        r2c2: matrix.r2c2 * scalar,
-        r3c2: matrix.r3c2 * scalar,
-        r4c2: matrix.r4c2 * scalar,
-
-        r1c3: matrix.r1c3 * scalar,
-        r2c3: matrix.r2c3 * scalar,
-        r3c3: matrix.r3c3 * scalar,
-        r4c3: matrix.r4c3 * scalar,
-
-        r1c4: matrix.r1c4 * scalar,
-        r2c4: matrix.r2c4 * scalar,
-        r3c4: matrix.r3c4 * scalar,
-        r4c4: matrix.r4c4 * scalar,
-    }
-}
-
-///
-/// calculate the scale for the given axis.
-///
-/// presumes the axis is not normalized.
-///
-fn scale(axis: Vertex3D) -> f32 {
-    ((axis.x * axis.x) + (axis.y * axis.y) + (axis.z * axis.z)).sqrt()
-}
-
-#[cfg(test)]
-mod test_multiply {
-    #[test]
-    fn test_identity() {
-
     }
 }
