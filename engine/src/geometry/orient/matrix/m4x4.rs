@@ -5,6 +5,7 @@ pub mod mult_scalar;
 pub mod scale;
 pub mod column_major;
 pub mod norm;
+mod det;
 
 use crate::geometry::primitive::v3d::Vertex3D;
 

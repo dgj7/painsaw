@@ -4,58 +4,11 @@ use crate::geometry::orient::matrix::m4x4::Matrix4x4;
 /// invert the given matrix, as long as it's invertible (having determinant > 0).
 ///
 fn invert(m: &Matrix4x4) -> Option<Matrix4x4> {
-    /* calculate cofactors */
-    let c11 = m.r2c2 * (m.r3c3 * m.r4c4 - m.r3c4 * m.r4c3)
-        - m.r2c3 * (m.r3c2 * m.r4c4 - m.r3c4 * m.r4c2)
-        + m.r2c4 * (m.r3c2 * m.r4c3 - m.r3c3 * m.r4c2);
-    let c12 = -(m.r2c1 * (m.r3c3 * m.r4c4 - m.r3c4 * m.r4c3)
-        - m.r2c3 * (m.r3c1 * m.r4c4 - m.r3c4 * m.r4c1)
-        + m.r2c4 * (m.r3c1 * m.r4c3 - m.r3c3 * m.r4c1));
-    let c13 = m.r2c1 * (m.r3c2 * m.r4c4 - m.r3c4 * m.r4c2)
-        - m.r2c2 * (m.r3c1 * m.r4c4 - m.r3c4 * m.r4c1)
-        + m.r2c4 * (m.r3c1 * m.r4c2 - m.r3c2 * m.r4c1);
-    let c14 = -(m.r2c1 * (m.r3c2 * m.r4c3 - m.r3c3 * m.r4c2)
-        - m.r2c2 * (m.r3c1 * m.r4c3 - m.r3c3 * m.r4c1)
-        + m.r2c3 * (m.r3c1 * m.r4c2 - m.r3c2 * m.r4c1));
-    let c21 = -(m.r1c2 * (m.r3c3 * m.r4c4 - m.r3c4 * m.r4c3)
-        - m.r1c3 * (m.r3c2 * m.r4c4 - m.r3c4 * m.r4c2)
-        + m.r1c4 * (m.r3c2 * m.r4c3 - m.r3c3 * m.r4c2));
-    let c22 = m.r1c1 * (m.r3c3 * m.r4c4 - m.r3c4 * m.r4c3)
-        - m.r1c3 * (m.r3c1 * m.r4c4 - m.r3c4 * m.r4c1)
-        + m.r1c4 * (m.r3c1 * m.r4c3 - m.r3c3 * m.r4c1);
-    let c23 = -(m.r1c1 * (m.r3c2 * m.r4c4 - m.r3c4 * m.r4c2)
-        - m.r1c2 * (m.r3c1 * m.r4c4 - m.r3c4 * m.r4c1)
-        + m.r1c4 * (m.r3c1 * m.r4c2 - m.r3c2 * m.r4c1));
-    let c24 = m.r1c1 * (m.r3c2 * m.r4c3 - m.r3c3 * m.r4c2)
-        - m.r1c2 * (m.r3c1 * m.r4c3 - m.r3c3 * m.r4c1)
-        + m.r1c3 * (m.r3c1 * m.r4c2 - m.r3c2 * m.r4c1);
-    let c31 = m.r1c2 * (m.r2c3 * m.r4c4 - m.r2c4 * m.r4c3)
-        - m.r1c3 * (m.r2c2 * m.r4c4 - m.r2c4 * m.r4c2)
-        + m.r1c4 * (m.r2c2 * m.r4c3 - m.r2c3 * m.r4c2);
-    let c32 = -(m.r1c1 * (m.r2c3 * m.r4c4 - m.r2c4 * m.r4c3)
-        - m.r1c3 * (m.r2c1 * m.r4c4 - m.r2c4 * m.r4c1)
-        + m.r1c4 * (m.r2c1 * m.r4c3 - m.r2c3 * m.r4c1));
-    let c33 = m.r1c1 * (m.r2c2 * m.r4c4 - m.r2c4 * m.r4c2)
-        - m.r1c2 * (m.r2c1 * m.r4c4 - m.r2c4 * m.r4c1)
-        + m.r1c4 * (m.r2c1 * m.r4c2 - m.r2c2 * m.r4c1);
-    let c34 = -(m.r1c1 * (m.r2c2 * m.r4c3 - m.r2c3 * m.r4c2)
-        - m.r1c2 * (m.r2c1 * m.r4c3 - m.r2c3 * m.r4c1)
-        + m.r1c3 * (m.r2c1 * m.r4c2 - m.r2c2 * m.r4c1));
-    let c41 = -(m.r1c2 * (m.r2c3 * m.r3c4 - m.r2c4 * m.r3c3)
-        - m.r1c3 * (m.r2c2 * m.r3c4 - m.r2c4 * m.r3c2)
-        + m.r1c4 * (m.r2c2 * m.r3c3 - m.r2c3 * m.r3c2));
-    let c42 = m.r1c1 * (m.r2c3 * m.r3c4 - m.r2c4 * m.r3c3)
-        - m.r1c3 * (m.r2c1 * m.r3c4 - m.r2c4 * m.r3c1)
-        + m.r1c4 * (m.r2c1 * m.r3c3 - m.r2c3 * m.r3c1);
-    let c43 = -(m.r1c1 * (m.r2c2 * m.r3c4 - m.r2c4 * m.r3c2)
-        - m.r1c2 * (m.r2c1 * m.r3c4 - m.r2c4 * m.r3c1)
-        + m.r1c4 * (m.r2c1 * m.r3c2 - m.r2c2 * m.r3c1));
-    let c44 = m.r1c1 * (m.r2c2 * m.r3c3 - m.r2c3 * m.r3c2)
-        - m.r1c2 * (m.r2c1 * m.r3c3 - m.r2c3 * m.r3c1)
-        + m.r1c3 * (m.r2c1 * m.r3c2 - m.r2c2 * m.r3c1);
+    /* get the cofactors */
+    let (c11,c12,c13,c14,c21,c22,c23,c24,c31,c32,c33,c34,c41,c42,c43,c44) = m.cofactors();
 
-    /* calculate determinant; consists of the first column and its cofactors */
-    let determinant = m.r1c1 * c11 + m.r1c2 * c12 + m.r1c3 * c13 + m.r1c4 * c14;
+    /* calculate the determinant */
+    let determinant = m.determinant();
 
     /* if the deterrent is practically zero, return none */
     if determinant.abs() < f32::EPSILON {
