@@ -44,13 +44,12 @@ fn invert(m: &Matrix4x4) -> Option<Matrix4x4> {
 
 #[cfg(test)]
 mod tests {
+    use crate::geometry::is_near;
     use crate::geometry::orient::matrix::m4x4::invert::invert;
     use crate::geometry::orient::matrix::m4x4::mult::multiply;
     use crate::geometry::orient::matrix::m4x4::Matrix4x4;
 
-    fn is_near(left: f32, right: f32) -> bool {
-        (left - right).abs() <= f32::EPSILON
-    }
+    
 
     ///
     /// inverse of identity should be _very close_ to the identity.

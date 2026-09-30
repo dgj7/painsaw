@@ -62,3 +62,12 @@ pub fn fov_to_zoom(fov: f32) -> f32 {
 pub fn zoom_to_fov(zoom: f32) -> f32 {
     2.0 * (1.0 / zoom).atan()
 }
+
+///
+/// determine if two values are near to each other.
+/// 
+/// "near" is defined as the absolute value of the difference is less than or equal to the constant epsilon.
+/// 
+pub fn is_near(left: f32, right: f32) -> bool {
+    (left - right).abs() <= f32::EPSILON
+}
