@@ -1,5 +1,6 @@
 use crate::geometry::angle::degrees::Degrees;
 use std::f32::consts::PI;
+use crate::geometry::angle::ToDegrees;
 
 ///
 /// radians: unit of angular measurement.  angle superimposed on a circle where the arc
@@ -14,8 +15,10 @@ impl Radians {
     pub fn new(value: f32) -> Radians {
         Radians { radians: value }
     }
+}
 
-    pub fn to_degrees(&self) -> Degrees {
+impl ToDegrees for Radians {
+    fn to_degrees(&self) -> Degrees {
         Degrees { degrees: radians_to_degrees(self.radians), }
     }
 }
