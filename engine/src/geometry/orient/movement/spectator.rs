@@ -79,22 +79,22 @@ pub trait SpectatorMovementStrategy {
         let delta_pitch = dy * config.input.mouse_sensitivity * -1.0;
 
         /* update the yaw and pitch */
-        camera.orientation.yaw = camera.orientation.yaw + delta_yaw;
-        camera.orientation.pitch = camera.orientation.pitch + delta_pitch;
-        camera.orientation.roll = 0.0;
-        camera.orientation.pitch_delta = delta_pitch;
-        camera.orientation.yaw_delta = delta_yaw;
-        camera.orientation.roll_delta = 0.0;
+        camera.orientation.yaw.radians = camera.orientation.yaw.radians + delta_yaw;
+        camera.orientation.pitch.radians = camera.orientation.pitch.radians + delta_pitch;
+        camera.orientation.roll = Radians::zero();
+        camera.orientation.pitch_delta.radians = delta_pitch;
+        camera.orientation.yaw_delta.radians = delta_yaw;
+        camera.orientation.roll_delta = Radians::zero();
 
         /* clamp to prevent flip */
-        if camera.orientation.pitch > 89.0 { camera.orientation.pitch = 89.0; }
-        if camera.orientation.pitch < -89.0 { camera.orientation.pitch = -89.0; }
+        if camera.orientation.pitch.radians > 89.0 { camera.orientation.pitch.radians = 89.0; }
+        if camera.orientation.pitch.radians < -89.0 { camera.orientation.pitch.radians = -89.0; }
 
         /* finally, update orientation */
         let rotation = from_pitch_yaw_roll(
-            &Radians { radians: camera.orientation.pitch_delta },
-            &Radians { radians: camera.orientation.yaw_delta },
-            &Radians { radians: camera.orientation.roll_delta },
+            &camera.orientation.pitch_delta,
+            &camera.orientation.yaw_delta,
+            &camera.orientation.roll_delta,
         );
         camera.orientation.position = rotate(&camera.orientation.position, &rotation);
     }

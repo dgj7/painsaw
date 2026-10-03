@@ -1,3 +1,4 @@
+use crate::geometry::angle::radians::Radians;
 use crate::geometry::orient::matrix::m4x4::Matrix4x4;
 
 pub mod matrix;
@@ -10,12 +11,12 @@ pub struct Orientation {
     pub x_scale: f32,
     pub y_scale: f32,
     pub z_scale: f32,
-    pub pitch: f32, // up/down, about x
-    pub yaw: f32,   // left/right; about y
-    pub roll: f32,  // side/side, about z
-    pub pitch_delta: f32,
-    pub yaw_delta: f32,
-    pub roll_delta: f32,
+    pub pitch: Radians, // up/down, about x
+    pub yaw: Radians,   // left/right; about y
+    pub roll: Radians,  // side/side, about z
+    pub pitch_delta: Radians,
+    pub yaw_delta: Radians,
+    pub roll_delta: Radians,
 }
 
 pub struct OrientationBuilder {
@@ -23,9 +24,9 @@ pub struct OrientationBuilder {
     the_x_scale: Option<f32>,
     the_y_scale: Option<f32>,
     the_z_scale: Option<f32>,
-    the_pitch: Option<f32>,
-    the_yaw: Option<f32>,
-    the_roll: Option<f32>,
+    the_pitch: Option<Radians>,
+    the_yaw: Option<Radians>,
+    the_roll: Option<Radians>,
 }
 
 impl Orientation {
@@ -34,11 +35,11 @@ impl Orientation {
         x_scale: f32,
         y_scale: f32,
         z_scale: f32,
-        pitch: f32,
-        yaw: f32,
-        roll: f32,
+        pitch: Radians,
+        yaw: Radians,
+        roll: Radians,
     ) -> Orientation {
-        Orientation { position, x_scale, y_scale, z_scale, pitch, yaw, roll, pitch_delta: 0.0, yaw_delta: 0.0, roll_delta: 0.0,}
+        Orientation { position, x_scale, y_scale, z_scale, pitch, yaw, roll, pitch_delta: Radians::zero(), yaw_delta: Radians::zero(), roll_delta: Radians::zero(),}
     }
 
     pub fn camera_default() -> Orientation {
@@ -52,12 +53,12 @@ impl Orientation {
             x_scale: 1.0,
             y_scale: 1.0,
             z_scale: 1.0,
-            pitch: 0.0,
-            yaw: 0.0,
-            roll: 0.0,
-            pitch_delta: 0.0,
-            yaw_delta: 0.0,
-            roll_delta: 0.0,
+            pitch: Radians::zero(),
+            yaw: Radians::zero(),
+            roll: Radians::zero(),
+            pitch_delta: Radians::zero(),
+            yaw_delta: Radians::zero(),
+            roll_delta: Radians::zero(),
         }
     }
 }
@@ -69,12 +70,12 @@ impl Default for Orientation {
             x_scale: 1.0,
             y_scale: 1.0,
             z_scale: 1.0,
-            pitch: 0.0,
-            yaw: 0.0,
-            roll: 0.0,
-            pitch_delta: 0.0,
-            yaw_delta: 0.0,
-            roll_delta: 0.0,
+            pitch: Radians::zero(),
+            yaw: Radians::zero(),
+            roll: Radians::zero(),
+            pitch_delta: Radians::zero(),
+            yaw_delta: Radians::zero(),
+            roll_delta: Radians::zero(),
         }
     }
 }
@@ -118,12 +119,12 @@ impl OrientationBuilder {
             x_scale: self.the_x_scale.unwrap_or_else(|| 1.0),
             y_scale: self.the_y_scale.unwrap_or_else(|| 1.0),
             z_scale: self.the_z_scale.unwrap_or_else(|| 1.0),
-            pitch: self.the_pitch.unwrap_or_else(|| 0.0),
-            yaw: self.the_yaw.unwrap_or_else(|| 0.0),
-            roll: self.the_roll.unwrap_or_else(|| 0.0),
-            pitch_delta: 0.0,
-            yaw_delta: 0.0,
-            roll_delta: 0.0,
+            pitch: self.the_pitch.unwrap_or_else(|| Radians::zero()),
+            yaw: self.the_yaw.unwrap_or_else(|| Radians::zero()),
+            roll: self.the_roll.unwrap_or_else(|| Radians::zero()),
+            pitch_delta:Radians::zero(),
+            yaw_delta:Radians::zero(),
+            roll_delta:Radians::zero(),
         }
     }
 }

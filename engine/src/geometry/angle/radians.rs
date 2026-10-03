@@ -7,6 +7,7 @@ use crate::geometry::angle::ToDegrees;
 /// is the length of the radius of the circle.  a circle is about 2*pi (6.28) radians,
 /// making 1 radian roughly equal to 57.3 degrees.
 ///
+#[derive(Clone)]
 pub struct Radians {
     pub radians: f32,
 }
@@ -14,6 +15,10 @@ pub struct Radians {
 impl Radians {
     pub fn new(value: f32) -> Radians {
         Radians { radians: value }
+    }
+
+    pub fn zero() -> Radians {
+        Radians { radians: 0.0 }
     }
 }
 

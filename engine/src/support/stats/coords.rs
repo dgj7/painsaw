@@ -59,19 +59,19 @@ pub(crate) fn show_cam_coords(g2d: &mut Graph2D, config: &EngineConfig, camera: 
     );
     g2d.attach_or_update(
         "99-2d-pitch",
-        || create_f32_model(X_POS, y_pitch, TC.clone(), PITCH, camera.orientation.pitch),
+        || create_f32_model(X_POS, y_pitch, TC.clone(), PITCH, camera.orientation.pitch.radians),
         |m| {
-            m.textures[0].replacement = create_f32_text(TC.clone(), PITCH, camera.orientation.pitch)
+            m.textures[0].replacement = create_f32_text(TC.clone(), PITCH, camera.orientation.pitch.radians)
         },
     );
     g2d.attach_or_update(
         "99-2d-yaw",
-        || create_f32_model(X_POS, y_yaw, TC.clone(), YAW, camera.orientation.yaw),
-        |m| m.textures[0].replacement = create_f32_text(TC.clone(), YAW, camera.orientation.yaw),
+        || create_f32_model(X_POS, y_yaw, TC.clone(), YAW, camera.orientation.yaw.radians),
+        |m| m.textures[0].replacement = create_f32_text(TC.clone(), YAW, camera.orientation.yaw.radians),
     );
     g2d.attach_or_update(
         "99-2d-roll",
-        || create_f32_model(X_POS, y_roll, TC.clone(), ROLL, camera.orientation.roll),
-        |m| m.textures[0].replacement = create_f32_text(TC.clone(), ROLL, camera.orientation.roll),
+        || create_f32_model(X_POS, y_roll, TC.clone(), ROLL, camera.orientation.roll.radians),
+        |m| m.textures[0].replacement = create_f32_text(TC.clone(), ROLL, camera.orientation.roll.radians),
     );
 }
