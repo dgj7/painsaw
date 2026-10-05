@@ -12,9 +12,9 @@ use engine::window::api::mc::move_cursor;
 impl MouseHandler for Demo1 {
     fn handle_mouse_deltas(
         &mut self,
-        _deltas: &Vec<MouseDelta>,
-        _config: &EngineConfig,
-        _camera: &mut Camera,
+        deltas: &Vec<MouseDelta>,
+        config: &EngineConfig,
+        camera: &mut Camera,
         _timing: &EngineTiming,
         _models: &mut Models,
     ) {
@@ -24,10 +24,10 @@ impl MouseHandler for Demo1 {
         }
 
         /* update mouse look  */
-        <Demo1 as SpectatorMovementStrategy>::update_look(_deltas, _config, _camera);
+        self.update_look(deltas, config, camera);
 
         /* compute center and move cursor */
-        let center = &_camera.screen.window_center;
+        let center = &camera.screen.window_center;
         move_cursor(center);
     }
 }
