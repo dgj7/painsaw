@@ -1,11 +1,13 @@
 use crate::geometry::angle::degrees::Degrees;
 use std::f32::consts::PI;
+use crate::geometry::angle::ToDegrees;
 
 ///
 /// radians: unit of angular measurement.  angle superimposed on a circle where the arc
 /// is the length of the radius of the circle.  a circle is about 2*pi (6.28) radians,
 /// making 1 radian roughly equal to 57.3 degrees.
 ///
+#[derive(Clone)]
 pub struct Radians {
     pub radians: f32,
 }
@@ -15,7 +17,13 @@ impl Radians {
         Radians { radians: value }
     }
 
-    pub fn to_degrees(&self) -> Degrees {
+    pub fn zero() -> Radians {
+        Radians { radians: 0.0 }
+    }
+}
+
+impl ToDegrees for Radians {
+    fn to_degrees(&self) -> Degrees {
         Degrees { degrees: radians_to_degrees(self.radians), }
     }
 }

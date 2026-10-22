@@ -1,7 +1,11 @@
-mod eq;
-pub(crate) mod invert;
-mod mult;
-pub mod new;
+pub mod eq;
+pub mod invert;
+pub mod mult;
+pub mod mult_scalar;
+pub mod scale;
+pub mod column_major;
+pub mod norm;
+mod det;
 
 use crate::geometry::primitive::v3d::Vertex3D;
 
@@ -31,119 +35,67 @@ use crate::geometry::primitive::v3d::Vertex3D;
 #[derive(Clone, Debug)]
 pub struct Matrix4x4 {
     /* column1: x(right) */
-    pub c1r1: f32,
-    pub c1r2: f32,
-    pub c1r3: f32,
-    pub c1r4: f32,
+    pub r1c1: f32,
+    pub r2c1: f32,
+    pub r3c1: f32,
+    pub r4c1: f32,
 
     /* column2: y(up) */
-    pub c2r1: f32,
-    pub c2r2: f32,
-    pub c2r3: f32,
-    pub c2r4: f32,
+    pub r1c2: f32,
+    pub r2c2: f32,
+    pub r3c2: f32,
+    pub r4c2: f32,
 
     /* column3: z(forward) */
-    pub c3r1: f32,
-    pub c3r2: f32,
-    pub c3r3: f32,
-    pub c3r4: f32,
+    pub r1c3: f32,
+    pub r2c3: f32,
+    pub r3c3: f32,
+    pub r4c3: f32,
 
     /* column4: translation(position) */
-    pub c4r1: f32,
-    pub c4r2: f32,
-    pub c4r3: f32,
-    pub c4r4: f32,
+    pub r1c4: f32,
+    pub r2c4: f32,
+    pub r3c4: f32,
+    pub r4c4: f32,
 }
 
-///
-/// vector retrieval functions
-///
 impl Matrix4x4 {
-    pub fn column_major_x_right(&self) -> Vertex3D {
-        Vertex3D {
-            x: self.c1r1,
-            y: self.c1r2,
-            z: self.c1r3,
+    pub fn from(
+        x_right: Vertex3D,
+        y_up: Vertex3D,
+        z_forward: Vertex3D,
+        position: Vertex3D,
+    ) -> Matrix4x4 {
+        Matrix4x4 {
+            r1c1: x_right.x,
+            r2c1: x_right.y,
+            r3c1: x_right.z,
+            r4c1: 0.0,
+
+            r1c2: y_up.x,
+            r2c2: y_up.y,
+            r3c2: y_up.z,
+            r4c2: 0.0,
+
+            r1c3: z_forward.x,
+            r2c3: z_forward.y,
+            r3c3: z_forward.z,
+            r4c3: 0.0,
+
+            r1c4: position.x,
+            r2c4: position.y,
+            r3c4: position.z,
+            r4c4: 0.0, // todo: i think this should be 1.0
         }
     }
 
-    pub fn column_major_y_up(&self) -> Vertex3D {
-        Vertex3D {
-            x: self.c2r1,
-            y: self.c2r2,
-            z: self.c2r3,
+    pub fn identity() -> Matrix4x4 {
+        Matrix4x4 {
+            r1c1: 1.0, r1c2: 0.0, r1c3: 0.0, r1c4: 0.0,
+            r2c1: 0.0, r2c2: 1.0, r2c3: 0.0, r2c4: 0.0,
+            r3c1: 0.0, r3c2: 0.0, r3c3: 1.0, r3c4: 0.0,
+            r4c1: 0.0, r4c2: 0.0, r4c3: 0.0, r4c4: 1.0,
         }
-    }
-
-    pub fn column_major_z_forward(&self) -> Vertex3D {
-        Vertex3D {
-            x: self.c3r1,
-            y: self.c3r2,
-            z: self.c3r3,
-        }
-    }
-
-    pub fn column_major_position(&self) -> Vertex3D {
-        Vertex3D {
-            x: self.c4r1,
-            y: self.c4r2,
-            z: self.c4r3,
-        }
-    }
-
-    pub fn column_major_x_scale(&self) -> f32 {
-        scale(self.column_major_x_right())
-    }
-
-    pub fn column_major_y_scale(&self) -> f32 {
-        scale(self.column_major_y_up())
-    }
-
-    pub fn column_major_z_scale(&self) -> f32 {
-        scale(self.column_major_z_forward())
-    }
-}
-
-///
-/// vector update functions
-///
-impl Matrix4x4 {
-    pub fn column_major_update_right(&mut self, right: &Vertex3D) {
-        self.c1r1 = right.x;
-        self.c1r2 = right.y;
-        self.c1r3 = right.z;
-    }
-
-    pub fn column_major_update_up(&mut self, up: &Vertex3D) {
-        self.c2r1 = up.x;
-        self.c2r2 = up.y;
-        self.c2r3 = up.z;
-    }
-
-    pub fn column_major_update_forward(&mut self, forward: &Vertex3D) {
-        self.c3r1 = forward.x;
-        self.c3r2 = forward.y;
-        self.c3r3 = forward.z;
-    }
-
-    pub fn column_major_update_position(&mut self, position: &Vertex3D) {
-        self.c4r1 = position.x;
-        self.c4r2 = position.y;
-        self.c4r3 = position.z;
-    }
-
-    pub fn normalize(&mut self) {
-        let mut forward = self.column_major_z_forward();
-        forward.normalize();
-        self.column_major_update_forward(&forward);
-
-        let mut right = self.column_major_x_right();
-        right.normalize();
-        self.column_major_update_right(&right);
-
-        let mut up = self.column_major_y_up();
-        up.normalize();
-        self.column_major_update_up(&up);
     }
 }
 
@@ -151,40 +103,4 @@ impl Default for Matrix4x4 {
     fn default() -> Matrix4x4 {
         Matrix4x4::from(Vertex3D::create_x_unit(), Vertex3D::create_y_unit(), Vertex3D::create_z_unit(), Vertex3D::origin(), )
     }
-}
-
-///
-/// multiply matrix by scalar.
-///
-pub fn multiply_scalar(matrix: &Matrix4x4, scalar: f32) -> Matrix4x4 {
-    Matrix4x4 {
-        c1r1: matrix.c1r1 * scalar,
-        c1r2: matrix.c1r2 * scalar,
-        c1r3: matrix.c1r3 * scalar,
-        c1r4: matrix.c1r4 * scalar,
-
-        c2r1: matrix.c2r1 * scalar,
-        c2r2: matrix.c2r2 * scalar,
-        c2r3: matrix.c2r3 * scalar,
-        c2r4: matrix.c2r4 * scalar,
-
-        c3r1: matrix.c3r1 * scalar,
-        c3r2: matrix.c3r2 * scalar,
-        c3r3: matrix.c3r3 * scalar,
-        c3r4: matrix.c3r4 * scalar,
-
-        c4r1: matrix.c4r1 * scalar,
-        c4r2: matrix.c4r2 * scalar,
-        c4r3: matrix.c4r3 * scalar,
-        c4r4: matrix.c4r4 * scalar,
-    }
-}
-
-///
-/// calculate the scale for the given axis.
-///
-/// presumes the axis is not normalized.
-///
-fn scale(axis: Vertex3D) -> f32 {
-    ((axis.x * axis.x) + (axis.y * axis.y) + (axis.z * axis.z)).sqrt()
 }

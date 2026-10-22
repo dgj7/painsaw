@@ -1,3 +1,7 @@
+pub mod column_major;
+mod mult;
+mod mult_scalar;
+
 ///
 /// store a 3x3 matrix, containing rotation and scaling of an object or camera.
 /// a matrix could be interpreted as column-major or row-major.
@@ -18,92 +22,32 @@
 ///
 /// row-major (directx/unreal): each row represents 3 (basis) vectors.
 ///
+#[derive(Debug, PartialEq)]
 pub struct Matrix3x3 {
-    /* column 1 */
-    pub c1r1: f32,
-    pub c1r2: f32,
-    pub c1r3: f32,
+    /* row 1 */
+    pub r1c1: f32,
+    pub r1c2: f32,
+    pub r1c3: f32,
 
-    /* column 2 */
-    pub c2r1: f32,
-    pub c2r2: f32,
-    pub c2r3: f32,
+    /* row 2 */
+    pub r2c1: f32,
+    pub r2c2: f32,
+    pub r2c3: f32,
 
-    /* column 3 */
-    pub c3r1: f32,
-    pub c3r2: f32,
-    pub c3r3: f32,
+    /* row 3 */
+    pub r3c1: f32,
+    pub r3c2: f32,
+    pub r3c3: f32,
 }
 
 type RotationMatrix = Matrix3x3;
 
 impl Matrix3x3 {
-    pub fn from_pitch_yaw_roll(pitch: f32, yaw: f32, roll: f32) -> Matrix3x3 {
-        let sp = pitch.sin();
-        let sy = yaw.sin();
-        let sr = roll.sin();
-        let cp = pitch.cos();
-        let cy = yaw.cos();
-        let cr = roll.cos();
-
-        let rotx = Matrix3x3 {
-            c1r1: 1.0, c1r2: 0.0, c1r3: 0.0,
-            c2r1: 0.0, c2r2: cp, c2r3: sp,
-            c3r1: 0.0, c3r2: -sp, c3r3: cp,
-        };
-        let roty = Matrix3x3 {
-            c1r1: cy, c1r2: 0.0, c1r3: -sy,
-            c2r1: 0.0, c2r2: 1.0, c2r3: 0.0,
-            c3r1: sy, c3r2: 0.0, c3r3: cy,
-        };
-        let rotz = Matrix3x3 {
-            c1r1: cr, c1r2: sr, c1r3: 0.0,
-            c2r1: -sr, c2r2: cr, c2r3: 0.0,
-            c3r1: 0.0, c3r2: 0.0, c3r3: 1.0,
-        };
-
-        rotx.multiply(&roty).multiply(&rotz)
-    }
-
-    pub fn multiply(&self, other: &Matrix3x3) -> Matrix3x3 {
-        multiply(self, other)
-    }
-}
-
-///
-/// multiply two matrices.
-///
-pub fn multiply(left: &Matrix3x3, right: &Matrix3x3) -> Matrix3x3 {
-    Matrix3x3 {
-        c1r1: left.c1r1 * right.c1r1 + left.c2r1 * right.c1r2 + left.c3r1 * right.c1r3,
-        c1r2: left.c1r2 * right.c1r1 + left.c2r2 * right.c1r2 + left.c3r2 * right.c1r3,
-        c1r3: left.c1r3 * right.c1r1 + left.c2r3 * right.c1r2 + left.c3r3 * right.c1r3,
-
-        c2r1: left.c1r1 * right.c2r1 + left.c2r1 * right.c2r2 + left.c3r1 * right.c2r3,
-        c2r2: left.c1r2 * right.c2r1 + left.c2r2 * right.c2r2 + left.c3r2 * right.c2r3,
-        c2r3: left.c1r3 * right.c2r1 + left.c2r3 * right.c2r2 + left.c3r3 * right.c2r3,
-
-        c3r1: left.c1r1 * right.c3r1 + left.c2r1 * right.c3r2 + left.c3r1 * right.c3r3,
-        c3r2: left.c1r2 * right.c3r1 + left.c2r2 * right.c3r2 + left.c3r2 * right.c3r3,
-        c3r3: left.c1r3 * right.c3r1 + left.c2r3 * right.c3r2 + left.c3r3 * right.c3r3,
-    }
-}
-
-///
-/// multiply matrix by scalar.
-///
-pub fn multiply_scalar(matrix: &Matrix3x3, scalar: f32) -> Matrix3x3 {
-    Matrix3x3 {
-        c1r1: matrix.c1r1 * scalar,
-        c1r2: matrix.c1r2 * scalar,
-        c1r3: matrix.c1r3 * scalar,
-
-        c2r1: matrix.c2r1 * scalar,
-        c2r2: matrix.c2r2 * scalar,
-        c2r3: matrix.c2r3 * scalar,
-
-        c3r1: matrix.c3r1 * scalar,
-        c3r2: matrix.c3r2 * scalar,
-        c3r3: matrix.c3r3 * scalar,
+    pub fn identity() -> Matrix3x3 {
+        Matrix3x3 {
+            r1c1: 1.0, r1c2: 0.0, r1c3: 0.0,
+            r2c1: 0.0, r2c2: 1.0, r2c3: 0.0,
+            r3c1: 0.0, r3c2: 0.0, r3c3: 1.0,
+        }
     }
 }

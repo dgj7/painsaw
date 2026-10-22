@@ -41,25 +41,25 @@ impl Projection {
         let f = 1.0 / (self.fov / 2.0).tan();
         let aspect = self.to_aspect();
         Matrix4x4 {
-            c1r1: f / aspect,
-            c1r2: 0.0,
-            c1r3: 0.0,
-            c1r4: 0.0,
+            r1c1: f / aspect,
+            r2c1: 0.0,
+            r3c1: 0.0,
+            r4c1: 0.0,
 
-            c2r1: 0.0,
-            c2r2: f,
-            c2r3: 0.0,
-            c2r4: 0.0,
+            r1c2: 0.0,
+            r2c2: f,
+            r3c2: 0.0,
+            r4c2: 0.0,
 
-            c3r1: 0.0,
-            c3r2: 0.0,
-            c3r3: (self.far + self.near) / (self.near - self.far),
-            c3r4: -1.0,
+            r1c3: 0.0,
+            r2c3: 0.0,
+            r3c3: (self.far + self.near) / (self.near - self.far),
+            r4c3: -1.0,
 
-            c4r1: 0.0,
-            c4r2: 0.0,
-            c4r3: (2.0 * self.far * self.near) / (self.near - self.far),
-            c4r4: 0.0,
+            r1c4: 0.0,
+            r2c4: 0.0,
+            r3c4: (2.0 * self.far * self.near) / (self.near - self.far),
+            r4c4: 0.0,
         }
     }
 }

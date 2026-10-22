@@ -21,10 +21,10 @@ pub(crate) fn show_cam_coords(g2d: &mut Graph2D, config: &EngineConfig, camera: 
     }
 
     /* get all the camera info */
-    let position = camera.orientation.position.column_major_position();
-    let forward = camera.orientation.position.column_major_z_forward();
-    let right = camera.orientation.position.column_major_x_right();
-    let up = camera.orientation.position.column_major_y_up();
+    let position = camera.orientation.transform.column_major_position();
+    let forward = camera.orientation.transform.column_major_z_forward();
+    let right = camera.orientation.transform.column_major_x_right();
+    let up = camera.orientation.transform.column_major_y_up();
 
     /* positioning variables */
     let y = 20.0;
@@ -59,19 +59,19 @@ pub(crate) fn show_cam_coords(g2d: &mut Graph2D, config: &EngineConfig, camera: 
     );
     g2d.attach_or_update(
         "99-2d-pitch",
-        || create_f32_model(X_POS, y_pitch, TC.clone(), PITCH, camera.orientation.pitch),
+        || create_f32_model(X_POS, y_pitch, TC.clone(), PITCH, camera.orientation.pitch.degrees),
         |m| {
-            m.textures[0].replacement = create_f32_text(TC.clone(), PITCH, camera.orientation.pitch)
+            m.textures[0].replacement = create_f32_text(TC.clone(), PITCH, camera.orientation.pitch.degrees)
         },
     );
     g2d.attach_or_update(
         "99-2d-yaw",
-        || create_f32_model(X_POS, y_yaw, TC.clone(), YAW, camera.orientation.yaw),
-        |m| m.textures[0].replacement = create_f32_text(TC.clone(), YAW, camera.orientation.yaw),
+        || create_f32_model(X_POS, y_yaw, TC.clone(), YAW, camera.orientation.yaw.degrees),
+        |m| m.textures[0].replacement = create_f32_text(TC.clone(), YAW, camera.orientation.yaw.degrees),
     );
     g2d.attach_or_update(
         "99-2d-roll",
-        || create_f32_model(X_POS, y_roll, TC.clone(), ROLL, camera.orientation.roll),
-        |m| m.textures[0].replacement = create_f32_text(TC.clone(), ROLL, camera.orientation.roll),
+        || create_f32_model(X_POS, y_roll, TC.clone(), ROLL, camera.orientation.roll.degrees),
+        |m| m.textures[0].replacement = create_f32_text(TC.clone(), ROLL, camera.orientation.roll.degrees),
     );
 }

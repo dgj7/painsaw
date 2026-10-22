@@ -15,7 +15,7 @@ pub(crate) mod subtract;
 ///
 /// includes supporting methods for all 3 types.
 ///
-#[derive(Clone)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct Vertex3D {
     pub x: f32,
     pub y: f32,

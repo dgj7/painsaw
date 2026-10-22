@@ -24,22 +24,22 @@ pub(crate) fn handle_command(
     match command {
         Command::CameraMoveForward => {
             if !game.is_menu() {
-                <Demo1 as SpectatorMovementStrategy>::move_forward(ec, camera, et)
+                game.move_forward(ec, camera, et)
             }
         }
         Command::CameraStrafeLeft => {
             if !game.is_menu() {
-                <Demo1 as SpectatorMovementStrategy>::move_left(ec, camera, et)
+                game.move_left(ec, camera, et)
             }
         }
         Command::CameraMoveBackward => {
             if !game.is_menu() {
-                <Demo1 as SpectatorMovementStrategy>::move_backward(ec, camera, et)
+                game.move_backward(ec, camera, et)
             }
         }
         Command::CameraStrafeRight => {
             if !game.is_menu() {
-                <Demo1 as SpectatorMovementStrategy>::move_right(ec, camera, et)
+                game.move_right(ec, camera, et)
             }
         }
     }
