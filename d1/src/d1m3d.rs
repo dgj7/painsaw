@@ -1,4 +1,4 @@
-use engine::geometry::angle::radians::Radians;
+use engine::geometry::angle::degrees::Degrees;
 use engine::geometry::build::cube::CubeBuilder;
 use engine::geometry::orient::matrix::m4x4::Matrix4x4;
 use engine::geometry::orient::Orientation;
@@ -81,7 +81,7 @@ pub(super) fn create_3d_cuboid_1() -> Model3D {
             Vertex3D::origin(),
             Vertex3D::origin(),
             Vertex3D::new(0.75, 0.5, -1.0),
-        ), 1.0, 1.0, 1.0, Radians::zero(), Radians::zero(), Radians::zero(), );
+        ), 1.0, 1.0, 1.0, Degrees::zero(), Degrees::zero(), Degrees::zero(), );
     Model3DBuilder::new()
         .with_primitive(
             Primitive3DBuilder::new()
@@ -111,7 +111,7 @@ pub(super) fn create_3d_cuboid_wall_2() -> Model3D {
             Vertex3D::origin(),
             Vertex3D::origin(),
             Vertex3D::new(-0.25, 0.5, -1.0),
-        ), 1.0, 1.0, 1.0, Radians::zero(), Radians::zero(), Radians::zero(), );
+        ), 1.0, 1.0, 1.0, Degrees::zero(), Degrees::zero(), Degrees::zero(), );
     Model3DBuilder::new()
         .with_primitive(
             Primitive3DBuilder::new()
@@ -141,7 +141,7 @@ pub(super) fn create_3d_enclosing_box() -> Model3D {
             Vertex3D::origin(),
             Vertex3D::origin(),
             Vertex3D::new(10.0, 10.0, 15.0),
-        ), 1.0, 1.0, 1.0, Radians::zero(), Radians::zero(), Radians::zero(), );
+        ), 1.0, 1.0, 1.0, Degrees::zero(), Degrees::zero(), Degrees::zero(), );
     Model3DBuilder::new()
         .with_primitive(
             Primitive3DBuilder::new()

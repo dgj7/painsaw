@@ -1,4 +1,4 @@
-use crate::geometry::angle::radians::Radians;
+use crate::geometry::angle::degrees::Degrees;
 use crate::geometry::orient::matrix::m4x4::Matrix4x4;
 
 pub mod matrix;
@@ -7,16 +7,17 @@ pub mod quaternion;
 
 #[derive(Clone)]
 pub struct Orientation {
-    pub position: Matrix4x4, // orientation; c1=right(x), c2=up(y), c3=forward(z/normal), c4=position
+    pub transform: Matrix4x4, // orientation; c1=right(x), c2=up(y), c3=forward(z/normal), c4=position
+
     pub x_scale: f32,
     pub y_scale: f32,
     pub z_scale: f32,
-    pub pitch: Radians, // up/down, about x
-    pub yaw: Radians,   // left/right; about y
-    pub roll: Radians,  // side/side, about z
-    pub pitch_delta: Radians,
-    pub yaw_delta: Radians,
-    pub roll_delta: Radians,
+    pub pitch: Degrees, // up/down, about x
+    pub yaw: Degrees,   // left/right; about y
+    pub roll: Degrees,  // side/side, about z
+    pub pitch_delta: Degrees,
+    pub yaw_delta: Degrees,
+    pub roll_delta: Degrees,
 }
 
 pub struct OrientationBuilder {
@@ -24,9 +25,9 @@ pub struct OrientationBuilder {
     the_x_scale: Option<f32>,
     the_y_scale: Option<f32>,
     the_z_scale: Option<f32>,
-    the_pitch: Option<Radians>,
-    the_yaw: Option<Radians>,
-    the_roll: Option<Radians>,
+    the_pitch: Option<Degrees>,
+    the_yaw: Option<Degrees>,
+    the_roll: Option<Degrees>,
 }
 
 impl Orientation {
@@ -35,16 +36,16 @@ impl Orientation {
         x_scale: f32,
         y_scale: f32,
         z_scale: f32,
-        pitch: Radians,
-        yaw: Radians,
-        roll: Radians,
+        pitch: Degrees,
+        yaw: Degrees,
+        roll: Degrees,
     ) -> Orientation {
-        Orientation { position, x_scale, y_scale, z_scale, pitch, yaw, roll, pitch_delta: Radians::zero(), yaw_delta: Radians::zero(), roll_delta: Radians::zero(),}
+        Orientation { transform: position, x_scale, y_scale, z_scale, pitch, yaw, roll, pitch_delta: Degrees::zero(), yaw_delta: Degrees::zero(), roll_delta: Degrees::zero(),}
     }
 
     pub fn camera_default() -> Orientation {
         Orientation {
-            position: Matrix4x4 {
+            transform: Matrix4x4 {
                 r1c4: 0.0,
                 r2c4: 0.0,
                 r3c4: 1.5,
@@ -53,12 +54,12 @@ impl Orientation {
             x_scale: 1.0,
             y_scale: 1.0,
             z_scale: 1.0,
-            pitch: Radians::zero(),
-            yaw: Radians::zero(),
-            roll: Radians::zero(),
-            pitch_delta: Radians::zero(),
-            yaw_delta: Radians::zero(),
-            roll_delta: Radians::zero(),
+            pitch: Degrees::zero(),
+            yaw: Degrees::zero(),
+            roll: Degrees::zero(),
+            pitch_delta: Degrees::zero(),
+            yaw_delta: Degrees::zero(),
+            roll_delta: Degrees::zero(),
         }
     }
 }
@@ -66,16 +67,16 @@ impl Orientation {
 impl Default for Orientation {
     fn default() -> Orientation {
         Orientation {
-            position: Matrix4x4::default(),
+            transform: Matrix4x4::default(),
             x_scale: 1.0,
             y_scale: 1.0,
             z_scale: 1.0,
-            pitch: Radians::zero(),
-            yaw: Radians::zero(),
-            roll: Radians::zero(),
-            pitch_delta: Radians::zero(),
-            yaw_delta: Radians::zero(),
-            roll_delta: Radians::zero(),
+            pitch: Degrees::zero(),
+            yaw: Degrees::zero(),
+            roll: Degrees::zero(),
+            pitch_delta: Degrees::zero(),
+            yaw_delta: Degrees::zero(),
+            roll_delta: Degrees::zero(),
         }
     }
 }
@@ -115,16 +116,16 @@ impl OrientationBuilder {
 
     pub fn build(self) -> Orientation {
         Orientation {
-            position: self.the_position.unwrap_or_else(|| Matrix4x4::default()),
+            transform: self.the_position.unwrap_or_else(|| Matrix4x4::default()),
             x_scale: self.the_x_scale.unwrap_or_else(|| 1.0),
             y_scale: self.the_y_scale.unwrap_or_else(|| 1.0),
             z_scale: self.the_z_scale.unwrap_or_else(|| 1.0),
-            pitch: self.the_pitch.unwrap_or_else(|| Radians::zero()),
-            yaw: self.the_yaw.unwrap_or_else(|| Radians::zero()),
-            roll: self.the_roll.unwrap_or_else(|| Radians::zero()),
-            pitch_delta:Radians::zero(),
-            yaw_delta:Radians::zero(),
-            roll_delta:Radians::zero(),
+            pitch: self.the_pitch.unwrap_or_else(|| Degrees::zero()),
+            yaw: self.the_yaw.unwrap_or_else(|| Degrees::zero()),
+            roll: self.the_roll.unwrap_or_else(|| Degrees::zero()),
+            pitch_delta:Degrees::zero(),
+            yaw_delta:Degrees::zero(),
+            roll_delta:Degrees::zero(),
         }
     }
 }
