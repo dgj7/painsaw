@@ -25,18 +25,18 @@ Changes that have occurred over time on the engine, demos, and games.
 |  0.3.x  | finish spectator movement strategy implementation                                  |
 
 ## Planning
-| Status | Version |                         Change                         |
-|:------:|:-------:|:------------------------------------------------------:|
-|   ✔️   |  0.2.x  |                 implement ui framework                 |
-|   ❌    |  0.3.x  |   finish spectator movement strategy implementation    |
-|   ❌    |    ?    |              animations for ui, g2d, g3d               |
-|   ❌    |    ?    |                      3d texturing                      |
-|   ❌    |    ?    |                        lighting                        |
-|   ❌    |    ?    |                        shadows                         |
-|   ❌    |    ?    | reorganize keyboard traits into a single unified trait |
-|   ❌    |    ?    |                       particles                        |
-|   ❌    |    ?    |                         sounds                         |
-|   ❌    |    ?    |                        physics                         |
+| Status | Version |                            Change                            |
+|:------:|:-------:|:------------------------------------------------------------:|
+|   ✔️   |  0.2.x  |                    implement ui framework                    |
+|   ✔️   |  0.3.x  |      finish spectator movement strategy implementation       |
+|   ❌    |    ?    |                 animations for ui, g2d, g3d                  |
+|   ❌    |    ?    |                         3d texturing                         |
+|   ❌    |    ?    |                           lighting                           |
+|   ❌    |    ?    |                           shadows                            |
+|   ❌    |    ?    | reorganize keyboard/mouse traits into a single unified trait |
+|   ❌    |    ?    |                          particles                           |
+|   ❌    |    ?    |                            sounds                            |
+|   ❌    |    ?    |                           physics                            |
 
 
 ---
