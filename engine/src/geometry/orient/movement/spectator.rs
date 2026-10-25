@@ -1,7 +1,7 @@
 use crate::config::EngineConfig;
 use crate::geometry::angle::degrees::Degrees;
-use crate::geometry::orient::matrix::m3x3::column_major::from_pitch_yaw_roll;
-use crate::geometry::orient::matrix::rotate;
+use crate::geometry::orient::matrix::m4x4::columnmajor;
+use crate::geometry::orient::matrix::{m3x3, rotate};
 use crate::geometry::primitive::v3d::Vertex3D;
 use crate::graphics::camera::Camera;
 use crate::input::mouse::md::MouseDelta;
@@ -12,66 +12,70 @@ use crate::support::timing::EngineTiming;
 ///
 /// largely intended for spectator view in games, and development.
 ///
-// todo: this needs extensive unit testing
 pub trait SpectatorMovementStrategy {
+    // todo: need some selection logic here for column-major vs row-major
     fn move_forward(&self, config: &EngineConfig, camera: &mut Camera, timing: &EngineTiming) {
         /* gather necessary variables */
-        let forward = camera.orientation.transform.column_major_z_forward();
-        let position = camera.orientation.transform.column_major_position();
+        let forward = columnmajor::z_forward(&camera.orientation.transform);
+        let position = columnmajor::position(&camera.orientation.transform);
 
         /* compute change (forward * speed * delta_time), then update position */
         let change = Vertex3D::new_mult_scalar(&Vertex3D::new_mult_scalar(&forward, config.movement.forward_speed), timing.delta_time as f32, );
         let updated = Vertex3D::new_subtract(&position, &change);
 
         /* update the orientation matrix */
-        camera.orientation.transform.column_major_update_position(&updated);
+        columnmajor::update_position(&mut camera.orientation.transform, &updated);
     }
 
+    // todo: need some selection logic here for column-major vs row-major
     fn move_backward(&self, config: &EngineConfig, camera: &mut Camera, timing: &EngineTiming) {
         /* gather necessary variables */
-        let forward = camera.orientation.transform.column_major_z_forward();
-        let position = camera.orientation.transform.column_major_position();
+        let forward = columnmajor::z_forward(&camera.orientation.transform);
+        let position = columnmajor::position(&camera.orientation.transform);
 
         /* compute change (forward * speed * delta_time), then update position */
         let change = Vertex3D::new_mult_scalar(&Vertex3D::new_mult_scalar(&forward, config.movement.forward_speed), timing.delta_time as f32, );
         let updated = Vertex3D::new_add(&position, &change);
 
         /* update the orientation matrix */
-        camera.orientation.transform.column_major_update_position(&updated);
+        columnmajor::update_position(&mut camera.orientation.transform, &updated);
     }
 
+    // todo: need some selection logic here for column-major vs row-major
     fn move_left(&self, config: &EngineConfig, camera: &mut Camera, timing: &EngineTiming) {
         /* gather necessary variables */
-        let right = camera.orientation.transform.column_major_x_right();
-        let position = camera.orientation.transform.column_major_position();
+        let right = columnmajor::x_right(&camera.orientation.transform);
+        let position = columnmajor::position(&camera.orientation.transform);
 
         /* compute change (right * speed * delta_time), then update position */
         let change = Vertex3D::new_mult_scalar(&Vertex3D::new_mult_scalar(&right, config.movement.forward_speed), timing.delta_time as f32, );
         let updated = Vertex3D::new_subtract(&position, &change);
 
         /* update the orientation matrix */
-        camera.orientation.transform.column_major_update_position(&updated);
+        columnmajor::update_position(&mut camera.orientation.transform, &updated);
     }
 
+    // todo: need some selection logic here for column-major vs row-major
     fn move_right(&self, config: &EngineConfig, camera: &mut Camera, timing: &EngineTiming) {
         /* gather necessary variables */
-        let right = camera.orientation.transform.column_major_x_right();
-        let position = camera.orientation.transform.column_major_position();
+        let right = columnmajor::x_right(&camera.orientation.transform);
+        let position = columnmajor::position(&camera.orientation.transform);
 
         /* compute change (right * speed * delta_time), then update position */
         let change = Vertex3D::new_mult_scalar(&Vertex3D::new_mult_scalar(&right, config.movement.forward_speed), timing.delta_time as f32, );
         let updated = Vertex3D::new_add(&position, &change);
 
         /* update the orientation matrix */
-        camera.orientation.transform.column_major_update_position(&updated);
+        columnmajor::update_position(&mut camera.orientation.transform, &updated);
     }
 
     ///
     /// update mouse look based on dx/dy.
     ///
+    // todo: need some selection logic here for column-major vs row-major
     fn update_look(&self, deltas: &Vec<MouseDelta>, config: &EngineConfig, camera: &mut Camera) {
         /* preserve position before rebuilding/rotating orientation */
-        let position = camera.orientation.transform.column_major_position();
+        let position = columnmajor::position(&camera.orientation.transform);
 
         /* get the collective delta x and y */
         let dx = deltas.iter().map(|d| d.dx).sum::<f32>();
@@ -94,9 +98,9 @@ pub trait SpectatorMovementStrategy {
         if camera.orientation.pitch.degrees < -89.0 { camera.orientation.pitch.degrees = -89.0; }
 
         /* rotate the world/camera transform based on pitch/yaw/roll */
-        let rotation = from_pitch_yaw_roll(&camera.orientation.pitch_delta, &camera.orientation.yaw_delta, &camera.orientation.roll_delta);
+        let rotation = m3x3::columnmajor::from_pitch_yaw_roll(&camera.orientation.pitch_delta, &camera.orientation.yaw_delta, &camera.orientation.roll_delta);
         camera.orientation.transform = rotate(&camera.orientation.transform, &rotation);
-        camera.orientation.transform.column_major_update_position(&position);
+        columnmajor::update_position(&mut camera.orientation.transform, &position);
 
         /* update the forward/right vectors */
         let pitch = camera.orientation.pitch.degrees.to_radians();
@@ -105,8 +109,8 @@ pub trait SpectatorMovementStrategy {
         let (sin_yaw, cos_yaw) = yaw.sin_cos();
         let right = Vertex3D::new(cos_yaw, 0.0, -sin_yaw);
         let forward = Vertex3D::new(sin_yaw * cos_pitch, -sin_pitch, cos_yaw * cos_pitch);
-        camera.orientation.transform.column_major_update_right(&right);
-        camera.orientation.transform.column_major_update_forward(&forward);
+        columnmajor::update_right(&mut camera.orientation.transform, &right);
+        columnmajor::update_forward(&mut camera.orientation.transform, &forward);
     }
 }
 
@@ -134,6 +138,7 @@ mod tests {
     }
 
     mod forward {
+        use crate::geometry::orient::matrix::m4x4::columnmajor;
         use crate::geometry::orient::movement::spectator::tests::{prepare, TestGame};
         use crate::geometry::orient::movement::spectator::SpectatorMovementStrategy;
         use crate::geometry::primitive::v3d::Vertex3D;
@@ -143,10 +148,10 @@ mod tests {
             let game = TestGame {};
             let (config, mut camera, timing) = prepare();
 
-            assert_eq!(Vertex3D::new(0.0, 0.0, 0.0), camera.orientation.transform.column_major_position());
-            assert_eq!(Vertex3D::new(1.0, 0.0, 0.0), camera.orientation.transform.column_major_x_right());
-            assert_eq!(Vertex3D::new(0.0, 1.0, 0.0), camera.orientation.transform.column_major_y_up());
-            assert_eq!(Vertex3D::new(0.0, 0.0, 1.0), camera.orientation.transform.column_major_z_forward());
+            assert_eq!(Vertex3D::new(0.0, 0.0, 0.0), columnmajor::position(&camera.orientation.transform));
+            assert_eq!(Vertex3D::new(1.0, 0.0, 0.0), columnmajor::x_right(&camera.orientation.transform));
+            assert_eq!(Vertex3D::new(0.0, 1.0, 0.0), columnmajor::y_up(&camera.orientation.transform));
+            assert_eq!(Vertex3D::new(0.0, 0.0, 1.0), columnmajor::z_forward(&camera.orientation.transform));
             assert_eq!(0.0, camera.orientation.pitch.degrees);
             assert_eq!(0.0, camera.orientation.roll.degrees);
             assert_eq!(0.0, camera.orientation.yaw.degrees);
@@ -156,10 +161,10 @@ mod tests {
 
             game.move_forward(&config, &mut camera, &timing);
 
-            assert_eq!(Vertex3D::new(0.0, 0.0, -0.5), camera.orientation.transform.column_major_position());
-            assert_eq!(Vertex3D::new(1.0, 0.0, 0.0), camera.orientation.transform.column_major_x_right());
-            assert_eq!(Vertex3D::new(0.0, 1.0, 0.0), camera.orientation.transform.column_major_y_up());
-            assert_eq!(Vertex3D::new(0.0, 0.0, 1.0), camera.orientation.transform.column_major_z_forward());
+            assert_eq!(Vertex3D::new(0.0, 0.0, -0.5), columnmajor::position(&camera.orientation.transform));
+            assert_eq!(Vertex3D::new(1.0, 0.0, 0.0), columnmajor::x_right(&camera.orientation.transform));
+            assert_eq!(Vertex3D::new(0.0, 1.0, 0.0), columnmajor::y_up(&camera.orientation.transform));
+            assert_eq!(Vertex3D::new(0.0, 0.0, 1.0), columnmajor::z_forward(&camera.orientation.transform));
             assert_eq!(0.0, camera.orientation.pitch.degrees);
             assert_eq!(0.0, camera.orientation.roll.degrees);
             assert_eq!(0.0, camera.orientation.yaw.degrees);
@@ -170,6 +175,7 @@ mod tests {
     }
 
     mod backward {
+        use crate::geometry::orient::matrix::m4x4::columnmajor;
         use crate::geometry::orient::movement::spectator::tests::{prepare, TestGame};
         use crate::geometry::orient::movement::spectator::SpectatorMovementStrategy;
         use crate::geometry::primitive::v3d::Vertex3D;
@@ -179,10 +185,10 @@ mod tests {
             let game = TestGame {};
             let (config, mut camera, timing) = prepare();
 
-            assert_eq!(Vertex3D::new(0.0, 0.0, 0.0), camera.orientation.transform.column_major_position());
-            assert_eq!(Vertex3D::new(1.0, 0.0, 0.0), camera.orientation.transform.column_major_x_right());
-            assert_eq!(Vertex3D::new(0.0, 1.0, 0.0), camera.orientation.transform.column_major_y_up());
-            assert_eq!(Vertex3D::new(0.0, 0.0, 1.0), camera.orientation.transform.column_major_z_forward());
+            assert_eq!(Vertex3D::new(0.0, 0.0, 0.0), columnmajor::position(&camera.orientation.transform));
+            assert_eq!(Vertex3D::new(1.0, 0.0, 0.0), columnmajor::x_right(&camera.orientation.transform));
+            assert_eq!(Vertex3D::new(0.0, 1.0, 0.0), columnmajor::y_up(&camera.orientation.transform));
+            assert_eq!(Vertex3D::new(0.0, 0.0, 1.0), columnmajor::z_forward(&camera.orientation.transform));
             assert_eq!(0.0, camera.orientation.pitch.degrees);
             assert_eq!(0.0, camera.orientation.roll.degrees);
             assert_eq!(0.0, camera.orientation.yaw.degrees);
@@ -192,10 +198,10 @@ mod tests {
 
             game.move_backward(&config, &mut camera, &timing);
 
-            assert_eq!(Vertex3D::new(0.0, 0.0, 0.5), camera.orientation.transform.column_major_position());
-            assert_eq!(Vertex3D::new(1.0, 0.0, 0.0), camera.orientation.transform.column_major_x_right());
-            assert_eq!(Vertex3D::new(0.0, 1.0, 0.0), camera.orientation.transform.column_major_y_up());
-            assert_eq!(Vertex3D::new(0.0, 0.0, 1.0), camera.orientation.transform.column_major_z_forward());
+            assert_eq!(Vertex3D::new(0.0, 0.0, 0.5), columnmajor::position(&camera.orientation.transform));
+            assert_eq!(Vertex3D::new(1.0, 0.0, 0.0), columnmajor::x_right(&camera.orientation.transform));
+            assert_eq!(Vertex3D::new(0.0, 1.0, 0.0), columnmajor::y_up(&camera.orientation.transform));
+            assert_eq!(Vertex3D::new(0.0, 0.0, 1.0), columnmajor::z_forward(&camera.orientation.transform));
             assert_eq!(0.0, camera.orientation.pitch.degrees);
             assert_eq!(0.0, camera.orientation.roll.degrees);
             assert_eq!(0.0, camera.orientation.yaw.degrees);
@@ -206,6 +212,7 @@ mod tests {
     }
 
     mod left {
+        use crate::geometry::orient::matrix::m4x4::columnmajor;
         use crate::geometry::orient::movement::spectator::tests::{prepare, TestGame};
         use crate::geometry::orient::movement::spectator::SpectatorMovementStrategy;
         use crate::geometry::primitive::v3d::Vertex3D;
@@ -215,10 +222,10 @@ mod tests {
             let game = TestGame {};
             let (config, mut camera, timing) = prepare();
 
-            assert_eq!(Vertex3D::new(0.0, 0.0, 0.0), camera.orientation.transform.column_major_position());
-            assert_eq!(Vertex3D::new(1.0, 0.0, 0.0), camera.orientation.transform.column_major_x_right());
-            assert_eq!(Vertex3D::new(0.0, 1.0, 0.0), camera.orientation.transform.column_major_y_up());
-            assert_eq!(Vertex3D::new(0.0, 0.0, 1.0), camera.orientation.transform.column_major_z_forward());
+            assert_eq!(Vertex3D::new(0.0, 0.0, 0.0), columnmajor::position(&camera.orientation.transform));
+            assert_eq!(Vertex3D::new(1.0, 0.0, 0.0), columnmajor::x_right(&camera.orientation.transform));
+            assert_eq!(Vertex3D::new(0.0, 1.0, 0.0), columnmajor::y_up(&camera.orientation.transform));
+            assert_eq!(Vertex3D::new(0.0, 0.0, 1.0), columnmajor::z_forward(&camera.orientation.transform));
             assert_eq!(0.0, camera.orientation.pitch.degrees);
             assert_eq!(0.0, camera.orientation.roll.degrees);
             assert_eq!(0.0, camera.orientation.yaw.degrees);
@@ -228,10 +235,10 @@ mod tests {
 
             game.move_left(&config, &mut camera, &timing);
 
-            assert_eq!(Vertex3D::new(-0.5, 0.0, 0.0), camera.orientation.transform.column_major_position());
-            assert_eq!(Vertex3D::new(1.0, 0.0, 0.0), camera.orientation.transform.column_major_x_right());
-            assert_eq!(Vertex3D::new(0.0, 1.0, 0.0), camera.orientation.transform.column_major_y_up());
-            assert_eq!(Vertex3D::new(0.0, 0.0, 1.0), camera.orientation.transform.column_major_z_forward());
+            assert_eq!(Vertex3D::new(-0.5, 0.0, 0.0), columnmajor::position(&camera.orientation.transform));
+            assert_eq!(Vertex3D::new(1.0, 0.0, 0.0), columnmajor::x_right(&camera.orientation.transform));
+            assert_eq!(Vertex3D::new(0.0, 1.0, 0.0), columnmajor::y_up(&camera.orientation.transform));
+            assert_eq!(Vertex3D::new(0.0, 0.0, 1.0), columnmajor::z_forward(&camera.orientation.transform));
             assert_eq!(0.0, camera.orientation.pitch.degrees);
             assert_eq!(0.0, camera.orientation.roll.degrees);
             assert_eq!(0.0, camera.orientation.yaw.degrees);
@@ -242,6 +249,7 @@ mod tests {
     }
 
     mod right {
+        use crate::geometry::orient::matrix::m4x4::columnmajor;
         use crate::geometry::orient::movement::spectator::tests::{prepare, TestGame};
         use crate::geometry::orient::movement::spectator::SpectatorMovementStrategy;
         use crate::geometry::primitive::v3d::Vertex3D;
@@ -251,10 +259,10 @@ mod tests {
             let game = TestGame {};
             let (config, mut camera, timing) = prepare();
 
-            assert_eq!(Vertex3D::new(0.0, 0.0, 0.0), camera.orientation.transform.column_major_position());
-            assert_eq!(Vertex3D::new(1.0, 0.0, 0.0), camera.orientation.transform.column_major_x_right());
-            assert_eq!(Vertex3D::new(0.0, 1.0, 0.0), camera.orientation.transform.column_major_y_up());
-            assert_eq!(Vertex3D::new(0.0, 0.0, 1.0), camera.orientation.transform.column_major_z_forward());
+            assert_eq!(Vertex3D::new(0.0, 0.0, 0.0), columnmajor::position(&camera.orientation.transform));
+            assert_eq!(Vertex3D::new(1.0, 0.0, 0.0), columnmajor::x_right(&camera.orientation.transform));
+            assert_eq!(Vertex3D::new(0.0, 1.0, 0.0), columnmajor::y_up(&camera.orientation.transform));
+            assert_eq!(Vertex3D::new(0.0, 0.0, 1.0), columnmajor::z_forward(&camera.orientation.transform));
             assert_eq!(0.0, camera.orientation.pitch.degrees);
             assert_eq!(0.0, camera.orientation.roll.degrees);
             assert_eq!(0.0, camera.orientation.yaw.degrees);
@@ -264,10 +272,10 @@ mod tests {
 
             game.move_right(&config, &mut camera, &timing);
 
-            assert_eq!(Vertex3D::new(0.5, 0.0, 0.0), camera.orientation.transform.column_major_position());
-            assert_eq!(Vertex3D::new(1.0, 0.0, 0.0), camera.orientation.transform.column_major_x_right());
-            assert_eq!(Vertex3D::new(0.0, 1.0, 0.0), camera.orientation.transform.column_major_y_up());
-            assert_eq!(Vertex3D::new(0.0, 0.0, 1.0), camera.orientation.transform.column_major_z_forward());
+            assert_eq!(Vertex3D::new(0.5, 0.0, 0.0), columnmajor::position(&camera.orientation.transform));
+            assert_eq!(Vertex3D::new(1.0, 0.0, 0.0), columnmajor::x_right(&camera.orientation.transform));
+            assert_eq!(Vertex3D::new(0.0, 1.0, 0.0), columnmajor::y_up(&camera.orientation.transform));
+            assert_eq!(Vertex3D::new(0.0, 0.0, 1.0), columnmajor::z_forward(&camera.orientation.transform));
             assert_eq!(0.0, camera.orientation.pitch.degrees);
             assert_eq!(0.0, camera.orientation.roll.degrees);
             assert_eq!(0.0, camera.orientation.yaw.degrees);

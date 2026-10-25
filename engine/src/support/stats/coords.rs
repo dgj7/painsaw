@@ -1,4 +1,5 @@
 use crate::config::EngineConfig;
+use crate::geometry::orient::matrix::m4x4::columnmajor;
 use crate::graphics::camera::Camera;
 use crate::graphics::storage::g2d::Graph2D;
 use crate::support::stats::{
@@ -21,10 +22,10 @@ pub(crate) fn show_cam_coords(g2d: &mut Graph2D, config: &EngineConfig, camera: 
     }
 
     /* get all the camera info */
-    let position = camera.orientation.transform.column_major_position();
-    let forward = camera.orientation.transform.column_major_z_forward();
-    let right = camera.orientation.transform.column_major_x_right();
-    let up = camera.orientation.transform.column_major_y_up();
+    let position = columnmajor::position(&camera.orientation.transform);
+    let forward = columnmajor::z_forward(&camera.orientation.transform);
+    let right = columnmajor::x_right(&camera.orientation.transform);
+    let up = columnmajor::y_up(&camera.orientation.transform);
 
     /* positioning variables */
     let y = 20.0;

@@ -10,6 +10,7 @@ use crate::graphics::subsystem::opengl::ffp::api::{
 use windows::Win32::Graphics::OpenGL::{
     GL_ALL_ATTRIB_BITS, GL_DEPTH_TEST, GL_MODELVIEW, GL_PROJECTION,
 };
+use crate::geometry::orient::matrix::m4x4::columnmajor;
 
 pub(crate) fn ffp_3d_setup(camera: &Camera) {
     /* save prior state before 3d rendering */
@@ -17,7 +18,7 @@ pub(crate) fn ffp_3d_setup(camera: &Camera) {
     gl_push_attrib(GL_ALL_ATTRIB_BITS);
 
     /* gather camera data */
-    let position = camera.orientation.transform.column_major_position();
+    let position = columnmajor::position(&camera.orientation.transform);
 
     /* projection: reset matrix */
     gl_matrix_mode(GL_PROJECTION);
@@ -45,7 +46,7 @@ pub(crate) fn ffp_3d_teardown() {
 }
 
 fn ffp_3d_translate(orientation: &Orientation) {
-    let position = orientation.transform.column_major_position();
+    let position = columnmajor::position(&orientation.transform);
     gl_translate_f(position.x, position.y, position.z);
     gl_rotate_f(orientation.pitch.degrees, 1.0, 0.0, 0.0);
     gl_rotate_f(orientation.yaw.degrees, 0.0, 1.0, 0.0);
