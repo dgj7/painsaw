@@ -75,6 +75,7 @@ pub(super) fn create_3d_axes() -> Model3D {
 }
 
 pub(super) fn create_3d_cuboid_1() -> Model3D {
+    // todo: use builder here so these are shorter
     let orientation = Orientation::new(
         Matrix4x4::from(
             Vertex3D::origin(),

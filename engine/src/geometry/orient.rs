@@ -8,7 +8,6 @@ pub mod quaternion;
 #[derive(Clone)]
 pub struct Orientation {
     pub transform: Matrix4x4, // orientation; c1=right(x), c2=up(y), c3=forward(z/normal), c4=position
-
     pub x_scale: f32,
     pub y_scale: f32,
     pub z_scale: f32,
@@ -21,7 +20,7 @@ pub struct Orientation {
 }
 
 pub struct OrientationBuilder {
-    the_position: Option<Matrix4x4>,
+    the_transform: Option<Matrix4x4>,
     the_x_scale: Option<f32>,
     the_y_scale: Option<f32>,
     the_z_scale: Option<f32>,
@@ -32,7 +31,7 @@ pub struct OrientationBuilder {
 
 impl Orientation {
     pub fn new(
-        position: Matrix4x4,
+        transform: Matrix4x4,
         x_scale: f32,
         y_scale: f32,
         z_scale: f32,
@@ -40,7 +39,7 @@ impl Orientation {
         yaw: Degrees,
         roll: Degrees,
     ) -> Orientation {
-        Orientation { transform: position, x_scale, y_scale, z_scale, pitch, yaw, roll, pitch_delta: Degrees::zero(), yaw_delta: Degrees::zero(), roll_delta: Degrees::zero(),}
+        Orientation { transform, x_scale, y_scale, z_scale, pitch, yaw, roll, pitch_delta: Degrees::zero(), yaw_delta: Degrees::zero(), roll_delta: Degrees::zero(),}
     }
 
     pub fn camera_default() -> Orientation {
@@ -84,7 +83,7 @@ impl Default for Orientation {
 impl OrientationBuilder {
     pub fn new() -> OrientationBuilder {
         OrientationBuilder {
-            the_position: None,
+            the_transform: None,
             the_x_scale: None,
             the_y_scale: None,
             the_z_scale: None,
@@ -94,8 +93,8 @@ impl OrientationBuilder {
         }
     }
 
-    pub fn with_position(mut self, position: Matrix4x4) -> OrientationBuilder {
-        self.the_position = Some(position);
+    pub fn with_transform(mut self, position: Matrix4x4) -> OrientationBuilder {
+        self.the_transform = Some(position);
         self
     }
 
@@ -116,7 +115,7 @@ impl OrientationBuilder {
 
     pub fn build(self) -> Orientation {
         Orientation {
-            transform: self.the_position.unwrap_or_else(|| Matrix4x4::default()),
+            transform: self.the_transform.unwrap_or_else(|| Matrix4x4::default()),
             x_scale: self.the_x_scale.unwrap_or_else(|| 1.0),
             y_scale: self.the_y_scale.unwrap_or_else(|| 1.0),
             z_scale: self.the_z_scale.unwrap_or_else(|| 1.0),
