@@ -42,6 +42,21 @@ impl Orientation {
         Orientation { transform, x_scale, y_scale, z_scale, pitch, yaw, roll, pitch_delta: Degrees::zero(), yaw_delta: Degrees::zero(), roll_delta: Degrees::zero(),}
     }
 
+    pub fn from_transform(transform: Matrix4x4) -> Orientation {
+        Orientation {
+            transform,
+            x_scale: 1.0,
+            y_scale: 1.0,
+            z_scale: 1.0,
+            pitch: Degrees::zero(),
+            yaw: Degrees::zero(),
+            roll: Degrees::zero(),
+            pitch_delta: Degrees::zero(),
+            yaw_delta: Degrees::zero(),
+            roll_delta: Degrees::zero(),
+        }
+    }
+
     pub fn camera_default() -> Orientation {
         Orientation {
             transform: Matrix4x4 {

@@ -80,6 +80,10 @@ impl Matrix4x4 {
         }
     }
 
+    pub fn from_position(position: Vertex3D) -> Matrix4x4 {
+        Matrix4x4::from(Vertex3D::origin(), Vertex3D::origin(), Vertex3D::origin(), position,)
+    }
+
     pub fn identity() -> Matrix4x4 {
         Matrix4x4 {
             r1c1: 1.0, r1c2: 0.0, r1c3: 0.0, r1c4: 0.0,

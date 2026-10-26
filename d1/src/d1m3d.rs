@@ -1,4 +1,3 @@
-use engine::geometry::angle::degrees::Degrees;
 use engine::geometry::build::cube::CubeBuilder;
 use engine::geometry::orient::matrix::m4x4::Matrix4x4;
 use engine::geometry::orient::Orientation;
@@ -75,14 +74,7 @@ pub(super) fn create_3d_axes() -> Model3D {
 }
 
 pub(super) fn create_3d_cuboid_1() -> Model3D {
-    // todo: use builder here so these are shorter
-    let orientation = Orientation::new(
-        Matrix4x4::from(
-            Vertex3D::origin(),
-            Vertex3D::origin(),
-            Vertex3D::origin(),
-            Vertex3D::new(0.75, 0.5, -1.0),
-        ), 1.0, 1.0, 1.0, Degrees::zero(), Degrees::zero(), Degrees::zero(), );
+    let orientation = Orientation::from_transform(Matrix4x4::from_position(Vertex3D::new(0.75, 0.5, -1.0),),);
     Model3DBuilder::new()
         .with_primitive(
             Primitive3DBuilder::new()
@@ -106,13 +98,7 @@ pub(super) fn create_3d_cuboid_1() -> Model3D {
 }
 
 pub(super) fn create_3d_cuboid_wall_2() -> Model3D {
-    let orientation = Orientation::new(
-        Matrix4x4::from(
-            Vertex3D::origin(),
-            Vertex3D::origin(),
-            Vertex3D::origin(),
-            Vertex3D::new(-0.25, 0.5, -1.0),
-        ), 1.0, 1.0, 1.0, Degrees::zero(), Degrees::zero(), Degrees::zero(), );
+    let orientation = Orientation::from_transform(Matrix4x4::from_position(Vertex3D::new(-0.25, 0.5, -1.0), ),);
     Model3DBuilder::new()
         .with_primitive(
             Primitive3DBuilder::new()
@@ -136,13 +122,7 @@ pub(super) fn create_3d_cuboid_wall_2() -> Model3D {
 }
 
 pub(super) fn create_3d_enclosing_box() -> Model3D {
-    let orientation = Orientation::new(
-        Matrix4x4::from(
-            Vertex3D::origin(),
-            Vertex3D::origin(),
-            Vertex3D::origin(),
-            Vertex3D::new(10.0, 10.0, 15.0),
-        ), 1.0, 1.0, 1.0, Degrees::zero(), Degrees::zero(), Degrees::zero(), );
+    let orientation = Orientation::from_transform(Matrix4x4::from_position(Vertex3D::new(10.0, 10.0, 15.0), ),);
     Model3DBuilder::new()
         .with_primitive(
             Primitive3DBuilder::new()
