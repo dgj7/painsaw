@@ -1,5 +1,5 @@
 use crate::geometry::primitive::prim2d::Primitive2D;
-use crate::graphics::texture::t2d::Texture;
+use crate::graphics::texture::Texture;
 
 pub struct Model2D {
     pub primitives: Vec<Primitive2D>,

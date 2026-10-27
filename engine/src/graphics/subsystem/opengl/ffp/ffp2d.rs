@@ -9,7 +9,7 @@ use crate::graphics::storage::g2d::Graph2D;
 use crate::graphics::storage::ui::UIManager;
 use crate::graphics::subsystem::opengl::ffp::api::{gl_bind_texture, gl_blend_func, gl_color_4f, gl_disable, gl_enable, gl_end, gl_hint, gl_line_width, gl_load_identity, gl_matrix_mode, gl_ortho, gl_point_size, gl_polygon_mode, gl_pop_attrib, gl_pop_matrix, gl_push_attrib, gl_push_matrix, gl_tex_coord_2f, gl_tex_env_f, gl_vertex_2f};
 use crate::graphics::subsystem::opengl::ffp::util::{gl_begin_line_strip, gl_begin_lines, gl_begin_points, gl_begin_quads};
-use crate::graphics::texture::t2d::Texture;
+use crate::graphics::texture::Texture;
 use crate::support::logger::log;
 use crate::support::logger::log_level::LogLevel;
 use glcore::{GL_DEPTH_TEST, GL_LINE_SMOOTH, GL_LINE_SMOOTH_HINT, GL_NICEST};

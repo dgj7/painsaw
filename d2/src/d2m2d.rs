@@ -3,7 +3,7 @@ use engine::geometry::primitive::v2d::Vertex2D;
 use engine::geometry::primitive::PrimitiveType;
 use engine::graphics::color::Color;
 use engine::graphics::storage::g2d::m2d::{Model2D, Model2DBuilder};
-use engine::graphics::texture::t2d::Texture;
+use engine::graphics::texture::Texture;
 use engine::support::image::bitmap::Bitmap;
 use engine::support::image::targa::Targa;
 use engine::support::image::Image;

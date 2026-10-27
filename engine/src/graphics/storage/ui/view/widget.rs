@@ -13,7 +13,7 @@ use crate::graphics::storage::g3d::Graph3D;
 use crate::graphics::storage::ui::UIManager;
 use crate::graphics::storage::ui::view::attrib::assembled::Assembled;
 use crate::graphics::storage::ui::view::qt::QuadTree;
-use crate::graphics::texture::t2d::Texture2DBuilder;
+use crate::graphics::texture::Texture2DBuilder;
 use crate::support::id::{next_id, Identifier};
 use crate::support::logger::log;
 use crate::support::logger::log_level::LogLevel;

@@ -1,7 +1,7 @@
 use std::ffi::c_void;
 use windows::Win32::Graphics::OpenGL::{GL_NEAREST, GL_RGBA, GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_TEXTURE_MIN_FILTER, GL_UNSIGNED_BYTE};
 use crate::graphics::subsystem::opengl::ffp::api::{gl_bind_texture, gl_gen_textures, gl_tex_image_2d, gl_tex_parameter_i, gl_tex_sub_image_2d};
-use crate::graphics::texture::t2d::Texture;
+use crate::graphics::texture::Texture;
 use crate::support::logger::log;
 use crate::support::logger::log_level::LogLevel;
 
