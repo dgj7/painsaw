@@ -6,7 +6,7 @@ use crate::graphics::storage::Models;
 use crate::graphics::storage::ui::UIManager;
 use crate::graphics::subsystem::opengl::ffp::api::{gl_line_width, gl_point_size};
 use crate::graphics::subsystem::opengl::ffp::ffp2d::{ffp_2d_initialize_textures, ffp_2d_update_textures, ffp_2d_render_primitive};
-use crate::graphics::subsystem::opengl::ffp::ffp3d::{ffp_3d_setup, ffp_3d_teardown, ffp_3d_render};
+use crate::graphics::subsystem::opengl::ffp::ffp3d::{ffp_3d_setup, ffp_3d_teardown, ffp_3d_render, ffp_3d_initialize_textures, ffp_3d_update_textures};
 use crate::graphics::subsystem::opengl::ffp::util::{gl_begin_lines, gl_begin_points, gl_begin_quads};
 use crate::graphics::subsystem::opengl::ffp::{ffp_before_scene, ffp_resize};
 use crate::graphics::subsystem::RendererInfo;
@@ -41,7 +41,10 @@ impl RenderingSubSystemHandle for OpenGLHandle {
 
     fn initialize(&self, models: &mut Models) {
         match self.pipeline {
-            OpenGLPipeline::FixedFunction => ffp_2d_initialize_textures(&mut models.g2d, &mut models.ui),
+            OpenGLPipeline::FixedFunction => {
+                ffp_2d_initialize_textures(&mut models.g2d, &mut models.ui);
+                ffp_3d_initialize_textures(&mut models.g3d);
+            },
             OpenGLPipeline::ProgrammableShader => {}
         }
     }
@@ -112,9 +115,12 @@ impl RenderingSubSystemHandle for OpenGLHandle {
         }
     }
 
-    fn prepare_3d(&self, camera: &Camera) {
+    fn prepare_3d(&self, camera: &Camera, g3d: &mut Graph3D) {
         match self.pipeline {
-            OpenGLPipeline::FixedFunction => ffp_3d_setup(camera),
+            OpenGLPipeline::FixedFunction => {
+                ffp_3d_setup(camera);
+                ffp_3d_update_textures(g3d);
+            },
             OpenGLPipeline::ProgrammableShader => {}
         }
     }

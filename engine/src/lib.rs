@@ -149,7 +149,7 @@ pub trait WorldController: KeyHandler + MouseHandler + Game + Sized where Self: 
         renderer.before_scene(&camera);
 
         /* draw 3d, if desired */
-        renderer.prepare_3d(camera);
+        renderer.prepare_3d(camera, &mut models.g3d);
         renderer.render_3d(&mut models.g3d);
         renderer.after_3d();
 

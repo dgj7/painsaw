@@ -94,8 +94,8 @@ impl RendererWrapper {
         self.subsystem.after_2d();
     }
 
-    pub(crate) fn prepare_3d(&self, camera: &Camera) {
-        self.subsystem.prepare_3d(camera);
+    pub(crate) fn prepare_3d(&self, camera: &Camera, g3d: &mut Graph3D) {
+        self.subsystem.prepare_3d(camera, g3d);
     }
 
     pub(crate) fn render_3d(&self, g3d: &mut Graph3D) {

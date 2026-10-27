@@ -1,3 +1,4 @@
+use glcore::GL_TEXTURE_2D;
 use crate::geometry::orient::Orientation;
 use crate::geometry::primitive::prim3d::Primitive3D;
 use crate::graphics::camera::Camera;
@@ -11,6 +12,11 @@ use windows::Win32::Graphics::OpenGL::{
     GL_ALL_ATTRIB_BITS, GL_DEPTH_TEST, GL_MODELVIEW, GL_PROJECTION,
 };
 use crate::geometry::orient::matrix::m4x4::columnmajor;
+use crate::graphics::storage::g3d::Graph3D;
+use crate::graphics::subsystem::opengl::ffp::ffpxd::{ffp_initialize_texture, ffp_update_texture};
+use crate::graphics::texture::Texture;
+use crate::support::logger::log;
+use crate::support::logger::log_level::LogLevel;
 
 pub(crate) fn ffp_3d_setup(camera: &Camera) {
     /* save prior state before 3d rendering */
@@ -72,4 +78,31 @@ fn ffp_3d_translate(orientation: &Orientation) {
     gl_rotate_f(orientation.pitch.degrees, 1.0, 0.0, 0.0);
     gl_rotate_f(orientation.yaw.degrees, 0.0, 1.0, 0.0);
     gl_scale_f(orientation.x_scale, orientation.y_scale, orientation.z_scale, );
+}
+
+pub(crate) fn ffp_3d_initialize_textures(g3d: &mut Graph3D) {
+    gl_enable(GL_TEXTURE_2D);
+
+    for (_, value) in g3d.iter_mut() {
+        for tex in &mut value.textures {
+            ffp_initialize_texture(tex);
+        }
+    }
+
+    log(LogLevel::Debug, &|| String::from("initialization complete"));
+}
+
+pub(crate) fn ffp_3d_update_textures(g3d: &mut Graph3D) {
+    for (_, model) in &mut g3d.iter_mut() {
+        for texture in &mut model.textures {
+            if !texture.initialized {
+                ffp_initialize_texture(texture);
+            }
+            ffp_update_texture(texture);
+        }
+    }
+}
+
+pub(crate) fn ffp_3d_render_texture(_texture: &Texture) {
+    // todo
 }

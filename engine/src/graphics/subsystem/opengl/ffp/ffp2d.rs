@@ -120,6 +120,7 @@ pub(crate) fn ffp_2d_update_textures(g2d: &mut Graph2D, ui: &mut UIManager) {
     }
 }
 
+// todo: modify this to work with shapes other than squares
 pub(crate) fn ffp_2d_render_texture(texture: &Texture) {
     /* save prior state before making changes */
     gl_push_matrix();
