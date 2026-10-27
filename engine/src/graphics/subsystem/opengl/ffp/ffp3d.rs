@@ -53,7 +53,7 @@ fn ffp_3d_translate(orientation: &Orientation) {
     gl_scale_f(orientation.x_scale, orientation.y_scale, orientation.z_scale, );
 }
 
-pub(crate) fn ffp_render_3d(primitive: &Primitive3D, preparation: impl Fn(), begin: impl Fn()) {
+pub(crate) fn ffp_3d_render(primitive: &Primitive3D, preparation: impl Fn(), begin: impl Fn()) {
     gl_push_matrix();
     gl_push_attrib(GL_ALL_ATTRIB_BITS);
 

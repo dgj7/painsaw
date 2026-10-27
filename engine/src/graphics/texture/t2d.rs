@@ -1,12 +1,12 @@
+use crate::geometry::primitive::v3d::Vertex3D;
 use crate::support::image::RawImage;
 
-pub struct Texture2D {
+pub struct Texture {
     pub initialized: bool,
     pub id: u32,
     pub image: RawImage,
 
-    pub x: f32,
-    pub y: f32,
+    pub location: Vertex3D,
     pub scale: f32,
 
     pub replacement: Option<RawImage>,
@@ -14,20 +14,23 @@ pub struct Texture2D {
 
 pub struct Texture2DBuilder {
     the_image: Option<RawImage>,
-    the_x: Option<f32>,
-    the_y: Option<f32>,
+    the_location: Option<Vertex3D>,
     the_scale: Option<f32>,
 }
 
-impl Texture2D {
-    pub fn new(image: RawImage, x: f32, y: f32, scale: f32) -> Texture2D {
-        Texture2D {
+impl Texture {
+    pub fn new_2d(image: RawImage, x: f32, y: f32, scale: f32) -> Texture {
+        Texture::new_3d(image, x, y, 0.0, scale)
+    }
+    
+    pub fn new_3d(image: RawImage, x: f32, y: f32, z: f32, scale: f32) -> Texture {
+        Texture {
             initialized: false,
             id: 0,
             image,
 
-            x,
-            y,
+            location: Vertex3D { x, y, z },
+
             scale,
 
             replacement: None,
@@ -39,8 +42,7 @@ impl Texture2DBuilder {
     pub fn new() -> Texture2DBuilder {
         Texture2DBuilder {
             the_image: None,
-            the_x: None,
-            the_y: None,
+            the_location: None,
             the_scale: None,
         }
     }
@@ -50,13 +52,8 @@ impl Texture2DBuilder {
         self
     }
 
-    pub fn with_x(mut self, x: f32) -> Self {
-        self.the_x = Some(x);
-        self
-    }
-
-    pub fn with_y(mut self, y: f32) -> Self {
-        self.the_y = Some(y);
+    pub fn with_location(mut self, corner: Vertex3D) -> Self {
+        self.the_location = Some(corner);
         self
     }
 
@@ -65,13 +62,12 @@ impl Texture2DBuilder {
         self
     }
 
-    pub fn build(self) -> Texture2D {
-        Texture2D {
+    pub fn build(self) -> Texture {
+        Texture {
             initialized: false,
             id: 0,
             image: self.the_image.expect("can't create a texture without texture data"),
-            x: self.the_x.unwrap_or_else(|| 0.0),
-            y: self.the_y.unwrap_or_else(|| 0.0),
+            location: self.the_location.expect("can't create a texture without specifying it's location"),
             scale: self.the_scale.unwrap_or_else(|| 1.0),
             replacement: None,
         }

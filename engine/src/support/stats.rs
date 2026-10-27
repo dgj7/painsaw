@@ -30,8 +30,7 @@ pub(crate) fn create_vertex2d_model(
     Model2DBuilder::new()
         .with_texture(
             Texture2DBuilder::new()
-                .with_x(x)
-                .with_y(y)
+                .with_location(Vertex3D { x, y, z: 0.0 })
                 .with_image(create_vertex2d_text(config, label, pt).unwrap())
                 .build(),
         )
@@ -58,8 +57,7 @@ pub(crate) fn create_vertex3d_model(
     Model2DBuilder::new()
         .with_texture(
             Texture2DBuilder::new()
-                .with_x(x)
-                .with_y(y)
+                .with_location(Vertex3D { x, y, z: 0.0 })
                 .with_image(create_vertex3d_text(config, label, &target).unwrap())
                 .build(),
         )
@@ -89,8 +87,7 @@ pub(crate) fn create_f32_model(
     Model2DBuilder::new()
         .with_texture(
             Texture2DBuilder::new()
-                .with_x(x)
-                .with_y(y)
+                .with_location(Vertex3D { x, y, z: 0.0 })
                 .with_image(create_f32_text(config, label, value).unwrap())
                 .build(),
         )
@@ -113,8 +110,7 @@ pub(crate) fn create_rect2d_model(
     Model2DBuilder::new()
         .with_texture(
             Texture2DBuilder::new()
-                .with_x(x)
-                .with_y(y)
+                .with_location(Vertex3D { x, y, z: 0.0 })
                 .with_image(create_rect2d_text(config, label, &rect).unwrap())
                 .build(),
         )

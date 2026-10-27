@@ -1,4 +1,5 @@
 use crate::config::EngineConfig;
+use crate::geometry::primitive::v3d::Vertex3D;
 use crate::graphics::storage::g2d::Graph2D;
 use crate::graphics::storage::g2d::m2d::{Model2D, Model2DBuilder};
 use crate::graphics::texture::t2d::Texture2DBuilder;
@@ -35,8 +36,11 @@ fn create_model(config: TextConfig, fps: u32, avg: u32) -> Model2D {
     Model2DBuilder::new()
         .with_texture(
             Texture2DBuilder::new()
-                .with_x(X_POS)
-                .with_y(5.0)
+                .with_location(Vertex3D {
+                    x: X_POS,
+                    y: 5.0,
+                    z: 0.0,
+                })
                 .with_image(create_text(config, fps, avg))
                 .build(),
         )

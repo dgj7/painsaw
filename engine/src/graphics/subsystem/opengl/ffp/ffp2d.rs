@@ -7,7 +7,7 @@ use crate::graphics::camera::Camera;
 use crate::graphics::storage::g2d::Graph2D;
 use crate::graphics::subsystem::opengl::ffp::api::{gl_bind_texture, gl_blend_func, gl_color_4f, gl_disable, gl_enable, gl_end, gl_gen_textures, gl_hint, gl_line_width, gl_load_identity, gl_matrix_mode, gl_ortho, gl_point_size, gl_polygon_mode, gl_pop_attrib, gl_pop_matrix, gl_push_attrib, gl_push_matrix, gl_tex_coord_2f, gl_tex_env_f, gl_tex_image_2d, gl_tex_parameter_i, gl_tex_sub_image_2d, gl_vertex_2f};
 use crate::graphics::subsystem::opengl::ffp::util::{gl_begin_line_strip, gl_begin_lines, gl_begin_points, gl_begin_quads};
-use crate::graphics::texture::t2d::Texture2D;
+use crate::graphics::texture::t2d::Texture;
 use crate::support::logger::log;
 use crate::support::logger::log_level::LogLevel;
 use std::ffi::c_void;
@@ -37,16 +37,16 @@ pub(crate) fn ffp_2d_teardown() {
     gl_pop_matrix();
 }
 
-pub(crate) fn ffp_render_2d_primitive(primitive: &Primitive2D) {
+pub(crate) fn ffp_2d_render_primitive(primitive: &Primitive2D) {
     match primitive.p_type {
-        PrimitiveType::Point { point_size } => { ffp_render_2d(primitive, || gl_point_size(point_size), gl_begin_points) }
-        PrimitiveType::Line { thickness } => { ffp_render_2d(primitive, || gl_line_width(thickness), gl_begin_lines) }
-        PrimitiveType::Cube { thickness } => { ffp_render_2d(primitive, || gl_line_width(thickness), gl_begin_quads) }
-        PrimitiveType::LineStrip { thickness } => { ffp_render_2d(primitive, || gl_line_width(thickness), gl_begin_line_strip) }
+        PrimitiveType::Point { point_size } => { ffp_2d_render(primitive, || gl_point_size(point_size), gl_begin_points) }
+        PrimitiveType::Line { thickness } => { ffp_2d_render(primitive, || gl_line_width(thickness), gl_begin_lines) }
+        PrimitiveType::Cube { thickness } => { ffp_2d_render(primitive, || gl_line_width(thickness), gl_begin_quads) }
+        PrimitiveType::LineStrip { thickness } => { ffp_2d_render(primitive, || gl_line_width(thickness), gl_begin_line_strip) }
     }
 }
 
-pub(crate) fn ffp_render_2d(primitive: &Primitive2D, preparation: impl Fn(), begin: impl Fn()) {
+pub(crate) fn ffp_2d_render(primitive: &Primitive2D, preparation: impl Fn(), begin: impl Fn()) {
     gl_push_matrix();
     gl_push_attrib(GL_ALL_ATTRIB_BITS);
 
@@ -120,66 +120,15 @@ pub(crate) fn ffp_2d_update_textures(g2d: &mut Graph2D, ui: &mut UIManager) {
     }
 }
 
-fn ffp_2d_initialize_texture(texture: &mut Texture2D) {
-    /* gen 1 texture; bind it */
-    let texture_id_ptr: *mut u32 = (&mut texture.id) as *mut u32;
-    gl_gen_textures(1, texture_id_ptr);
-    gl_bind_texture(GL_TEXTURE_2D, texture.id);
-
-    /* set texture params */
-    gl_tex_parameter_i(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST as i32);
-    gl_tex_parameter_i(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST as i32);
-
-    /* inform opengl of the texture data; see https://registry.khronos.org/OpenGL-Refpages/gl4/html/glTexImage2D.xhtml */
-    gl_tex_image_2d(
-        GL_TEXTURE_2D,                                // target
-        0,                                            // level
-        GL_RGBA as i32, // internal format; the number of color components in the texture data
-        texture.image.width as i32, // width
-        texture.image.height as i32, // height
-        0,              // border
-        GL_RGBA,        // format: (or order) of pixel data (r,g,b,a)
-        GL_UNSIGNED_BYTE, // r-type: the data type of the pixel data
-        texture.image.data.as_ptr() as *const c_void, // pixels
-    );
-
-    /* mark the texture as initialized (ready) */
-    texture.initialized = true;
-
-    /* done */
-    log(LogLevel::Info, &|| {
-        String::from(format!("created texture, id=[{}]", texture.id))
-    });
-}
-
-fn ffp_2d_update_texture(texture: &mut Texture2D) {
-    if texture.replacement.is_some() {
-        let repl = texture.replacement.take().unwrap();
-        gl_bind_texture(GL_TEXTURE_2D, texture.id);
-        gl_tex_sub_image_2d(
-            GL_TEXTURE_2D,                       // target
-            0,                                   // level
-            0,                                   // x-offset
-            0,                                   // y-offset
-            repl.width as i32,                   // width
-            repl.height as i32,                  // height
-            GL_RGBA,                             // format: (order) of pixel data (r, g, b, a)
-            GL_UNSIGNED_BYTE,                    // r-type: the dat type of the pixel data
-            repl.data.as_ptr() as *const c_void, // pixels
-        );
-        texture.image = repl;
-    }
-}
-
-pub(crate) fn ffp_render_2d_texture(texture: &Texture2D) {
+pub(crate) fn ffp_2d_render_texture(texture: &Texture) {
     /* save prior state before making changes */
     gl_push_matrix();
     gl_push_attrib(GL_ALL_ATTRIB_BITS);
 
     /* gather variables */
     let scale = texture.scale;
-    let x = texture.x;
-    let y = texture.y;
+    let x = texture.location.x;
+    let y = texture.location.y;
     let width = texture.image.width as f32;
     let height = texture.image.height as f32;
 
@@ -221,4 +170,55 @@ pub(crate) fn ffp_render_2d_texture(texture: &Texture2D) {
     /* restore prior state */
     gl_pop_attrib();
     gl_pop_matrix();
+}
+
+fn ffp_2d_initialize_texture(texture: &mut Texture) {
+    /* gen 1 texture; bind it */
+    let texture_id_ptr: *mut u32 = (&mut texture.id) as *mut u32;
+    gl_gen_textures(1, texture_id_ptr);
+    gl_bind_texture(GL_TEXTURE_2D, texture.id);
+
+    /* set texture params */
+    gl_tex_parameter_i(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST as i32);
+    gl_tex_parameter_i(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST as i32);
+
+    /* inform opengl of the texture data; see https://registry.khronos.org/OpenGL-Refpages/gl4/html/glTexImage2D.xhtml */
+    gl_tex_image_2d(
+        GL_TEXTURE_2D,                                // target
+        0,                                            // level
+        GL_RGBA as i32, // internal format; the number of color components in the texture data
+        texture.image.width as i32, // width
+        texture.image.height as i32, // height
+        0,              // border
+        GL_RGBA,        // format: (or order) of pixel data (r,g,b,a)
+        GL_UNSIGNED_BYTE, // r-type: the data type of the pixel data
+        texture.image.data.as_ptr() as *const c_void, // pixels
+    );
+
+    /* mark the texture as initialized (ready) */
+    texture.initialized = true;
+
+    /* done */
+    log(LogLevel::Info, &|| {
+        String::from(format!("created texture, id=[{}]", texture.id))
+    });
+}
+
+fn ffp_2d_update_texture(texture: &mut Texture) {
+    if texture.replacement.is_some() {
+        let repl = texture.replacement.take().unwrap();
+        gl_bind_texture(GL_TEXTURE_2D, texture.id);
+        gl_tex_sub_image_2d(
+            GL_TEXTURE_2D,                       // target
+            0,                                   // level
+            0,                                   // x-offset
+            0,                                   // y-offset
+            repl.width as i32,                   // width
+            repl.height as i32,                  // height
+            GL_RGBA,                             // format: (order) of pixel data (r, g, b, a)
+            GL_UNSIGNED_BYTE,                    // r-type: the dat type of the pixel data
+            repl.data.as_ptr() as *const c_void, // pixels
+        );
+        texture.image = repl;
+    }
 }

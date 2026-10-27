@@ -27,4 +27,12 @@ impl Graph3D {
     pub fn iter(&self) -> impl Iterator<Item = (&String, &Model3D)> {
         self.models.iter()
     }
+
+    pub fn iter_mut(&mut self) -> impl Iterator<Item = (&String, &mut Model3D)> {
+        self.models.iter_mut()
+    }
+
+    pub fn count(&self) -> usize {
+        self.models.len()
+    }
 }

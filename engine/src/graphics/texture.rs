@@ -1,5 +1,5 @@
 //!
-//! 2d and 3d textures.
+//! Textures!
 //!
 
 pub mod t2d;

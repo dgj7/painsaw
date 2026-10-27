@@ -5,15 +5,15 @@ use crate::graphics::storage::g3d::Graph3D;
 use crate::graphics::storage::Models;
 use crate::graphics::storage::ui::UIManager;
 use crate::graphics::subsystem::opengl::ffp::api::{gl_line_width, gl_point_size};
-use crate::graphics::subsystem::opengl::ffp::ffp2d::{ffp_2d_initialize_textures, ffp_2d_update_textures, ffp_render_2d_primitive};
-use crate::graphics::subsystem::opengl::ffp::ffp3d::{ffp_3d_setup, ffp_3d_teardown, ffp_render_3d};
+use crate::graphics::subsystem::opengl::ffp::ffp2d::{ffp_2d_initialize_textures, ffp_2d_update_textures, ffp_2d_render_primitive};
+use crate::graphics::subsystem::opengl::ffp::ffp3d::{ffp_3d_setup, ffp_3d_teardown, ffp_3d_render};
 use crate::graphics::subsystem::opengl::ffp::util::{gl_begin_lines, gl_begin_points, gl_begin_quads};
 use crate::graphics::subsystem::opengl::ffp::{ffp_before_scene, ffp_resize};
 use crate::graphics::subsystem::RendererInfo;
 use crate::graphics::subsystem::{OpenGLPipeline, RenderingSubSystemHandle};
 use ffp::api::gl_get_string;
 use ffp::ffp2d::{
-    ffp_2d_setup, ffp_2d_teardown, ffp_render_2d_texture,
+    ffp_2d_setup, ffp_2d_teardown, ffp_2d_render_texture,
 };
 use windows::Win32::Graphics::OpenGL::{GL_RENDERER, GL_VENDOR, GL_VERSION};
 
@@ -78,13 +78,13 @@ impl RenderingSubSystemHandle for OpenGLHandle {
                     if !model.visible { continue; }
 
                     for primitive in model.primitives.iter() {
-                        ffp_render_2d_primitive(primitive);
+                        ffp_2d_render_primitive(primitive);
                     }
 
                     model.textures
                         .iter()
                         .filter(|x| x.initialized)
-                        .for_each(|x| ffp_render_2d_texture(x));
+                        .for_each(|x| ffp_2d_render_texture(x));
                 }
 
                 /* render the currently activated ui, if there is one */
@@ -93,12 +93,12 @@ impl RenderingSubSystemHandle for OpenGLHandle {
                     view.model
                         .primitives
                         .iter()
-                        .for_each(|primitive| { ffp_render_2d_primitive(primitive) });
+                        .for_each(|primitive| { ffp_2d_render_primitive(primitive) });
                     view.model
                         .textures
                         .iter()
                         .filter(|x| x.initialized)
-                        .for_each(|x| ffp_render_2d_texture(x));
+                        .for_each(|x| ffp_2d_render_texture(x));
                 });
             }
             OpenGLPipeline::ProgrammableShader => {}
@@ -126,15 +126,15 @@ impl RenderingSubSystemHandle for OpenGLHandle {
                     for primitive in model.primitives.iter() {
                         match primitive.ptype {
                             PrimitiveType::Point { point_size } => match self.pipeline {
-                                OpenGLPipeline::FixedFunction => { ffp_render_3d(primitive, || gl_point_size(point_size), gl_begin_points) }
+                                OpenGLPipeline::FixedFunction => { ffp_3d_render(primitive, || gl_point_size(point_size), gl_begin_points) }
                                 OpenGLPipeline::ProgrammableShader => {}
                             },
                             PrimitiveType::Line { thickness } => match self.pipeline {
-                                OpenGLPipeline::FixedFunction => ffp_render_3d(primitive, || gl_line_width(thickness), gl_begin_lines),
+                                OpenGLPipeline::FixedFunction => ffp_3d_render(primitive, || gl_line_width(thickness), gl_begin_lines),
                                 OpenGLPipeline::ProgrammableShader => {}
                             },
                             PrimitiveType::Cube { thickness } => match self.pipeline {
-                                OpenGLPipeline::FixedFunction => ffp_render_3d(primitive, || gl_line_width(thickness), gl_begin_quads),
+                                OpenGLPipeline::FixedFunction => ffp_3d_render(primitive, || gl_line_width(thickness), gl_begin_quads),
                                 OpenGLPipeline::ProgrammableShader => {}
                             },
                             PrimitiveType::LineStrip { .. } => {

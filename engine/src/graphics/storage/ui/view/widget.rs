@@ -4,6 +4,7 @@ use crate::geometry::primitive::mode::PolygonMode;
 use crate::geometry::primitive::prim2d::Primitive2DBuilder;
 use crate::geometry::primitive::v2d::Vertex2D;
 use crate::geometry::primitive::PrimitiveType;
+use crate::geometry::primitive::v3d::Vertex3D;
 use crate::geometry::rect::Rectangle2D;
 use crate::graphics::color::Color;
 use crate::graphics::storage::g2d::Graph2D;
@@ -80,8 +81,11 @@ impl Assembled for Widget {
             /* add text to the button */
             model.textures
                 .push(Texture2DBuilder::new()
-                    .with_x(rectangle.origin.x + 10.0)
-                    .with_y(rectangle.origin.y + (height / 2.0) - (scaled_text_height / 2.0))
+                    .with_location(Vertex3D {
+                        x: rectangle.origin.x + 10.0,
+                        y: rectangle.origin.y + (height / 2.0) - (scaled_text_height / 2.0),
+                        z: 0.0
+                    })
                     .with_scale(scale)
                     .with_image(text)
                     .build());

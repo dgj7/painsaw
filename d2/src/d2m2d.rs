@@ -3,7 +3,7 @@ use engine::geometry::primitive::v2d::Vertex2D;
 use engine::geometry::primitive::PrimitiveType;
 use engine::graphics::color::Color;
 use engine::graphics::storage::g2d::m2d::{Model2D, Model2DBuilder};
-use engine::graphics::texture::t2d::Texture2D;
+use engine::graphics::texture::t2d::Texture;
 use engine::support::image::bitmap::Bitmap;
 use engine::support::image::targa::Targa;
 use engine::support::image::Image;
@@ -19,7 +19,7 @@ pub(super) fn create_2d_bmp_24b() -> Model2D {
     let bmp_24b_height = bmp_24b.height as f32;
 
     Model2DBuilder::new()
-        .with_texture(Texture2D::new(bmp_24b, bmp_24b_x_zero, bmp_24b_y_zero, 1.0))
+        .with_texture(Texture::new_2d(bmp_24b, bmp_24b_x_zero, bmp_24b_y_zero, 1.0))
         .with_primitive(
             Primitive2DBuilder::new()
                 .with_type(PrimitiveType::Point { point_size: 12.0 })
@@ -42,7 +42,7 @@ pub(super) fn create_2d_tga_32b_b2t_l2r() -> Model2D {
     let tga_height = tga.height as f32;
 
     Model2DBuilder::new()
-        .with_texture(Texture2D::new(tga, tga_x_zero, tga_y_zero, 1.0))
+        .with_texture(Texture::new_2d(tga, tga_x_zero, tga_y_zero, 1.0))
         .with_primitive(
             Primitive2DBuilder::new()
                 .with_type(PrimitiveType::Point { point_size: 12.0 })

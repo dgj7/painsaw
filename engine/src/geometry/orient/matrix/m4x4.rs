@@ -51,6 +51,7 @@ pub struct Matrix4x4 {
 }
 
 impl Matrix4x4 {
+    // todo: needs a column-major and row-major specialization
     pub fn from(
         x_right: Vertex3D,
         y_up: Vertex3D,
@@ -80,6 +81,7 @@ impl Matrix4x4 {
         }
     }
 
+    // todo: needs a column-major and row-major specialization
     pub fn from_position(position: Vertex3D) -> Matrix4x4 {
         Matrix4x4::from(Vertex3D::origin(), Vertex3D::origin(), Vertex3D::origin(), position,)
     }
