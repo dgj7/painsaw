@@ -6,7 +6,7 @@ use crate::graphics::storage::Models;
 use crate::graphics::storage::ui::UIManager;
 use crate::graphics::subsystem::opengl::ffp::api::{gl_line_width, gl_point_size};
 use crate::graphics::subsystem::opengl::ffp::ffp2d::{ffp_2d_initialize_textures, ffp_2d_update_textures, ffp_2d_render_primitive};
-use crate::graphics::subsystem::opengl::ffp::ffp3d::{ffp_3d_setup, ffp_3d_teardown, ffp_3d_render, ffp_3d_initialize_textures, ffp_3d_update_textures};
+use crate::graphics::subsystem::opengl::ffp::ffp3d::{ffp_3d_setup, ffp_3d_teardown, ffp_3d_render, ffp_3d_initialize_textures, ffp_3d_update_textures, ffp_3d_render_asset};
 use crate::graphics::subsystem::opengl::ffp::util::{gl_begin_lines, gl_begin_points, gl_begin_quads};
 use crate::graphics::subsystem::opengl::ffp::{ffp_before_scene, ffp_resize};
 use crate::graphics::subsystem::RendererInfo;
@@ -128,6 +128,9 @@ impl RenderingSubSystemHandle for OpenGLHandle {
     fn render_3d(&self, g3d: &mut Graph3D) {
         match self.pipeline {
             OpenGLPipeline::FixedFunction => {
+
+                /* primitive rendering; this to be removed */
+                // todo: i think we're checking the pipeline type twice; the below ones can be removed, they are already fixed function
                 for (_, model) in g3d.iter() {
                     for primitive in model.primitives.iter() {
                         match primitive.ptype {
@@ -148,6 +151,11 @@ impl RenderingSubSystemHandle for OpenGLHandle {
                             }
                         }
                     }
+                }
+
+                /* 3d asset rendering */
+                for asset in g3d.assets.iter() {
+                    ffp_3d_render_asset(asset);
                 }
             }
             OpenGLPipeline::ProgrammableShader => {}

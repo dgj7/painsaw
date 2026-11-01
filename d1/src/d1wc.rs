@@ -1,6 +1,6 @@
 use crate::d1::Demo1;
 use crate::d1m2d::{create_2d_axes, create_2d_crosshairs};
-use crate::d1m3d::{create_3d_axes, create_3d_cuboid_1, create_3d_cuboid_wall_2, create_3d_enclosing_box, };
+use crate::d1m3d::{create_3d_axes, create_3d_cuboid_1, create_3d_cuboid_wall_2, create_3d_enclosing_box, create_3d_triangle_asset};
 use engine::graphics::camera::Camera;
 use engine::graphics::storage::Models;
 use engine::input::UserInput;
@@ -43,6 +43,7 @@ impl WorldController for Demo1 {
         models.g3d.attach(M3D_3D_CUBOID_1, create_3d_cuboid_1());
         models.g3d.attach(M3D_3D_CUBOID_WALL, create_3d_cuboid_wall_2());
         models.g3d.attach(M3D_3D_CUBOID_ENCLOSING, create_3d_enclosing_box());
+        models.g3d.assets.push(create_3d_triangle_asset());
     }
 
     fn update_world_helper(

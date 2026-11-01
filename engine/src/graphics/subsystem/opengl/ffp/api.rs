@@ -2,7 +2,7 @@ use crate::graphics::subsystem::opengl::errors::check_errors_gl;
 use crate::support::logger::log;
 use crate::support::logger::log_level::LogLevel;
 use std::ffi::{c_char, CStr};
-use windows::Win32::Graphics::OpenGL::{glBegin, glBindTexture, glBlendFunc, glClear, glClearColor, glColor4f, glDisable, glEnable, glEnd, glFrustum, glGenTextures, glGetString, glHint, glLineWidth, glLoadIdentity, glMatrixMode, glOrtho, glPointSize, glPolygonMode, glPopAttrib, glPopMatrix, glPushAttrib, glPushMatrix, glRotatef, glScalef, glTexCoord2f, glTexEnvf, glTexImage2D, glTexParameteri, glTexSubImage2D, glTranslatef, glVertex2f, glVertex3f, glViewport, gluPerspective};
+use windows::Win32::Graphics::OpenGL::{glBegin, glBindTexture, glBlendFunc, glClear, glClearColor, glColor4f, glDisable, glEnable, glEnd, glFrustum, glGenTextures, glGetString, glHint, glLineWidth, glLoadIdentity, glMatrixMode, glNormal3f, glOrtho, glPointSize, glPolygonMode, glPopAttrib, glPopMatrix, glPushAttrib, glPushMatrix, glRotatef, glScalef, glTexCoord2f, glTexEnvf, glTexImage2D, glTexParameteri, glTexSubImage2D, glTranslatef, glVertex2f, glVertex3f, glViewport, gluPerspective};
 
 pub(crate) fn gl_clear(mask: u32) {
     unsafe { glClear(mask); }
@@ -210,4 +210,9 @@ pub(crate) fn gl_scale_f(x: f32, y: f32, z: f32) {
 pub(crate) fn gl_polygon_mode(face: u32, mode: u32) {
     unsafe { glPolygonMode(face, mode) }
     check_errors_gl("glPolygonMode");
+}
+
+pub(crate) fn gl_normal_3f(nx: f32, ny: f32, nz: f32) {
+    unsafe { glNormal3f(nx, ny, nz) }
+    //check_errors_gl("glNormal3f");
 }

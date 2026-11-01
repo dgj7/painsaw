@@ -1,5 +1,6 @@
 use m3d::Model3D;
 use std::collections::BTreeMap;
+use crate::graphics::storage::asset::Asset3D;
 
 pub mod m3d;
 pub mod id;
@@ -9,12 +10,14 @@ pub mod tree;
 // todo: better organization; scene graph?
 pub struct Graph3D {
     models: BTreeMap<String, Model3D>,
+    pub assets: Vec<Asset3D>,
 }
 
 impl Graph3D {
     pub fn new() -> Graph3D {
         Graph3D {
             models: BTreeMap::new(),
+            assets: Vec::new(),
         }
     }
 }
