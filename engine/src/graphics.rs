@@ -1,9 +1,7 @@
 use crate::config::EngineConfig;
-use crate::geometry::primitive::v2d::Vertex2D;
 use crate::graphics::camera::Camera;
-use storage::Models;
+use crate::graphics::storage::ui::UIManager;
 use crate::graphics::subsystem::{grss_factory, GraphicsSubSystem, RenderingSubSystemHandle};
-use crate::input::mouse::min::MouseInputName;
 use crate::input::UserInput;
 use crate::support::logger::log;
 use crate::support::logger::log_level::LogLevel;
@@ -14,8 +12,8 @@ use crate::support::timing::EngineTiming;
 use std::sync::MutexGuard;
 use storage::g2d::Graph2D;
 use storage::g3d::Graph3D;
+use storage::Models;
 use subsystem::RendererInfo;
-use crate::graphics::storage::ui::UIManager;
 
 pub mod camera;
 pub mod color;
@@ -71,23 +69,13 @@ impl RendererWrapper {
         g2d: &mut Graph2D,
         ui: &mut UIManager
     ) {
-        /* track down the mouse position */
-        // todo: can this just be moved into the show_screen_stats method, so that we can skip this if we're not displaying stats
-        let mouse_pos = input
-            .mouse_states
-            .get(&MouseInputName::MouseMove)
-            .map(|ms| (ms.current.x as f32, ms.current.y as f32))
-            .or_else(|| Some((0.0, 0.0)))
-            .map(|(x, y)| Vertex2D::new(x, y))
-            .unwrap();
-
         /* render primitives */
         self.subsystem.render_2d(g2d, ui);
 
         /* conditional display */
         show_fps(g2d, timing, config);
         show_cam_coords(g2d, config, camera);
-        show_screen_stats(g2d, config, &camera, &mouse_pos);
+        show_screen_stats(config, input, &camera, g2d);
     }
 
     pub(crate) fn after_2d(&self) {

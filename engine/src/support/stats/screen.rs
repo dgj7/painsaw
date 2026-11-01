@@ -1,7 +1,10 @@
+use std::sync::MutexGuard;
 use crate::config::EngineConfig;
 use crate::geometry::primitive::v2d::Vertex2D;
 use crate::graphics::camera::Camera;
 use crate::graphics::storage::g2d::Graph2D;
+use crate::input::mouse::min::MouseInputName;
+use crate::input::UserInput;
 use crate::support::stats::{
     create_rect2d_model, create_rect2d_text, create_vertex2d_model, create_vertex2d_text, HEIGHT, TC,
     X_POS,
@@ -21,15 +24,24 @@ static MOS_POS: &str = "mouse:   ";
 /// * center of screen, from operating system perspective
 ///
 pub(crate) fn show_screen_stats(
-    g2d: &mut Graph2D,
     config: &EngineConfig,
+    input: MutexGuard<UserInput>,
     camera: &Camera,
-    mouse_position: &Vertex2D,
+    g2d: &mut Graph2D,
 ) {
     /* nothing to do if not enabled */
     if !config.renderer.show_screen_stats {
         return;
     }
+
+    /* track down the mouse position */
+    let mouse_position = input
+        .mouse_states
+        .get(&MouseInputName::MouseMove)
+        .map(|ms| (ms.current.x as f32, ms.current.y as f32))
+        .or_else(|| Some((0.0, 0.0)))
+        .map(|(x, y)| Vertex2D::new(x, y))
+        .unwrap();
 
     /* gather variables */
     let client_rect = &camera.screen.current_client_rect;
