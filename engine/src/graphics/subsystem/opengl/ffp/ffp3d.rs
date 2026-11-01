@@ -48,7 +48,6 @@ pub(crate) fn ffp_3d_teardown() {
     gl_pop_matrix();
 }
 
-// todo: rename to render_primitive
 pub(crate) fn ffp_3d_render_primitive(primitive: &Primitive3D, preparation: impl Fn(), begin: impl Fn()) {
     gl_push_matrix();
     gl_push_attrib(GL_ALL_ATTRIB_BITS);

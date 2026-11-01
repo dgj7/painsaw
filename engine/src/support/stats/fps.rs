@@ -17,22 +17,23 @@ pub(crate) fn show_fps(g2d: &mut Graph2D, timing: &EngineTiming, config: &Engine
     /* calculate fps */
     let fps = timing.compute_fps();
     let avg = timing.compute_avg_fps();
+    let max = config.renderer.fps_cap.unwrap_or(0);
 
     /* add or update models */
     g2d.attach_or_update(
         "99-builtin-fps",
-        || create_model(TC.clone(), fps, avg),
-        |m| m.textures[0].replacement = Option::from(create_text(TC.clone(), fps, avg)),
+        || create_model(TC.clone(), fps, avg, max),
+        |m| m.textures[0].replacement = Option::from(create_text(TC.clone(), fps, avg, max)),
     );
 }
 
-fn create_text(config: TextConfig, fps: u32, avg: u32) -> RawImage {
+fn create_text(config: TextConfig, fps: u32, avg: u32, max: u32) -> RawImage {
     text_2d_image(config.clone(), || {
-        String::from(format!("FPS:{:4} ({:4} avg)", fps, avg))
+        String::from(format!("FPS:{:4} ({:4} avg, {:4} max)", fps, avg, max))
     })
 }
 
-fn create_model(config: TextConfig, fps: u32, avg: u32) -> Model2D {
+fn create_model(config: TextConfig, fps: u32, avg: u32, max: u32) -> Model2D {
     Model2DBuilder::new()
         .with_texture(
             Texture2DBuilder::new()
@@ -41,7 +42,7 @@ fn create_model(config: TextConfig, fps: u32, avg: u32) -> Model2D {
                     y: 5.0,
                     z: 0.0,
                 })
-                .with_image(create_text(config, fps, avg))
+                .with_image(create_text(config, fps, avg, max))
                 .build(),
         )
         .build()

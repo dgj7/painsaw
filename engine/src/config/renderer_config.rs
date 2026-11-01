@@ -6,7 +6,7 @@ pub struct RendererConfig {
     pub show_fps: bool,
     pub show_cam_coords: bool,
     pub show_screen_stats: bool,
-    pub fps_cap: Option<u16>,
+    pub fps_cap: Option<u32>,
 }
 
 impl RendererConfig {
