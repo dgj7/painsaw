@@ -83,6 +83,7 @@ impl Matrix4x4 {
 
     // todo: needs a column-major and row-major specialization
     pub fn from_position(position: Vertex3D) -> Matrix4x4 {
+        // todo: this should probably use create_x_unit(), create_y_unit(), create_z_unit()
         Matrix4x4::from(Vertex3D::origin(), Vertex3D::origin(), Vertex3D::origin(), position,)
     }
 

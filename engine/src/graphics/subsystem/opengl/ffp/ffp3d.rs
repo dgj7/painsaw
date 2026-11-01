@@ -9,6 +9,7 @@ use windows::Win32::Graphics::OpenGL::{
 use crate::geometry::orient::matrix::m4x4::columnmajor;
 use crate::graphics::storage::asset::Asset3D;
 use crate::graphics::storage::g3d::Graph3D;
+use crate::graphics::storage::o3d::Object3D;
 use crate::graphics::subsystem::opengl::ffp::ffpxd::{ffp_initialize_texture, ffp_update_texture};
 use crate::graphics::subsystem::opengl::ffp::util::gl_begin_triangles;
 use crate::support::logger::log;
@@ -48,7 +49,7 @@ pub(crate) fn ffp_3d_teardown() {
 }
 
 // todo: rename to render_primitive
-pub(crate) fn ffp_3d_render(primitive: &Primitive3D, preparation: impl Fn(), begin: impl Fn()) {
+pub(crate) fn ffp_3d_render_primitive(primitive: &Primitive3D, preparation: impl Fn(), begin: impl Fn()) {
     gl_push_matrix();
     gl_push_attrib(GL_ALL_ATTRIB_BITS);
 
@@ -69,13 +70,15 @@ pub(crate) fn ffp_3d_render(primitive: &Primitive3D, preparation: impl Fn(), beg
     gl_pop_matrix();
 }
 
-pub(crate) fn ffp_3d_render_asset(asset: &Asset3D) {
-    if !asset.visible {
+pub(crate) fn ffp_3d_render_asset(object: &Object3D, asset: &Asset3D) {
+    if !object.visible {
         return;
     }
 
     gl_push_matrix();
     gl_push_attrib(GL_ALL_ATTRIB_BITS);
+
+    ffp_3d_translate(&object.transform);
 
     for mesh in asset.meshes.iter() {
         let material = mesh
@@ -141,12 +144,13 @@ pub(crate) fn ffp_3d_render_asset(asset: &Asset3D) {
     gl_pop_matrix();
 }
 
+// todo: figure out if we can determine the rotations here using only the m4x4, and not the pitch/roll/yaw fields specifically.  if so, Object3D's orientation field can just be a 4x4 matrix
 fn ffp_3d_translate(orientation: &Orientation) {
     let position = columnmajor::position(&orientation.transform);
     gl_translate_f(position.x, position.y, position.z);
     gl_rotate_f(orientation.pitch.degrees, 1.0, 0.0, 0.0);
     gl_rotate_f(orientation.yaw.degrees, 0.0, 1.0, 0.0);
-    gl_scale_f(orientation.x_scale, orientation.y_scale, orientation.z_scale, );
+    gl_scale_f(orientation.x_scale, orientation.y_scale, orientation.z_scale);
 }
 
 pub(crate) fn ffp_3d_initialize_textures(g3d: &mut Graph3D) {
@@ -158,10 +162,12 @@ pub(crate) fn ffp_3d_initialize_textures(g3d: &mut Graph3D) {
         }
     }
 
-    for asset in g3d.assets.iter_mut() {
-        for material in asset.materials.iter_mut() {
-            if let Some(texture) = &mut material.diffuse_texture {
-                ffp_initialize_texture(texture);
+    for (_, object) in g3d.objects.iter_mut() {
+        if let Some(asset) = g3d.assets.get_mut(&object.asset_id) {
+            for material in asset.materials.iter_mut() {
+                if let Some(texture) = &mut material.diffuse_texture {
+                    ffp_initialize_texture(texture);
+                }
             }
         }
     }
@@ -180,14 +186,16 @@ pub(crate) fn ffp_3d_update_textures(g3d: &mut Graph3D) {
         }
     }
 
-    for asset in g3d.assets.iter_mut() {
-        for material in asset.materials.iter_mut() {
-            if let Some(texture) = &mut material.diffuse_texture {
-                if !texture.initialized {
-                    ffp_initialize_texture(texture);
-                }
+    for (_, object) in g3d.objects.iter_mut() {
+        if let Some(asset) = g3d.assets.get_mut(&object.asset_id) {
+            for material in asset.materials.iter_mut() {
+                if let Some(texture) = &mut material.diffuse_texture {
+                    if !texture.initialized {
+                        ffp_initialize_texture(texture);
+                    }
 
-                ffp_update_texture(texture);
+                    ffp_update_texture(texture);
+                }
             }
         }
     }

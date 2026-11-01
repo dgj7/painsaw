@@ -29,7 +29,7 @@ Changes that have occurred over time on the engine, demos, and games.
 |:------:|:-------:|:------------------------------------------------------------:|
 |   ✔️   |  0.2.x  |                    implement ui framework                    |
 |   ✔️   |  0.3.x  |      finish spectator movement strategy implementation       |
-|   ❌    |  0.4.x  |                         3d texturing                         |
+|   ⚠️   |  0.4.x  |                         3d texturing                         |
 |   ❌    |    ?    |                 animations for ui, g2d, g3d                  |
 |   ❌    |    ?    |                           lighting                           |
 |   ❌    |    ?    |                           shadows                            |

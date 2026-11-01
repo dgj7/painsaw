@@ -6,7 +6,7 @@ use crate::graphics::storage::Models;
 use crate::graphics::storage::ui::UIManager;
 use crate::graphics::subsystem::opengl::ffp::api::{gl_line_width, gl_point_size};
 use crate::graphics::subsystem::opengl::ffp::ffp2d::{ffp_2d_initialize_textures, ffp_2d_update_textures, ffp_2d_render_primitive};
-use crate::graphics::subsystem::opengl::ffp::ffp3d::{ffp_3d_setup, ffp_3d_teardown, ffp_3d_render, ffp_3d_initialize_textures, ffp_3d_update_textures, ffp_3d_render_asset};
+use crate::graphics::subsystem::opengl::ffp::ffp3d::{ffp_3d_setup, ffp_3d_teardown, ffp_3d_render_primitive, ffp_3d_initialize_textures, ffp_3d_update_textures, ffp_3d_render_asset};
 use crate::graphics::subsystem::opengl::ffp::util::{gl_begin_lines, gl_begin_points, gl_begin_quads};
 use crate::graphics::subsystem::opengl::ffp::{ffp_before_scene, ffp_resize};
 use crate::graphics::subsystem::RendererInfo;
@@ -135,15 +135,15 @@ impl RenderingSubSystemHandle for OpenGLHandle {
                     for primitive in model.primitives.iter() {
                         match primitive.ptype {
                             PrimitiveType::Point { point_size } => match self.pipeline {
-                                OpenGLPipeline::FixedFunction => { ffp_3d_render(primitive, || gl_point_size(point_size), gl_begin_points) }
+                                OpenGLPipeline::FixedFunction => { ffp_3d_render_primitive(primitive, || gl_point_size(point_size), gl_begin_points) }
                                 OpenGLPipeline::ProgrammableShader => {}
                             },
                             PrimitiveType::Line { thickness } => match self.pipeline {
-                                OpenGLPipeline::FixedFunction => ffp_3d_render(primitive, || gl_line_width(thickness), gl_begin_lines),
+                                OpenGLPipeline::FixedFunction => ffp_3d_render_primitive(primitive, || gl_line_width(thickness), gl_begin_lines),
                                 OpenGLPipeline::ProgrammableShader => {}
                             },
                             PrimitiveType::Cube { thickness } => match self.pipeline {
-                                OpenGLPipeline::FixedFunction => ffp_3d_render(primitive, || gl_line_width(thickness), gl_begin_quads),
+                                OpenGLPipeline::FixedFunction => ffp_3d_render_primitive(primitive, || gl_line_width(thickness), gl_begin_quads),
                                 OpenGLPipeline::ProgrammableShader => {}
                             },
                             PrimitiveType::LineStrip { .. } => {
@@ -154,8 +154,10 @@ impl RenderingSubSystemHandle for OpenGLHandle {
                 }
 
                 /* 3d asset rendering */
-                for asset in g3d.assets.iter() {
-                    ffp_3d_render_asset(asset);
+                for (_, object) in g3d.objects.iter() {
+                    if let Some(asset) = g3d.assets.get(&object.asset_id) {
+                        ffp_3d_render_asset(object, asset);
+                    }
                 }
             }
             OpenGLPipeline::ProgrammableShader => {}
