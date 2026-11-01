@@ -130,25 +130,13 @@ impl RenderingSubSystemHandle for OpenGLHandle {
             OpenGLPipeline::FixedFunction => {
 
                 /* primitive rendering; this to be removed */
-                // todo: i think we're checking the pipeline type twice; the below ones can be removed, they are already fixed function
                 for (_, model) in g3d.iter() {
                     for primitive in model.primitives.iter() {
                         match primitive.ptype {
-                            PrimitiveType::Point { point_size } => match self.pipeline {
-                                OpenGLPipeline::FixedFunction => { ffp_3d_render_primitive(primitive, || gl_point_size(point_size), gl_begin_points) }
-                                OpenGLPipeline::ProgrammableShader => {}
-                            },
-                            PrimitiveType::Line { thickness } => match self.pipeline {
-                                OpenGLPipeline::FixedFunction => ffp_3d_render_primitive(primitive, || gl_line_width(thickness), gl_begin_lines),
-                                OpenGLPipeline::ProgrammableShader => {}
-                            },
-                            PrimitiveType::Cube { thickness } => match self.pipeline {
-                                OpenGLPipeline::FixedFunction => ffp_3d_render_primitive(primitive, || gl_line_width(thickness), gl_begin_quads),
-                                OpenGLPipeline::ProgrammableShader => {}
-                            },
-                            PrimitiveType::LineStrip { .. } => {
-                                panic!("not yet implemented")
-                            }
+                            PrimitiveType::Point { point_size } => ffp_3d_render_primitive(primitive, || gl_point_size(point_size), gl_begin_points),
+                            PrimitiveType::Line { thickness } => ffp_3d_render_primitive(primitive, || gl_line_width(thickness), gl_begin_lines),
+                            PrimitiveType::Cube { thickness } => ffp_3d_render_primitive(primitive, || gl_line_width(thickness), gl_begin_quads),
+                            PrimitiveType::LineStrip { .. } => panic!("not yet implemented"),
                         }
                     }
                 }
