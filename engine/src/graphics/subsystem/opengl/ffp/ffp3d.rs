@@ -7,11 +7,11 @@ use windows::Win32::Graphics::OpenGL::{
     GL_ALL_ATTRIB_BITS, GL_DEPTH_TEST, GL_MODELVIEW, GL_PROJECTION,
 };
 use crate::geometry::orient::matrix::m4x4::columnmajor;
-use crate::graphics::storage::asset::Asset3D;
 use crate::graphics::storage::g3d::Graph3D;
 use crate::graphics::storage::o3d::Object3D;
 use crate::graphics::subsystem::opengl::ffp::ffpxd::{ffp_initialize_texture, ffp_update_texture};
 use crate::graphics::subsystem::opengl::ffp::util::gl_begin_triangles;
+use crate::support::asset::Asset3D;
 use crate::support::logger::log;
 use crate::support::logger::log_level::LogLevel;
 

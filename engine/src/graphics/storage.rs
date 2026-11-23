@@ -5,7 +5,6 @@ use crate::graphics::storage::ui::UIManager;
 pub mod g2d;
 pub mod g3d;
 pub mod ui;
-pub mod asset;
 pub mod o3d;
 
 pub struct Models {

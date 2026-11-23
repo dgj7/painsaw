@@ -4,10 +4,7 @@
 
 use engine::geometry::primitive::v3d::Vertex3D;
 use engine::graphics::color::Color;
-use engine::graphics::storage::asset::Asset3D;
-use engine::graphics::storage::asset::m3d::Mesh3D;
-use engine::graphics::storage::asset::material::Material;
-use engine::graphics::storage::asset::mv3d::MeshVertex3D;
+use engine::support::asset::{Asset3D, Material, Mesh3D, MeshVertex3D};
 
 pub(super) fn create_3d_triangle_asset() -> Asset3D {
     Asset3D {

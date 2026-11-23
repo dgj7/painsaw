@@ -1,7 +1,7 @@
 use m3d::Model3D;
 use std::collections::{BTreeMap, HashMap};
-use crate::graphics::storage::asset::Asset3D;
 use crate::graphics::storage::o3d::Object3D;
+use crate::support::asset::Asset3D;
 
 pub mod m3d;
 pub mod id;

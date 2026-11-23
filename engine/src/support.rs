@@ -10,3 +10,4 @@ pub(crate) mod stats;
 pub mod text;
 pub mod timing;
 pub mod id;
+pub mod asset;
