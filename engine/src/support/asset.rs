@@ -4,7 +4,7 @@
 //! assets themselves are not rendered; they are referenced some number of times by objects.
 //!
 
-mod wobj;
+pub mod wobj;
 
 use std::fs::File;
 use std::io::{BufRead, BufReader, Cursor, Seek};

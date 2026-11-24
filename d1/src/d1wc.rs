@@ -10,8 +10,8 @@ use engine::support::timing::EngineTiming;
 use engine::window::api::mouse::hide::hide_mouse;
 use engine::WorldController;
 use std::sync::{Arc, Mutex};
-use crate::d1a3d::{create_3d_quad_asset, create_3d_triangle_asset};
-use crate::d1o3d::{create_object_quad1, create_object_triangle1};
+use crate::d1a3d::{create_3d_pyramid_asset, create_3d_quad_asset, create_3d_triangle_asset};
+use crate::d1o3d::{create_object_pyramid1, create_object_quad1, create_object_triangle1};
 use crate::d1ui::main_menu;
 
 pub static M2D_XY_PURPLE: &str = "1-2d-xy-purple";
@@ -49,10 +49,12 @@ impl WorldController for Demo1 {
         /* load assets */
         models.g3d.attach_asset(create_3d_triangle_asset());        // asset.id=9000
         models.g3d.attach_asset(create_3d_quad_asset());            // asset.id=9001
+        models.g3d.attach_asset(create_3d_pyramid_asset());         // asset.id=9002
         
         /* create objects, referencing assets */
         models.g3d.attach_object(create_object_triangle1(9000));
         models.g3d.attach_object(create_object_quad1(9001));
+        models.g3d.attach_object(create_object_pyramid1(9002));
     }
 
     fn update_world_helper(

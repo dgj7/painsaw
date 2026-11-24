@@ -4,7 +4,37 @@
 
 use engine::geometry::primitive::v3d::Vertex3D;
 use engine::graphics::color::Color;
-use engine::support::asset::{Asset3D, Material, Mesh3D, MeshVertex3D};
+use engine::support::asset::{Asset3D, Asset3DLoader, Material, Mesh3D, MeshVertex3D};
+use engine::support::asset::wobj::WObj;
+
+const PYRAMID_OBJ: &str = include_str!("../../engine/tests/pyramid.obj");
+
+pub(super) fn create_3d_pyramid_asset() -> Asset3D {
+    let mut asset = WObj::load_from_bytes(PYRAMID_OBJ.as_bytes())
+        .expect("pyramid.obj should load successfully");
+
+    asset.id = 9002;
+    asset.name = String::from("yellow pyramid");
+
+    asset.materials = vec!(
+        Material {
+            name: Some(String::from("test-yellow")),
+            diffuse_texture: None,
+            diffuse_color: Color::YELLOW,
+
+            normal_texture: None,
+            specular_texture: None,
+            specular_color: Color::WHITE,
+            shininess: 0.0,
+        },
+    );
+
+    for mesh in &mut asset.meshes {
+        mesh.material_index = Some(0);
+    }
+
+    asset
+}
 
 pub(super) fn create_3d_triangle_asset() -> Asset3D {
     Asset3D {

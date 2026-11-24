@@ -17,7 +17,7 @@ pub(super) fn create_object_triangle1(asset_id: usize) -> Object3D {
                 Vertex3D::create_x_unit(),
                 Vertex3D::create_y_unit(),
                 Vertex3D::create_z_unit(),
-                Vertex3D::new(-3.0, 0.0, 0.0),
+                Vertex3D::new(20.0, 0.0, 0.0),
             ))
             .build(),
 
@@ -38,7 +38,28 @@ pub(super) fn create_object_quad1(asset_id: usize) -> Object3D {
                 Vertex3D::create_x_unit(),
                 Vertex3D::create_y_unit(),
                 Vertex3D::create_z_unit(),
-                Vertex3D::new(0.0, 0.0, 0.0),
+                Vertex3D::new(-20.0, 0.0, 0.0),
+            ))
+            .build(),
+
+        asset_id,
+
+        visible: true,
+        clipping: false,
+    }
+}
+
+pub(super) fn create_object_pyramid1(asset_id: usize) -> Object3D {
+    Object3D {
+        id: 5002,
+        name: Some(String::from("pyramid-1")),
+
+        transform: OrientationBuilder::new()
+            .with_transform(Matrix4x4::from(
+                Vertex3D::create_x_unit(),
+                Vertex3D::create_y_unit(),
+                Vertex3D::create_z_unit(),
+                Vertex3D::new(0.0, -1.0, -5.0),
             ))
             .build(),
 
